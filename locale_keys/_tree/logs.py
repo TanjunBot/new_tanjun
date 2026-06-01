@@ -7,6 +7,302 @@ from locale_keys.types import LocalizedString, ResolveMap
 
 
 @dataclass(frozen=True, slots=True)
+class Logs:
+    automodRuleCreate: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+    permissions: LocalizedString
+    automodAction: LogsAutomodAction
+    automodRuleCreate: LogsAutomodRuleCreate
+    automodRuleDelete: LogsAutomodRuleDelete
+    automodRuleUpdate: LogsAutomodRuleUpdate
+    blacklist: LogsBlacklist
+    blacklistc: LogsBlacklistc
+    blacklistcat: LogsBlacklistcat
+    blacklistr: LogsBlacklistr
+    blacklistu: LogsBlacklistu
+    blacklistv: LogsBlacklistv
+    configure: LogsConfigure
+    guildChannelCreate: LogsGuildChannelCreate
+    guildChannelDelete: LogsGuildChannelDelete
+    guildChannelUpdate: LogsGuildChannelUpdate
+    guildRoleCreate: LogsGuildRoleCreate
+    guildRoleDelete: LogsGuildRoleDelete
+    guildRoleUpdate: LogsGuildRoleUpdate
+    guildUpdate: LogsGuildUpdate
+    guild_channelCreate: LogsGuild_channelCreate
+    guild_channelDelete: LogsGuild_channelDelete
+    guild_channelUpdate: LogsGuild_channelUpdate
+    inviteCreate: LogsInviteCreate
+    inviteDelete: LogsInviteDelete
+    memberBan: LogsMemberBan
+    memberJoin: LogsMemberJoin
+    memberRemove: LogsMemberRemove
+    memberUnban: LogsMemberUnban
+    memberUpdate: LogsMemberUpdate
+    messageDelete: LogsMessageDelete
+    messageEdit: LogsMessageEdit
+    permissions: LogsPermissions
+    presenceUpdate: LogsPresenceUpdate
+    reactionAdd: LogsReactionAdd
+    reactionRemove: LogsReactionRemove
+    remove: LogsRemove
+    set: LogsSet
+    userUpdate: LogsUserUpdate
+
+@dataclass(frozen=True, slots=True)
+class LogsAutomodRuleCreate:
+    actions: LocalizedString
+    allow_list: LocalizedString
+    block_member_interaction: LocalizedString
+    block_message: LocalizedString
+    created_by: LocalizedString
+    enabled: LocalizedString
+    excluded_channels: LocalizedString
+    excluded_roles: LocalizedString
+    keywordFilters: LocalizedString
+    max_mentions: LocalizedString
+    mentionSpamProtection: LocalizedString
+    name: LocalizedString
+    presets: LocalizedString
+    regexPatterns: LocalizedString
+    send_warning_message: LocalizedString
+    timeout: LocalizedString
+    title: LocalizedString
+    trigger: LocalizedString
+    triggerType: LocalizedString
+    AutoModRuleTriggerType: LogsAutomodRuleCreateAutoModRuleTriggerType
+    timeout_duration: LogsAutomodRuleCreateTimeout_duration
+    resolve: ResolveMap
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistc:
+    description: LocalizedString
+    name: LocalizedString
+    add: LogsBlacklistcAdd
+    remove: LogsBlacklistcRemove
+    show: LogsBlacklistcShow
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistr:
+    description: LocalizedString
+    name: LocalizedString
+    add: LogsBlacklistrAdd
+    remove: LogsBlacklistrRemove
+    show: LogsBlacklistrShow
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistu:
+    description: LocalizedString
+    name: LocalizedString
+    add: LogsBlacklistuAdd
+    remove: LogsBlacklistuRemove
+    show: LogsBlacklistuShow
+
+@dataclass(frozen=True, slots=True)
+class LogsGuildChannelCreate:
+    category: LocalizedString
+    created_at: LocalizedString
+    created_by: LocalizedString
+    name: LocalizedString
+    permissionOverwriteAllowed: LocalizedString
+    permissionOverwriteDenied: LocalizedString
+    permissionOverwriteNeutral: LocalizedString
+    permissionOverwriteTarget: LocalizedString
+    permissionOverwrites: LocalizedString
+    title: LocalizedString
+    topic: LocalizedString
+    type: LocalizedString
+    types: LogsGuildChannelCreateTypes
+
+@dataclass(frozen=True, slots=True)
+class LogsGuildChannelDelete:
+    category: LocalizedString
+    created_at: LocalizedString
+    deleted_by: LocalizedString
+    name: LocalizedString
+    permissionOverwriteAllowed: LocalizedString
+    permissionOverwriteDenied: LocalizedString
+    permissionOverwriteNeutral: LocalizedString
+    permissionOverwriteTarget: LocalizedString
+    permissionOverwrites: LocalizedString
+    title: LocalizedString
+    topic: LocalizedString
+    type: LocalizedString
+    types: LogsGuildChannelDeleteTypes
+
+@dataclass(frozen=True, slots=True)
+class LogsGuildUpdate:
+    addedEmojis: LocalizedString
+    addedFeatures: LocalizedString
+    afkChannel: LocalizedString
+    afkTimeout: LocalizedString
+    banner: LocalizedString
+    defaultNotifications: LocalizedString
+    description: LocalizedString
+    discoverySplash: LocalizedString
+    emojiLimit: LocalizedString
+    explicitContentFilter: LocalizedString
+    filesizeLimit: LocalizedString
+    icon: LocalizedString
+    invitesPausedUntil: LocalizedString
+    maxMembers: LocalizedString
+    maxPresences: LocalizedString
+    maxVideoChannelUsers: LocalizedString
+    name: LocalizedString
+    none: LocalizedString
+    nsfwLevel: LocalizedString
+    owner: LocalizedString
+    preferredLocale: LocalizedString
+    premiumSubscriberRole: LocalizedString
+    premiumSubscribers: LocalizedString
+    premiumTier: LocalizedString
+    publicUpdatesChannel: LocalizedString
+    removedEmojis: LocalizedString
+    removedFeatures: LocalizedString
+    rulesChannel: LocalizedString
+    safetyAlertsChannel: LocalizedString
+    title: LocalizedString
+    verificationLevel: LocalizedString
+    defaultNotificationsLocales: LogsGuildUpdateDefaultNotificationsLocales
+    discoverySplashLocales: LogsGuildUpdateDiscoverySplashLocales
+    explicitContentFilterLocales: LogsGuildUpdateExplicitContentFilterLocales
+    featuresLocales: LogsGuildUpdateFeaturesLocales
+    iconLocales: LogsGuildUpdateIconLocales
+    invitesPausedUntilLocales: LogsGuildUpdateInvitesPausedUntilLocales
+    nsfwLevelLocales: LogsGuildUpdateNsfwLevelLocales
+    preferredLocaleLocales: LogsGuildUpdatePreferredLocaleLocales
+    premiumProgressBarEnabled: LogsGuildUpdatePremiumProgressBarEnabled
+    premiumProgressBarLocales: LogsGuildUpdatePremiumProgressBarLocales
+    unavailableLocales: LogsGuildUpdateUnavailableLocales
+    verificationLevelLocales: LogsGuildUpdateVerificationLevelLocales
+
+@dataclass(frozen=True, slots=True)
+class LogsInviteCreate:
+    channel: LocalizedString
+    createdBy: LocalizedString
+    expires: LocalizedString
+    invite: LocalizedString
+    max_uses: LocalizedString
+    scheduledEvent: LocalizedString
+    targetApplication: LocalizedString
+    targetUser: LocalizedString
+    temporary: LocalizedString
+    title: LocalizedString
+    expiresLocales: LogsInviteCreateExpiresLocales
+    maxUsesLocales: LogsInviteCreateMaxUsesLocales
+    targetTypeLocales: LogsInviteCreateTargetTypeLocales
+
+@dataclass(frozen=True, slots=True)
+class LogsMemberUpdate:
+    addedRoles: LocalizedString
+    banner: LocalizedString
+    displayName: LocalizedString
+    guildAvatar: LocalizedString
+    name: LocalizedString
+    pending: LocalizedString
+    pendingRemoved: LocalizedString
+    removedRoles: LocalizedString
+    timeout: LocalizedString
+    timeoutRemoved: LocalizedString
+    title: LocalizedString
+    guildAvatarLocales: LogsMemberUpdateGuildAvatarLocales
+
+@dataclass(frozen=True, slots=True)
+class LogsPermissions:
+    add_reaction: LocalizedString
+    add_reactions: LocalizedString
+    administrator: LocalizedString
+    attach_files: LocalizedString
+    ban_members: LocalizedString
+    change_nickname: LocalizedString
+    connect: LocalizedString
+    create_events: LocalizedString
+    create_expressions: LocalizedString
+    create_instant_invite: LocalizedString
+    create_polls: LocalizedString
+    create_private_threads: LocalizedString
+    create_public_threads: LocalizedString
+    deafen_members: LocalizedString
+    embed_links: LocalizedString
+    external_emojis: LocalizedString
+    external_stickers: LocalizedString
+    kick_members: LocalizedString
+    manage_channels: LocalizedString
+    manage_emojis: LocalizedString
+    manage_emojis_and_stickers: LocalizedString
+    manage_events: LocalizedString
+    manage_expressions: LocalizedString
+    manage_guild: LocalizedString
+    manage_messages: LocalizedString
+    manage_nicknames: LocalizedString
+    manage_permissions: LocalizedString
+    manage_roles: LocalizedString
+    manage_stickers: LocalizedString
+    manage_threads: LocalizedString
+    manage_webhooks: LocalizedString
+    mention_everyone: LocalizedString
+    moderate_members: LocalizedString
+    move_members: LocalizedString
+    mute_members: LocalizedString
+    priority_speaker: LocalizedString
+    read_message_history: LocalizedString
+    read_messages: LocalizedString
+    request_to_speak: LocalizedString
+    send_messages: LocalizedString
+    send_messages_in_threads: LocalizedString
+    send_polls: LocalizedString
+    send_tts_messages: LocalizedString
+    send_voice_messages: LocalizedString
+    speak: LocalizedString
+    stream: LocalizedString
+    use_application_commands: LocalizedString
+    use_embedded_activities: LocalizedString
+    use_external_apps: LocalizedString
+    use_external_emojis: LocalizedString
+    use_external_sounds: LocalizedString
+    use_external_stickers: LocalizedString
+    use_soundboard: LocalizedString
+    use_voice_activation: LocalizedString
+    view_audit_log: LocalizedString
+    view_channel: LocalizedString
+    view_creator_monetization_analytics: LocalizedString
+    view_guild_insights: LocalizedString
+    resolve: ResolveMap
+
+@dataclass(frozen=True, slots=True)
+class LogsSet:
+    description: LocalizedString
+    name: LocalizedString
+    params: LogsSetParams
+
+@dataclass(frozen=True, slots=True)
+class LogsUserUpdate:
+    avatar: LocalizedString
+    banner: LocalizedString
+    globalName: LocalizedString
+    name: LocalizedString
+    title: LocalizedString
+    userName: LocalizedString
+    guildAvatarLocales: LogsUserUpdateGuildAvatarLocales
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcat:
+    description: LocalizedString
+    name: LocalizedString
+    add: LogsBlacklistcatAdd
+    remove: LogsBlacklistcatRemove
+    show: LogsBlacklistcatShow
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistv:
+    description: LocalizedString
+    name: LocalizedString
+    add: LogsBlacklistvAdd
+    remove: LogsBlacklistvRemove
+    show: LogsBlacklistvShow
+
+@dataclass(frozen=True, slots=True)
 class LogsAutomodAction:
     action: LocalizedString
     actionWasTaken: LocalizedString
@@ -231,299 +527,6 @@ class LogsRemove:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class Logs:
-    automodAction: LogsAutomodAction
-    automodRuleDelete: LogsAutomodRuleDelete
-    automodRuleUpdate: LogsAutomodRuleUpdate
-    blacklist: LogsBlacklist
-    configure: LogsConfigure
-    guildChannelUpdate: LogsGuildChannelUpdate
-    guildRoleCreate: LogsGuildRoleCreate
-    guildRoleDelete: LogsGuildRoleDelete
-    guildRoleUpdate: LogsGuildRoleUpdate
-    guild_channelCreate: LogsGuild_channelCreate
-    guild_channelDelete: LogsGuild_channelDelete
-    guild_channelUpdate: LogsGuild_channelUpdate
-    inviteDelete: LogsInviteDelete
-    memberBan: LogsMemberBan
-    memberJoin: LogsMemberJoin
-    memberRemove: LogsMemberRemove
-    memberUnban: LogsMemberUnban
-    messageDelete: LogsMessageDelete
-    messageEdit: LogsMessageEdit
-    presenceUpdate: LogsPresenceUpdate
-    reactionAdd: LogsReactionAdd
-    reactionRemove: LogsReactionRemove
-    remove: LogsRemove
-    automodRuleCreate: LocalizedString
-    description: LocalizedString
-    name: LocalizedString
-    permissions: LocalizedString
-    automodRuleCreate: LogsAutomodRuleCreate
-    blacklistc: LogsBlacklistc
-    blacklistr: LogsBlacklistr
-    blacklistu: LogsBlacklistu
-    guildChannelCreate: LogsGuildChannelCreate
-    guildChannelDelete: LogsGuildChannelDelete
-    guildUpdate: LogsGuildUpdate
-    inviteCreate: LogsInviteCreate
-    memberUpdate: LogsMemberUpdate
-    permissions: LogsPermissions
-    set: LogsSet
-    userUpdate: LogsUserUpdate
-
-@dataclass(frozen=True, slots=True)
-class LogsAutomodRuleCreate:
-    actions: LocalizedString
-    allow_list: LocalizedString
-    block_member_interaction: LocalizedString
-    block_message: LocalizedString
-    created_by: LocalizedString
-    enabled: LocalizedString
-    excluded_channels: LocalizedString
-    excluded_roles: LocalizedString
-    keywordFilters: LocalizedString
-    max_mentions: LocalizedString
-    mentionSpamProtection: LocalizedString
-    name: LocalizedString
-    presets: LocalizedString
-    regexPatterns: LocalizedString
-    send_warning_message: LocalizedString
-    timeout: LocalizedString
-    title: LocalizedString
-    trigger: LocalizedString
-    triggerType: LocalizedString
-    AutoModRuleTriggerType: LogsAutomodRuleCreateAutoModRuleTriggerType
-    timeout_duration: LogsAutomodRuleCreateTimeout_duration
-    resolve: ResolveMap
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistcShow:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistc:
-    show: LogsBlacklistcShow
-    description: LocalizedString
-    name: LocalizedString
-    add: LogsBlacklistcAdd
-    remove: LogsBlacklistcRemove
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistrShow:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistr:
-    show: LogsBlacklistrShow
-    description: LocalizedString
-    name: LocalizedString
-    add: LogsBlacklistrAdd
-    remove: LogsBlacklistrRemove
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistuShow:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistu:
-    show: LogsBlacklistuShow
-    description: LocalizedString
-    name: LocalizedString
-    add: LogsBlacklistuAdd
-    remove: LogsBlacklistuRemove
-
-@dataclass(frozen=True, slots=True)
-class LogsGuildChannelCreate:
-    category: LocalizedString
-    created_at: LocalizedString
-    created_by: LocalizedString
-    name: LocalizedString
-    permissionOverwriteAllowed: LocalizedString
-    permissionOverwriteDenied: LocalizedString
-    permissionOverwriteNeutral: LocalizedString
-    permissionOverwriteTarget: LocalizedString
-    permissionOverwrites: LocalizedString
-    title: LocalizedString
-    topic: LocalizedString
-    type: LocalizedString
-    types: LogsGuildChannelCreateTypes
-
-@dataclass(frozen=True, slots=True)
-class LogsGuildChannelDelete:
-    category: LocalizedString
-    created_at: LocalizedString
-    deleted_by: LocalizedString
-    name: LocalizedString
-    permissionOverwriteAllowed: LocalizedString
-    permissionOverwriteDenied: LocalizedString
-    permissionOverwriteNeutral: LocalizedString
-    permissionOverwriteTarget: LocalizedString
-    permissionOverwrites: LocalizedString
-    title: LocalizedString
-    topic: LocalizedString
-    type: LocalizedString
-    types: LogsGuildChannelDeleteTypes
-
-@dataclass(frozen=True, slots=True)
-class LogsGuildUpdate:
-    addedEmojis: LocalizedString
-    addedFeatures: LocalizedString
-    afkChannel: LocalizedString
-    afkTimeout: LocalizedString
-    banner: LocalizedString
-    defaultNotifications: LocalizedString
-    description: LocalizedString
-    discoverySplash: LocalizedString
-    emojiLimit: LocalizedString
-    explicitContentFilter: LocalizedString
-    filesizeLimit: LocalizedString
-    icon: LocalizedString
-    invitesPausedUntil: LocalizedString
-    maxMembers: LocalizedString
-    maxPresences: LocalizedString
-    maxVideoChannelUsers: LocalizedString
-    name: LocalizedString
-    none: LocalizedString
-    nsfwLevel: LocalizedString
-    owner: LocalizedString
-    preferredLocale: LocalizedString
-    premiumSubscriberRole: LocalizedString
-    premiumSubscribers: LocalizedString
-    premiumTier: LocalizedString
-    publicUpdatesChannel: LocalizedString
-    removedEmojis: LocalizedString
-    removedFeatures: LocalizedString
-    rulesChannel: LocalizedString
-    safetyAlertsChannel: LocalizedString
-    title: LocalizedString
-    verificationLevel: LocalizedString
-    defaultNotificationsLocales: LogsGuildUpdateDefaultNotificationsLocales
-    discoverySplashLocales: LogsGuildUpdateDiscoverySplashLocales
-    explicitContentFilterLocales: LogsGuildUpdateExplicitContentFilterLocales
-    featuresLocales: LogsGuildUpdateFeaturesLocales
-    iconLocales: LogsGuildUpdateIconLocales
-    invitesPausedUntilLocales: LogsGuildUpdateInvitesPausedUntilLocales
-    nsfwLevelLocales: LogsGuildUpdateNsfwLevelLocales
-    preferredLocaleLocales: LogsGuildUpdatePreferredLocaleLocales
-    premiumProgressBarEnabled: LogsGuildUpdatePremiumProgressBarEnabled
-    premiumProgressBarLocales: LogsGuildUpdatePremiumProgressBarLocales
-    unavailableLocales: LogsGuildUpdateUnavailableLocales
-    verificationLevelLocales: LogsGuildUpdateVerificationLevelLocales
-
-@dataclass(frozen=True, slots=True)
-class LogsInviteCreate:
-    channel: LocalizedString
-    createdBy: LocalizedString
-    expires: LocalizedString
-    invite: LocalizedString
-    max_uses: LocalizedString
-    scheduledEvent: LocalizedString
-    targetApplication: LocalizedString
-    targetUser: LocalizedString
-    temporary: LocalizedString
-    title: LocalizedString
-    expiresLocales: LogsInviteCreateExpiresLocales
-    maxUsesLocales: LogsInviteCreateMaxUsesLocales
-    targetTypeLocales: LogsInviteCreateTargetTypeLocales
-
-@dataclass(frozen=True, slots=True)
-class LogsMemberUpdate:
-    addedRoles: LocalizedString
-    banner: LocalizedString
-    displayName: LocalizedString
-    guildAvatar: LocalizedString
-    name: LocalizedString
-    pending: LocalizedString
-    pendingRemoved: LocalizedString
-    removedRoles: LocalizedString
-    timeout: LocalizedString
-    timeoutRemoved: LocalizedString
-    title: LocalizedString
-    guildAvatarLocales: LogsMemberUpdateGuildAvatarLocales
-
-@dataclass(frozen=True, slots=True)
-class LogsPermissions:
-    add_reaction: LocalizedString
-    add_reactions: LocalizedString
-    administrator: LocalizedString
-    attach_files: LocalizedString
-    ban_members: LocalizedString
-    change_nickname: LocalizedString
-    connect: LocalizedString
-    create_events: LocalizedString
-    create_expressions: LocalizedString
-    create_instant_invite: LocalizedString
-    create_polls: LocalizedString
-    create_private_threads: LocalizedString
-    create_public_threads: LocalizedString
-    deafen_members: LocalizedString
-    embed_links: LocalizedString
-    external_emojis: LocalizedString
-    external_stickers: LocalizedString
-    kick_members: LocalizedString
-    manage_channels: LocalizedString
-    manage_emojis: LocalizedString
-    manage_emojis_and_stickers: LocalizedString
-    manage_events: LocalizedString
-    manage_expressions: LocalizedString
-    manage_guild: LocalizedString
-    manage_messages: LocalizedString
-    manage_nicknames: LocalizedString
-    manage_permissions: LocalizedString
-    manage_roles: LocalizedString
-    manage_stickers: LocalizedString
-    manage_threads: LocalizedString
-    manage_webhooks: LocalizedString
-    mention_everyone: LocalizedString
-    moderate_members: LocalizedString
-    move_members: LocalizedString
-    mute_members: LocalizedString
-    priority_speaker: LocalizedString
-    read_message_history: LocalizedString
-    read_messages: LocalizedString
-    request_to_speak: LocalizedString
-    send_messages: LocalizedString
-    send_messages_in_threads: LocalizedString
-    send_polls: LocalizedString
-    send_tts_messages: LocalizedString
-    send_voice_messages: LocalizedString
-    speak: LocalizedString
-    stream: LocalizedString
-    use_application_commands: LocalizedString
-    use_embedded_activities: LocalizedString
-    use_external_apps: LocalizedString
-    use_external_emojis: LocalizedString
-    use_external_sounds: LocalizedString
-    use_external_stickers: LocalizedString
-    use_soundboard: LocalizedString
-    use_voice_activation: LocalizedString
-    view_audit_log: LocalizedString
-    view_channel: LocalizedString
-    view_creator_monetization_analytics: LocalizedString
-    view_guild_insights: LocalizedString
-    resolve: ResolveMap
-
-@dataclass(frozen=True, slots=True)
-class LogsSet:
-    description: LocalizedString
-    name: LocalizedString
-    params: LogsSetParams
-
-@dataclass(frozen=True, slots=True)
-class LogsUserUpdate:
-    avatar: LocalizedString
-    banner: LocalizedString
-    globalName: LocalizedString
-    name: LocalizedString
-    title: LocalizedString
-    userName: LocalizedString
-    guildAvatarLocales: LogsUserUpdateGuildAvatarLocales
-
-@dataclass(frozen=True, slots=True)
 class LogsAutomodRuleCreateAutoModRuleTriggerType:
     harmful_link: LocalizedString
     keyword: LocalizedString
@@ -555,6 +558,11 @@ class LogsBlacklistcRemove:
     params: LogsBlacklistcRemoveParams
 
 @dataclass(frozen=True, slots=True)
+class LogsBlacklistcShow:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class LogsBlacklistrAdd:
     description: LocalizedString
     name: LocalizedString
@@ -567,6 +575,11 @@ class LogsBlacklistrRemove:
     params: LogsBlacklistrRemoveParams
 
 @dataclass(frozen=True, slots=True)
+class LogsBlacklistrShow:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class LogsBlacklistuAdd:
     description: LocalizedString
     name: LocalizedString
@@ -577,6 +590,11 @@ class LogsBlacklistuRemove:
     description: LocalizedString
     name: LocalizedString
     params: LogsBlacklistuRemoveParams
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistuShow:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsGuildChannelCreateTypes:
@@ -742,10 +760,6 @@ class LogsMemberUpdateGuildAvatarLocales:
     url: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LogsSetParamsChannel:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LogsSetParams:
     channel: LogsSetParamsChannel
 
@@ -755,54 +769,130 @@ class LogsUserUpdateGuildAvatarLocales:
     url: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LogsBlacklistcAddParamsChannel:
+class LogsBlacklistcatAdd:
     description: LocalizedString
+    name: LocalizedString
+    params: LogsBlacklistcatAddParams
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcatRemove:
+    description: LocalizedString
+    name: LocalizedString
+    params: LogsBlacklistcatRemoveParams
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcatShow:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvAdd:
+    description: LocalizedString
+    name: LocalizedString
+    params: LogsBlacklistvAddParams
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvRemove:
+    description: LocalizedString
+    name: LocalizedString
+    params: LogsBlacklistvRemoveParams
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvShow:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsBlacklistcAddParams:
     channel: LogsBlacklistcAddParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class LogsBlacklistcRemoveParamsChannel:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LogsBlacklistcRemoveParams:
     channel: LogsBlacklistcRemoveParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistrAddParamsRole:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsBlacklistrAddParams:
     role: LogsBlacklistrAddParamsRole
 
 @dataclass(frozen=True, slots=True)
-class LogsBlacklistrRemoveParamsRole:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LogsBlacklistrRemoveParams:
     role: LogsBlacklistrRemoveParamsRole
-
-@dataclass(frozen=True, slots=True)
-class LogsBlacklistuAddParamsUser:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsBlacklistuAddParams:
     user: LogsBlacklistuAddParamsUser
 
 @dataclass(frozen=True, slots=True)
+class LogsBlacklistuRemoveParams:
+    user: LogsBlacklistuRemoveParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LogsSetParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcatAddParams:
+    channel: LogsBlacklistcatAddParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcatRemoveParams:
+    channel: LogsBlacklistcatRemoveParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvAddParams:
+    channel: LogsBlacklistvAddParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvRemoveParams:
+    channel: LogsBlacklistvRemoveParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcAddParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcRemoveParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistrAddParamsRole:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistrRemoveParamsRole:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistuAddParamsUser:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class LogsBlacklistuRemoveParamsUser:
     description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LogsBlacklistuRemoveParams:
-    user: LogsBlacklistuRemoveParamsUser
+class LogsBlacklistcatAddParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistcatRemoveParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvAddParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LogsBlacklistvRemoveParamsChannel:
+    description: LocalizedString
 
 def build_logs() -> Logs:
+    _n_logs_automodAction = LogsAutomodAction(
+        action=LocalizedString('logs.automodAction.action'),
+        actionWasTaken=LocalizedString('logs.automodAction.actionWasTaken'),
+        message=LocalizedString('logs.automodAction.message'),
+        title=LocalizedString('logs.automodAction.title'),
+    )
     _n_logs_automodRuleCreate_AutoModRuleTriggerType = LogsAutomodRuleCreateAutoModRuleTriggerType(
         harmful_link=LocalizedString('logs.automodRuleCreate.AutoModRuleTriggerType.harmful_link'),
         keyword=LocalizedString('logs.automodRuleCreate.AutoModRuleTriggerType.keyword'),
@@ -891,6 +981,19 @@ def build_logs() -> Logs:
         trigger=LocalizedString('logs.automodRuleCreate.trigger'),
         triggerType=LocalizedString('logs.automodRuleCreate.triggerType'),
     )
+    _n_logs_automodRuleDelete = LogsAutomodRuleDelete(
+        deleted_by=LocalizedString('logs.automodRuleDelete.deleted_by'),
+        title=LocalizedString('logs.automodRuleDelete.title'),
+    )
+    _n_logs_automodRuleUpdate = LogsAutomodRuleUpdate(
+        footer=LocalizedString('logs.automodRuleUpdate.footer'),
+        title=LocalizedString('logs.automodRuleUpdate.title'),
+        updated_by=LocalizedString('logs.automodRuleUpdate.updated_by'),
+    )
+    _n_logs_blacklist = LogsBlacklist(
+        description=LocalizedString('logs.blacklist.description'),
+        name=LocalizedString('logs.blacklist.name'),
+    )
     _n_logs_blacklistc_add_params_channel = LogsBlacklistcAddParamsChannel(
         description=LocalizedString('logs.blacklistc.add.params.channel.description'),
     )
@@ -923,6 +1026,39 @@ def build_logs() -> Logs:
         name=LocalizedString('logs.blacklistc.name'),
         remove=_n_logs_blacklistc_remove,
         show=_n_logs_blacklistc_show,
+    )
+    _n_logs_blacklistcat_add_params_channel = LogsBlacklistcatAddParamsChannel(
+        description=LocalizedString('logs.blacklistcat.add.params.channel.description'),
+    )
+    _n_logs_blacklistcat_add_params = LogsBlacklistcatAddParams(
+        channel=_n_logs_blacklistcat_add_params_channel,
+    )
+    _n_logs_blacklistcat_add = LogsBlacklistcatAdd(
+        description=LocalizedString('logs.blacklistcat.add.description'),
+        name=LocalizedString('logs.blacklistcat.add.name'),
+        params=_n_logs_blacklistcat_add_params,
+    )
+    _n_logs_blacklistcat_remove_params_channel = LogsBlacklistcatRemoveParamsChannel(
+        description=LocalizedString('logs.blacklistcat.remove.params.channel.description'),
+    )
+    _n_logs_blacklistcat_remove_params = LogsBlacklistcatRemoveParams(
+        channel=_n_logs_blacklistcat_remove_params_channel,
+    )
+    _n_logs_blacklistcat_remove = LogsBlacklistcatRemove(
+        description=LocalizedString('logs.blacklistcat.remove.description'),
+        name=LocalizedString('logs.blacklistcat.remove.name'),
+        params=_n_logs_blacklistcat_remove_params,
+    )
+    _n_logs_blacklistcat_show = LogsBlacklistcatShow(
+        description=LocalizedString('logs.blacklistcat.show.description'),
+        name=LocalizedString('logs.blacklistcat.show.name'),
+    )
+    _n_logs_blacklistcat = LogsBlacklistcat(
+        add=_n_logs_blacklistcat_add,
+        description=LocalizedString('logs.blacklistcat.description'),
+        name=LocalizedString('logs.blacklistcat.name'),
+        remove=_n_logs_blacklistcat_remove,
+        show=_n_logs_blacklistcat_show,
     )
     _n_logs_blacklistr_add_params_role = LogsBlacklistrAddParamsRole(
         description=LocalizedString('logs.blacklistr.add.params.role.description'),
@@ -989,6 +1125,43 @@ def build_logs() -> Logs:
         name=LocalizedString('logs.blacklistu.name'),
         remove=_n_logs_blacklistu_remove,
         show=_n_logs_blacklistu_show,
+    )
+    _n_logs_blacklistv_add_params_channel = LogsBlacklistvAddParamsChannel(
+        description=LocalizedString('logs.blacklistv.add.params.channel.description'),
+    )
+    _n_logs_blacklistv_add_params = LogsBlacklistvAddParams(
+        channel=_n_logs_blacklistv_add_params_channel,
+    )
+    _n_logs_blacklistv_add = LogsBlacklistvAdd(
+        description=LocalizedString('logs.blacklistv.add.description'),
+        name=LocalizedString('logs.blacklistv.add.name'),
+        params=_n_logs_blacklistv_add_params,
+    )
+    _n_logs_blacklistv_remove_params_channel = LogsBlacklistvRemoveParamsChannel(
+        description=LocalizedString('logs.blacklistv.remove.params.channel.description'),
+    )
+    _n_logs_blacklistv_remove_params = LogsBlacklistvRemoveParams(
+        channel=_n_logs_blacklistv_remove_params_channel,
+    )
+    _n_logs_blacklistv_remove = LogsBlacklistvRemove(
+        description=LocalizedString('logs.blacklistv.remove.description'),
+        name=LocalizedString('logs.blacklistv.remove.name'),
+        params=_n_logs_blacklistv_remove_params,
+    )
+    _n_logs_blacklistv_show = LogsBlacklistvShow(
+        description=LocalizedString('logs.blacklistv.show.description'),
+        name=LocalizedString('logs.blacklistv.show.name'),
+    )
+    _n_logs_blacklistv = LogsBlacklistv(
+        add=_n_logs_blacklistv_add,
+        description=LocalizedString('logs.blacklistv.description'),
+        name=LocalizedString('logs.blacklistv.name'),
+        remove=_n_logs_blacklistv_remove,
+        show=_n_logs_blacklistv_show,
+    )
+    _n_logs_configure = LogsConfigure(
+        description=LocalizedString('logs.configure.description'),
+        name=LocalizedString('logs.configure.name'),
     )
     _n_logs_guildChannelCreate_types_resolve = ResolveMap(
         'logs.guildChannelCreate.types.',
@@ -1057,6 +1230,67 @@ def build_logs() -> Logs:
         topic=LocalizedString('logs.guildChannelDelete.topic'),
         type=LocalizedString('logs.guildChannelDelete.type'),
         types=_n_logs_guildChannelDelete_types,
+    )
+    _n_logs_guildChannelUpdate = LogsGuildChannelUpdate(
+        category=LocalizedString('logs.guildChannelUpdate.category'),
+        defaultAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultAutoArchiveDuration'),
+        defaultThreadAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultThreadAutoArchiveDuration'),
+        mention=LocalizedString('logs.guildChannelUpdate.mention'),
+        name=LocalizedString('logs.guildChannelUpdate.name'),
+        no=LocalizedString('logs.guildChannelUpdate.no'),
+        nsfw=LocalizedString('logs.guildChannelUpdate.nsfw'),
+        permissionOverwriteAddedAllow=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedAllow'),
+        permissionOverwriteAddedDeny=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedDeny'),
+        permissionOverwriteAddedNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedNeutral'),
+        permissionOverwriteAllowed=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAllowed'),
+        permissionOverwriteDenied=LocalizedString('logs.guildChannelUpdate.permissionOverwriteDenied'),
+        permissionOverwriteModified=LocalizedString('logs.guildChannelUpdate.permissionOverwriteModified'),
+        permissionOverwriteNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNeutral'),
+        permissionOverwriteNew=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNew'),
+        permissionOverwriteRemovedAllow=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedAllow'),
+        permissionOverwriteRemovedDeny=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedDeny'),
+        permissionOverwriteRemovedNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedNeutral'),
+        permissionOverwriteTarget=LocalizedString('logs.guildChannelUpdate.permissionOverwriteTarget'),
+        permissionOverwrites=LocalizedString('logs.guildChannelUpdate.permissionOverwrites'),
+        slowmodeDelay=LocalizedString('logs.guildChannelUpdate.slowmodeDelay'),
+        title=LocalizedString('logs.guildChannelUpdate.title'),
+        topic=LocalizedString('logs.guildChannelUpdate.topic'),
+        type=LocalizedString('logs.guildChannelUpdate.type'),
+        updated_by=LocalizedString('logs.guildChannelUpdate.updated_by'),
+        yes=LocalizedString('logs.guildChannelUpdate.yes'),
+    )
+    _n_logs_guildRoleCreate = LogsGuildRoleCreate(
+        color=LocalizedString('logs.guildRoleCreate.color'),
+        createdBy=LocalizedString('logs.guildRoleCreate.createdBy'),
+        displayIcon=LocalizedString('logs.guildRoleCreate.displayIcon'),
+        hoist=LocalizedString('logs.guildRoleCreate.hoist'),
+        managed=LocalizedString('logs.guildRoleCreate.managed'),
+        mentionable=LocalizedString('logs.guildRoleCreate.mentionable'),
+        name=LocalizedString('logs.guildRoleCreate.name'),
+        permissions=LocalizedString('logs.guildRoleCreate.permissions'),
+        title=LocalizedString('logs.guildRoleCreate.title'),
+    )
+    _n_logs_guildRoleDelete = LogsGuildRoleDelete(
+        deletedBy=LocalizedString('logs.guildRoleDelete.deletedBy'),
+        name=LocalizedString('logs.guildRoleDelete.name'),
+        permissions=LocalizedString('logs.guildRoleDelete.permissions'),
+        title=LocalizedString('logs.guildRoleDelete.title'),
+    )
+    _n_logs_guildRoleUpdate = LogsGuildRoleUpdate(
+        addedPermissions=LocalizedString('logs.guildRoleUpdate.addedPermissions'),
+        color=LocalizedString('logs.guildRoleUpdate.color'),
+        displayIcon=LocalizedString('logs.guildRoleUpdate.displayIcon'),
+        hoistNoLonger=LocalizedString('logs.guildRoleUpdate.hoistNoLonger'),
+        hoistNow=LocalizedString('logs.guildRoleUpdate.hoistNow'),
+        icon=LocalizedString('logs.guildRoleUpdate.icon'),
+        managedNoLonger=LocalizedString('logs.guildRoleUpdate.managedNoLonger'),
+        managedNow=LocalizedString('logs.guildRoleUpdate.managedNow'),
+        mentionableNoLonger=LocalizedString('logs.guildRoleUpdate.mentionableNoLonger'),
+        mentionableNow=LocalizedString('logs.guildRoleUpdate.mentionableNow'),
+        name=LocalizedString('logs.guildRoleUpdate.name'),
+        removedPermissions=LocalizedString('logs.guildRoleUpdate.removedPermissions'),
+        title=LocalizedString('logs.guildRoleUpdate.title'),
+        updatedBy=LocalizedString('logs.guildRoleUpdate.updatedBy'),
     )
     _n_logs_guildUpdate_defaultNotificationsLocales = LogsGuildUpdateDefaultNotificationsLocales(
         allMembers=LocalizedString('logs.guildUpdate.defaultNotificationsLocales.allMembers'),
@@ -1284,6 +1518,59 @@ def build_logs() -> Logs:
         verificationLevel=LocalizedString('logs.guildUpdate.verificationLevel'),
         verificationLevelLocales=_n_logs_guildUpdate_verificationLevelLocales,
     )
+    _n_logs_guild_channelCreate = LogsGuild_channelCreate(
+        category=LocalizedString('logs.guild_channelCreate.category'),
+        created_at=LocalizedString('logs.guild_channelCreate.created_at'),
+        created_by=LocalizedString('logs.guild_channelCreate.created_by'),
+        name=LocalizedString('logs.guild_channelCreate.name'),
+        permissionOverwrites=LocalizedString('logs.guild_channelCreate.permissionOverwrites'),
+        title=LocalizedString('logs.guild_channelCreate.title'),
+        topic=LocalizedString('logs.guild_channelCreate.topic'),
+        type=LocalizedString('logs.guild_channelCreate.type'),
+        types=LocalizedString('logs.guild_channelCreate.types.'),
+    )
+    _n_logs_guild_channelDelete = LogsGuild_channelDelete(
+        category=LocalizedString('logs.guild_channelDelete.category'),
+        created_at=LocalizedString('logs.guild_channelDelete.created_at'),
+        deleted_by=LocalizedString('logs.guild_channelDelete.deleted_by'),
+        name=LocalizedString('logs.guild_channelDelete.name'),
+        permissionOverwriteAllowed=LocalizedString('logs.guild_channelDelete.permissionOverwriteAllowed'),
+        permissionOverwriteDenied=LocalizedString('logs.guild_channelDelete.permissionOverwriteDenied'),
+        permissionOverwriteTarget=LocalizedString('logs.guild_channelDelete.permissionOverwriteTarget'),
+        permissionOverwrites=LocalizedString('logs.guild_channelDelete.permissionOverwrites'),
+        title=LocalizedString('logs.guild_channelDelete.title'),
+        topic=LocalizedString('logs.guild_channelDelete.topic'),
+        type=LocalizedString('logs.guild_channelDelete.type'),
+        types=LocalizedString('logs.guild_channelDelete.types.'),
+    )
+    _n_logs_guild_channelUpdate = LogsGuild_channelUpdate(
+        category=LocalizedString('logs.guild_channelUpdate.category'),
+        defaultAutoArchiveDuration=LocalizedString('logs.guild_channelUpdate.defaultAutoArchiveDuration'),
+        defaultThreadAutoArchiveDuration=LocalizedString('logs.guild_channelUpdate.defaultThreadAutoArchiveDuration'),
+        mention=LocalizedString('logs.guild_channelUpdate.mention'),
+        name=LocalizedString('logs.guild_channelUpdate.name'),
+        no=LocalizedString('logs.guild_channelUpdate.no'),
+        nsfw=LocalizedString('logs.guild_channelUpdate.nsfw'),
+        permissionOverwriteAddedAllow=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedAllow'),
+        permissionOverwriteAddedDeny=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedDeny'),
+        permissionOverwriteAddedNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedNeutral'),
+        permissionOverwriteAllowed=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAllowed'),
+        permissionOverwriteDenied=LocalizedString('logs.guild_channelUpdate.permissionOverwriteDenied'),
+        permissionOverwriteModified=LocalizedString('logs.guild_channelUpdate.permissionOverwriteModified'),
+        permissionOverwriteNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteNeutral'),
+        permissionOverwriteNew=LocalizedString('logs.guild_channelUpdate.permissionOverwriteNew'),
+        permissionOverwriteRemoved=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemoved'),
+        permissionOverwriteRemovedAllow=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedAllow'),
+        permissionOverwriteRemovedDeny=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedDeny'),
+        permissionOverwriteRemovedNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedNeutral'),
+        slowmodeDelay=LocalizedString('logs.guild_channelUpdate.slowmodeDelay'),
+        title=LocalizedString('logs.guild_channelUpdate.title'),
+        topic=LocalizedString('logs.guild_channelUpdate.topic'),
+        type=LocalizedString('logs.guild_channelUpdate.type'),
+        types=LocalizedString('logs.guild_channelUpdate.types.'),
+        updated_by=LocalizedString('logs.guild_channelUpdate.updated_by'),
+        yes=LocalizedString('logs.guild_channelUpdate.yes'),
+    )
     _n_logs_inviteCreate_expiresLocales = LogsInviteCreateExpiresLocales(
         never=LocalizedString('logs.inviteCreate.expiresLocales.never'),
     )
@@ -1319,6 +1606,29 @@ def build_logs() -> Logs:
         temporary=LocalizedString('logs.inviteCreate.temporary'),
         title=LocalizedString('logs.inviteCreate.title'),
     )
+    _n_logs_inviteDelete = LogsInviteDelete(
+        invite=LocalizedString('logs.inviteDelete.invite'),
+        title=LocalizedString('logs.inviteDelete.title'),
+    )
+    _n_logs_memberBan = LogsMemberBan(
+        banned_by=LocalizedString('logs.memberBan.banned_by'),
+        name=LocalizedString('logs.memberBan.name'),
+        title=LocalizedString('logs.memberBan.title'),
+    )
+    _n_logs_memberJoin = LogsMemberJoin(
+        name=LocalizedString('logs.memberJoin.name'),
+        title=LocalizedString('logs.memberJoin.title'),
+    )
+    _n_logs_memberRemove = LogsMemberRemove(
+        name=LocalizedString('logs.memberRemove.name'),
+        roles=LocalizedString('logs.memberRemove.roles'),
+        title=LocalizedString('logs.memberRemove.title'),
+    )
+    _n_logs_memberUnban = LogsMemberUnban(
+        name=LocalizedString('logs.memberUnban.name'),
+        title=LocalizedString('logs.memberUnban.title'),
+        unbanned_by=LocalizedString('logs.memberUnban.unbanned_by'),
+    )
     _n_logs_memberUpdate_guildAvatarLocales = LogsMemberUpdateGuildAvatarLocales(
         none=LocalizedString('logs.memberUpdate.guildAvatarLocales.none'),
         url=LocalizedString('logs.memberUpdate.guildAvatarLocales.url'),
@@ -1336,6 +1646,30 @@ def build_logs() -> Logs:
         timeout=LocalizedString('logs.memberUpdate.timeout'),
         timeoutRemoved=LocalizedString('logs.memberUpdate.timeoutRemoved'),
         title=LocalizedString('logs.memberUpdate.title'),
+    )
+    _n_logs_messageDelete = LogsMessageDelete(
+        attachments=LocalizedString('logs.messageDelete.attachments'),
+        content=LocalizedString('logs.messageDelete.content'),
+        deletedBy=LocalizedString('logs.messageDelete.deletedBy'),
+        embeds=LocalizedString('logs.messageDelete.embeds'),
+        name=LocalizedString('logs.messageDelete.name'),
+        title=LocalizedString('logs.messageDelete.title'),
+        urlNotAvaiableLocale=LocalizedString('logs.messageDelete.urlNotAvaiableLocale'),
+        url_not_available_locale=LocalizedString('logs.messageDelete.url_not_available_locale'),
+    )
+    _n_logs_messageEdit = LogsMessageEdit(
+        addedAttachments=LocalizedString('logs.messageEdit.addedAttachments'),
+        content=LocalizedString('logs.messageEdit.content'),
+        diff=LocalizedString('logs.messageEdit.diff'),
+        ellipsis=LocalizedString('logs.messageEdit.ellipsis'),
+        embeds=LocalizedString('logs.messageEdit.embeds'),
+        name=LocalizedString('logs.messageEdit.name'),
+        removedAttachments=LocalizedString('logs.messageEdit.removedAttachments'),
+        title=LocalizedString('logs.messageEdit.title'),
+        tooLongNotice=LocalizedString('logs.messageEdit.tooLongNotice'),
+        truncatedNotice=LocalizedString('logs.messageEdit.truncatedNotice'),
+        urlNotAvaiableLocale=LocalizedString('logs.messageEdit.urlNotAvaiableLocale'),
+        url_not_available_locale=LocalizedString('logs.messageEdit.url_not_available_locale'),
     )
     _n_logs_permissions_resolve = ResolveMap(
         'logs.permissions.',
@@ -1461,6 +1795,23 @@ def build_logs() -> Logs:
         view_creator_monetization_analytics=LocalizedString('logs.permissions.view_creator_monetization_analytics'),
         view_guild_insights=LocalizedString('logs.permissions.view_guild_insights'),
     )
+    _n_logs_presenceUpdate = LogsPresenceUpdate(
+        activity=LocalizedString('logs.presenceUpdate.activity'),
+        name=LocalizedString('logs.presenceUpdate.name'),
+        title=LocalizedString('logs.presenceUpdate.title'),
+    )
+    _n_logs_reactionAdd = LogsReactionAdd(
+        name=LocalizedString('logs.reactionAdd.name'),
+        title=LocalizedString('logs.reactionAdd.title'),
+    )
+    _n_logs_reactionRemove = LogsReactionRemove(
+        name=LocalizedString('logs.reactionRemove.name'),
+        title=LocalizedString('logs.reactionRemove.title'),
+    )
+    _n_logs_remove = LogsRemove(
+        description=LocalizedString('logs.remove.description'),
+        name=LocalizedString('logs.remove.name'),
+    )
     _n_logs_set_params_channel = LogsSetParamsChannel(
         description=LocalizedString('logs.set.params.channel.description'),
     )
@@ -1485,207 +1836,6 @@ def build_logs() -> Logs:
         title=LocalizedString('logs.userUpdate.title'),
         userName=LocalizedString('logs.userUpdate.userName'),
     )
-    _n_logs_automodAction = LogsAutomodAction(
-        action=LocalizedString('logs.automodAction.action'),
-        actionWasTaken=LocalizedString('logs.automodAction.actionWasTaken'),
-        message=LocalizedString('logs.automodAction.message'),
-        title=LocalizedString('logs.automodAction.title'),
-    )
-    _n_logs_automodRuleDelete = LogsAutomodRuleDelete(
-        deleted_by=LocalizedString('logs.automodRuleDelete.deleted_by'),
-        title=LocalizedString('logs.automodRuleDelete.title'),
-    )
-    _n_logs_automodRuleUpdate = LogsAutomodRuleUpdate(
-        footer=LocalizedString('logs.automodRuleUpdate.footer'),
-        title=LocalizedString('logs.automodRuleUpdate.title'),
-        updated_by=LocalizedString('logs.automodRuleUpdate.updated_by'),
-    )
-    _n_logs_blacklist = LogsBlacklist(
-        description=LocalizedString('logs.blacklist.description'),
-        name=LocalizedString('logs.blacklist.name'),
-    )
-    _n_logs_configure = LogsConfigure(
-        description=LocalizedString('logs.configure.description'),
-        name=LocalizedString('logs.configure.name'),
-    )
-    _n_logs_guildChannelUpdate = LogsGuildChannelUpdate(
-        category=LocalizedString('logs.guildChannelUpdate.category'),
-        defaultAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultAutoArchiveDuration'),
-        defaultThreadAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultThreadAutoArchiveDuration'),
-        mention=LocalizedString('logs.guildChannelUpdate.mention'),
-        name=LocalizedString('logs.guildChannelUpdate.name'),
-        no=LocalizedString('logs.guildChannelUpdate.no'),
-        nsfw=LocalizedString('logs.guildChannelUpdate.nsfw'),
-        permissionOverwriteAddedAllow=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedAllow'),
-        permissionOverwriteAddedDeny=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedDeny'),
-        permissionOverwriteAddedNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAddedNeutral'),
-        permissionOverwriteAllowed=LocalizedString('logs.guildChannelUpdate.permissionOverwriteAllowed'),
-        permissionOverwriteDenied=LocalizedString('logs.guildChannelUpdate.permissionOverwriteDenied'),
-        permissionOverwriteModified=LocalizedString('logs.guildChannelUpdate.permissionOverwriteModified'),
-        permissionOverwriteNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNeutral'),
-        permissionOverwriteNew=LocalizedString('logs.guildChannelUpdate.permissionOverwriteNew'),
-        permissionOverwriteRemovedAllow=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedAllow'),
-        permissionOverwriteRemovedDeny=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedDeny'),
-        permissionOverwriteRemovedNeutral=LocalizedString('logs.guildChannelUpdate.permissionOverwriteRemovedNeutral'),
-        permissionOverwriteTarget=LocalizedString('logs.guildChannelUpdate.permissionOverwriteTarget'),
-        permissionOverwrites=LocalizedString('logs.guildChannelUpdate.permissionOverwrites'),
-        slowmodeDelay=LocalizedString('logs.guildChannelUpdate.slowmodeDelay'),
-        title=LocalizedString('logs.guildChannelUpdate.title'),
-        topic=LocalizedString('logs.guildChannelUpdate.topic'),
-        type=LocalizedString('logs.guildChannelUpdate.type'),
-        updated_by=LocalizedString('logs.guildChannelUpdate.updated_by'),
-        yes=LocalizedString('logs.guildChannelUpdate.yes'),
-    )
-    _n_logs_guildRoleCreate = LogsGuildRoleCreate(
-        color=LocalizedString('logs.guildRoleCreate.color'),
-        createdBy=LocalizedString('logs.guildRoleCreate.createdBy'),
-        displayIcon=LocalizedString('logs.guildRoleCreate.displayIcon'),
-        hoist=LocalizedString('logs.guildRoleCreate.hoist'),
-        managed=LocalizedString('logs.guildRoleCreate.managed'),
-        mentionable=LocalizedString('logs.guildRoleCreate.mentionable'),
-        name=LocalizedString('logs.guildRoleCreate.name'),
-        permissions=LocalizedString('logs.guildRoleCreate.permissions'),
-        title=LocalizedString('logs.guildRoleCreate.title'),
-    )
-    _n_logs_guildRoleDelete = LogsGuildRoleDelete(
-        deletedBy=LocalizedString('logs.guildRoleDelete.deletedBy'),
-        name=LocalizedString('logs.guildRoleDelete.name'),
-        permissions=LocalizedString('logs.guildRoleDelete.permissions'),
-        title=LocalizedString('logs.guildRoleDelete.title'),
-    )
-    _n_logs_guildRoleUpdate = LogsGuildRoleUpdate(
-        addedPermissions=LocalizedString('logs.guildRoleUpdate.addedPermissions'),
-        color=LocalizedString('logs.guildRoleUpdate.color'),
-        displayIcon=LocalizedString('logs.guildRoleUpdate.displayIcon'),
-        hoistNoLonger=LocalizedString('logs.guildRoleUpdate.hoistNoLonger'),
-        hoistNow=LocalizedString('logs.guildRoleUpdate.hoistNow'),
-        icon=LocalizedString('logs.guildRoleUpdate.icon'),
-        managedNoLonger=LocalizedString('logs.guildRoleUpdate.managedNoLonger'),
-        managedNow=LocalizedString('logs.guildRoleUpdate.managedNow'),
-        mentionableNoLonger=LocalizedString('logs.guildRoleUpdate.mentionableNoLonger'),
-        mentionableNow=LocalizedString('logs.guildRoleUpdate.mentionableNow'),
-        name=LocalizedString('logs.guildRoleUpdate.name'),
-        removedPermissions=LocalizedString('logs.guildRoleUpdate.removedPermissions'),
-        title=LocalizedString('logs.guildRoleUpdate.title'),
-        updatedBy=LocalizedString('logs.guildRoleUpdate.updatedBy'),
-    )
-    _n_logs_guild_channelCreate = LogsGuild_channelCreate(
-        category=LocalizedString('logs.guild_channelCreate.category'),
-        created_at=LocalizedString('logs.guild_channelCreate.created_at'),
-        created_by=LocalizedString('logs.guild_channelCreate.created_by'),
-        name=LocalizedString('logs.guild_channelCreate.name'),
-        permissionOverwrites=LocalizedString('logs.guild_channelCreate.permissionOverwrites'),
-        title=LocalizedString('logs.guild_channelCreate.title'),
-        topic=LocalizedString('logs.guild_channelCreate.topic'),
-        type=LocalizedString('logs.guild_channelCreate.type'),
-        types=LocalizedString('logs.guild_channelCreate.types.'),
-    )
-    _n_logs_guild_channelDelete = LogsGuild_channelDelete(
-        category=LocalizedString('logs.guild_channelDelete.category'),
-        created_at=LocalizedString('logs.guild_channelDelete.created_at'),
-        deleted_by=LocalizedString('logs.guild_channelDelete.deleted_by'),
-        name=LocalizedString('logs.guild_channelDelete.name'),
-        permissionOverwriteAllowed=LocalizedString('logs.guild_channelDelete.permissionOverwriteAllowed'),
-        permissionOverwriteDenied=LocalizedString('logs.guild_channelDelete.permissionOverwriteDenied'),
-        permissionOverwriteTarget=LocalizedString('logs.guild_channelDelete.permissionOverwriteTarget'),
-        permissionOverwrites=LocalizedString('logs.guild_channelDelete.permissionOverwrites'),
-        title=LocalizedString('logs.guild_channelDelete.title'),
-        topic=LocalizedString('logs.guild_channelDelete.topic'),
-        type=LocalizedString('logs.guild_channelDelete.type'),
-        types=LocalizedString('logs.guild_channelDelete.types.'),
-    )
-    _n_logs_guild_channelUpdate = LogsGuild_channelUpdate(
-        category=LocalizedString('logs.guild_channelUpdate.category'),
-        defaultAutoArchiveDuration=LocalizedString('logs.guild_channelUpdate.defaultAutoArchiveDuration'),
-        defaultThreadAutoArchiveDuration=LocalizedString('logs.guild_channelUpdate.defaultThreadAutoArchiveDuration'),
-        mention=LocalizedString('logs.guild_channelUpdate.mention'),
-        name=LocalizedString('logs.guild_channelUpdate.name'),
-        no=LocalizedString('logs.guild_channelUpdate.no'),
-        nsfw=LocalizedString('logs.guild_channelUpdate.nsfw'),
-        permissionOverwriteAddedAllow=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedAllow'),
-        permissionOverwriteAddedDeny=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedDeny'),
-        permissionOverwriteAddedNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAddedNeutral'),
-        permissionOverwriteAllowed=LocalizedString('logs.guild_channelUpdate.permissionOverwriteAllowed'),
-        permissionOverwriteDenied=LocalizedString('logs.guild_channelUpdate.permissionOverwriteDenied'),
-        permissionOverwriteModified=LocalizedString('logs.guild_channelUpdate.permissionOverwriteModified'),
-        permissionOverwriteNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteNeutral'),
-        permissionOverwriteNew=LocalizedString('logs.guild_channelUpdate.permissionOverwriteNew'),
-        permissionOverwriteRemoved=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemoved'),
-        permissionOverwriteRemovedAllow=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedAllow'),
-        permissionOverwriteRemovedDeny=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedDeny'),
-        permissionOverwriteRemovedNeutral=LocalizedString('logs.guild_channelUpdate.permissionOverwriteRemovedNeutral'),
-        slowmodeDelay=LocalizedString('logs.guild_channelUpdate.slowmodeDelay'),
-        title=LocalizedString('logs.guild_channelUpdate.title'),
-        topic=LocalizedString('logs.guild_channelUpdate.topic'),
-        type=LocalizedString('logs.guild_channelUpdate.type'),
-        types=LocalizedString('logs.guild_channelUpdate.types.'),
-        updated_by=LocalizedString('logs.guild_channelUpdate.updated_by'),
-        yes=LocalizedString('logs.guild_channelUpdate.yes'),
-    )
-    _n_logs_inviteDelete = LogsInviteDelete(
-        invite=LocalizedString('logs.inviteDelete.invite'),
-        title=LocalizedString('logs.inviteDelete.title'),
-    )
-    _n_logs_memberBan = LogsMemberBan(
-        banned_by=LocalizedString('logs.memberBan.banned_by'),
-        name=LocalizedString('logs.memberBan.name'),
-        title=LocalizedString('logs.memberBan.title'),
-    )
-    _n_logs_memberJoin = LogsMemberJoin(
-        name=LocalizedString('logs.memberJoin.name'),
-        title=LocalizedString('logs.memberJoin.title'),
-    )
-    _n_logs_memberRemove = LogsMemberRemove(
-        name=LocalizedString('logs.memberRemove.name'),
-        roles=LocalizedString('logs.memberRemove.roles'),
-        title=LocalizedString('logs.memberRemove.title'),
-    )
-    _n_logs_memberUnban = LogsMemberUnban(
-        name=LocalizedString('logs.memberUnban.name'),
-        title=LocalizedString('logs.memberUnban.title'),
-        unbanned_by=LocalizedString('logs.memberUnban.unbanned_by'),
-    )
-    _n_logs_messageDelete = LogsMessageDelete(
-        attachments=LocalizedString('logs.messageDelete.attachments'),
-        content=LocalizedString('logs.messageDelete.content'),
-        deletedBy=LocalizedString('logs.messageDelete.deletedBy'),
-        embeds=LocalizedString('logs.messageDelete.embeds'),
-        name=LocalizedString('logs.messageDelete.name'),
-        title=LocalizedString('logs.messageDelete.title'),
-        urlNotAvaiableLocale=LocalizedString('logs.messageDelete.urlNotAvaiableLocale'),
-        url_not_available_locale=LocalizedString('logs.messageDelete.url_not_available_locale'),
-    )
-    _n_logs_messageEdit = LogsMessageEdit(
-        addedAttachments=LocalizedString('logs.messageEdit.addedAttachments'),
-        content=LocalizedString('logs.messageEdit.content'),
-        diff=LocalizedString('logs.messageEdit.diff'),
-        ellipsis=LocalizedString('logs.messageEdit.ellipsis'),
-        embeds=LocalizedString('logs.messageEdit.embeds'),
-        name=LocalizedString('logs.messageEdit.name'),
-        removedAttachments=LocalizedString('logs.messageEdit.removedAttachments'),
-        title=LocalizedString('logs.messageEdit.title'),
-        tooLongNotice=LocalizedString('logs.messageEdit.tooLongNotice'),
-        truncatedNotice=LocalizedString('logs.messageEdit.truncatedNotice'),
-        urlNotAvaiableLocale=LocalizedString('logs.messageEdit.urlNotAvaiableLocale'),
-        url_not_available_locale=LocalizedString('logs.messageEdit.url_not_available_locale'),
-    )
-    _n_logs_presenceUpdate = LogsPresenceUpdate(
-        activity=LocalizedString('logs.presenceUpdate.activity'),
-        name=LocalizedString('logs.presenceUpdate.name'),
-        title=LocalizedString('logs.presenceUpdate.title'),
-    )
-    _n_logs_reactionAdd = LogsReactionAdd(
-        name=LocalizedString('logs.reactionAdd.name'),
-        title=LocalizedString('logs.reactionAdd.title'),
-    )
-    _n_logs_reactionRemove = LogsReactionRemove(
-        name=LocalizedString('logs.reactionRemove.name'),
-        title=LocalizedString('logs.reactionRemove.title'),
-    )
-    _n_logs_remove = LogsRemove(
-        description=LocalizedString('logs.remove.description'),
-        name=LocalizedString('logs.remove.name'),
-    )
     _n_logs = Logs(
         automodAction=_n_logs_automodAction,
         automodRuleCreate=_n_logs_automodRuleCreate,
@@ -1693,8 +1843,10 @@ def build_logs() -> Logs:
         automodRuleUpdate=_n_logs_automodRuleUpdate,
         blacklist=_n_logs_blacklist,
         blacklistc=_n_logs_blacklistc,
+        blacklistcat=_n_logs_blacklistcat,
         blacklistr=_n_logs_blacklistr,
         blacklistu=_n_logs_blacklistu,
+        blacklistv=_n_logs_blacklistv,
         configure=_n_logs_configure,
         description=LocalizedString('logs.description'),
         guildChannelCreate=_n_logs_guildChannelCreate,

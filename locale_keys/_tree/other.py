@@ -7,40 +7,19 @@ from locale_keys.types import LocalizedString, ResolveMap
 
 
 @dataclass(frozen=True, slots=True)
-class AiCustomsituations:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiDeletecustom:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiTokens:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class Ai:
-    customsituations: AiCustomsituations
-    deletecustom: AiDeletecustom
-    tokens: AiTokens
     description: LocalizedString
     name: LocalizedString
     askcustom: AiAskcustom
     askgpt: AiAskgpt
     asktanjuwun: AiAsktanjuwun
     createcustom: AiCreatecustom
-
-@dataclass(frozen=True, slots=True)
-class ChannelWelcome:
-    description: LocalizedString
-    name: LocalizedString
+    customsituations: AiCustomsituations
+    deletecustom: AiDeletecustom
+    tokens: AiTokens
 
 @dataclass(frozen=True, slots=True)
 class Channel:
-    welcome: ChannelWelcome
     description: LocalizedString
     name: LocalizedString
     ds: ChannelDs
@@ -48,6 +27,7 @@ class Channel:
     media: ChannelMedia
     mediaremove: ChannelMediaremove
     w: ChannelW
+    welcome: ChannelWelcome
 
 @dataclass(frozen=True, slots=True)
 class Countries:
@@ -315,6 +295,331 @@ class Display:
     icon: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class Errors:
+    cooldown: ErrorsCooldown
+    forbidden: ErrorsForbidden
+    guildOnly: ErrorsGuildOnly
+    guildonly: ErrorsGuildonly
+    http: ErrorsHttp
+    http_error: ErrorsHttp_error
+    interaction: ErrorsInteraction
+    missing_permissions: ErrorsMissing_permissions
+    noChannel: ErrorsNoChannel
+    not_found: ErrorsNot_found
+    permission: ErrorsPermission
+    transformer_error: ErrorsTransformer_error
+    unexpected: ErrorsUnexpected
+    unexpected_error: ErrorsUnexpected_error
+    validation: ErrorsValidation
+
+@dataclass(frozen=True, slots=True)
+class Frequency:
+    penalty: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Fun:
+    description: LocalizedString
+    name: LocalizedString
+    action: FunAction
+    boop: FunBoop
+    hug: FunHug
+    kiss: FunKiss
+    laugh: FunLaugh
+    pat: FunPat
+    poke: FunPoke
+    slap: FunSlap
+    tickle: FunTickle
+    wave: FunWave
+
+@dataclass(frozen=True, slots=True)
+class Games:
+    description: LocalizedString
+    name: LocalizedString
+    advanced: GamesAdvanced
+    akinator: GamesAkinator
+    battleship: GamesBattleship
+    connect4: GamesConnect4
+    flagquiz: GamesFlagquiz
+    hangman: GamesHangman
+    memory: GamesMemory
+    rps: GamesRps
+    ttt: GamesTtt
+    wordle: GamesWordle
+
+@dataclass(frozen=True, slots=True)
+class Giveaway:
+    description: LocalizedString
+    name: LocalizedString
+    bl: GiveawayBl
+    blacklist: GiveawayBlacklist
+    edit: GiveawayEdit
+    end: GiveawayEnd
+    reroll: GiveawayReroll
+    start: GiveawayStart
+
+@dataclass(frozen=True, slots=True)
+class Image:
+    description: LocalizedString
+    name: LocalizedString
+    background: ImageBackground
+    blur: ImageBlur
+    compress: ImageCompress
+    contour: ImageContour
+    detail: ImageDetail
+    edgeenhance: ImageEdgeenhance
+    emboss: ImageEmboss
+    findedges: ImageFindedges
+    mirror: ImageMirror
+    rescale: ImageRescale
+    resize: ImageResize
+    sharpen: ImageSharpen
+    smooth: ImageSmooth
+
+@dataclass(frozen=True, slots=True)
+class Level:
+    addlevelrole: LevelAddlevelrole
+    blacklist: LevelBlacklist
+    boosts: LevelBoosts
+    changelevelupmessage: LevelChangelevelupmessage
+    changexpscaling: LevelChangexpscaling
+    config: LevelConfig
+    disable: LevelDisable
+    disablelevelupmessage: LevelDisablelevelupmessage
+    enable: LevelEnable
+    enablelevelupmessage: LevelEnablelevelupmessage
+    givexp: LevelGivexp
+    leaderboard: LevelLeaderboard
+    rank: LevelRank
+    removelevelrole: LevelRemovelevelrole
+    setbackground: LevelSetbackground
+    setlevelupchannel: LevelSetlevelupchannel
+    settextcooldown: LevelSettextcooldown
+    setvoicecooldown: LevelSetvoicecooldown
+    setxp: LevelSetxp
+    showlevelroles: LevelShowlevelroles
+    showxpscalings: LevelShowxpscalings
+    takexp: LevelTakexp
+
+@dataclass(frozen=True, slots=True)
+class Listeners:
+    interaction: ListenersInteraction
+
+@dataclass(frozen=True, slots=True)
+class Math:
+    description: LocalizedString
+    name: LocalizedString
+    calc: MathCalc
+    calculator: MathCalculator
+    faculty: MathFaculty
+    num2word: MathNum2word
+    plotfunction: MathPlotfunction
+    randomnumber: MathRandomnumber
+
+@dataclass(frozen=True, slots=True)
+class Minigames:
+    cchcmds: MinigamesCchcmds
+    cmodescmds: MinigamesCmodescmds
+    counting: MinigamesCounting
+    countingcmds: MinigamesCountingcmds
+    rcchallengech: MinigamesRcchallengech
+    removecmodesch: MinigamesRemovecmodesch
+    removecountingch: MinigamesRemovecountingch
+    removecountingchallengechannel: MinigamesRemovecountingchallengechannel
+    removecountingchannel: MinigamesRemovecountingchannel
+    removecountingmodeschannel: MinigamesRemovecountingmodeschannel
+    removewordchainchannel: MinigamesRemovewordchainchannel
+    removewordchch: MinigamesRemovewordchch
+    setcchallengech: MinigamesSetcchallengech
+    setcchallengechannel: MinigamesSetcchallengechannel
+    setcchallengep: MinigamesSetcchallengep
+    setcmodesch: MinigamesSetcmodesch
+    setcmodesprogress: MinigamesSetcmodesprogress
+    setcountingch: MinigamesSetcountingch
+    setcountingchallengechannel: MinigamesSetcountingchallengechannel
+    setcountingchallengeprogress: MinigamesSetcountingchallengeprogress
+    setcountingchannel: MinigamesSetcountingchannel
+    setcountingprogress: MinigamesSetcountingprogress
+    setcprogress: MinigamesSetcprogress
+    setwordcainch: MinigamesSetwordcainch
+    setwordchainchannel: MinigamesSetwordchainchannel
+    wordchain: MinigamesWordchain
+    wordchaincmds: MinigamesWordchaincmds
+
+@dataclass(frozen=True, slots=True)
+class Presence:
+    penalty: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Setup:
+    description: LocalizedString
+    name: LocalizedString
+    booster: SetupBooster
+    giveaway: SetupGiveaway
+    level: SetupLevel
+    logs: SetupLogs
+
+@dataclass(frozen=True, slots=True)
+class Target:
+    role: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Top:
+    p: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Utility:
+    description: LocalizedString
+    name: LocalizedString
+    afk: UtilityAfk
+    autopublish: UtilityAutopublish
+    avatar: UtilityAvatar
+    avatardecoration: UtilityAvatardecoration
+    banner: UtilityBanner
+    boosterchannel: UtilityBoosterchannel
+    boosterchannelinfo: UtilityBoosterchannelinfo
+    boosterrole: UtilityBoosterrole
+    boosterroleinfo: UtilityBoosterroleinfo
+    bs: UtilityBs
+    claimboosterchannel: UtilityClaimboosterchannel
+    claimboosterrole: UtilityClaimboosterrole
+    deleteboosterch: UtilityDeleteboosterch
+    deleteboosterchannel: UtilityDeleteboosterchannel
+    deleteboosterrole: UtilityDeleteboosterrole
+    deletescheduledmessage: UtilityDeletescheduledmessage
+    feedback: UtilityFeedback
+    help: UtilityHelp
+    listscheduled: UtilityListscheduled
+    messageoptin: UtilityMessageoptin
+    messageoptout: UtilityMessageoptout
+    messagetracking: UtilityMessagetracking
+    removescheduled: UtilityRemovescheduled
+    report: UtilityReport
+    scheduledmessage: UtilityScheduledmessage
+    schedulemessage: UtilitySchedulemessage
+    setupboosterchannel: UtilitySetupboosterchannel
+    setupboosterrole: UtilitySetupboosterrole
+    twitch: UtilityTwitch
+
+@dataclass(frozen=True, slots=True)
+class Twitch:
+    username: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Funcmd:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Hangman:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Levelcommands:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Minigame:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class Utilitycmd:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class The_top:
+    p_setting: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskcustom:
+    description: LocalizedString
+    name: LocalizedString
+    params: AiAskcustomParams
+
+@dataclass(frozen=True, slots=True)
+class AiAskgpt:
+    description: LocalizedString
+    name: LocalizedString
+    params: AiAskgptParams
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwun:
+    description: LocalizedString
+    name: LocalizedString
+    params: AiAsktanjuwunParams
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustom:
+    description: LocalizedString
+    name: LocalizedString
+    params: AiCreatecustomParams
+
+@dataclass(frozen=True, slots=True)
+class AiTokens:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCustomsituations:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiDeletecustom:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelDs:
+    description: LocalizedString
+    name: LocalizedString
+    add: ChannelDsAdd
+    get: ChannelDsGet
+    remove: ChannelDsRemove
+
+@dataclass(frozen=True, slots=True)
+class ChannelFarewell:
+    description: LocalizedString
+    name: LocalizedString
+    remove: ChannelFarewellRemove
+    set: ChannelFarewellSet
+
+@dataclass(frozen=True, slots=True)
+class ChannelMedia:
+    description: LocalizedString
+    name: LocalizedString
+    params: ChannelMediaParams
+
+@dataclass(frozen=True, slots=True)
+class ChannelMediaremove:
+    description: LocalizedString
+    name: LocalizedString
+    params: ChannelMediaremoveParams
+
+@dataclass(frozen=True, slots=True)
+class ChannelW:
+    description: LocalizedString
+    name: LocalizedString
+    params: ChannelWParams
+    remove: ChannelWRemove
+
+@dataclass(frozen=True, slots=True)
+class ChannelWelcome:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class DeleteMessage:
+    days: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ErrorsUnexpected:
+    bug_report: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class ErrorsCooldown:
     description: LocalizedString
     title: LocalizedString
@@ -406,410 +711,6 @@ class ErrorsValidation:
     title: LocalizedString
     too_long: LocalizedString
     too_short: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Errors:
-    cooldown: ErrorsCooldown
-    forbidden: ErrorsForbidden
-    guildOnly: ErrorsGuildOnly
-    guildonly: ErrorsGuildonly
-    http: ErrorsHttp
-    http_error: ErrorsHttp_error
-    interaction: ErrorsInteraction
-    missing_permissions: ErrorsMissing_permissions
-    noChannel: ErrorsNoChannel
-    not_found: ErrorsNot_found
-    permission: ErrorsPermission
-    transformer_error: ErrorsTransformer_error
-    unexpected_error: ErrorsUnexpected_error
-    validation: ErrorsValidation
-    unexpected: ErrorsUnexpected
-
-@dataclass(frozen=True, slots=True)
-class Frequency:
-    penalty: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Fun:
-    description: LocalizedString
-    name: LocalizedString
-    action: FunAction
-    boop: FunBoop
-    hug: FunHug
-    kiss: FunKiss
-    laugh: FunLaugh
-    pat: FunPat
-    poke: FunPoke
-    slap: FunSlap
-    tickle: FunTickle
-    wave: FunWave
-
-@dataclass(frozen=True, slots=True)
-class GamesFlagquiz:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Games:
-    flagquiz: GamesFlagquiz
-    description: LocalizedString
-    name: LocalizedString
-    advanced: GamesAdvanced
-    akinator: GamesAkinator
-    battleship: GamesBattleship
-    connect4: GamesConnect4
-    hangman: GamesHangman
-    rps: GamesRps
-    ttt: GamesTtt
-    wordle: GamesWordle
-
-@dataclass(frozen=True, slots=True)
-class GiveawayBlacklist:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Giveaway:
-    blacklist: GiveawayBlacklist
-    description: LocalizedString
-    name: LocalizedString
-    bl: GiveawayBl
-    edit: GiveawayEdit
-    end: GiveawayEnd
-    reroll: GiveawayReroll
-    start: GiveawayStart
-
-@dataclass(frozen=True, slots=True)
-class Image:
-    description: LocalizedString
-    name: LocalizedString
-    background: ImageBackground
-    blur: ImageBlur
-    compress: ImageCompress
-    contour: ImageContour
-    detail: ImageDetail
-    edgeenhance: ImageEdgeenhance
-    emboss: ImageEmboss
-    findedges: ImageFindedges
-    mirror: ImageMirror
-    rescale: ImageRescale
-    resize: ImageResize
-    sharpen: ImageSharpen
-    smooth: ImageSmooth
-
-@dataclass(frozen=True, slots=True)
-class LevelConfig:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelDisable:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelDisablelevelupmessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelEnable:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelEnablelevelupmessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelShowlevelroles:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Level:
-    config: LevelConfig
-    disable: LevelDisable
-    disablelevelupmessage: LevelDisablelevelupmessage
-    enable: LevelEnable
-    enablelevelupmessage: LevelEnablelevelupmessage
-    showlevelroles: LevelShowlevelroles
-    addlevelrole: LevelAddlevelrole
-    blacklist: LevelBlacklist
-    boosts: LevelBoosts
-    changelevelupmessage: LevelChangelevelupmessage
-    changexpscaling: LevelChangexpscaling
-    givexp: LevelGivexp
-    leaderboard: LevelLeaderboard
-    rank: LevelRank
-    removelevelrole: LevelRemovelevelrole
-    setbackground: LevelSetbackground
-    setlevelupchannel: LevelSetlevelupchannel
-    settextcooldown: LevelSettextcooldown
-    setvoicecooldown: LevelSetvoicecooldown
-    setxp: LevelSetxp
-    showxpscalings: LevelShowxpscalings
-    takexp: LevelTakexp
-
-@dataclass(frozen=True, slots=True)
-class Listeners:
-    interaction: ListenersInteraction
-
-@dataclass(frozen=True, slots=True)
-class Math:
-    description: LocalizedString
-    name: LocalizedString
-    calc: MathCalc
-    calculator: MathCalculator
-    faculty: MathFaculty
-    num2word: MathNum2word
-    plotfunction: MathPlotfunction
-    randomnumber: MathRandomnumber
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCchcmds:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCmodescmds:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCountingcmds:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesWordchaincmds:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Minigames:
-    cchcmds: MinigamesCchcmds
-    cmodescmds: MinigamesCmodescmds
-    countingcmds: MinigamesCountingcmds
-    wordchaincmds: MinigamesWordchaincmds
-    counting: MinigamesCounting
-    rcchallengech: MinigamesRcchallengech
-    removecmodesch: MinigamesRemovecmodesch
-    removecountingch: MinigamesRemovecountingch
-    removecountingchallengechannel: MinigamesRemovecountingchallengechannel
-    removecountingchannel: MinigamesRemovecountingchannel
-    removecountingmodeschannel: MinigamesRemovecountingmodeschannel
-    removewordchainchannel: MinigamesRemovewordchainchannel
-    removewordchch: MinigamesRemovewordchch
-    setcchallengech: MinigamesSetcchallengech
-    setcchallengechannel: MinigamesSetcchallengechannel
-    setcchallengep: MinigamesSetcchallengep
-    setcmodesch: MinigamesSetcmodesch
-    setcmodesprogress: MinigamesSetcmodesprogress
-    setcountingch: MinigamesSetcountingch
-    setcountingchallengechannel: MinigamesSetcountingchallengechannel
-    setcountingchallengeprogress: MinigamesSetcountingchallengeprogress
-    setcountingchannel: MinigamesSetcountingchannel
-    setcountingprogress: MinigamesSetcountingprogress
-    setcprogress: MinigamesSetcprogress
-    setwordcainch: MinigamesSetwordcainch
-    setwordchainchannel: MinigamesSetwordchainchannel
-    wordchain: MinigamesWordchain
-
-@dataclass(frozen=True, slots=True)
-class Presence:
-    penalty: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Target:
-    role: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Top:
-    p: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBoosterchannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBoosterchannelinfo:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBoosterrole:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBoosterroleinfo:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityDeleteboosterch:
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityDeleteboosterchannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityDeleteboosterrole:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityFeedback:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityHelp:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityListscheduled:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityMessageoptin:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityMessageoptout:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityMessagetracking:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class Utility:
-    boosterchannel: UtilityBoosterchannel
-    boosterchannelinfo: UtilityBoosterchannelinfo
-    boosterrole: UtilityBoosterrole
-    boosterroleinfo: UtilityBoosterroleinfo
-    deleteboosterch: UtilityDeleteboosterch
-    deleteboosterchannel: UtilityDeleteboosterchannel
-    deleteboosterrole: UtilityDeleteboosterrole
-    feedback: UtilityFeedback
-    help: UtilityHelp
-    listscheduled: UtilityListscheduled
-    messageoptin: UtilityMessageoptin
-    messageoptout: UtilityMessageoptout
-    messagetracking: UtilityMessagetracking
-    description: LocalizedString
-    name: LocalizedString
-    afk: UtilityAfk
-    autopublish: UtilityAutopublish
-    avatar: UtilityAvatar
-    avatardecoration: UtilityAvatardecoration
-    banner: UtilityBanner
-    bs: UtilityBs
-    claimboosterchannel: UtilityClaimboosterchannel
-    claimboosterrole: UtilityClaimboosterrole
-    deletescheduledmessage: UtilityDeletescheduledmessage
-    removescheduled: UtilityRemovescheduled
-    report: UtilityReport
-    scheduledmessage: UtilityScheduledmessage
-    schedulemessage: UtilitySchedulemessage
-    setupboosterchannel: UtilitySetupboosterchannel
-    setupboosterrole: UtilitySetupboosterrole
-    twitch: UtilityTwitch
-
-@dataclass(frozen=True, slots=True)
-class Twitch:
-    username: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class The_top:
-    p_setting: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskcustom:
-    description: LocalizedString
-    name: LocalizedString
-    params: AiAskcustomParams
-
-@dataclass(frozen=True, slots=True)
-class AiAskgpt:
-    description: LocalizedString
-    name: LocalizedString
-    params: AiAskgptParams
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwun:
-    description: LocalizedString
-    name: LocalizedString
-    params: AiAsktanjuwunParams
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustom:
-    description: LocalizedString
-    name: LocalizedString
-    params: AiCreatecustomParams
-
-@dataclass(frozen=True, slots=True)
-class ChannelDsGet:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ChannelDs:
-    get: ChannelDsGet
-    description: LocalizedString
-    name: LocalizedString
-    add: ChannelDsAdd
-    remove: ChannelDsRemove
-
-@dataclass(frozen=True, slots=True)
-class ChannelFarewell:
-    description: LocalizedString
-    name: LocalizedString
-    remove: ChannelFarewellRemove
-    set: ChannelFarewellSet
-
-@dataclass(frozen=True, slots=True)
-class ChannelMedia:
-    description: LocalizedString
-    name: LocalizedString
-    params: ChannelMediaParams
-
-@dataclass(frozen=True, slots=True)
-class ChannelMediaremove:
-    description: LocalizedString
-    name: LocalizedString
-    params: ChannelMediaremoveParams
-
-@dataclass(frozen=True, slots=True)
-class ChannelWRemove:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ChannelW:
-    remove: ChannelWRemove
-    description: LocalizedString
-    name: LocalizedString
-    params: ChannelWParams
-
-@dataclass(frozen=True, slots=True)
-class DeleteMessage:
-    days: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ErrorsUnexpected:
-    bug_report: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunAction:
@@ -915,18 +816,24 @@ class GamesWordle:
     params: GamesWordleParams
 
 @dataclass(frozen=True, slots=True)
+class GamesMemory:
+    description: LocalizedString
+    name: LocalizedString
+    params: GamesMemoryParams
+
+@dataclass(frozen=True, slots=True)
 class GamesAdvanced:
     ttt: GamesAdvancedTtt
 
 @dataclass(frozen=True, slots=True)
-class GiveawayBlList:
+class GamesFlagquiz:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class GiveawayBl:
-    list: GiveawayBlList
     add: GiveawayBlAdd
+    list: GiveawayBlList
     remove: GiveawayBlRemove
 
 @dataclass(frozen=True, slots=True)
@@ -952,6 +859,11 @@ class GiveawayStart:
     description: LocalizedString
     name: LocalizedString
     params: GiveawayStartParams
+
+@dataclass(frozen=True, slots=True)
+class GiveawayBlacklist:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageBackground:
@@ -1050,13 +962,7 @@ class LevelBlacklist:
     show: LevelBlacklistShow
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsShow:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelBoosts:
-    show: LevelBoostsShow
     description: LocalizedString
     name: LocalizedString
     addchannel: LevelBoostsAddchannel
@@ -1067,6 +973,7 @@ class LevelBoosts:
     removechannel: LevelBoostsRemovechannel
     removerole: LevelBoostsRemoverole
     removeuser: LevelBoostsRemoveuser
+    show: LevelBoostsShow
 
 @dataclass(frozen=True, slots=True)
 class LevelChangelevelupmessage:
@@ -1147,6 +1054,36 @@ class LevelTakexp:
     params: LevelTakexpParams
 
 @dataclass(frozen=True, slots=True)
+class LevelConfig:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelDisable:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelDisablelevelupmessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelEnable:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelEnablelevelupmessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelShowlevelroles:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class ListenersInteraction:
     error: ListenersInteractionError
 
@@ -1187,20 +1124,10 @@ class MathRandomnumber:
     params: MathRandomnumberParams
 
 @dataclass(frozen=True, slots=True)
-class MinigamesCountingFailed:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCountingFailed_double:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesCounting:
+    opted_out: LocalizedString
     failed: MinigamesCountingFailed
     failed_double: MinigamesCountingFailed_double
-    opted_out: LocalizedString
     modes: MinigamesCountingModes
     reasons: MinigamesCountingReasons
 
@@ -1223,68 +1150,28 @@ class MinigamesRemovecountingch:
     params: MinigamesRemovecountingchParams
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchallengechannelChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchallengechannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesRemovecountingchallengechannel:
     channel_message: MinigamesRemovecountingchallengechannelChannel_message
-    success: MinigamesRemovecountingchallengechannelSuccess
     error: MinigamesRemovecountingchallengechannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchannelChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
+    success: MinigamesRemovecountingchallengechannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovecountingchannel:
     channel_message: MinigamesRemovecountingchannelChannel_message
-    success: MinigamesRemovecountingchannelSuccess
     error: MinigamesRemovecountingchannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingmodeschannelChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingmodeschannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
+    success: MinigamesRemovecountingchannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovecountingmodeschannel:
     channel_message: MinigamesRemovecountingmodeschannelChannel_message
-    success: MinigamesRemovecountingmodeschannelSuccess
     error: MinigamesRemovecountingmodeschannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovewordchainchannelChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovewordchainchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
+    success: MinigamesRemovecountingmodeschannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovewordchainchannel:
     channel_message: MinigamesRemovewordchainchannelChannel_message
-    success: MinigamesRemovewordchainchannelSuccess
     error: MinigamesRemovewordchainchannelError
+    success: MinigamesRemovewordchainchannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovewordchch:
@@ -1329,83 +1216,33 @@ class MinigamesSetcountingch:
     params: MinigamesSetcountingchParams
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelIntroduction:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchallengechannel:
+    error: MinigamesSetcountingchallengechannelError
     introduction: MinigamesSetcountingchallengechannelIntroduction
     success: MinigamesSetcountingchallengechannelSuccess
-    error: MinigamesSetcountingchallengechannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressSuccess:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchallengeprogress:
-    channel_message: MinigamesSetcountingchallengeprogressChannel_message
-    success: MinigamesSetcountingchallengeprogressSuccess
     description: LocalizedString
     name: LocalizedString
+    channel_message: MinigamesSetcountingchallengeprogressChannel_message
     error: MinigamesSetcountingchallengeprogressError
     params: MinigamesSetcountingchallengeprogressParams
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelChallengeintroduction:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelIntroduction:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelModesintroduction:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
+    success: MinigamesSetcountingchallengeprogressSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchannel:
     challengeintroduction: MinigamesSetcountingchannelChallengeintroduction
+    error: MinigamesSetcountingchannelError
     introduction: MinigamesSetcountingchannelIntroduction
     modesintroduction: MinigamesSetcountingchannelModesintroduction
     success: MinigamesSetcountingchannelSuccess
-    error: MinigamesSetcountingchannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressChannel_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressSuccess:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcountingprogress:
     channel_message: MinigamesSetcountingprogressChannel_message
-    success: MinigamesSetcountingprogressSuccess
     error: MinigamesSetcountingprogressError
+    success: MinigamesSetcountingprogressSuccess
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcprogress:
@@ -1420,30 +1257,55 @@ class MinigamesSetwordcainch:
     params: MinigamesSetwordcainchParams
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelIntroduction:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetwordchainchannel:
+    error: MinigamesSetwordchainchannelError
     introduction: MinigamesSetwordchainchannelIntroduction
     success: MinigamesSetwordchainchannelSuccess
-    error: MinigamesSetwordchainchannelError
-
-@dataclass(frozen=True, slots=True)
-class MinigamesWordchainFinished:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesWordchain:
-    finished: MinigamesWordchainFinished
     opted_out: LocalizedString
+    finished: MinigamesWordchainFinished
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCchcmds:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCmodescmds:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingcmds:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesWordchaincmds:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class SetupBooster:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class SetupGiveaway:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class SetupLevel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class SetupLogs:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityAfk:
@@ -1477,26 +1339,16 @@ class UtilityBanner:
     params: UtilityBannerParams
 
 @dataclass(frozen=True, slots=True)
-class UtilityBsEvents:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBsUnlink:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class UtilityBs:
-    events: UtilityBsEvents
-    unlink: UtilityBsUnlink
     description: LocalizedString
     name: LocalizedString
     battlelog: UtilityBsBattlelog
     brawlers: UtilityBsBrawlers
     club: UtilityBsClub
+    events: UtilityBsEvents
     link: UtilityBsLink
     playerinfo: UtilityBsPlayerinfo
+    unlink: UtilityBsUnlink
 
 @dataclass(frozen=True, slots=True)
 class UtilityClaimboosterchannel:
@@ -1553,24 +1405,73 @@ class UtilitySetupboosterrole:
     params: UtilitySetupboosterroleParams
 
 @dataclass(frozen=True, slots=True)
-class UtilityTwitchSee:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class UtilityTwitch:
-    see: UtilityTwitchSee
     description: LocalizedString
     name: LocalizedString
     add: UtilityTwitchAdd
+    see: UtilityTwitchSee
 
 @dataclass(frozen=True, slots=True)
-class AiAskcustomParamsPersonality:
+class UtilityBoosterchannel:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AiAskcustomParamsPrompt:
+class UtilityBoosterchannelinfo:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityBoosterrole:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityBoosterroleinfo:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityDeleteboosterch:
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityDeleteboosterchannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityDeleteboosterrole:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityFeedback:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityHelp:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityListscheduled:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityMessageoptin:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityMessageoptout:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityMessagetracking:
     description: LocalizedString
     name: LocalizedString
 
@@ -1578,50 +1479,6 @@ class AiAskcustomParamsPrompt:
 class AiAskcustomParams:
     personality: AiAskcustomParamsPersonality
     prompt: AiAskcustomParamsPrompt
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsFrequency_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsFrequencypanelty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsFrequencypenalty:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsPresence_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsPresencepenalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsPrompt:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsTemperature:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsTop_p:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAskgptParamsTopp:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class AiAskgptParams:
@@ -1636,49 +1493,6 @@ class AiAskgptParams:
     topp: AiAskgptParamsTopp
 
 @dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsFrequency_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsFrequencypanelty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsFrequencypenalty:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsPresence_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsPresencepenalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsPrompt:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsTemperature:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsTop_p:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiAsktanjuwunParamsTopp:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class AiAsktanjuwunParams:
     frequency_penalty: AiAsktanjuwunParamsFrequency_penalty
     frequencypanelty: AiAsktanjuwunParamsFrequencypanelty
@@ -1689,48 +1503,6 @@ class AiAsktanjuwunParams:
     temperature: AiAsktanjuwunParamsTemperature
     top_p: AiAsktanjuwunParamsTop_p
     topp: AiAsktanjuwunParamsTopp
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsFrequency_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsFrequencypenalty:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsName:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsPersonality:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsPresence_penalty:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsPresencepenalty:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsTemperature:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsTop_p:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AiCreatecustomParamsTopp:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class AiCreatecustomParams:
@@ -1757,7 +1529,7 @@ class ChannelDsRemove:
     params: ChannelDsRemoveParams
 
 @dataclass(frozen=True, slots=True)
-class ChannelFarewellRemoveCh:
+class ChannelDsGet:
     description: LocalizedString
     name: LocalizedString
 
@@ -1770,43 +1542,23 @@ class ChannelFarewellSet:
     ch: ChannelFarewellSetCh
 
 @dataclass(frozen=True, slots=True)
-class ChannelMediaParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ChannelMediaParams:
     channel: ChannelMediaParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class ChannelMediaremoveParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ChannelMediaremoveParams:
     channel: ChannelMediaremoveParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class ChannelWParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ChannelWParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ChannelWParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ChannelWParams:
     channel: ChannelWParamsChannel
     image: ChannelWParamsImage
     message: ChannelWParamsMessage
+
+@dataclass(frozen=True, slots=True)
+class ChannelWRemove:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunActionChoice:
@@ -1821,33 +1573,10 @@ class FunActionChoice:
     wave: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class FunActionParamsAction:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunActionParamsMember:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunActionParamsMessage:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class FunActionParams:
     action: FunActionParamsAction
     member: FunActionParamsMember
     message: FunActionParamsMessage
-
-@dataclass(frozen=True, slots=True)
-class FunBoopParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunBoopParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunBoopParams:
@@ -1855,29 +1584,9 @@ class FunBoopParams:
     message: FunBoopParamsMessage
 
 @dataclass(frozen=True, slots=True)
-class FunHugParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunHugParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class FunHugParams:
     member: FunHugParamsMember
     message: FunHugParamsMessage
-
-@dataclass(frozen=True, slots=True)
-class FunKissParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunKissParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunKissParams:
@@ -1885,29 +1594,9 @@ class FunKissParams:
     message: FunKissParamsMessage
 
 @dataclass(frozen=True, slots=True)
-class FunLaughParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunLaughParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class FunLaughParams:
     member: FunLaughParamsMember
     message: FunLaughParamsMessage
-
-@dataclass(frozen=True, slots=True)
-class FunPatParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunPatParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunPatParams:
@@ -1915,29 +1604,9 @@ class FunPatParams:
     message: FunPatParamsMessage
 
 @dataclass(frozen=True, slots=True)
-class FunPokeParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunPokeParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class FunPokeParams:
     member: FunPokeParamsMember
     message: FunPokeParamsMessage
-
-@dataclass(frozen=True, slots=True)
-class FunSlapParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunSlapParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunSlapParams:
@@ -1945,29 +1614,9 @@ class FunSlapParams:
     message: FunSlapParamsMessage
 
 @dataclass(frozen=True, slots=True)
-class FunTickleParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunTickleParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class FunTickleParams:
     member: FunTickleParamsMember
     message: FunTickleParamsMessage
-
-@dataclass(frozen=True, slots=True)
-class FunWaveParamsMember:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class FunWaveParamsMessage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class FunWaveParams:
@@ -1975,122 +1624,36 @@ class FunWaveParams:
     message: FunWaveParamsMessage
 
 @dataclass(frozen=True, slots=True)
-class GamesAkinatorParamsTheme:
-    animals: LocalizedString
-    characters: LocalizedString
-    description: LocalizedString
-    name: LocalizedString
-    objects: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GamesAkinatorParams:
     theme: GamesAkinatorParamsTheme
-
-@dataclass(frozen=True, slots=True)
-class GamesBattleshipParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class GamesBattleshipParams:
     user: GamesBattleshipParamsUser
 
 @dataclass(frozen=True, slots=True)
-class GamesConnect4ParamsSize:
-    _10x9: LocalizedString
-    _11x10: LocalizedString
-    _12x11: LocalizedString
-    _12x12: LocalizedString
-    _4x4: LocalizedString
-    _8x7: LocalizedString
-    _9x8: LocalizedString
-    default: LocalizedString
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GamesConnect4Params:
     size: GamesConnect4ParamsSize
-
-@dataclass(frozen=True, slots=True)
-class GamesHangmanParamsLanguage:
-    bg: LocalizedString
-    cs: LocalizedString
-    da: LocalizedString
-    de: LocalizedString
-    description: LocalizedString
-    el: LocalizedString
-    en: LocalizedString
-    es: LocalizedString
-    fi: LocalizedString
-    fr: LocalizedString
-    hi: LocalizedString
-    hu: LocalizedString
-    id: LocalizedString
-    it: LocalizedString
-    ja: LocalizedString
-    ko: LocalizedString
-    lt: LocalizedString
-    name: LocalizedString
-    nb: LocalizedString
-    nl: LocalizedString
-    pl: LocalizedString
-    pt: LocalizedString
-    ru: LocalizedString
-    zh: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class GamesHangmanParams:
     language: GamesHangmanParamsLanguage
 
 @dataclass(frozen=True, slots=True)
-class GamesRpsParamsUser:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GamesRpsParams:
     user: GamesRpsParamsUser
-
-@dataclass(frozen=True, slots=True)
-class GamesTttParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class GamesTttParams:
     user: GamesTttParamsUser
 
 @dataclass(frozen=True, slots=True)
-class GamesWordleParamsLanguage:
-    bg: LocalizedString
-    cs: LocalizedString
-    da: LocalizedString
-    de: LocalizedString
-    description: LocalizedString
-    el: LocalizedString
-    en: LocalizedString
-    es: LocalizedString
-    fi: LocalizedString
-    fr: LocalizedString
-    hi: LocalizedString
-    hu: LocalizedString
-    id: LocalizedString
-    it: LocalizedString
-    ja: LocalizedString
-    ko: LocalizedString
-    lt: LocalizedString
-    name: LocalizedString
-    nb: LocalizedString
-    nl: LocalizedString
-    pl: LocalizedString
-    pt: LocalizedString
-    ru: LocalizedString
-    zh: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GamesWordleParams:
     language: GamesWordleParamsLanguage
+
+@dataclass(frozen=True, slots=True)
+class GamesMemoryParams:
+    user: GamesMemoryParamsUser
 
 @dataclass(frozen=True, slots=True)
 class GamesAdvancedTtt:
@@ -2109,7 +1672,7 @@ class GiveawayBlRemove:
     user: GiveawayBlRemoveUser
 
 @dataclass(frozen=True, slots=True)
-class GiveawayEditParamsGiveawayid:
+class GiveawayBlList:
     description: LocalizedString
     name: LocalizedString
 
@@ -2118,32 +1681,12 @@ class GiveawayEditParams:
     giveawayid: GiveawayEditParamsGiveawayid
 
 @dataclass(frozen=True, slots=True)
-class GiveawayEndParamsGiveawayid:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GiveawayEndParams:
     giveawayid: GiveawayEndParamsGiveawayid
 
 @dataclass(frozen=True, slots=True)
-class GiveawayRerollParamsGiveawayid:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GiveawayRerollParams:
     giveawayid: GiveawayRerollParamsGiveawayid
-
-@dataclass(frozen=True, slots=True)
-class GiveawayStartParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class GiveawayStartParamsTitle:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class GiveawayStartParams:
@@ -2151,30 +1694,8 @@ class GiveawayStartParams:
     title: GiveawayStartParamsTitle
 
 @dataclass(frozen=True, slots=True)
-class ImageBackgroundParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageBackgroundParams:
     image: ImageBackgroundParamsImage
-
-@dataclass(frozen=True, slots=True)
-class ImageBlurParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageBlurParamsRadius:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageBlurParamsType:
-    boxblurr: LocalizedString
-    description: LocalizedString
-    gaussian: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageBlurParams:
@@ -2183,74 +1704,29 @@ class ImageBlurParams:
     type: ImageBlurParamsType
 
 @dataclass(frozen=True, slots=True)
-class ImageCompressParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageCompressParamsQuality:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageCompressParams:
     image: ImageCompressParamsImage
     quality: ImageCompressParamsQuality
-
-@dataclass(frozen=True, slots=True)
-class ImageContourParamsImage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageContourParams:
     image: ImageContourParamsImage
 
 @dataclass(frozen=True, slots=True)
-class ImageDetailParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageDetailParams:
     image: ImageDetailParamsImage
-
-@dataclass(frozen=True, slots=True)
-class ImageEdgeenhanceParamsImage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageEdgeenhanceParams:
     image: ImageEdgeenhanceParamsImage
 
 @dataclass(frozen=True, slots=True)
-class ImageEmbossParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageEmbossParams:
     image: ImageEmbossParamsImage
 
 @dataclass(frozen=True, slots=True)
-class ImageFindedgesParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageFindedgesParams:
     image: ImageFindedgesParamsImage
-
-@dataclass(frozen=True, slots=True)
-class ImageMirrorParamsDirection:
-    description: LocalizedString
-    horizontal: LocalizedString
-    vertical: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageMirrorParamsImage:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageMirrorParams:
@@ -2258,35 +1734,9 @@ class ImageMirrorParams:
     image: ImageMirrorParamsImage
 
 @dataclass(frozen=True, slots=True)
-class ImageRescaleParamsFactor:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageRescaleParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageRescaleParams:
     factor: ImageRescaleParamsFactor
     image: ImageRescaleParamsImage
-
-@dataclass(frozen=True, slots=True)
-class ImageResizeParamsFactor:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageResizeParamsHeight:
-    description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageResizeParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class ImageResizeParamsWidth:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class ImageResizeParams:
@@ -2296,32 +1746,12 @@ class ImageResizeParams:
     width: ImageResizeParamsWidth
 
 @dataclass(frozen=True, slots=True)
-class ImageSharpenParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageSharpenParams:
     image: ImageSharpenParamsImage
 
 @dataclass(frozen=True, slots=True)
-class ImageSmoothParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class ImageSmoothParams:
     image: ImageSmoothParamsImage
-
-@dataclass(frozen=True, slots=True)
-class LevelAddlevelroleParamsLevel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelAddlevelroleParamsRole:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelAddlevelroleParams:
@@ -2419,7 +1849,7 @@ class LevelBoostsRemoveuser:
     params: LevelBoostsRemoveuserParams
 
 @dataclass(frozen=True, slots=True)
-class LevelChangelevelupmessageParamsNewmessage:
+class LevelBoostsShow:
     description: LocalizedString
     name: LocalizedString
 
@@ -2428,29 +1858,9 @@ class LevelChangelevelupmessageParams:
     newmessage: LevelChangelevelupmessageParamsNewmessage
 
 @dataclass(frozen=True, slots=True)
-class LevelChangexpscalingParamsCustomformula:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelChangexpscalingParamsScaling:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelChangexpscalingParams:
     customformula: LevelChangexpscalingParamsCustomformula
     scaling: LevelChangexpscalingParamsScaling
-
-@dataclass(frozen=True, slots=True)
-class LevelGivexpParamsAmount:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelGivexpParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelGivexpParams:
@@ -2458,32 +1868,12 @@ class LevelGivexpParams:
     user: LevelGivexpParamsUser
 
 @dataclass(frozen=True, slots=True)
-class LevelLeaderboardParamsPage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelLeaderboardParams:
     page: LevelLeaderboardParamsPage
 
 @dataclass(frozen=True, slots=True)
-class LevelRankParamsUser:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelRankParams:
     user: LevelRankParamsUser
-
-@dataclass(frozen=True, slots=True)
-class LevelRemovelevelroleParamsLevel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelRemovelevelroleParamsRole:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelRemovelevelroleParams:
@@ -2491,50 +1881,20 @@ class LevelRemovelevelroleParams:
     role: LevelRemovelevelroleParamsRole
 
 @dataclass(frozen=True, slots=True)
-class LevelSetbackgroundParamsImage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelSetbackgroundParams:
     image: LevelSetbackgroundParamsImage
-
-@dataclass(frozen=True, slots=True)
-class LevelSetlevelupchannelParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelSetlevelupchannelParams:
     channel: LevelSetlevelupchannelParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class LevelSettextcooldownParamsCooldown:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelSettextcooldownParams:
     cooldown: LevelSettextcooldownParamsCooldown
 
 @dataclass(frozen=True, slots=True)
-class LevelSetvoicecooldownParamsCooldown:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelSetvoicecooldownParams:
     cooldown: LevelSetvoicecooldownParamsCooldown
-
-@dataclass(frozen=True, slots=True)
-class LevelSetxpParamsAmount:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelSetxpParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelSetxpParams:
@@ -2542,29 +1902,9 @@ class LevelSetxpParams:
     user: LevelSetxpParamsUser
 
 @dataclass(frozen=True, slots=True)
-class LevelShowxpscalingsParamsEndlevel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelShowxpscalingsParamsStartlevel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class LevelShowxpscalingsParams:
     endlevel: LevelShowxpscalingsParamsEndlevel
     startlevel: LevelShowxpscalingsParamsStartlevel
-
-@dataclass(frozen=True, slots=True)
-class LevelTakexpParamsAmount:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelTakexpParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelTakexpParams:
@@ -2579,61 +1919,21 @@ class ListenersInteractionError:
     unexpected: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MathCalcParamsExpression:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MathCalcParams:
     expression: MathCalcParamsExpression
-
-@dataclass(frozen=True, slots=True)
-class MathCalculatorParamsEquation:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MathCalculatorParams:
     equation: MathCalculatorParamsEquation
 
 @dataclass(frozen=True, slots=True)
-class MathFacultyParamsNumber:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MathFacultyParams:
     number: MathFacultyParamsNumber
-
-@dataclass(frozen=True, slots=True)
-class MathNum2wordParamsLocale:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MathNum2wordParamsNumber:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MathNum2wordParams:
     locale: MathNum2wordParamsLocale
     number: MathNum2wordParamsNumber
-
-@dataclass(frozen=True, slots=True)
-class MathPlotfunctionParamsFunc:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MathPlotfunctionParamsXmax:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MathPlotfunctionParamsXmin:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MathPlotfunctionParams:
@@ -2642,47 +1942,17 @@ class MathPlotfunctionParams:
     xmin: MathPlotfunctionParamsXmin
 
 @dataclass(frozen=True, slots=True)
-class MathRandomnumberParamsAmount:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MathRandomnumberParamsMax:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MathRandomnumberParamsMin:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MathRandomnumberParams:
     amount: MathRandomnumberParamsAmount
     max: MathRandomnumberParamsMax
     min: MathRandomnumberParamsMin
 
 @dataclass(frozen=True, slots=True)
-class MinigamesCountingModesFailed:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCountingModesFailed_double:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesCountingModesWon:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesCountingModes:
     failed: MinigamesCountingModesFailed
     failed_double: MinigamesCountingModesFailed_double
-    won: MinigamesCountingModesWon
     modes: MinigamesCountingModesModes
+    won: MinigamesCountingModesWon
 
 @dataclass(frozen=True, slots=True)
 class MinigamesCountingReasons:
@@ -2693,41 +1963,26 @@ class MinigamesCountingReasons:
     wrong_number: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRcchallengechParamsChannel:
+class MinigamesCountingFailed:
     description: LocalizedString
-    name: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingFailed_double:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRcchallengechParams:
     channel: MinigamesRcchallengechParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecmodeschParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesRemovecmodeschParams:
     channel: MinigamesRemovecmodeschParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesRemovecountingchParams:
     channel: MinigamesRemovecountingchParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchallengechannelErrorNo_moderate_members_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchallengechannelErrorNot_counting_channel:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovecountingchallengechannelError:
@@ -2735,12 +1990,12 @@ class MinigamesRemovecountingchallengechannelError:
     not_counting_channel: MinigamesRemovecountingchallengechannelErrorNot_counting_channel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchannelErrorNo_moderate_members_perms:
+class MinigamesRemovecountingchallengechannelChannel_message:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingchannelErrorNot_counting_channel:
+class MinigamesRemovecountingchallengechannelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -2750,12 +2005,12 @@ class MinigamesRemovecountingchannelError:
     not_counting_channel: MinigamesRemovecountingchannelErrorNot_counting_channel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingmodeschannelErrorNo_moderate_members_perms:
+class MinigamesRemovecountingchannelChannel_message:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovecountingmodeschannelErrorNot_counting_channel:
+class MinigamesRemovecountingchannelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -2765,12 +2020,12 @@ class MinigamesRemovecountingmodeschannelError:
     not_counting_channel: MinigamesRemovecountingmodeschannelErrorNot_counting_channel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovewordchainchannelErrorNo_moderate_members_perms:
+class MinigamesRemovecountingmodeschannelChannel_message:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovewordchainchannelErrorNot_counting_channel:
+class MinigamesRemovecountingmodeschannelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -2780,41 +2035,26 @@ class MinigamesRemovewordchainchannelError:
     not_counting_channel: MinigamesRemovewordchainchannelErrorNot_counting_channel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesRemovewordchchParamsChannel:
+class MinigamesRemovewordchainchannelChannel_message:
     description: LocalizedString
-    name: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovewordchainchannelSuccess:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesRemovewordchchParams:
     channel: MinigamesRemovewordchchParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcchallengechParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcchallengechParams:
     channel: MinigamesSetcchallengechParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcchallengechannelParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcchallengechannelParams:
     channel: MinigamesSetcchallengechannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcchallengepParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcchallengepParamsProgress:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcchallengepParams:
@@ -2822,23 +2062,8 @@ class MinigamesSetcchallengepParams:
     progress: MinigamesSetcchallengepParamsProgress
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcmodeschParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcmodeschParams:
     channel: MinigamesSetcmodeschParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcmodesprogressParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcmodesprogressParamsProgress:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcmodesprogressParams:
@@ -2846,43 +2071,8 @@ class MinigamesSetcmodesprogressParams:
     progress: MinigamesSetcmodesprogressParamsProgress
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchParams:
     channel: MinigamesSetcountingchParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_message_delete_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_moderate_members_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_read_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_send_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengechannelErrorNo_view_perms:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchallengechannelError:
@@ -2894,22 +2084,12 @@ class MinigamesSetcountingchallengechannelError:
     no_view_perms: MinigamesSetcountingchallengechannelErrorNo_view_perms
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressErrorInvalid_progress:
+class MinigamesSetcountingchallengechannelIntroduction:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressErrorNo_moderate_members_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressErrorNot_counting_channel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressErrorToo_high:
+class MinigamesSetcountingchallengechannelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -2921,47 +2101,17 @@ class MinigamesSetcountingchallengeprogressError:
     too_high: MinigamesSetcountingchallengeprogressErrorToo_high
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchallengeprogressParamsProgress:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetcountingchallengeprogressParams:
     channel: MinigamesSetcountingchallengeprogressParamsChannel
     progress: MinigamesSetcountingchallengeprogressParamsProgress
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_message_delete_perms:
+class MinigamesSetcountingchallengeprogressChannel_message:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_moderate_members_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_read_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_send_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetcountingchannelErrorNo_view_perms:
+class MinigamesSetcountingchallengeprogressSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -2975,22 +2125,22 @@ class MinigamesSetcountingchannelError:
     no_view_perms: MinigamesSetcountingchannelErrorNo_view_perms
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressErrorInvalid_progress:
+class MinigamesSetcountingchannelChallengeintroduction:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressErrorNo_moderate_members_perms:
+class MinigamesSetcountingchannelIntroduction:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressErrorNot_counting_channel:
+class MinigamesSetcountingchannelModesintroduction:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcountingprogressErrorToo_high:
+class MinigamesSetcountingchannelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -3002,14 +2152,14 @@ class MinigamesSetcountingprogressError:
     too_high: MinigamesSetcountingprogressErrorToo_high
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcprogressParamsChannel:
+class MinigamesSetcountingprogressChannel_message:
     description: LocalizedString
-    name: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetcprogressParamsProgress:
+class MinigamesSetcountingprogressSuccess:
     description: LocalizedString
-    name: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetcprogressParams:
@@ -3017,43 +2167,8 @@ class MinigamesSetcprogressParams:
     progress: MinigamesSetcprogressParamsProgress
 
 @dataclass(frozen=True, slots=True)
-class MinigamesSetwordcainchParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class MinigamesSetwordcainchParams:
     channel: MinigamesSetwordcainchParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_message_delete_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_moderate_members_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_read_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_send_perms:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class MinigamesSetwordchainchannelErrorNo_view_perms:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class MinigamesSetwordchainchannelError:
@@ -3065,18 +2180,23 @@ class MinigamesSetwordchainchannelError:
     no_view_perms: MinigamesSetwordchainchannelErrorNo_view_perms
 
 @dataclass(frozen=True, slots=True)
-class UtilityAfkParamsReason:
+class MinigamesSetwordchainchannelIntroduction:
     description: LocalizedString
-    name: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesWordchainFinished:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityAfkParams:
     reason: UtilityAfkParamsReason
-
-@dataclass(frozen=True, slots=True)
-class UtilityAutopublishParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityAutopublishParams:
@@ -3089,27 +2209,12 @@ class UtilityAutopublishRemove:
     params: UtilityAutopublishRemoveParams
 
 @dataclass(frozen=True, slots=True)
-class UtilityAvatarParamsUser:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class UtilityAvatarParams:
     user: UtilityAvatarParamsUser
 
 @dataclass(frozen=True, slots=True)
-class UtilityAvatardecorationParamsUser:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class UtilityAvatardecorationParams:
     user: UtilityAvatardecorationParamsUser
-
-@dataclass(frozen=True, slots=True)
-class UtilityBannerParamsUser:
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityBannerParams:
@@ -3146,13 +2251,1185 @@ class UtilityBsPlayerinfo:
     params: UtilityBsPlayerinfoParams
 
 @dataclass(frozen=True, slots=True)
-class UtilityClaimboosterchannelParamsName:
+class UtilityBsEvents:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsUnlink:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityClaimboosterchannelParams:
     name: UtilityClaimboosterchannelParamsName
+
+@dataclass(frozen=True, slots=True)
+class UtilityClaimboosterroleParams:
+    color: UtilityClaimboosterroleParamsColor
+    icon: UtilityClaimboosterroleParamsIcon
+    name: UtilityClaimboosterroleParamsName
+
+@dataclass(frozen=True, slots=True)
+class UtilityDeletescheduledmessageParams:
+    messageid: UtilityDeletescheduledmessageParamsMessageid
+
+@dataclass(frozen=True, slots=True)
+class UtilityRemovescheduledParams:
+    messageid: UtilityRemovescheduledParamsMessageid
+
+@dataclass(frozen=True, slots=True)
+class UtilityReportParams:
+    anonymous: UtilityReportParamsAnonymous
+    attachment: UtilityReportParamsAttachment
+    reason: UtilityReportParamsReason
+    user: UtilityReportParamsUser
+
+@dataclass(frozen=True, slots=True)
+class UtilityScheduledmessageParams:
+    channel: UtilityScheduledmessageParamsChannel
+    content: UtilityScheduledmessageParamsContent
+    repeat: UtilityScheduledmessageParamsRepeat
+    sendin: UtilityScheduledmessageParamsSendin
+
+@dataclass(frozen=True, slots=True)
+class UtilitySchedulemessageParams:
+    attachment: UtilitySchedulemessageParamsAttachment
+    channel: UtilitySchedulemessageParamsChannel
+    content: UtilitySchedulemessageParamsContent
+    repeat: UtilitySchedulemessageParamsRepeat
+    repeatamount: UtilitySchedulemessageParamsRepeatamount
+    sendin: UtilitySchedulemessageParamsSendin
+
+@dataclass(frozen=True, slots=True)
+class UtilitySetupboosterchannelParams:
+    category: UtilitySetupboosterchannelParamsCategory
+    channel: UtilitySetupboosterchannelParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class UtilitySetupboosterroleParams:
+    role: UtilitySetupboosterroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class UtilityTwitchAdd:
+    description: LocalizedString
+    name: LocalizedString
+    params: UtilityTwitchAddParams
+
+@dataclass(frozen=True, slots=True)
+class UtilityTwitchSee:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskcustomParamsPersonality:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskcustomParamsPrompt:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsFrequency_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsFrequencypanelty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsFrequencypenalty:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsPresence_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsPresencepenalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsPrompt:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsTemperature:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsTop_p:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAskgptParamsTopp:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsFrequency_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsFrequencypanelty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsFrequencypenalty:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsPresence_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsPresencepenalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsPrompt:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsTemperature:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsTop_p:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiAsktanjuwunParamsTopp:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsFrequency_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsFrequencypenalty:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsName:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsPersonality:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsPresence_penalty:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsPresencepenalty:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsTemperature:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsTop_p:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AiCreatecustomParamsTopp:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelDsAddParams:
+    channel: ChannelDsAddParamsChannel
+    messages: ChannelDsAddParamsMessages
+    per: ChannelDsAddParamsPer
+    resetafter: ChannelDsAddParamsResetafter
+
+@dataclass(frozen=True, slots=True)
+class ChannelDsRemoveParams:
+    channel: ChannelDsRemoveParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class ChannelFarewellRemoveCh:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelFarewellSetCh:
+    description: LocalizedString
+    name: LocalizedString
+    params: ChannelFarewellSetChParams
+
+@dataclass(frozen=True, slots=True)
+class ChannelMediaParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelMediaremoveParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelWParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelWParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ChannelWParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunActionParamsAction:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunActionParamsMember:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunActionParamsMessage:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunBoopParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunBoopParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunHugParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunHugParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunKissParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunKissParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunLaughParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunLaughParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunPatParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunPatParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunPokeParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunPokeParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunSlapParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunSlapParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunTickleParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunTickleParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunWaveParamsMember:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class FunWaveParamsMessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesAkinatorParamsTheme:
+    animals: LocalizedString
+    characters: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+    objects: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesBattleshipParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesConnect4ParamsSize:
+    _10x9: LocalizedString
+    _11x10: LocalizedString
+    _12x11: LocalizedString
+    _12x12: LocalizedString
+    _4x4: LocalizedString
+    _8x7: LocalizedString
+    _9x8: LocalizedString
+    default: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesHangmanParamsLanguage:
+    bg: LocalizedString
+    cs: LocalizedString
+    da: LocalizedString
+    de: LocalizedString
+    description: LocalizedString
+    el: LocalizedString
+    en: LocalizedString
+    es: LocalizedString
+    fi: LocalizedString
+    fr: LocalizedString
+    hi: LocalizedString
+    hu: LocalizedString
+    id: LocalizedString
+    it: LocalizedString
+    ja: LocalizedString
+    ko: LocalizedString
+    lt: LocalizedString
+    name: LocalizedString
+    nb: LocalizedString
+    nl: LocalizedString
+    pl: LocalizedString
+    pt: LocalizedString
+    ru: LocalizedString
+    zh: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesRpsParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesTttParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesWordleParamsLanguage:
+    bg: LocalizedString
+    cs: LocalizedString
+    da: LocalizedString
+    de: LocalizedString
+    description: LocalizedString
+    el: LocalizedString
+    en: LocalizedString
+    es: LocalizedString
+    fi: LocalizedString
+    fr: LocalizedString
+    hi: LocalizedString
+    hu: LocalizedString
+    id: LocalizedString
+    it: LocalizedString
+    ja: LocalizedString
+    ko: LocalizedString
+    lt: LocalizedString
+    name: LocalizedString
+    nb: LocalizedString
+    nl: LocalizedString
+    pl: LocalizedString
+    pt: LocalizedString
+    ru: LocalizedString
+    zh: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesMemoryParamsUser:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GamesAdvancedTttParams:
+    user: GamesAdvancedTttParamsUser
+
+@dataclass(frozen=True, slots=True)
+class GiveawayBlAddRole:
+    description: LocalizedString
+    name: LocalizedString
+    role: GiveawayBlAddRoleRole
+
+@dataclass(frozen=True, slots=True)
+class GiveawayBlAddUser:
+    description: LocalizedString
+    name: LocalizedString
+    user: GiveawayBlAddUserUser
+
+@dataclass(frozen=True, slots=True)
+class GiveawayBlRemoveRole:
+    description: LocalizedString
+    name: LocalizedString
+    role: GiveawayBlRemoveRoleRole
+
+@dataclass(frozen=True, slots=True)
+class GiveawayBlRemoveUser:
+    description: LocalizedString
+    name: LocalizedString
+    user: GiveawayBlRemoveUserUser
+
+@dataclass(frozen=True, slots=True)
+class GiveawayEditParamsGiveawayid:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GiveawayEndParamsGiveawayid:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GiveawayRerollParamsGiveawayid:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GiveawayStartParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class GiveawayStartParamsTitle:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageBackgroundParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageBlurParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageBlurParamsRadius:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageBlurParamsType:
+    boxblurr: LocalizedString
+    description: LocalizedString
+    gaussian: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageCompressParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageCompressParamsQuality:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageContourParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageDetailParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageEdgeenhanceParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageEmbossParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageFindedgesParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageMirrorParamsDirection:
+    description: LocalizedString
+    horizontal: LocalizedString
+    vertical: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageMirrorParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageRescaleParamsFactor:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageRescaleParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageResizeParamsFactor:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageResizeParamsHeight:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageResizeParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageResizeParamsWidth:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageSharpenParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class ImageSmoothParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelAddlevelroleParamsLevel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelAddlevelroleParamsRole:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistAddcParams:
+    channel: LevelBlacklistAddcParamsChannel
+    reason: LevelBlacklistAddcParamsReason
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistAddrParams:
+    reason: LevelBlacklistAddrParamsReason
+    role: LevelBlacklistAddrParamsRole
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistAdduParams:
+    reason: LevelBlacklistAdduParamsReason
+    user: LevelBlacklistAdduParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistRemovecParams:
+    channel: LevelBlacklistRemovecParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistRemoverParams:
+    role: LevelBlacklistRemoverParamsRole
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistRemoveuParams:
+    user: LevelBlacklistRemoveuParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelBlacklistShowError:
+    no_permission: LevelBlacklistShowErrorNo_permission
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsAddchannelParams:
+    additive: LevelBoostsAddchannelParamsAdditive
+    boost: LevelBoostsAddchannelParamsBoost
+    channel: LevelBoostsAddchannelParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsAddroleParams:
+    additive: LevelBoostsAddroleParamsAdditive
+    boost: LevelBoostsAddroleParamsBoost
+    role: LevelBoostsAddroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsAdduserParams:
+    additive: LevelBoostsAdduserParamsAdditive
+    boost: LevelBoostsAdduserParamsBoost
+    user: LevelBoostsAdduserParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsCalculateParams:
+    channel: LevelBoostsCalculateParamsChannel
+    user: LevelBoostsCalculateParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsCalculate_userParams:
+    user: LevelBoostsCalculate_userParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsRemovechannelParams:
+    channel: LevelBoostsRemovechannelParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsRemoveroleParams:
+    role: LevelBoostsRemoveroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class LevelBoostsRemoveuserParams:
+    user: LevelBoostsRemoveuserParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LevelChangelevelupmessageParamsNewmessage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelChangexpscalingParamsCustomformula:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelChangexpscalingParamsScaling:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelGivexpParamsAmount:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelGivexpParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelLeaderboardParamsPage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelRankParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelRemovelevelroleParamsLevel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelRemovelevelroleParamsRole:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSetbackgroundParamsImage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSetlevelupchannelParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSettextcooldownParamsCooldown:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSetvoicecooldownParamsCooldown:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSetxpParamsAmount:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelSetxpParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelShowxpscalingsParamsEndlevel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelShowxpscalingsParamsStartlevel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelTakexpParamsAmount:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class LevelTakexpParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathCalcParamsExpression:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathCalculatorParamsEquation:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathFacultyParamsNumber:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathNum2wordParamsLocale:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathNum2wordParamsNumber:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathPlotfunctionParamsFunc:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathPlotfunctionParamsXmax:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathPlotfunctionParamsXmin:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathRandomnumberParamsAmount:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathRandomnumberParamsMax:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MathRandomnumberParamsMin:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingModesModes:
+    binary: MinigamesCountingModesModesBinary
+    cube: MinigamesCountingModesModesCube
+    double: MinigamesCountingModesModesDouble
+    even: MinigamesCountingModesModesEven
+    fibonacci: MinigamesCountingModesModesFibonacci
+    houndreds: MinigamesCountingModesModesHoundreds
+    negative: MinigamesCountingModesModesNegative
+    normal: MinigamesCountingModesModesNormal
+    odd: MinigamesCountingModesModesOdd
+    prime: MinigamesCountingModesModesPrime
+    reverse: MinigamesCountingModesModesReverse
+    romean: MinigamesCountingModesModesRomean
+    square: MinigamesCountingModesModesSquare
+    triple: MinigamesCountingModesModesTriple
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingModesFailed:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingModesFailed_double:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesCountingModesWon:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRcchallengechParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecmodeschParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingchParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingchallengechannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingchallengechannelErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingchannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingchannelErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingmodeschannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovecountingmodeschannelErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovewordchainchannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovewordchainchannelErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesRemovewordchchParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcchallengechParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcchallengechannelParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcchallengepParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcchallengepParamsProgress:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcmodeschParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcmodesprogressParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcmodesprogressParamsProgress:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_message_delete_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_read_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_send_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengechannelErrorNo_view_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressErrorInvalid_progress:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressErrorToo_high:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchallengeprogressParamsProgress:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_message_delete_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_read_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_send_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingchannelErrorNo_view_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingprogressErrorInvalid_progress:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingprogressErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingprogressErrorNot_counting_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcountingprogressErrorToo_high:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcprogressParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetcprogressParamsProgress:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordcainchParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_message_delete_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_moderate_members_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_read_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_send_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class MinigamesSetwordchainchannelErrorNo_view_perms:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityAfkParamsReason:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityAutopublishParamsChannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityAutopublishRemoveParams:
+    channel: UtilityAutopublishRemoveParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class UtilityAvatarParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityAvatardecorationParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityBannerParamsUser:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsBattlelogParams:
+    tag: UtilityBsBattlelogParamsTag
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsBrawlersParams:
+    tag: UtilityBsBrawlersParamsTag
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsClubParams:
+    tag: UtilityBsClubParamsTag
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsLinkParams:
+    tag: UtilityBsLinkParamsTag
+
+@dataclass(frozen=True, slots=True)
+class UtilityBsPlayerinfoParams:
+    tag: UtilityBsPlayerinfoParamsTag
+
+@dataclass(frozen=True, slots=True)
+class UtilityClaimboosterchannelParamsName:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityClaimboosterroleParamsColor:
@@ -3170,36 +3447,12 @@ class UtilityClaimboosterroleParamsName:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityClaimboosterroleParams:
-    color: UtilityClaimboosterroleParamsColor
-    icon: UtilityClaimboosterroleParamsIcon
-    name: UtilityClaimboosterroleParamsName
-
-@dataclass(frozen=True, slots=True)
 class UtilityDeletescheduledmessageParamsMessageid:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityDeletescheduledmessageParams:
-    messageid: UtilityDeletescheduledmessageParamsMessageid
-
-@dataclass(frozen=True, slots=True)
 class UtilityRemovescheduledParamsMessageid:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityRemovescheduledParams:
-    messageid: UtilityRemovescheduledParamsMessageid
-
-@dataclass(frozen=True, slots=True)
-class UtilityReportParamsAnonymous:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityReportParamsAttachment:
     description: LocalizedString
     name: LocalizedString
 
@@ -3214,11 +3467,14 @@ class UtilityReportParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityReportParams:
-    anonymous: UtilityReportParamsAnonymous
-    attachment: UtilityReportParamsAttachment
-    reason: UtilityReportParamsReason
-    user: UtilityReportParamsUser
+class UtilityReportParamsAttachment:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class UtilityReportParamsAnonymous:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilityScheduledmessageParamsChannel:
@@ -3239,17 +3495,6 @@ class UtilityScheduledmessageParamsRepeat:
 class UtilityScheduledmessageParamsSendin:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityScheduledmessageParams:
-    channel: UtilityScheduledmessageParamsChannel
-    content: UtilityScheduledmessageParamsContent
-    repeat: UtilityScheduledmessageParamsRepeat
-    sendin: UtilityScheduledmessageParamsSendin
-
-@dataclass(frozen=True, slots=True)
-class UtilitySchedulemessageParamsAttachment:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilitySchedulemessageParamsChannel:
@@ -3276,13 +3521,8 @@ class UtilitySchedulemessageParamsSendin:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilitySchedulemessageParams:
-    attachment: UtilitySchedulemessageParamsAttachment
-    channel: UtilitySchedulemessageParamsChannel
-    content: UtilitySchedulemessageParamsContent
-    repeat: UtilitySchedulemessageParamsRepeat
-    repeatamount: UtilitySchedulemessageParamsRepeatamount
-    sendin: UtilitySchedulemessageParamsSendin
+class UtilitySchedulemessageParamsAttachment:
+    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class UtilitySetupboosterchannelParamsCategory:
@@ -3294,24 +3534,17 @@ class UtilitySetupboosterchannelParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilitySetupboosterchannelParams:
-    category: UtilitySetupboosterchannelParamsCategory
-    channel: UtilitySetupboosterchannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
 class UtilitySetupboosterroleParamsRole:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilitySetupboosterroleParams:
-    role: UtilitySetupboosterroleParamsRole
-
-@dataclass(frozen=True, slots=True)
-class UtilityTwitchAdd:
-    description: LocalizedString
-    name: LocalizedString
-    params: UtilityTwitchAddParams
+class UtilityTwitchAddParams:
+    channel: UtilityTwitchAddParamsChannel
+    notification_message: UtilityTwitchAddParamsNotification_message
+    notificationmessage: UtilityTwitchAddParamsNotificationmessage
+    twitch: UtilityTwitchAddParamsTwitch
+    twitchname: UtilityTwitchAddParamsTwitchname
 
 @dataclass(frozen=True, slots=True)
 class ChannelDsAddParamsChannel:
@@ -3334,26 +3567,15 @@ class ChannelDsAddParamsResetafter:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class ChannelDsAddParams:
-    channel: ChannelDsAddParamsChannel
-    messages: ChannelDsAddParamsMessages
-    per: ChannelDsAddParamsPer
-    resetafter: ChannelDsAddParamsResetafter
-
-@dataclass(frozen=True, slots=True)
 class ChannelDsRemoveParamsChannel:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class ChannelDsRemoveParams:
-    channel: ChannelDsRemoveParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class ChannelFarewellSetCh:
-    description: LocalizedString
-    name: LocalizedString
-    params: ChannelFarewellSetChParams
+class ChannelFarewellSetChParams:
+    channel: ChannelFarewellSetChParamsChannel
+    image: ChannelFarewellSetChParamsImage
+    message: ChannelFarewellSetChParamsMessage
 
 @dataclass(frozen=True, slots=True)
 class GamesAdvancedTttParamsUser:
@@ -3361,27 +3583,11 @@ class GamesAdvancedTttParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class GamesAdvancedTttParams:
-    user: GamesAdvancedTttParamsUser
-
-@dataclass(frozen=True, slots=True)
 class GiveawayBlAddRoleRole:
     description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class GiveawayBlAddRole:
-    role: GiveawayBlAddRoleRole
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GiveawayBlAddUserUser:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class GiveawayBlAddUser:
-    user: GiveawayBlAddUserUser
     description: LocalizedString
     name: LocalizedString
 
@@ -3390,20 +3596,8 @@ class GiveawayBlRemoveRoleRole:
     description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class GiveawayBlRemoveRole:
-    role: GiveawayBlRemoveRoleRole
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class GiveawayBlRemoveUserUser:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class GiveawayBlRemoveUser:
-    user: GiveawayBlRemoveUserUser
-    description: LocalizedString
-    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LevelBlacklistAddcParamsChannel:
@@ -3416,11 +3610,6 @@ class LevelBlacklistAddcParamsReason:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBlacklistAddcParams:
-    channel: LevelBlacklistAddcParamsChannel
-    reason: LevelBlacklistAddcParamsReason
-
-@dataclass(frozen=True, slots=True)
 class LevelBlacklistAddrParamsReason:
     description: LocalizedString
     name: LocalizedString
@@ -3429,11 +3618,6 @@ class LevelBlacklistAddrParamsReason:
 class LevelBlacklistAddrParamsRole:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBlacklistAddrParams:
-    reason: LevelBlacklistAddrParamsReason
-    role: LevelBlacklistAddrParamsRole
 
 @dataclass(frozen=True, slots=True)
 class LevelBlacklistAdduParamsReason:
@@ -3446,18 +3630,9 @@ class LevelBlacklistAdduParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBlacklistAdduParams:
-    reason: LevelBlacklistAdduParamsReason
-    user: LevelBlacklistAdduParamsUser
-
-@dataclass(frozen=True, slots=True)
 class LevelBlacklistRemovecParamsChannel:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBlacklistRemovecParams:
-    channel: LevelBlacklistRemovecParamsChannel
 
 @dataclass(frozen=True, slots=True)
 class LevelBlacklistRemoverParamsRole:
@@ -3465,26 +3640,14 @@ class LevelBlacklistRemoverParamsRole:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBlacklistRemoverParams:
-    role: LevelBlacklistRemoverParamsRole
-
-@dataclass(frozen=True, slots=True)
 class LevelBlacklistRemoveuParamsUser:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBlacklistRemoveuParams:
-    user: LevelBlacklistRemoveuParamsUser
-
-@dataclass(frozen=True, slots=True)
 class LevelBlacklistShowErrorNo_permission:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBlacklistShowError:
-    no_permission: LevelBlacklistShowErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class LevelBoostsAddchannelParamsAdditive:
@@ -3502,12 +3665,6 @@ class LevelBoostsAddchannelParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsAddchannelParams:
-    additive: LevelBoostsAddchannelParamsAdditive
-    boost: LevelBoostsAddchannelParamsBoost
-    channel: LevelBoostsAddchannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
 class LevelBoostsAddroleParamsAdditive:
     description: LocalizedString
     name: LocalizedString
@@ -3521,12 +3678,6 @@ class LevelBoostsAddroleParamsBoost:
 class LevelBoostsAddroleParamsRole:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBoostsAddroleParams:
-    additive: LevelBoostsAddroleParamsAdditive
-    boost: LevelBoostsAddroleParamsBoost
-    role: LevelBoostsAddroleParamsRole
 
 @dataclass(frozen=True, slots=True)
 class LevelBoostsAdduserParamsAdditive:
@@ -3544,12 +3695,6 @@ class LevelBoostsAdduserParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsAdduserParams:
-    additive: LevelBoostsAdduserParamsAdditive
-    boost: LevelBoostsAdduserParamsBoost
-    user: LevelBoostsAdduserParamsUser
-
-@dataclass(frozen=True, slots=True)
 class LevelBoostsCalculateParamsChannel:
     description: LocalizedString
     name: LocalizedString
@@ -3560,18 +3705,9 @@ class LevelBoostsCalculateParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsCalculateParams:
-    channel: LevelBoostsCalculateParamsChannel
-    user: LevelBoostsCalculateParamsUser
-
-@dataclass(frozen=True, slots=True)
 class LevelBoostsCalculate_userParamsUser:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBoostsCalculate_userParams:
-    user: LevelBoostsCalculate_userParamsUser
 
 @dataclass(frozen=True, slots=True)
 class LevelBoostsRemovechannelParamsChannel:
@@ -3579,26 +3715,14 @@ class LevelBoostsRemovechannelParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsRemovechannelParams:
-    channel: LevelBoostsRemovechannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
 class LevelBoostsRemoveroleParamsRole:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class LevelBoostsRemoveroleParams:
-    role: LevelBoostsRemoveroleParamsRole
-
-@dataclass(frozen=True, slots=True)
 class LevelBoostsRemoveuserParamsUser:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LevelBoostsRemoveuserParams:
-    user: LevelBoostsRemoveuserParamsUser
 
 @dataclass(frozen=True, slots=True)
 class MinigamesCountingModesModesBinary:
@@ -3671,30 +3795,9 @@ class MinigamesCountingModesModesTriple:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class MinigamesCountingModesModes:
-    binary: MinigamesCountingModesModesBinary
-    cube: MinigamesCountingModesModesCube
-    double: MinigamesCountingModesModesDouble
-    even: MinigamesCountingModesModesEven
-    fibonacci: MinigamesCountingModesModesFibonacci
-    houndreds: MinigamesCountingModesModesHoundreds
-    negative: MinigamesCountingModesModesNegative
-    normal: MinigamesCountingModesModesNormal
-    odd: MinigamesCountingModesModesOdd
-    prime: MinigamesCountingModesModesPrime
-    reverse: MinigamesCountingModesModesReverse
-    romean: MinigamesCountingModesModesRomean
-    square: MinigamesCountingModesModesSquare
-    triple: MinigamesCountingModesModesTriple
-
-@dataclass(frozen=True, slots=True)
 class UtilityAutopublishRemoveParamsChannel:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityAutopublishRemoveParams:
-    channel: UtilityAutopublishRemoveParamsChannel
 
 @dataclass(frozen=True, slots=True)
 class UtilityBsBattlelogParamsTag:
@@ -3702,17 +3805,9 @@ class UtilityBsBattlelogParamsTag:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityBsBattlelogParams:
-    tag: UtilityBsBattlelogParamsTag
-
-@dataclass(frozen=True, slots=True)
 class UtilityBsBrawlersParamsTag:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBsBrawlersParams:
-    tag: UtilityBsBrawlersParamsTag
 
 @dataclass(frozen=True, slots=True)
 class UtilityBsClubParamsTag:
@@ -3720,17 +3815,9 @@ class UtilityBsClubParamsTag:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityBsClubParams:
-    tag: UtilityBsClubParamsTag
-
-@dataclass(frozen=True, slots=True)
 class UtilityBsLinkParamsTag:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityBsLinkParams:
-    tag: UtilityBsLinkParamsTag
 
 @dataclass(frozen=True, slots=True)
 class UtilityBsPlayerinfoParamsTag:
@@ -3738,8 +3825,8 @@ class UtilityBsPlayerinfoParamsTag:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityBsPlayerinfoParams:
-    tag: UtilityBsPlayerinfoParamsTag
+class UtilityTwitchAddParamsTwitch:
+    name: UtilityTwitchAddParamsTwitchName
 
 @dataclass(frozen=True, slots=True)
 class UtilityTwitchAddParamsChannel:
@@ -3761,14 +3848,6 @@ class UtilityTwitchAddParamsTwitchname:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class UtilityTwitchAddParams:
-    channel: UtilityTwitchAddParamsChannel
-    notification_message: UtilityTwitchAddParamsNotification_message
-    notificationmessage: UtilityTwitchAddParamsNotificationmessage
-    twitchname: UtilityTwitchAddParamsTwitchname
-    twitch: UtilityTwitchAddParamsTwitch
-
-@dataclass(frozen=True, slots=True)
 class ChannelFarewellSetChParamsChannel:
     description: LocalizedString
     name: LocalizedString
@@ -3784,18 +3863,8 @@ class ChannelFarewellSetChParamsMessage:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class ChannelFarewellSetChParams:
-    channel: ChannelFarewellSetChParamsChannel
-    image: ChannelFarewellSetChParamsImage
-    message: ChannelFarewellSetChParamsMessage
-
-@dataclass(frozen=True, slots=True)
 class UtilityTwitchAddParamsTwitchName:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class UtilityTwitchAddParamsTwitch:
-    name: UtilityTwitchAddParamsTwitchName
 @dataclass(frozen=True, slots=True)
 class OtherLocales:
     ai: Ai
@@ -3806,18 +3875,24 @@ class OtherLocales:
     errors: Errors
     frequency: Frequency
     fun: Fun
+    funcmd: Funcmd
     games: Games
     giveaway: Giveaway
+    hangman: Hangman
     image: Image
     level: Level
+    levelcommands: Levelcommands
     listeners: Listeners
     math: Math
+    minigame: Minigame
     minigames: Minigames
     presence: Presence
+    setup: Setup
     target: Target
     top: Top
     twitch: Twitch
     utility: Utility
+    utilitycmd: Utilitycmd
 
 def build_other() -> OtherLocales:
     _n_ai_askcustom_params_personality = AiAskcustomParamsPersonality(
@@ -4037,6 +4112,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('channel.ds.add.name'),
         params=_n_channel_ds_add_params,
     )
+    _n_channel_ds_get = ChannelDsGet(
+        description=LocalizedString('channel.ds.get.description'),
+        name=LocalizedString('channel.ds.get.name'),
+    )
     _n_channel_ds_remove_params_channel = ChannelDsRemoveParamsChannel(
         description=LocalizedString('channel.ds.remove.params.channel.description'),
         name=LocalizedString('channel.ds.remove.params.channel.name'),
@@ -4048,10 +4127,6 @@ def build_other() -> OtherLocales:
         description=LocalizedString('channel.ds.remove.description'),
         name=LocalizedString('channel.ds.remove.name'),
         params=_n_channel_ds_remove_params,
-    )
-    _n_channel_ds_get = ChannelDsGet(
-        description=LocalizedString('channel.ds.get.description'),
-        name=LocalizedString('channel.ds.get.name'),
     )
     _n_channel_ds = ChannelDs(
         add=_n_channel_ds_add,
@@ -4428,9 +4503,6 @@ def build_other() -> OtherLocales:
         emoji=LocalizedString('display.emoji'),
         icon=LocalizedString('display.icon'),
     )
-    _n_errors_unexpected = ErrorsUnexpected(
-        bug_report=LocalizedString('errors.unexpected.bug_report'),
-    )
     _n_errors_cooldown = ErrorsCooldown(
         description=LocalizedString('errors.cooldown.description'),
         title=LocalizedString('errors.cooldown.title'),
@@ -4497,6 +4569,9 @@ def build_other() -> OtherLocales:
     _n_errors_transformer_error = ErrorsTransformer_error(
         description=LocalizedString('errors.transformer_error.description'),
         title=LocalizedString('errors.transformer_error.title'),
+    )
+    _n_errors_unexpected = ErrorsUnexpected(
+        bug_report=LocalizedString('errors.unexpected.bug_report'),
     )
     _n_errors_unexpected_error = ErrorsUnexpected_error(
         description=LocalizedString('errors.unexpected_error.description'),
@@ -4729,6 +4804,10 @@ def build_other() -> OtherLocales:
         tickle=_n_fun_tickle,
         wave=_n_fun_wave,
     )
+    _n_funcmd = Funcmd(
+        description=LocalizedString('funcmd.description'),
+        name=LocalizedString('funcmd.name'),
+    )
     _n_games_advanced_ttt_params_user = GamesAdvancedTttParamsUser(
         description=LocalizedString('games.advanced.ttt.params.user.description'),
         name=LocalizedString('games.advanced.ttt.params.user.name'),
@@ -4791,6 +4870,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('games.connect4.name'),
         params=_n_games_connect4_params,
     )
+    _n_games_flagquiz = GamesFlagquiz(
+        description=LocalizedString('games.flagquiz.description'),
+        name=LocalizedString('games.flagquiz.name'),
+    )
     _n_games_hangman_params_language = GamesHangmanParamsLanguage(
         bg=LocalizedString('games.hangman.params.language.bg'),
         cs=LocalizedString('games.hangman.params.language.cs'),
@@ -4824,6 +4907,17 @@ def build_other() -> OtherLocales:
         description=LocalizedString('games.hangman.description'),
         name=LocalizedString('games.hangman.name'),
         params=_n_games_hangman_params,
+    )
+    _n_games_memory_params_user = GamesMemoryParamsUser(
+        description=LocalizedString('games.memory.params.user.description'),
+    )
+    _n_games_memory_params = GamesMemoryParams(
+        user=_n_games_memory_params_user,
+    )
+    _n_games_memory = GamesMemory(
+        description=LocalizedString('games.memory.description'),
+        name=LocalizedString('games.memory.name'),
+        params=_n_games_memory_params,
     )
     _n_games_rps_params_user = GamesRpsParamsUser(
         description=LocalizedString('games.rps.params.user.description'),
@@ -4883,10 +4977,6 @@ def build_other() -> OtherLocales:
         name=LocalizedString('games.wordle.name'),
         params=_n_games_wordle_params,
     )
-    _n_games_flagquiz = GamesFlagquiz(
-        description=LocalizedString('games.flagquiz.description'),
-        name=LocalizedString('games.flagquiz.name'),
-    )
     _n_games = Games(
         advanced=_n_games_advanced,
         akinator=_n_games_akinator,
@@ -4895,6 +4985,7 @@ def build_other() -> OtherLocales:
         description=LocalizedString('games.description'),
         flagquiz=_n_games_flagquiz,
         hangman=_n_games_hangman,
+        memory=_n_games_memory,
         name=LocalizedString('games.name'),
         rps=_n_games_rps,
         ttt=_n_games_ttt,
@@ -4921,6 +5012,10 @@ def build_other() -> OtherLocales:
         role=_n_giveaway_bl_add_role,
         user=_n_giveaway_bl_add_user,
     )
+    _n_giveaway_bl_list = GiveawayBlList(
+        description=LocalizedString('giveaway.bl.list.description'),
+        name=LocalizedString('giveaway.bl.list.name'),
+    )
     _n_giveaway_bl_remove_role_role = GiveawayBlRemoveRoleRole(
         description=LocalizedString('giveaway.bl.remove.role.role.description'),
     )
@@ -4941,14 +5036,14 @@ def build_other() -> OtherLocales:
         role=_n_giveaway_bl_remove_role,
         user=_n_giveaway_bl_remove_user,
     )
-    _n_giveaway_bl_list = GiveawayBlList(
-        description=LocalizedString('giveaway.bl.list.description'),
-        name=LocalizedString('giveaway.bl.list.name'),
-    )
     _n_giveaway_bl = GiveawayBl(
         add=_n_giveaway_bl_add,
         list=_n_giveaway_bl_list,
         remove=_n_giveaway_bl_remove,
+    )
+    _n_giveaway_blacklist = GiveawayBlacklist(
+        description=LocalizedString('giveaway.blacklist.description'),
+        name=LocalizedString('giveaway.blacklist.name'),
     )
     _n_giveaway_edit_params_giveawayid = GiveawayEditParamsGiveawayid(
         description=LocalizedString('giveaway.edit.params.giveawayid.description'),
@@ -5003,10 +5098,6 @@ def build_other() -> OtherLocales:
         name=LocalizedString('giveaway.start.name'),
         params=_n_giveaway_start_params,
     )
-    _n_giveaway_blacklist = GiveawayBlacklist(
-        description=LocalizedString('giveaway.blacklist.description'),
-        name=LocalizedString('giveaway.blacklist.name'),
-    )
     _n_giveaway = Giveaway(
         bl=_n_giveaway_bl,
         blacklist=_n_giveaway_blacklist,
@@ -5016,6 +5107,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('giveaway.name'),
         reroll=_n_giveaway_reroll,
         start=_n_giveaway_start,
+    )
+    _n_hangman = Hangman(
+        description=LocalizedString('hangman.description'),
+        name=LocalizedString('hangman.name'),
     )
     _n_image_background_params_image = ImageBackgroundParamsImage(
         description=LocalizedString('image.background.params.image.description'),
@@ -5532,6 +5627,26 @@ def build_other() -> OtherLocales:
         name=LocalizedString('level.changexpscaling.name'),
         params=_n_level_changexpscaling_params,
     )
+    _n_level_config = LevelConfig(
+        description=LocalizedString('level.config.description'),
+        name=LocalizedString('level.config.name'),
+    )
+    _n_level_disable = LevelDisable(
+        description=LocalizedString('level.disable.description'),
+        name=LocalizedString('level.disable.name'),
+    )
+    _n_level_disablelevelupmessage = LevelDisablelevelupmessage(
+        description=LocalizedString('level.disablelevelupmessage.description'),
+        name=LocalizedString('level.disablelevelupmessage.name'),
+    )
+    _n_level_enable = LevelEnable(
+        description=LocalizedString('level.enable.description'),
+        name=LocalizedString('level.enable.name'),
+    )
+    _n_level_enablelevelupmessage = LevelEnablelevelupmessage(
+        description=LocalizedString('level.enablelevelupmessage.description'),
+        name=LocalizedString('level.enablelevelupmessage.name'),
+    )
     _n_level_givexp_params_amount = LevelGivexpParamsAmount(
         description=LocalizedString('level.givexp.params.amount.description'),
         name=LocalizedString('level.givexp.params.amount.name'),
@@ -5655,6 +5770,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('level.setxp.name'),
         params=_n_level_setxp_params,
     )
+    _n_level_showlevelroles = LevelShowlevelroles(
+        description=LocalizedString('level.showlevelroles.description'),
+        name=LocalizedString('level.showlevelroles.name'),
+    )
     _n_level_showxpscalings_params_endlevel = LevelShowxpscalingsParamsEndlevel(
         description=LocalizedString('level.showxpscalings.params.endlevel.description'),
         name=LocalizedString('level.showxpscalings.params.endlevel.name'),
@@ -5689,30 +5808,6 @@ def build_other() -> OtherLocales:
         name=LocalizedString('level.takexp.name'),
         params=_n_level_takexp_params,
     )
-    _n_level_config = LevelConfig(
-        description=LocalizedString('level.config.description'),
-        name=LocalizedString('level.config.name'),
-    )
-    _n_level_disable = LevelDisable(
-        description=LocalizedString('level.disable.description'),
-        name=LocalizedString('level.disable.name'),
-    )
-    _n_level_disablelevelupmessage = LevelDisablelevelupmessage(
-        description=LocalizedString('level.disablelevelupmessage.description'),
-        name=LocalizedString('level.disablelevelupmessage.name'),
-    )
-    _n_level_enable = LevelEnable(
-        description=LocalizedString('level.enable.description'),
-        name=LocalizedString('level.enable.name'),
-    )
-    _n_level_enablelevelupmessage = LevelEnablelevelupmessage(
-        description=LocalizedString('level.enablelevelupmessage.description'),
-        name=LocalizedString('level.enablelevelupmessage.name'),
-    )
-    _n_level_showlevelroles = LevelShowlevelroles(
-        description=LocalizedString('level.showlevelroles.description'),
-        name=LocalizedString('level.showlevelroles.name'),
-    )
     _n_level = Level(
         addlevelrole=_n_level_addlevelrole,
         blacklist=_n_level_blacklist,
@@ -5736,6 +5831,10 @@ def build_other() -> OtherLocales:
         showlevelroles=_n_level_showlevelroles,
         showxpscalings=_n_level_showxpscalings,
         takexp=_n_level_takexp,
+    )
+    _n_levelcommands = Levelcommands(
+        description=LocalizedString('levelcommands.description'),
+        name=LocalizedString('levelcommands.name'),
     )
     _n_listeners_interaction_error = ListenersInteractionError(
         forbidden=LocalizedString('listeners.interaction.error.forbidden'),
@@ -5856,6 +5955,34 @@ def build_other() -> OtherLocales:
         plotfunction=_n_math_plotfunction,
         randomnumber=_n_math_randomnumber,
     )
+    _n_minigame = Minigame(
+        description=LocalizedString('minigame.description'),
+        name=LocalizedString('minigame.name'),
+    )
+    _n_minigames_cchcmds = MinigamesCchcmds(
+        description=LocalizedString('minigames.cchcmds.description'),
+        name=LocalizedString('minigames.cchcmds.name'),
+    )
+    _n_minigames_cmodescmds = MinigamesCmodescmds(
+        description=LocalizedString('minigames.cmodescmds.description'),
+        name=LocalizedString('minigames.cmodescmds.name'),
+    )
+    _n_minigames_counting_failed = MinigamesCountingFailed(
+        description=LocalizedString('minigames.counting.failed.description'),
+        title=LocalizedString('minigames.counting.failed.title'),
+    )
+    _n_minigames_counting_failed_double = MinigamesCountingFailed_double(
+        description=LocalizedString('minigames.counting.failed_double.description'),
+        title=LocalizedString('minigames.counting.failed_double.title'),
+    )
+    _n_minigames_counting_modes_failed = MinigamesCountingModesFailed(
+        description=LocalizedString('minigames.counting.modes.failed.description'),
+        title=LocalizedString('minigames.counting.modes.failed.title'),
+    )
+    _n_minigames_counting_modes_failed_double = MinigamesCountingModesFailed_double(
+        description=LocalizedString('minigames.counting.modes.failed_double.description'),
+        title=LocalizedString('minigames.counting.modes.failed_double.title'),
+    )
     _n_minigames_counting_modes_modes_binary = MinigamesCountingModesModesBinary(
         description=LocalizedString('minigames.counting.modes.modes.binary.description'),
         name=LocalizedString('minigames.counting.modes.modes.binary.name'),
@@ -5928,14 +6055,6 @@ def build_other() -> OtherLocales:
         square=_n_minigames_counting_modes_modes_square,
         triple=_n_minigames_counting_modes_modes_triple,
     )
-    _n_minigames_counting_modes_failed = MinigamesCountingModesFailed(
-        description=LocalizedString('minigames.counting.modes.failed.description'),
-        title=LocalizedString('minigames.counting.modes.failed.title'),
-    )
-    _n_minigames_counting_modes_failed_double = MinigamesCountingModesFailed_double(
-        description=LocalizedString('minigames.counting.modes.failed_double.description'),
-        title=LocalizedString('minigames.counting.modes.failed_double.title'),
-    )
     _n_minigames_counting_modes_won = MinigamesCountingModesWon(
         description=LocalizedString('minigames.counting.modes.won.description'),
         title=LocalizedString('minigames.counting.modes.won.title'),
@@ -5953,20 +6072,16 @@ def build_other() -> OtherLocales:
         opted_out=LocalizedString('minigames.counting.reasons.opted_out'),
         wrong_number=LocalizedString('minigames.counting.reasons.wrong_number'),
     )
-    _n_minigames_counting_failed = MinigamesCountingFailed(
-        description=LocalizedString('minigames.counting.failed.description'),
-        title=LocalizedString('minigames.counting.failed.title'),
-    )
-    _n_minigames_counting_failed_double = MinigamesCountingFailed_double(
-        description=LocalizedString('minigames.counting.failed_double.description'),
-        title=LocalizedString('minigames.counting.failed_double.title'),
-    )
     _n_minigames_counting = MinigamesCounting(
         failed=_n_minigames_counting_failed,
         failed_double=_n_minigames_counting_failed_double,
         modes=_n_minigames_counting_modes,
         opted_out=LocalizedString('minigames.counting.opted_out'),
         reasons=_n_minigames_counting_reasons,
+    )
+    _n_minigames_countingcmds = MinigamesCountingcmds(
+        description=LocalizedString('minigames.countingcmds.description'),
+        name=LocalizedString('minigames.countingcmds.name'),
     )
     _n_minigames_rcchallengech_params_channel = MinigamesRcchallengechParamsChannel(
         description=LocalizedString('minigames.rcchallengech.params.channel.description'),
@@ -6004,6 +6119,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('minigames.removecountingch.name'),
         params=_n_minigames_removecountingch_params,
     )
+    _n_minigames_removecountingchallengechannel_channel_message = MinigamesRemovecountingchallengechannelChannel_message(
+        description=LocalizedString('minigames.removecountingchallengechannel.channel_message.description'),
+        title=LocalizedString('minigames.removecountingchallengechannel.channel_message.title'),
+    )
     _n_minigames_removecountingchallengechannel_error_no_moderate_members_perms = MinigamesRemovecountingchallengechannelErrorNo_moderate_members_perms(
         description=LocalizedString('minigames.removecountingchallengechannel.error.no_moderate_members_perms.description'),
         title=LocalizedString('minigames.removecountingchallengechannel.error.no_moderate_members_perms.title'),
@@ -6016,10 +6135,6 @@ def build_other() -> OtherLocales:
         no_moderate_members_perms=_n_minigames_removecountingchallengechannel_error_no_moderate_members_perms,
         not_counting_channel=_n_minigames_removecountingchallengechannel_error_not_counting_channel,
     )
-    _n_minigames_removecountingchallengechannel_channel_message = MinigamesRemovecountingchallengechannelChannel_message(
-        description=LocalizedString('minigames.removecountingchallengechannel.channel_message.description'),
-        title=LocalizedString('minigames.removecountingchallengechannel.channel_message.title'),
-    )
     _n_minigames_removecountingchallengechannel_success = MinigamesRemovecountingchallengechannelSuccess(
         description=LocalizedString('minigames.removecountingchallengechannel.success.description'),
         title=LocalizedString('minigames.removecountingchallengechannel.success.title'),
@@ -6028,6 +6143,10 @@ def build_other() -> OtherLocales:
         channel_message=_n_minigames_removecountingchallengechannel_channel_message,
         error=_n_minigames_removecountingchallengechannel_error,
         success=_n_minigames_removecountingchallengechannel_success,
+    )
+    _n_minigames_removecountingchannel_channel_message = MinigamesRemovecountingchannelChannel_message(
+        description=LocalizedString('minigames.removecountingchannel.channel_message.description'),
+        title=LocalizedString('minigames.removecountingchannel.channel_message.title'),
     )
     _n_minigames_removecountingchannel_error_no_moderate_members_perms = MinigamesRemovecountingchannelErrorNo_moderate_members_perms(
         description=LocalizedString('minigames.removecountingchannel.error.no_moderate_members_perms.description'),
@@ -6041,10 +6160,6 @@ def build_other() -> OtherLocales:
         no_moderate_members_perms=_n_minigames_removecountingchannel_error_no_moderate_members_perms,
         not_counting_channel=_n_minigames_removecountingchannel_error_not_counting_channel,
     )
-    _n_minigames_removecountingchannel_channel_message = MinigamesRemovecountingchannelChannel_message(
-        description=LocalizedString('minigames.removecountingchannel.channel_message.description'),
-        title=LocalizedString('minigames.removecountingchannel.channel_message.title'),
-    )
     _n_minigames_removecountingchannel_success = MinigamesRemovecountingchannelSuccess(
         description=LocalizedString('minigames.removecountingchannel.success.description'),
         title=LocalizedString('minigames.removecountingchannel.success.title'),
@@ -6053,6 +6168,10 @@ def build_other() -> OtherLocales:
         channel_message=_n_minigames_removecountingchannel_channel_message,
         error=_n_minigames_removecountingchannel_error,
         success=_n_minigames_removecountingchannel_success,
+    )
+    _n_minigames_removecountingmodeschannel_channel_message = MinigamesRemovecountingmodeschannelChannel_message(
+        description=LocalizedString('minigames.removecountingmodeschannel.channel_message.description'),
+        title=LocalizedString('minigames.removecountingmodeschannel.channel_message.title'),
     )
     _n_minigames_removecountingmodeschannel_error_no_moderate_members_perms = MinigamesRemovecountingmodeschannelErrorNo_moderate_members_perms(
         description=LocalizedString('minigames.removecountingmodeschannel.error.no_moderate_members_perms.description'),
@@ -6066,10 +6185,6 @@ def build_other() -> OtherLocales:
         no_moderate_members_perms=_n_minigames_removecountingmodeschannel_error_no_moderate_members_perms,
         not_counting_channel=_n_minigames_removecountingmodeschannel_error_not_counting_channel,
     )
-    _n_minigames_removecountingmodeschannel_channel_message = MinigamesRemovecountingmodeschannelChannel_message(
-        description=LocalizedString('minigames.removecountingmodeschannel.channel_message.description'),
-        title=LocalizedString('minigames.removecountingmodeschannel.channel_message.title'),
-    )
     _n_minigames_removecountingmodeschannel_success = MinigamesRemovecountingmodeschannelSuccess(
         description=LocalizedString('minigames.removecountingmodeschannel.success.description'),
         title=LocalizedString('minigames.removecountingmodeschannel.success.title'),
@@ -6078,6 +6193,10 @@ def build_other() -> OtherLocales:
         channel_message=_n_minigames_removecountingmodeschannel_channel_message,
         error=_n_minigames_removecountingmodeschannel_error,
         success=_n_minigames_removecountingmodeschannel_success,
+    )
+    _n_minigames_removewordchainchannel_channel_message = MinigamesRemovewordchainchannelChannel_message(
+        description=LocalizedString('minigames.removewordchainchannel.channel_message.description'),
+        title=LocalizedString('minigames.removewordchainchannel.channel_message.title'),
     )
     _n_minigames_removewordchainchannel_error_no_moderate_members_perms = MinigamesRemovewordchainchannelErrorNo_moderate_members_perms(
         description=LocalizedString('minigames.removewordchainchannel.error.no_moderate_members_perms.description'),
@@ -6090,10 +6209,6 @@ def build_other() -> OtherLocales:
     _n_minigames_removewordchainchannel_error = MinigamesRemovewordchainchannelError(
         no_moderate_members_perms=_n_minigames_removewordchainchannel_error_no_moderate_members_perms,
         not_counting_channel=_n_minigames_removewordchainchannel_error_not_counting_channel,
-    )
-    _n_minigames_removewordchainchannel_channel_message = MinigamesRemovewordchainchannelChannel_message(
-        description=LocalizedString('minigames.removewordchainchannel.channel_message.description'),
-        title=LocalizedString('minigames.removewordchainchannel.channel_message.title'),
     )
     _n_minigames_removewordchainchannel_success = MinigamesRemovewordchainchannelSuccess(
         description=LocalizedString('minigames.removewordchainchannel.success.description'),
@@ -6243,6 +6358,10 @@ def build_other() -> OtherLocales:
         introduction=_n_minigames_setcountingchallengechannel_introduction,
         success=_n_minigames_setcountingchallengechannel_success,
     )
+    _n_minigames_setcountingchallengeprogress_channel_message = MinigamesSetcountingchallengeprogressChannel_message(
+        description=LocalizedString('minigames.setcountingchallengeprogress.channel_message.description'),
+        title=LocalizedString('minigames.setcountingchallengeprogress.channel_message.title'),
+    )
     _n_minigames_setcountingchallengeprogress_error_invalid_progress = MinigamesSetcountingchallengeprogressErrorInvalid_progress(
         description=LocalizedString('minigames.setcountingchallengeprogress.error.invalid_progress.description'),
         title=LocalizedString('minigames.setcountingchallengeprogress.error.invalid_progress.title'),
@@ -6277,10 +6396,6 @@ def build_other() -> OtherLocales:
         channel=_n_minigames_setcountingchallengeprogress_params_channel,
         progress=_n_minigames_setcountingchallengeprogress_params_progress,
     )
-    _n_minigames_setcountingchallengeprogress_channel_message = MinigamesSetcountingchallengeprogressChannel_message(
-        description=LocalizedString('minigames.setcountingchallengeprogress.channel_message.description'),
-        title=LocalizedString('minigames.setcountingchallengeprogress.channel_message.title'),
-    )
     _n_minigames_setcountingchallengeprogress_success = MinigamesSetcountingchallengeprogressSuccess(
         description=LocalizedString('minigames.setcountingchallengeprogress.success.description'),
         title=LocalizedString('minigames.setcountingchallengeprogress.success.title'),
@@ -6292,6 +6407,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('minigames.setcountingchallengeprogress.name'),
         params=_n_minigames_setcountingchallengeprogress_params,
         success=_n_minigames_setcountingchallengeprogress_success,
+    )
+    _n_minigames_setcountingchannel_challengeintroduction = MinigamesSetcountingchannelChallengeintroduction(
+        description=LocalizedString('minigames.setcountingchannel.challengeintroduction.description'),
+        title=LocalizedString('minigames.setcountingchannel.challengeintroduction.title'),
     )
     _n_minigames_setcountingchannel_error_no_message_delete_perms = MinigamesSetcountingchannelErrorNo_message_delete_perms(
         description=LocalizedString('minigames.setcountingchannel.error.no_message_delete_perms.description'),
@@ -6325,10 +6444,6 @@ def build_other() -> OtherLocales:
         no_send_perms=_n_minigames_setcountingchannel_error_no_send_perms,
         no_view_perms=_n_minigames_setcountingchannel_error_no_view_perms,
     )
-    _n_minigames_setcountingchannel_challengeintroduction = MinigamesSetcountingchannelChallengeintroduction(
-        description=LocalizedString('minigames.setcountingchannel.challengeintroduction.description'),
-        title=LocalizedString('minigames.setcountingchannel.challengeintroduction.title'),
-    )
     _n_minigames_setcountingchannel_introduction = MinigamesSetcountingchannelIntroduction(
         description=LocalizedString('minigames.setcountingchannel.introduction.description'),
         title=LocalizedString('minigames.setcountingchannel.introduction.title'),
@@ -6347,6 +6462,10 @@ def build_other() -> OtherLocales:
         introduction=_n_minigames_setcountingchannel_introduction,
         modesintroduction=_n_minigames_setcountingchannel_modesintroduction,
         success=_n_minigames_setcountingchannel_success,
+    )
+    _n_minigames_setcountingprogress_channel_message = MinigamesSetcountingprogressChannel_message(
+        description=LocalizedString('minigames.setcountingprogress.channel_message.description'),
+        title=LocalizedString('minigames.setcountingprogress.channel_message.title'),
     )
     _n_minigames_setcountingprogress_error_invalid_progress = MinigamesSetcountingprogressErrorInvalid_progress(
         description=LocalizedString('minigames.setcountingprogress.error.invalid_progress.description'),
@@ -6369,10 +6488,6 @@ def build_other() -> OtherLocales:
         no_moderate_members_perms=_n_minigames_setcountingprogress_error_no_moderate_members_perms,
         not_counting_channel=_n_minigames_setcountingprogress_error_not_counting_channel,
         too_high=_n_minigames_setcountingprogress_error_too_high,
-    )
-    _n_minigames_setcountingprogress_channel_message = MinigamesSetcountingprogressChannel_message(
-        description=LocalizedString('minigames.setcountingprogress.channel_message.description'),
-        title=LocalizedString('minigames.setcountingprogress.channel_message.title'),
     )
     _n_minigames_setcountingprogress_success = MinigamesSetcountingprogressSuccess(
         description=LocalizedString('minigames.setcountingprogress.success.description'),
@@ -6465,18 +6580,6 @@ def build_other() -> OtherLocales:
         finished=_n_minigames_wordchain_finished,
         opted_out=LocalizedString('minigames.wordchain.opted_out'),
     )
-    _n_minigames_cchcmds = MinigamesCchcmds(
-        description=LocalizedString('minigames.cchcmds.description'),
-        name=LocalizedString('minigames.cchcmds.name'),
-    )
-    _n_minigames_cmodescmds = MinigamesCmodescmds(
-        description=LocalizedString('minigames.cmodescmds.description'),
-        name=LocalizedString('minigames.cmodescmds.name'),
-    )
-    _n_minigames_countingcmds = MinigamesCountingcmds(
-        description=LocalizedString('minigames.countingcmds.description'),
-        name=LocalizedString('minigames.countingcmds.name'),
-    )
     _n_minigames_wordchaincmds = MinigamesWordchaincmds(
         description=LocalizedString('minigames.wordchaincmds.description'),
         name=LocalizedString('minigames.wordchaincmds.name'),
@@ -6512,6 +6615,30 @@ def build_other() -> OtherLocales:
     )
     _n_presence = Presence(
         penalty=LocalizedString('presence.penalty'),
+    )
+    _n_setup_booster = SetupBooster(
+        description=LocalizedString('setup.booster.description'),
+        name=LocalizedString('setup.booster.name'),
+    )
+    _n_setup_giveaway = SetupGiveaway(
+        description=LocalizedString('setup.giveaway.description'),
+        name=LocalizedString('setup.giveaway.name'),
+    )
+    _n_setup_level = SetupLevel(
+        description=LocalizedString('setup.level.description'),
+        name=LocalizedString('setup.level.name'),
+    )
+    _n_setup_logs = SetupLogs(
+        description=LocalizedString('setup.logs.description'),
+        name=LocalizedString('setup.logs.name'),
+    )
+    _n_setup = Setup(
+        booster=_n_setup_booster,
+        description=LocalizedString('setup.description'),
+        giveaway=_n_setup_giveaway,
+        level=_n_setup_level,
+        logs=_n_setup_logs,
+        name=LocalizedString('setup.name'),
     )
     _n_target = Target(
         role=LocalizedString('target.role'),
@@ -6595,6 +6722,22 @@ def build_other() -> OtherLocales:
         name=LocalizedString('utility.banner.name'),
         params=_n_utility_banner_params,
     )
+    _n_utility_boosterchannel = UtilityBoosterchannel(
+        description=LocalizedString('utility.boosterchannel.description'),
+        name=LocalizedString('utility.boosterchannel.name'),
+    )
+    _n_utility_boosterchannelinfo = UtilityBoosterchannelinfo(
+        description=LocalizedString('utility.boosterchannelinfo.description'),
+        name=LocalizedString('utility.boosterchannelinfo.name'),
+    )
+    _n_utility_boosterrole = UtilityBoosterrole(
+        description=LocalizedString('utility.boosterrole.description'),
+        name=LocalizedString('utility.boosterrole.name'),
+    )
+    _n_utility_boosterroleinfo = UtilityBoosterroleinfo(
+        description=LocalizedString('utility.boosterroleinfo.description'),
+        name=LocalizedString('utility.boosterroleinfo.name'),
+    )
     _n_utility_bs_battlelog_params_tag = UtilityBsBattlelogParamsTag(
         description=LocalizedString('utility.bs.battlelog.params.tag.description'),
         name=LocalizedString('utility.bs.battlelog.params.tag.name'),
@@ -6631,6 +6774,10 @@ def build_other() -> OtherLocales:
         name=LocalizedString('utility.bs.club.name'),
         params=_n_utility_bs_club_params,
     )
+    _n_utility_bs_events = UtilityBsEvents(
+        description=LocalizedString('utility.bs.events.description'),
+        name=LocalizedString('utility.bs.events.name'),
+    )
     _n_utility_bs_link_params_tag = UtilityBsLinkParamsTag(
         description=LocalizedString('utility.bs.link.params.tag.description'),
         name=LocalizedString('utility.bs.link.params.tag.name'),
@@ -6654,10 +6801,6 @@ def build_other() -> OtherLocales:
         description=LocalizedString('utility.bs.playerinfo.description'),
         name=LocalizedString('utility.bs.playerinfo.name'),
         params=_n_utility_bs_playerinfo_params,
-    )
-    _n_utility_bs_events = UtilityBsEvents(
-        description=LocalizedString('utility.bs.events.description'),
-        name=LocalizedString('utility.bs.events.name'),
     )
     _n_utility_bs_unlink = UtilityBsUnlink(
         description=LocalizedString('utility.bs.unlink.description'),
@@ -6708,6 +6851,17 @@ def build_other() -> OtherLocales:
         name=LocalizedString('utility.claimboosterrole.name'),
         params=_n_utility_claimboosterrole_params,
     )
+    _n_utility_deleteboosterch = UtilityDeleteboosterch(
+        name=LocalizedString('utility.deleteboosterch.name'),
+    )
+    _n_utility_deleteboosterchannel = UtilityDeleteboosterchannel(
+        description=LocalizedString('utility.deleteboosterchannel.description'),
+        name=LocalizedString('utility.deleteboosterchannel.name'),
+    )
+    _n_utility_deleteboosterrole = UtilityDeleteboosterrole(
+        description=LocalizedString('utility.deleteboosterrole.description'),
+        name=LocalizedString('utility.deleteboosterrole.name'),
+    )
     _n_utility_deletescheduledmessage_params_messageid = UtilityDeletescheduledmessageParamsMessageid(
         description=LocalizedString('utility.deletescheduledmessage.params.messageid.description'),
         name=LocalizedString('utility.deletescheduledmessage.params.messageid.name'),
@@ -6719,6 +6873,30 @@ def build_other() -> OtherLocales:
         description=LocalizedString('utility.deletescheduledmessage.description'),
         name=LocalizedString('utility.deletescheduledmessage.name'),
         params=_n_utility_deletescheduledmessage_params,
+    )
+    _n_utility_feedback = UtilityFeedback(
+        description=LocalizedString('utility.feedback.description'),
+        name=LocalizedString('utility.feedback.name'),
+    )
+    _n_utility_help = UtilityHelp(
+        description=LocalizedString('utility.help.description'),
+        name=LocalizedString('utility.help.name'),
+    )
+    _n_utility_listscheduled = UtilityListscheduled(
+        description=LocalizedString('utility.listscheduled.description'),
+        name=LocalizedString('utility.listscheduled.name'),
+    )
+    _n_utility_messageoptin = UtilityMessageoptin(
+        description=LocalizedString('utility.messageoptin.description'),
+        name=LocalizedString('utility.messageoptin.name'),
+    )
+    _n_utility_messageoptout = UtilityMessageoptout(
+        description=LocalizedString('utility.messageoptout.description'),
+        name=LocalizedString('utility.messageoptout.name'),
+    )
+    _n_utility_messagetracking = UtilityMessagetracking(
+        description=LocalizedString('utility.messagetracking.description'),
+        name=LocalizedString('utility.messagetracking.name'),
     )
     _n_utility_removescheduled_params_messageid = UtilityRemovescheduledParamsMessageid(
         description=LocalizedString('utility.removescheduled.params.messageid.description'),
@@ -6849,12 +7027,6 @@ def build_other() -> OtherLocales:
         name=LocalizedString('utility.setupboosterrole.name'),
         params=_n_utility_setupboosterrole_params,
     )
-    _n_utility_twitch_add_params_twitch_name = UtilityTwitchAddParamsTwitchName(
-        description=LocalizedString('utility.twitch.add.params.twitch.name.description'),
-    )
-    _n_utility_twitch_add_params_twitch = UtilityTwitchAddParamsTwitch(
-        name=_n_utility_twitch_add_params_twitch_name,
-    )
     _n_utility_twitch_add_params_channel = UtilityTwitchAddParamsChannel(
         description=LocalizedString('utility.twitch.add.params.channel.description'),
         name=LocalizedString('utility.twitch.add.params.channel.name'),
@@ -6865,6 +7037,12 @@ def build_other() -> OtherLocales:
     )
     _n_utility_twitch_add_params_notificationmessage = UtilityTwitchAddParamsNotificationmessage(
         description=LocalizedString('utility.twitch.add.params.notificationmessage.description'),
+    )
+    _n_utility_twitch_add_params_twitch_name = UtilityTwitchAddParamsTwitchName(
+        description=LocalizedString('utility.twitch.add.params.twitch.name.description'),
+    )
+    _n_utility_twitch_add_params_twitch = UtilityTwitchAddParamsTwitch(
+        name=_n_utility_twitch_add_params_twitch_name,
     )
     _n_utility_twitch_add_params_twitchname = UtilityTwitchAddParamsTwitchname(
         description=LocalizedString('utility.twitch.add.params.twitchname.description'),
@@ -6891,57 +7069,6 @@ def build_other() -> OtherLocales:
         description=LocalizedString('utility.twitch.description'),
         name=LocalizedString('utility.twitch.name'),
         see=_n_utility_twitch_see,
-    )
-    _n_utility_boosterchannel = UtilityBoosterchannel(
-        description=LocalizedString('utility.boosterchannel.description'),
-        name=LocalizedString('utility.boosterchannel.name'),
-    )
-    _n_utility_boosterchannelinfo = UtilityBoosterchannelinfo(
-        description=LocalizedString('utility.boosterchannelinfo.description'),
-        name=LocalizedString('utility.boosterchannelinfo.name'),
-    )
-    _n_utility_boosterrole = UtilityBoosterrole(
-        description=LocalizedString('utility.boosterrole.description'),
-        name=LocalizedString('utility.boosterrole.name'),
-    )
-    _n_utility_boosterroleinfo = UtilityBoosterroleinfo(
-        description=LocalizedString('utility.boosterroleinfo.description'),
-        name=LocalizedString('utility.boosterroleinfo.name'),
-    )
-    _n_utility_deleteboosterch = UtilityDeleteboosterch(
-        name=LocalizedString('utility.deleteboosterch.name'),
-    )
-    _n_utility_deleteboosterchannel = UtilityDeleteboosterchannel(
-        description=LocalizedString('utility.deleteboosterchannel.description'),
-        name=LocalizedString('utility.deleteboosterchannel.name'),
-    )
-    _n_utility_deleteboosterrole = UtilityDeleteboosterrole(
-        description=LocalizedString('utility.deleteboosterrole.description'),
-        name=LocalizedString('utility.deleteboosterrole.name'),
-    )
-    _n_utility_feedback = UtilityFeedback(
-        description=LocalizedString('utility.feedback.description'),
-        name=LocalizedString('utility.feedback.name'),
-    )
-    _n_utility_help = UtilityHelp(
-        description=LocalizedString('utility.help.description'),
-        name=LocalizedString('utility.help.name'),
-    )
-    _n_utility_listscheduled = UtilityListscheduled(
-        description=LocalizedString('utility.listscheduled.description'),
-        name=LocalizedString('utility.listscheduled.name'),
-    )
-    _n_utility_messageoptin = UtilityMessageoptin(
-        description=LocalizedString('utility.messageoptin.description'),
-        name=LocalizedString('utility.messageoptin.name'),
-    )
-    _n_utility_messageoptout = UtilityMessageoptout(
-        description=LocalizedString('utility.messageoptout.description'),
-        name=LocalizedString('utility.messageoptout.name'),
-    )
-    _n_utility_messagetracking = UtilityMessagetracking(
-        description=LocalizedString('utility.messagetracking.description'),
-        name=LocalizedString('utility.messagetracking.name'),
     )
     _n_utility = Utility(
         afk=_n_utility_afk,
@@ -6976,6 +7103,10 @@ def build_other() -> OtherLocales:
         setupboosterrole=_n_utility_setupboosterrole,
         twitch=_n_utility_twitch,
     )
+    _n_utilitycmd = Utilitycmd(
+        description=LocalizedString('utilitycmd.description'),
+        name=LocalizedString('utilitycmd.name'),
+    )
     return OtherLocales(
     ai=_n_ai,
     channel=_n_channel,
@@ -6985,16 +7116,22 @@ def build_other() -> OtherLocales:
     errors=_n_errors,
     frequency=_n_frequency,
     fun=_n_fun,
+    funcmd=_n_funcmd,
     games=_n_games,
     giveaway=_n_giveaway,
+    hangman=_n_hangman,
     image=_n_image,
     level=_n_level,
+    levelcommands=_n_levelcommands,
     listeners=_n_listeners,
     math=_n_math,
+    minigame=_n_minigame,
     minigames=_n_minigames,
     presence=_n_presence,
+    setup=_n_setup,
     target=_n_target,
     top=_n_top,
     twitch=_n_twitch,
     utility=_n_utility,
+    utilitycmd=_n_utilitycmd,
     )

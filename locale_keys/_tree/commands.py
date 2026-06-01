@@ -82,6 +82,666 @@ class CommandsChannel:
     dynamicslowmode: CommandsChannelDynamicslowmode
 
 @dataclass(frozen=True, slots=True)
+class CommandsFun:
+    boop: CommandsFunBoop
+    hug: CommandsFunHug
+    kiss: CommandsFunKiss
+    laugh: CommandsFunLaugh
+    pat: CommandsFunPat
+    poke: CommandsFunPoke
+    slap: CommandsFunSlap
+    tickle: CommandsFunTickle
+    wave: CommandsFunWave
+
+@dataclass(frozen=True, slots=True)
+class CommandsGames:
+    akinator: CommandsGamesAkinator
+    battleship: CommandsGamesBattleship
+    connect4: CommandsGamesConnect4
+    flagquiz: CommandsGamesFlagquiz
+    hangman: CommandsGamesHangman
+    memory: CommandsGamesMemory
+    rps: CommandsGamesRps
+    ticTacToe: CommandsGamesTicTacToe
+    tic_tac_toe: CommandsGamesTic_tac_toe
+    wordle: CommandsGamesWordle
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveaway:
+    add_blacklist_role: CommandsGiveawayAdd_blacklist_role
+    add_blacklist_user: CommandsGiveawayAdd_blacklist_user
+    builder: CommandsGiveawayBuilder
+    editor: CommandsGiveawayEditor
+    end_giveaway: CommandsGiveawayEnd_giveaway
+    end_giveaway_command: CommandsGiveawayEnd_giveaway_command
+    endedGiveaway: CommandsGiveawayEndedGiveaway
+    giveawayEmbed: CommandsGiveawayGiveawayEmbed
+    list_blacklist: CommandsGiveawayList_blacklist
+    remove_blacklist_role: CommandsGiveawayRemove_blacklist_role
+    remove_blacklist_user: CommandsGiveawayRemove_blacklist_user
+    reroll_giveaway: CommandsGiveawayReroll_giveaway
+
+@dataclass(frozen=True, slots=True)
+class CommandsHelp:
+    buttons: CommandsHelpButtons
+    not_authorized: CommandsHelpNot_authorized
+    select: CommandsHelpSelect
+    timeout: CommandsHelpTimeout
+
+@dataclass(frozen=True, slots=True)
+class CommandsImage:
+    background: CommandsImageBackground
+    blur: CommandsImageBlur
+    compress: CommandsImageCompress
+    contour: CommandsImageContour
+    detail: CommandsImageDetail
+    edgeenhance: CommandsImageEdgeenhance
+    emboss: CommandsImageEmboss
+    error: CommandsImageError
+    filesize: CommandsImageFilesize
+    findedges: CommandsImageFindedges
+    mirror: CommandsImageMirror
+    rescale: CommandsImageRescale
+    resize: CommandsImageResize
+    sharpen: CommandsImageSharpen
+    smooth: CommandsImageSmooth
+    typenotsupported: CommandsImageTypenotsupported
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevel:
+    defaultlevelupmessage: LocalizedString
+    addlevelrole: CommandsLevelAddlevelrole
+    blacklist: CommandsLevelBlacklist
+    boosts: CommandsLevelBoosts
+    changelevelupmessage: CommandsLevelChangelevelupmessage
+    changexpscaling: CommandsLevelChangexpscaling
+    disablelevelsystem: CommandsLevelDisablelevelsystem
+    disablelevelupmessage: CommandsLevelDisablelevelupmessage
+    enablelevelsystem: CommandsLevelEnablelevelsystem
+    enablelevelupmessage: CommandsLevelEnablelevelupmessage
+    givexp: CommandsLevelGivexp
+    leaderboard: CommandsLevelLeaderboard
+    rank: CommandsLevelRank
+    removelevelrole: CommandsLevelRemovelevelrole
+    setbackground: CommandsLevelSetbackground
+    setlevelupchannel: CommandsLevelSetlevelupchannel
+    settextcooldown: CommandsLevelSettextcooldown
+    setvoicecooldown: CommandsLevelSetvoicecooldown
+    setxp: CommandsLevelSetxp
+    showlevelroles: CommandsLevelShowlevelroles
+    showxpscalings: CommandsLevelShowxpscalings
+    takexp: CommandsLevelTakexp
+    updateuserroles: CommandsLevelUpdateuserroles
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogs:
+    _text: LocalizedString
+    blacklist: CommandsLogsBlacklist
+    blacklistCategory: CommandsLogsBlacklistCategory
+    blacklistChannel: CommandsLogsBlacklistChannel
+    blacklistListCategory: CommandsLogsBlacklistListCategory
+    blacklistListChannel: CommandsLogsBlacklistListChannel
+    blacklistListRole: CommandsLogsBlacklistListRole
+    blacklistListUser: CommandsLogsBlacklistListUser
+    blacklistListVoiceChannel: CommandsLogsBlacklistListVoiceChannel
+    blacklistRemoveCategory: CommandsLogsBlacklistRemoveCategory
+    blacklistRemoveChannel: CommandsLogsBlacklistRemoveChannel
+    blacklistRemoveRole: CommandsLogsBlacklistRemoveRole
+    blacklistRemoveUser: CommandsLogsBlacklistRemoveUser
+    blacklistRemoveVoiceChannel: CommandsLogsBlacklistRemoveVoiceChannel
+    blacklistRole: CommandsLogsBlacklistRole
+    blacklistUser: CommandsLogsBlacklistUser
+    blacklistVoiceChannel: CommandsLogsBlacklistVoiceChannel
+    configureLogs: CommandsLogsConfigureLogs
+    removeLogChannel: CommandsLogsRemoveLogChannel
+    setLogChannel: CommandsLogsSetLogChannel
+
+@dataclass(frozen=True, slots=True)
+class CommandsMath:
+    calc: CommandsMathCalc
+    calculator: CommandsMathCalculator
+    faculty: CommandsMathFaculty
+    num2word: CommandsMathNum2word
+    plot_function: CommandsMathPlot_function
+    plotfunction: CommandsMathPlotfunction
+    randomnumber: CommandsMathRandomnumber
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtility:
+    afk: CommandsUtilityAfk
+    autopublish: CommandsUtilityAutopublish
+    avatar: CommandsUtilityAvatar
+    avatarDecoration: CommandsUtilityAvatarDecoration
+    banner: CommandsUtilityBanner
+    boosterchannelinfo: CommandsUtilityBoosterchannelinfo
+    boosterroleinfo: CommandsUtilityBoosterroleinfo
+    brawlstars: CommandsUtilityBrawlstars
+    claimboosterchannel: CommandsUtilityClaimboosterchannel
+    claimboosterrole: CommandsUtilityClaimboosterrole
+    deleteboosterchannel: CommandsUtilityDeleteboosterchannel
+    deleteboosterrole: CommandsUtilityDeleteboosterrole
+    feedback: CommandsUtilityFeedback
+    help: CommandsUtilityHelp
+    listscheduled: CommandsUtilityListscheduled
+    messagetrackingoptin: CommandsUtilityMessagetrackingoptin
+    messagetrackingoptout: CommandsUtilityMessagetrackingoptout
+    noBanner: CommandsUtilityNoBanner
+    removescheduled: CommandsUtilityRemovescheduled
+    report: CommandsUtilityReport
+    reports: CommandsUtilityReports
+    schedulemessage: CommandsUtilitySchedulemessage
+    setupboosterchannel: CommandsUtilitySetupboosterchannel
+    setupboosterrole: CommandsUtilitySetupboosterrole
+    twitch: CommandsUtilityTwitch
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminAdd_role:
+    multipleSuccess: CommandsAdminAdd_roleMultipleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminAddrole:
+    cancelled: LocalizedString
+    multiplePrompt: LocalizedString
+    multipleSuccess: LocalizedString
+    noSelection: LocalizedString
+    alreadyHasRole: CommandsAdminAddroleAlreadyHasRole
+    cancel: CommandsAdminAddroleCancel
+    confirm: CommandsAdminAddroleConfirm
+    managedRole: CommandsAdminAddroleManagedRole
+    missingPermission: CommandsAdminAddroleMissingPermission
+    missingPermissionBot: CommandsAdminAddroleMissingPermissionBot
+    noRole: CommandsAdminAddroleNoRole
+    noUser: CommandsAdminAddroleNoUser
+    roleSelect: CommandsAdminAddroleRoleSelect
+    roleTooHigh: CommandsAdminAddroleRoleTooHigh
+    roleTooHighBot: CommandsAdminAddroleRoleTooHighBot
+    success: CommandsAdminAddroleSuccess
+    userSelect: CommandsAdminAddroleUserSelect
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminAdministration:
+    bs_bot_info: LocalizedString
+    bs_download_failed: LocalizedString
+    bs_emoji_created: LocalizedString
+    bs_emoji_failed: LocalizedString
+    console_check: LocalizedString
+    github_auth_test: LocalizedString
+    me: LocalizedString
+    permission_list: LocalizedString
+    permission_result: LocalizedString
+    set_guild_locale: LocalizedString
+    situation_approved: LocalizedString
+    situation_creator_gone: LocalizedString
+    situation_deleted: LocalizedString
+    situation_not_found: LocalizedString
+    benchmark_bot: CommandsAdminAdministrationBenchmark_bot
+    test_bot: CommandsAdminAdministrationTest_bot
+    update: CommandsAdminAdministrationUpdate
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminBan:
+    noReasonProvided: LocalizedString
+    error: CommandsAdminBanError
+    forbidden: CommandsAdminBanForbidden
+    missingPermission: CommandsAdminBanMissingPermission
+    missingPermissionBot: CommandsAdminBanMissingPermissionBot
+    success: CommandsAdminBanSuccess
+    targetTooHigh: CommandsAdminBanTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminBoosterRole:
+    error: CommandsAdminBoosterRoleError
+    forbidden: CommandsAdminBoosterRoleForbidden
+    missingPermission: CommandsAdminBoosterRoleMissingPermission
+    missingPermissionBot: CommandsAdminBoosterRoleMissingPermissionBot
+    roleRemoved: CommandsAdminBoosterRoleRoleRemoved
+    roleTooHighBot: CommandsAdminBoosterRoleRoleTooHighBot
+    success: CommandsAdminBoosterRoleSuccess
+    targetTooHigh: CommandsAdminBoosterRoleTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannel:
+    farewell: CommandsAdminChannelFarewell
+    media: CommandsAdminChannelMedia
+    welcome: CommandsAdminChannelWelcome
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminClose_ticket:
+    button: CommandsAdminClose_ticketButton
+    error: CommandsAdminClose_ticketError
+    success: CommandsAdminClose_ticketSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopy7tv:
+    footer: LocalizedString
+    noEmotes: LocalizedString
+    notYourEmbed: LocalizedString
+    title: LocalizedString
+    addModal: CommandsAdminCopy7tvAddModal
+    error: CommandsAdminCopy7tvError
+    missingPermission: CommandsAdminCopy7tvMissingPermission
+    missingPermissionBot: CommandsAdminCopy7tvMissingPermissionBot
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmoji:
+    reason: LocalizedString
+    error: CommandsAdminCopyEmojiError
+    missingPermission: CommandsAdminCopyEmojiMissingPermission
+    missingPermissionBot: CommandsAdminCopyEmojiMissingPermissionBot
+    partialSuccess: CommandsAdminCopyEmojiPartialSuccess
+    success: CommandsAdminCopyEmojiSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyrole:
+    reason: LocalizedString
+    missingPermission: CommandsAdminCopyroleMissingPermission
+    missingPermissionBot: CommandsAdminCopyroleMissingPermissionBot
+    success: CommandsAdminCopyroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCreateEmoji:
+    allRoles: LocalizedString
+    error: LocalizedString
+    imageDownloadError: LocalizedString
+    roleSelect: LocalizedString
+    roleSelectPlaceholder: LocalizedString
+    role_select: LocalizedString
+    role_selectPlaceholder: LocalizedString
+    missingPermission: CommandsAdminCreateEmojiMissingPermission
+    success: CommandsAdminCreateEmojiSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCreate_ticket:
+    button: CommandsAdminCreate_ticketButton
+    embed: CommandsAdminCreate_ticketEmbed
+    error: CommandsAdminCreate_ticketError
+    missingBotPermission: CommandsAdminCreate_ticketMissingBotPermission
+    missingPermission: CommandsAdminCreate_ticketMissingPermission
+    success: CommandsAdminCreate_ticketSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCreaterole:
+    forbidden: CommandsAdminCreateroleForbidden
+    http_error: CommandsAdminCreateroleHttp_error
+    iconTooLarge: CommandsAdminCreateroleIconTooLarge
+    invalidColor: CommandsAdminCreateroleInvalidColor
+    invalidIcon: CommandsAdminCreateroleInvalidIcon
+    missingName: CommandsAdminCreateroleMissingName
+    missingPermission: CommandsAdminCreateroleMissingPermission
+    missingPermissionBot: CommandsAdminCreateroleMissingPermissionBot
+    nameTooLong: CommandsAdminCreateroleNameTooLong
+    notfound: CommandsAdminCreateroleNotfound
+    reasonTooLong: CommandsAdminCreateroleReasonTooLong
+    roleIconsNotEnabled: CommandsAdminCreateroleRoleIconsNotEnabled
+    success: CommandsAdminCreateroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminDatabase_sync:
+    aborted: LocalizedString
+    analyzing: LocalizedString
+    backup_error: LocalizedString
+    backup_success: LocalizedString
+    cancel_token: LocalizedString
+    download_error: LocalizedString
+    download_failed: LocalizedString
+    downloading: LocalizedString
+    filter_error: LocalizedString
+    import_error: LocalizedString
+    importing: LocalizedString
+    no_attachment: LocalizedString
+    no_schema_found: LocalizedString
+    preparing_import: LocalizedString
+    schema_prompt: LocalizedString
+    schema_warning: LocalizedString
+    success: LocalizedString
+    timeout: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminDeleterole:
+    noRole: LocalizedString
+    forbidden: CommandsAdminDeleteroleForbidden
+    http_error: CommandsAdminDeleteroleHttp_error
+    missingPermission: CommandsAdminDeleteroleMissingPermission
+    missingPermissionBot: CommandsAdminDeleteroleMissingPermissionBot
+    notfound: CommandsAdminDeleteroleNotfound
+    roleTooHigh: CommandsAdminDeleteroleRoleTooHigh
+    roleTooHighBot: CommandsAdminDeleteroleRoleTooHighBot
+    success: CommandsAdminDeleteroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminDemo_message:
+    confirm: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbed:
+    colorUpdated: LocalizedString
+    creatorDescription: LocalizedString
+    creatorTitle: LocalizedString
+    descriptionUpdated: LocalizedString
+    embedSent: LocalizedString
+    fieldAdded: LocalizedString
+    fieldEdited: LocalizedString
+    fieldRemoved: LocalizedString
+    footerUpdated: LocalizedString
+    imageUpdated: LocalizedString
+    invalidColorCode: LocalizedString
+    maxFieldsReached: LocalizedString
+    noFieldsToEdit: LocalizedString
+    noFieldsToRemove: LocalizedString
+    previewSent: LocalizedString
+    thumbnailUpdated: LocalizedString
+    titleUpdated: LocalizedString
+    unauthorizedUser: LocalizedString
+    buttons: CommandsAdminEmbedButtons
+    missingPermission: CommandsAdminEmbedMissingPermission
+    missingTitle: CommandsAdminEmbedMissingTitle
+    modals: CommandsAdminEmbedModals
+    setDescription: CommandsAdminEmbedSetDescription
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminFeedback:
+    added: LocalizedString
+    blocked: LocalizedString
+    unblocked: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminJoinToCreateListener:
+    channelDeleted: CommandsAdminJoinToCreateListenerChannelDeleted
+    success: CommandsAdminJoinToCreateListenerSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminJointocreatechannel:
+    alreadySet: CommandsAdminJointocreatechannelAlreadySet
+    missingPermission: CommandsAdminJointocreatechannelMissingPermission
+    success: CommandsAdminJointocreatechannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminKick:
+    noReasonProvided: LocalizedString
+    error: CommandsAdminKickError
+    forbidden: CommandsAdminKickForbidden
+    missingPermission: CommandsAdminKickMissingPermission
+    missingPermissionBot: CommandsAdminKickMissingPermissionBot
+    success: CommandsAdminKickSuccess
+    targetTooHigh: CommandsAdminKickTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminLock:
+    channelLockedMessage: LocalizedString
+    alreadyLocked: CommandsAdminLockAlreadyLocked
+    error: CommandsAdminLockError
+    forbidden: CommandsAdminLockForbidden
+    missingPermission: CommandsAdminLockMissingPermission
+    missingPermissionBot: CommandsAdminLockMissingPermissionBot
+    success: CommandsAdminLockSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminMoverole:
+    error: CommandsAdminMoveroleError
+    forbidden: CommandsAdminMoveroleForbidden
+    missingPermission: CommandsAdminMoveroleMissingPermission
+    missingPermissionBot: CommandsAdminMoveroleMissingPermissionBot
+    roleTooHigh: CommandsAdminMoveroleRoleTooHigh
+    success: CommandsAdminMoveroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminNickname:
+    changed: CommandsAdminNicknameChanged
+    error: CommandsAdminNicknameError
+    forbidden: CommandsAdminNicknameForbidden
+    missingPermission: CommandsAdminNicknameMissingPermission
+    missingPermissionBot: CommandsAdminNicknameMissingPermissionBot
+    removed: CommandsAdminNicknameRemoved
+    targetTooHigh: CommandsAdminNicknameTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminNuke:
+    cancel: LocalizedString
+    cancelledMessage: LocalizedString
+    confirm: LocalizedString
+    confirmationDescription: LocalizedString
+    confirmationPrompt: LocalizedString
+    confirmationTitle: LocalizedString
+    confirmationWord: LocalizedString
+    forbiddenError: LocalizedString
+    httpError: LocalizedString
+    incorrectConfirmation: LocalizedString
+    nukeReason: LocalizedString
+    nukeSuccessMessage: LocalizedString
+    timeoutMessage: LocalizedString
+    unauthorizedUser: LocalizedString
+    missingPermission: CommandsAdminNukeMissingPermission
+    missingPermissionBot: CommandsAdminNukeMissingPermissionBot
+    notfound: CommandsAdminNukeNotfound
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminOpen_ticket:
+    error: CommandsAdminOpen_ticketError
+    optedOutWarning: CommandsAdminOpen_ticketOptedOutWarning
+    success: CommandsAdminOpen_ticketSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminPurge:
+    error: CommandsAdminPurgeError
+    forbidden: CommandsAdminPurgeForbidden
+    invalidAmount: CommandsAdminPurgeInvalidAmount
+    missingPermission: CommandsAdminPurgeMissingPermission
+    missingPermissionBot: CommandsAdminPurgeMissingPermissionBot
+    success: CommandsAdminPurgeSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminRemove_role:
+    multipleSuccess: CommandsAdminRemove_roleMultipleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminRemove_timeout:
+    noReasonProvided: LocalizedString
+    error: CommandsAdminRemove_timeoutError
+    forbidden: CommandsAdminRemove_timeoutForbidden
+    missingPermission: CommandsAdminRemove_timeoutMissingPermission
+    missingPermissionBot: CommandsAdminRemove_timeoutMissingPermissionBot
+    notTimedOut: CommandsAdminRemove_timeoutNotTimedOut
+    success: CommandsAdminRemove_timeoutSuccess
+    targetTooHigh: CommandsAdminRemove_timeoutTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminRemovejointocreatechannel:
+    alreadySet: CommandsAdminRemovejointocreatechannelAlreadySet
+    missingPermission: CommandsAdminRemovejointocreatechannelMissingPermission
+    notSet: CommandsAdminRemovejointocreatechannelNotSet
+    success: CommandsAdminRemovejointocreatechannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminRemoverole:
+    cancelled: LocalizedString
+    error: LocalizedString
+    multiplePrompt: LocalizedString
+    multipleSuccess: LocalizedString
+    noSelection: LocalizedString
+    selectRoles: LocalizedString
+    selectUsers: LocalizedString
+    cancel: CommandsAdminRemoveroleCancel
+    confirm: CommandsAdminRemoveroleConfirm
+    doesNotHaveRole: CommandsAdminRemoveroleDoesNotHaveRole
+    managedRole: CommandsAdminRemoveroleManagedRole
+    missingPermission: CommandsAdminRemoveroleMissingPermission
+    missingPermissionBot: CommandsAdminRemoveroleMissingPermissionBot
+    noRole: CommandsAdminRemoveroleNoRole
+    noUser: CommandsAdminRemoveroleNoUser
+    roleTooHigh: CommandsAdminRemoveroleRoleTooHigh
+    roleTooHighBot: CommandsAdminRemoveroleRoleTooHighBot
+    success: CommandsAdminRemoveroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReports:
+    remove_channel: CommandsAdminReportsRemove_channel
+    set_channel: CommandsAdminReportsSet_channel
+    show_reports: CommandsAdminReportsShow_reports
+    unblock_reporter: CommandsAdminReportsUnblock_reporter
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminSay:
+    error: CommandsAdminSayError
+    missingPermission: CommandsAdminSayMissingPermission
+    missingPermissionBot: CommandsAdminSayMissingPermissionBot
+    success: CommandsAdminSaySuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminSetLocale:
+    setLocaleReason: LocalizedString
+    missingPermission: CommandsAdminSetLocaleMissingPermission
+    success: CommandsAdminSetLocaleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminSlowmode:
+    disabled: CommandsAdminSlowmodeDisabled
+    enabled: CommandsAdminSlowmodeEnabled
+    error: CommandsAdminSlowmodeError
+    forbidden: CommandsAdminSlowmodeForbidden
+    invalidDuration: CommandsAdminSlowmodeInvalidDuration
+    missingPermission: CommandsAdminSlowmodeMissingPermission
+    missingPermissionBot: CommandsAdminSlowmodeMissingPermissionBot
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminSync:
+    completed: LocalizedString
+    failed: LocalizedString
+    in_progress: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTimeout:
+    noReasonProvided: LocalizedString
+    alreadyTimedOut: CommandsAdminTimeoutAlreadyTimedOut
+    error: CommandsAdminTimeoutError
+    forbidden: CommandsAdminTimeoutForbidden
+    invalidDuration: CommandsAdminTimeoutInvalidDuration
+    missingPermission: CommandsAdminTimeoutMissingPermission
+    missingPermissionBot: CommandsAdminTimeoutMissingPermissionBot
+    success: CommandsAdminTimeoutSuccess
+    targetTooHigh: CommandsAdminTimeoutTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messages:
+    add: CommandsAdminTrigger_messagesAdd
+    configure: CommandsAdminTrigger_messagesConfigure
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminUnban:
+    noReasonProvided: LocalizedString
+    error: CommandsAdminUnbanError
+    forbidden: CommandsAdminUnbanForbidden
+    missingPermission: CommandsAdminUnbanMissingPermission
+    missingPermissionBot: CommandsAdminUnbanMissingPermissionBot
+    success: CommandsAdminUnbanSuccess
+    userNotFound: CommandsAdminUnbanUserNotFound
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminUnlock:
+    channelUnlockedMessage: LocalizedString
+    error: CommandsAdminUnlockError
+    forbidden: CommandsAdminUnlockForbidden
+    missingPermission: CommandsAdminUnlockMissingPermission
+    missingPermissionBot: CommandsAdminUnlockMissingPermissionBot
+    notLocked: CommandsAdminUnlockNotLocked
+    success: CommandsAdminUnlockSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminUpdate_text:
+    cancelled: LocalizedString
+    confirm: LocalizedString
+    confirm2: LocalizedString
+    enter_password: LocalizedString
+    expected_password: LocalizedString
+    say_wallah: LocalizedString
+    timeout: LocalizedString
+    wrong_password: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminViewwarns:
+    description: LocalizedString
+    never: LocalizedString
+    nextButton: LocalizedString
+    noReason: LocalizedString
+    pageFooter: LocalizedString
+    prevButton: LocalizedString
+    removeButton: LocalizedString
+    title: LocalizedString
+    unauthorizedUser: LocalizedString
+    warningDetails: LocalizedString
+    warningEntry: LocalizedString
+    missingPermission: CommandsAdminViewwarnsMissingPermission
+    noWarnings: CommandsAdminViewwarnsNoWarnings
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarn:
+    noReasonProvided: LocalizedString
+    dmNotification: CommandsAdminWarnDmNotification
+    missingPermission: CommandsAdminWarnMissingPermission
+    reason: CommandsAdminWarnReason
+    success: CommandsAdminWarnSuccess
+    targetTooHigh: CommandsAdminWarnTargetTooHigh
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfig:
+    currentConfig: CommandsAdminWarnconfigCurrentConfig
+    error: CommandsAdminWarnconfigError
+    missingPermission: CommandsAdminWarnconfigMissingPermission
+    modal: CommandsAdminWarnconfigModal
+    success: CommandsAdminWarnconfigSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiAddcustom:
+    alreadyexists: CommandsAiAddcustomAlreadyexists
+    invalidfrequency_penalty: CommandsAiAddcustomInvalidfrequency_penalty
+    invalidpresence_penalty: CommandsAiAddcustomInvalidpresence_penalty
+    invalidtemperature: CommandsAiAddcustomInvalidtemperature
+    invalidtop_p: CommandsAiAddcustomInvalidtop_p
+    longname: CommandsAiAddcustomLongname
+    longsituation: CommandsAiAddcustomLongsituation
+    namealreadyexists: CommandsAiAddcustomNamealreadyexists
+    notplus: CommandsAiAddcustomNotplus
+    shortname: CommandsAiAddcustomShortname
+    shortsituation: CommandsAiAddcustomShortsituation
+    success: CommandsAiAddcustomSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiApprovecustom:
+    success: CommandsAiApprovecustomSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiAsk:
+    error: CommandsAiAskError
+    noapi: CommandsAiAskNoapi
+    notoken: CommandsAiAskNotoken
+    success: CommandsAiAskSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiTokens:
+    success: CommandsAiTokensSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiDeletecustom:
+    notfound: CommandsAiDeletecustomNotfound
+    success: CommandsAiDeletecustomSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAiDencustom:
+    success: CommandsAiDencustomSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsChannelDynamicslowmode:
+    reason: LocalizedString
+    resetReason: LocalizedString
+    alreadySet: CommandsChannelDynamicslowmodeAlreadySet
+    channels: CommandsChannelDynamicslowmodeChannels
+    deleteSuccess: CommandsChannelDynamicslowmodeDeleteSuccess
+    missingBotPermission: CommandsChannelDynamicslowmodeMissingBotPermission
+    missingPermission: CommandsChannelDynamicslowmodeMissingPermission
+    noChannels: CommandsChannelDynamicslowmodeNoChannels
+    notSet: CommandsChannelDynamicslowmodeNotSet
+    success: CommandsChannelDynamicslowmodeSuccess
+
+@dataclass(frozen=True, slots=True)
 class CommandsFunBoop:
     title: LocalizedString
 
@@ -118,16 +778,88 @@ class CommandsFunWave:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsFun:
-    boop: CommandsFunBoop
-    hug: CommandsFunHug
-    kiss: CommandsFunKiss
-    laugh: CommandsFunLaugh
-    pat: CommandsFunPat
-    poke: CommandsFunPoke
-    slap: CommandsFunSlap
-    tickle: CommandsFunTickle
-    wave: CommandsFunWave
+class CommandsGamesBattleship:
+    alreadyAttacked: LocalizedString
+    battleTitle: LocalizedString
+    currentTurn: LocalizedString
+    gameOver: LocalizedString
+    helpAttackInstruction: LocalizedString
+    helpBoards: LocalizedString
+    helpCurrentTurn: LocalizedString
+    helpEnemyBoard: LocalizedString
+    helpGiveUp: LocalizedString
+    helpGiveUpInstruction: LocalizedString
+    helpPlayers: LocalizedString
+    helpPlayersValue: LocalizedString
+    helpTitle: LocalizedString
+    helpToAttack: LocalizedString
+    helpYourBoard: LocalizedString
+    legend: LocalizedString
+    notYourGame: LocalizedString
+    notYourTurn: LocalizedString
+    placementDescription: LocalizedString
+    placementTitle: LocalizedString
+    winner: LocalizedString
+    error: CommandsGamesBattleshipError
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesConnect4:
+    cellAlreadyTaken: LocalizedString
+    currentTurn: LocalizedString
+    description: LocalizedString
+    descriptionBotEnemy: LocalizedString
+    draw: LocalizedString
+    drop: LocalizedString
+    invalidMove: LocalizedString
+    notYourGame: LocalizedString
+    notYourTurn: LocalizedString
+    title: LocalizedString
+    winner: LocalizedString
+    error: CommandsGamesConnect4Error
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesFlagquiz:
+    description: LocalizedString
+    hint: LocalizedString
+    notYourGame: LocalizedString
+    title: LocalizedString
+    buttons: CommandsGamesFlagquizButtons
+    error: CommandsGamesFlagquizError
+    failure: CommandsGamesFlagquizFailure
+    givenUp: CommandsGamesFlagquizGivenUp
+    initial: CommandsGamesFlagquizInitial
+    modal: CommandsGamesFlagquizModal
+    success: CommandsGamesFlagquizSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesHangman:
+    description: LocalizedString
+    notYourGame: LocalizedString
+    title: LocalizedString
+    buttons: CommandsGamesHangmanButtons
+    error: CommandsGamesHangmanError
+    failure: CommandsGamesHangmanFailure
+    givenUp: CommandsGamesHangmanGivenUp
+    initial: CommandsGamesHangmanInitial
+    modal: CommandsGamesHangmanModal
+    success: CommandsGamesHangmanSuccess
+    wrongGuess: CommandsGamesHangmanWrongGuess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesWordle:
+    description: LocalizedString
+    notYourGame: LocalizedString
+    title: LocalizedString
+    buttons: CommandsGamesWordleButtons
+    error: CommandsGamesWordleError
+    failure: CommandsGamesWordleFailure
+    givenUp: CommandsGamesWordleGivenUp
+    hardMode: CommandsGamesWordleHardMode
+    initial: CommandsGamesWordleInitial
+    modal: CommandsGamesWordleModal
+    pickMode: CommandsGamesWordlePickMode
+    stats: CommandsGamesWordleStats
+    success: CommandsGamesWordleSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsGamesAkinator:
@@ -201,32 +933,139 @@ class CommandsGamesTic_tac_toe:
     winner: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGames:
-    akinator: CommandsGamesAkinator
-    memory: CommandsGamesMemory
-    rps: CommandsGamesRps
-    ticTacToe: CommandsGamesTicTacToe
-    tic_tac_toe: CommandsGamesTic_tac_toe
-    battleship: CommandsGamesBattleship
-    connect4: CommandsGamesConnect4
-    flagquiz: CommandsGamesFlagquiz
-    hangman: CommandsGamesHangman
-    wordle: CommandsGamesWordle
+class CommandsGiveawayAdd_blacklist_role:
+    alreadyBlacklisted: CommandsGiveawayAdd_blacklist_roleAlreadyBlacklisted
+    missingPermission: CommandsGiveawayAdd_blacklist_roleMissingPermission
+    pro_required: CommandsGiveawayAdd_blacklist_rolePro_required
+    success: CommandsGiveawayAdd_blacklist_roleSuccess
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveaway:
-    add_blacklist_role: CommandsGiveawayAdd_blacklist_role
-    add_blacklist_user: CommandsGiveawayAdd_blacklist_user
-    builder: CommandsGiveawayBuilder
-    editor: CommandsGiveawayEditor
-    end_giveaway: CommandsGiveawayEnd_giveaway
-    end_giveaway_command: CommandsGiveawayEnd_giveaway_command
-    endedGiveaway: CommandsGiveawayEndedGiveaway
-    giveawayEmbed: CommandsGiveawayGiveawayEmbed
-    list_blacklist: CommandsGiveawayList_blacklist
-    remove_blacklist_role: CommandsGiveawayRemove_blacklist_role
-    remove_blacklist_user: CommandsGiveawayRemove_blacklist_user
-    reroll_giveaway: CommandsGiveawayReroll_giveaway
+class CommandsGiveawayAdd_blacklist_user:
+    alreadyBlacklisted: CommandsGiveawayAdd_blacklist_userAlreadyBlacklisted
+    missingPermission: CommandsGiveawayAdd_blacklist_userMissingPermission
+    success: CommandsGiveawayAdd_blacklist_userSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilder:
+    cancel: LocalizedString
+    change_description: LocalizedString
+    channel_selected: LocalizedString
+    confirm: LocalizedString
+    enter_description: LocalizedString
+    enter_message: LocalizedString
+    enter_price: LocalizedString
+    false: LocalizedString
+    loading: LocalizedString
+    no_permission: LocalizedString
+    none: LocalizedString
+    not_authorized: LocalizedString
+    preview: LocalizedString
+    true: LocalizedString
+    winners: LocalizedString
+    with_button: LocalizedString
+    add_channel_requirement: CommandsGiveawayBuilderAdd_channel_requirement
+    change_winners: CommandsGiveawayBuilderChange_winners
+    channel: CommandsGiveawayBuilderChannel
+    custom_name: CommandsGiveawayBuilderCustom_name
+    day_requirement: CommandsGiveawayBuilderDay_requirement
+    description: CommandsGiveawayBuilderDescription
+    end_time: CommandsGiveawayBuilderEnd_time
+    message: CommandsGiveawayBuilderMessage
+    modal: CommandsGiveawayBuilderModal
+    new_message_requirement: CommandsGiveawayBuilderNew_message_requirement
+    price: CommandsGiveawayBuilderPrice
+    remove_channel_requirement: CommandsGiveawayBuilderRemove_channel_requirement
+    role_requirement: CommandsGiveawayBuilderRole_requirement
+    sponsor: CommandsGiveawayBuilderSponsor
+    start_time: CommandsGiveawayBuilderStart_time
+    success: CommandsGiveawayBuilderSuccess
+    voice_requirement: CommandsGiveawayBuilderVoice_requirement
+    winner: CommandsGiveawayBuilderWinner
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEditor:
+    loading: LocalizedString
+    no_permission: LocalizedString
+    not_authorized: LocalizedString
+    not_found: LocalizedString
+    pro_required: LocalizedString
+    success: CommandsGiveawayEditorSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveaway:
+    deleted: CommandsGiveawayEnd_giveawayDeleted
+    error: CommandsGiveawayEnd_giveawayError
+    success: CommandsGiveawayEnd_giveawaySuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveaway_command:
+    deleted: CommandsGiveawayEnd_giveaway_commandDeleted
+    error: CommandsGiveawayEnd_giveaway_commandError
+    success: CommandsGiveawayEnd_giveaway_commandSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEndedGiveaway:
+    button_text: LocalizedString
+    description: LocalizedString
+    dm: LocalizedString
+    title: LocalizedString
+    winnerDM: LocalizedString
+    no_participants: CommandsGiveawayEndedGiveawayNo_participants
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayGiveawayEmbed:
+    button_text: LocalizedString
+    channel_requirements: LocalizedString
+    day_requirement: LocalizedString
+    description: LocalizedString
+    end_time: LocalizedString
+    footer: LocalizedString
+    new_message_requirement: LocalizedString
+    no_requirements: LocalizedString
+    price: LocalizedString
+    role_requirement: LocalizedString
+    sponsor: LocalizedString
+    title: LocalizedString
+    voice_requirement: LocalizedString
+    participation_failed: CommandsGiveawayGiveawayEmbedParticipation_failed
+    participation_removed: CommandsGiveawayGiveawayEmbedParticipation_removed
+    participation_success: CommandsGiveawayGiveawayEmbedParticipation_success
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayList_blacklist:
+    description: LocalizedString
+    empty: LocalizedString
+    roles: LocalizedString
+    title: LocalizedString
+    users: LocalizedString
+    missingPermission: CommandsGiveawayList_blacklistMissingPermission
+    noBlacklist: CommandsGiveawayList_blacklistNoBlacklist
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayRemove_blacklist_role:
+    missingPermission: CommandsGiveawayRemove_blacklist_roleMissingPermission
+    notBlacklisted: CommandsGiveawayRemove_blacklist_roleNotBlacklisted
+    success: CommandsGiveawayRemove_blacklist_roleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayRemove_blacklist_user:
+    missingPermission: CommandsGiveawayRemove_blacklist_userMissingPermission
+    notBlacklisted: CommandsGiveawayRemove_blacklist_userNotBlacklisted
+    success: CommandsGiveawayRemove_blacklist_userSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayReroll_giveaway:
+    rerollAllWinners: LocalizedString
+    rerollOneWinner: LocalizedString
+    winnerDM: LocalizedString
+    error: CommandsGiveawayReroll_giveawayError
+    selectOption: CommandsGiveawayReroll_giveawaySelectOption
+    success: CommandsGiveawayReroll_giveawaySuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsHelpButtons:
+    next: LocalizedString
+    previous: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsHelpNot_authorized:
@@ -245,11 +1084,62 @@ class CommandsHelpTimeout:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsHelp:
-    not_authorized: CommandsHelpNot_authorized
-    select: CommandsHelpSelect
-    timeout: CommandsHelpTimeout
-    buttons: CommandsHelpButtons
+class CommandsImageBackground:
+    disabled: CommandsImageBackgroundDisabled
+    success: CommandsImageBackgroundSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageBlur:
+    success: CommandsImageBlurSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageCompress:
+    success: CommandsImageCompressSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageContour:
+    success: CommandsImageContourSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageDetail:
+    success: CommandsImageDetailSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageEdgeenhance:
+    success: CommandsImageEdgeenhanceSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageEmboss:
+    success: CommandsImageEmbossSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageError:
+    unknown_filter: CommandsImageErrorUnknown_filter
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageFindedges:
+    success: CommandsImageFindedgesSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageMirror:
+    invalidaxis: CommandsImageMirrorInvalidaxis
+    success: CommandsImageMirrorSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageRescale:
+    success: CommandsImageRescaleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageResize:
+    success: CommandsImageResizeSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageSharpen:
+    success: CommandsImageSharpenSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsImageSmooth:
+    success: CommandsImageSmoothSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageFilesize:
@@ -262,23 +1152,159 @@ class CommandsImageTypenotsupported:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImage:
-    filesize: CommandsImageFilesize
-    typenotsupported: CommandsImageTypenotsupported
-    background: CommandsImageBackground
-    blur: CommandsImageBlur
-    compress: CommandsImageCompress
-    contour: CommandsImageContour
-    detail: CommandsImageDetail
-    edgeenhance: CommandsImageEdgeenhance
-    emboss: CommandsImageEmboss
-    error: CommandsImageError
-    findedges: CommandsImageFindedges
-    mirror: CommandsImageMirror
-    rescale: CommandsImageRescale
-    resize: CommandsImageResize
-    sharpen: CommandsImageSharpen
-    smooth: CommandsImageSmooth
+class CommandsLevelAddlevelrole:
+    error: CommandsLevelAddlevelroleError
+    success: CommandsLevelAddlevelroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklist:
+    no_reason: LocalizedString
+    add_channel: CommandsLevelBlacklistAdd_channel
+    add_role: CommandsLevelBlacklistAdd_role
+    add_user: CommandsLevelBlacklistAdd_user
+    remove_channel: CommandsLevelBlacklistRemove_channel
+    remove_role: CommandsLevelBlacklistRemove_role
+    remove_user: CommandsLevelBlacklistRemove_user
+    show: CommandsLevelBlacklistShow
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoosts:
+    additive: LocalizedString
+    multiplicative: LocalizedString
+    add_channel: CommandsLevelBoostsAdd_channel
+    add_role: CommandsLevelBoostsAdd_role
+    add_user: CommandsLevelBoostsAdd_user
+    calculate_user_channel: CommandsLevelBoostsCalculate_user_channel
+    error: CommandsLevelBoostsError
+    remove_channel: CommandsLevelBoostsRemove_channel
+    remove_role: CommandsLevelBoostsRemove_role
+    remove_user: CommandsLevelBoostsRemove_user
+    show: CommandsLevelBoostsShow
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangelevelupmessage:
+    error: CommandsLevelChangelevelupmessageError
+    success: CommandsLevelChangelevelupmessageSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscaling:
+    xp_examples: LocalizedString
+    error: CommandsLevelChangexpscalingError
+    formulas: CommandsLevelChangexpscalingFormulas
+    scalings: CommandsLevelChangexpscalingScalings
+    success: CommandsLevelChangexpscalingSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelsystem:
+    cancel: LocalizedString
+    confirm: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+    cancel: CommandsLevelDisablelevelsystemCancel
+    confirmation: CommandsLevelDisablelevelsystemConfirmation
+    error: CommandsLevelDisablelevelsystemError
+    success: CommandsLevelDisablelevelsystemSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelupmessage:
+    error: CommandsLevelDisablelevelupmessageError
+    success: CommandsLevelDisablelevelupmessageSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelsystem:
+    description: LocalizedString
+    name: LocalizedString
+    error: CommandsLevelEnablelevelsystemError
+    success: CommandsLevelEnablelevelsystemSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelupmessage:
+    error: CommandsLevelEnablelevelupmessageError
+    success: CommandsLevelEnablelevelupmessageSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelGivexp:
+    error: CommandsLevelGivexpError
+    success: CommandsLevelGivexpSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRank:
+    data: CommandsLevelRankData
+    error: CommandsLevelRankError
+    success: CommandsLevelRankSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRemovelevelrole:
+    error: CommandsLevelRemovelevelroleError
+    success: CommandsLevelRemovelevelroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetbackground:
+    error: CommandsLevelSetbackgroundError
+    success: CommandsLevelSetbackgroundSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetlevelupchannel:
+    error: CommandsLevelSetlevelupchannelError
+    reset: CommandsLevelSetlevelupchannelReset
+    success: CommandsLevelSetlevelupchannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSettextcooldown:
+    description: LocalizedString
+    name: LocalizedString
+    error: CommandsLevelSettextcooldownError
+    params: CommandsLevelSettextcooldownParams
+    success: CommandsLevelSettextcooldownSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetvoicecooldown:
+    description: LocalizedString
+    name: LocalizedString
+    error: CommandsLevelSetvoicecooldownError
+    params: CommandsLevelSetvoicecooldownParams
+    success: CommandsLevelSetvoicecooldownSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetxp:
+    error: CommandsLevelSetxpError
+    success: CommandsLevelSetxpSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelShowlevelroles:
+    add_button: LocalizedString
+    add_role_cancelled: LocalizedString
+    add_role_prompt: LocalizedString
+    cancel_button: LocalizedString
+    data: LocalizedString
+    description: LocalizedString
+    level: LocalizedString
+    next_button: LocalizedString
+    previous_button: LocalizedString
+    remove_button: LocalizedString
+    remove_role_cancelled: LocalizedString
+    remove_role_confirm: LocalizedString
+    remove_role_data: LocalizedString
+    remove_role_prompt: LocalizedString
+    remove_role_select_placeholder: LocalizedString
+    remove_role_success: LocalizedString
+    role_select_placeholder: LocalizedString
+    select_placeholder: LocalizedString
+    title: LocalizedString
+    add_role_modal: CommandsLevelShowlevelrolesAdd_role_modal
+    error: CommandsLevelShowlevelrolesError
+    no_roles: CommandsLevelShowlevelrolesNo_roles
+    remove_role_confirm: CommandsLevelShowlevelrolesRemove_role_confirm
+    selected_level: CommandsLevelShowlevelrolesSelected_level
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelTakexp:
+    error: CommandsLevelTakexpError
+    success: CommandsLevelTakexpSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelUpdateuserroles:
+    reason: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelLeaderboard:
@@ -298,53 +1324,185 @@ class CommandsLevelShowxpscalings:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevel:
-    leaderboard: CommandsLevelLeaderboard
-    showxpscalings: CommandsLevelShowxpscalings
-    defaultlevelupmessage: LocalizedString
-    addlevelrole: CommandsLevelAddlevelrole
-    blacklist: CommandsLevelBlacklist
-    boosts: CommandsLevelBoosts
-    changelevelupmessage: CommandsLevelChangelevelupmessage
-    changexpscaling: CommandsLevelChangexpscaling
-    disablelevelsystem: CommandsLevelDisablelevelsystem
-    disablelevelupmessage: CommandsLevelDisablelevelupmessage
-    enablelevelsystem: CommandsLevelEnablelevelsystem
-    enablelevelupmessage: CommandsLevelEnablelevelupmessage
-    givexp: CommandsLevelGivexp
-    rank: CommandsLevelRank
-    removelevelrole: CommandsLevelRemovelevelrole
-    setbackground: CommandsLevelSetbackground
-    setlevelupchannel: CommandsLevelSetlevelupchannel
-    settextcooldown: CommandsLevelSettextcooldown
-    setvoicecooldown: CommandsLevelSetvoicecooldown
-    setxp: CommandsLevelSetxp
-    showlevelroles: CommandsLevelShowlevelroles
-    takexp: CommandsLevelTakexp
-    updateuserroles: CommandsLevelUpdateuserroles
+class CommandsLogsBlacklist:
+    description: LocalizedString
+    name: LocalizedString
+    add: CommandsLogsBlacklistAdd
+    remove: CommandsLogsBlacklistRemove
+    show: CommandsLogsBlacklistShow
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogs:
-    _text: LocalizedString
-    blacklist: CommandsLogsBlacklist
-    blacklistCategory: CommandsLogsBlacklistCategory
-    blacklistChannel: CommandsLogsBlacklistChannel
-    blacklistListCategory: CommandsLogsBlacklistListCategory
-    blacklistListChannel: CommandsLogsBlacklistListChannel
-    blacklistListRole: CommandsLogsBlacklistListRole
-    blacklistListUser: CommandsLogsBlacklistListUser
-    blacklistListVoiceChannel: CommandsLogsBlacklistListVoiceChannel
-    blacklistRemoveCategory: CommandsLogsBlacklistRemoveCategory
-    blacklistRemoveChannel: CommandsLogsBlacklistRemoveChannel
-    blacklistRemoveRole: CommandsLogsBlacklistRemoveRole
-    blacklistRemoveUser: CommandsLogsBlacklistRemoveUser
-    blacklistRemoveVoiceChannel: CommandsLogsBlacklistRemoveVoiceChannel
-    blacklistRole: CommandsLogsBlacklistRole
-    blacklistUser: CommandsLogsBlacklistUser
-    blacklistVoiceChannel: CommandsLogsBlacklistVoiceChannel
-    configureLogs: CommandsLogsConfigureLogs
-    removeLogChannel: CommandsLogsRemoveLogChannel
-    setLogChannel: CommandsLogsSetLogChannel
+class CommandsLogsBlacklistCategory:
+    alreadyBlacklisted: CommandsLogsBlacklistCategoryAlreadyBlacklisted
+    blacklisted: CommandsLogsBlacklistCategoryBlacklisted
+    missingChannel: CommandsLogsBlacklistCategoryMissingChannel
+    missingPermission: CommandsLogsBlacklistCategoryMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistChannel:
+    alreadyBlacklisted: CommandsLogsBlacklistChannelAlreadyBlacklisted
+    blacklisted: CommandsLogsBlacklistChannelBlacklisted
+    missingPermission: CommandsLogsBlacklistChannelMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistListCategory:
+    noBlacklistedCategories: LocalizedString
+    title: LocalizedString
+    addCategory: CommandsLogsBlacklistListCategoryAddCategory
+    missingPermission: CommandsLogsBlacklistListCategoryMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistListChannel:
+    noBlacklistedChannels: LocalizedString
+    title: LocalizedString
+    addChannel: CommandsLogsBlacklistListChannelAddChannel
+    missingPermission: CommandsLogsBlacklistListChannelMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistListRole:
+    noBlacklistedRoles: LocalizedString
+    title: LocalizedString
+    addRole: CommandsLogsBlacklistListRoleAddRole
+    missingPermission: CommandsLogsBlacklistListRoleMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistListUser:
+    noBlacklistedUsers: LocalizedString
+    title: LocalizedString
+    addUser: CommandsLogsBlacklistListUserAddUser
+    missingPermission: CommandsLogsBlacklistListUserMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistListVoiceChannel:
+    noBlacklistedChannels: LocalizedString
+    title: LocalizedString
+    addChannel: CommandsLogsBlacklistListVoiceChannelAddChannel
+    missingPermission: CommandsLogsBlacklistListVoiceChannelMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveCategory:
+    missingChannel: CommandsLogsBlacklistRemoveCategoryMissingChannel
+    missingPermission: CommandsLogsBlacklistRemoveCategoryMissingPermission
+    notBlacklisted: CommandsLogsBlacklistRemoveCategoryNotBlacklisted
+    success: CommandsLogsBlacklistRemoveCategorySuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveChannel:
+    missingPermission: CommandsLogsBlacklistRemoveChannelMissingPermission
+    notBlacklisted: CommandsLogsBlacklistRemoveChannelNotBlacklisted
+    success: CommandsLogsBlacklistRemoveChannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveRole:
+    missingPermission: CommandsLogsBlacklistRemoveRoleMissingPermission
+    notBlacklisted: CommandsLogsBlacklistRemoveRoleNotBlacklisted
+    success: CommandsLogsBlacklistRemoveRoleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveUser:
+    missingPermission: CommandsLogsBlacklistRemoveUserMissingPermission
+    notBlacklisted: CommandsLogsBlacklistRemoveUserNotBlacklisted
+    success: CommandsLogsBlacklistRemoveUserSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveVoiceChannel:
+    missingChannel: CommandsLogsBlacklistRemoveVoiceChannelMissingChannel
+    missingPermission: CommandsLogsBlacklistRemoveVoiceChannelMissingPermission
+    notBlacklisted: CommandsLogsBlacklistRemoveVoiceChannelNotBlacklisted
+    success: CommandsLogsBlacklistRemoveVoiceChannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRole:
+    alreadyBlacklisted: CommandsLogsBlacklistRoleAlreadyBlacklisted
+    blacklisted: CommandsLogsBlacklistRoleBlacklisted
+    missingPermission: CommandsLogsBlacklistRoleMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistUser:
+    alreadyBlacklisted: CommandsLogsBlacklistUserAlreadyBlacklisted
+    blacklisted: CommandsLogsBlacklistUserBlacklisted
+    missingPermission: CommandsLogsBlacklistUserMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistVoiceChannel:
+    alreadyBlacklisted: CommandsLogsBlacklistVoiceChannelAlreadyBlacklisted
+    blacklisted: CommandsLogsBlacklistVoiceChannelBlacklisted
+    missingChannel: CommandsLogsBlacklistVoiceChannelMissingChannel
+    missingPermission: CommandsLogsBlacklistVoiceChannelMissingPermission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsConfigureLogs:
+    title: LocalizedString
+    configurationEmbed: CommandsLogsConfigureLogsConfigurationEmbed
+    configuration_embed: CommandsLogsConfigureLogsConfiguration_embed
+    noLogEnabled: CommandsLogsConfigureLogsNoLogEnabled
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsRemoveLogChannel:
+    missingPermission: CommandsLogsRemoveLogChannelMissingPermission
+    notSet: CommandsLogsRemoveLogChannelNotSet
+    success: CommandsLogsRemoveLogChannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsSetLogChannel:
+    alreadySet: CommandsLogsSetLogChannelAlreadySet
+    botMissingPermission: CommandsLogsSetLogChannelBotMissingPermission
+    missingPermission: CommandsLogsSetLogChannelMissingPermission
+    success: CommandsLogsSetLogChannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathCalc:
+    error: CommandsMathCalcError
+    success: CommandsMathCalcSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathFaculty:
+    error: CommandsMathFacultyError
+    success: CommandsMathFacultySuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathNum2word:
+    description: LocalizedString
+    title: LocalizedString
+    locales: CommandsMathNum2wordLocales
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlot_function:
+    error: LocalizedString
+    no_functions_to_rename: LocalizedString
+    not_clickable: LocalizedString
+    unexpected_error: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunction:
+    default_title: LocalizedString
+    default_x_label: LocalizedString
+    default_y_label: LocalizedString
+    description: LocalizedString
+    error: LocalizedString
+    extrema: LocalizedString
+    extremum: LocalizedString
+    inflection: LocalizedString
+    inflection_points: LocalizedString
+    no_functions_to_rename: LocalizedString
+    not_clickable: LocalizedString
+    plot_title: LocalizedString
+    unexpected_error: LocalizedString
+    x_axis: LocalizedString
+    y_axis: LocalizedString
+    zero: LocalizedString
+    zeros: LocalizedString
+    buttons: CommandsMathPlotfunctionButtons
+    error: CommandsMathPlotfunctionError
+    messages: CommandsMathPlotfunctionMessages
+    modals: CommandsMathPlotfunctionModals
+    select_menus: CommandsMathPlotfunctionSelect_menus
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathRandomnumber:
+    not_truly_random: LocalizedString
+    error: CommandsMathRandomnumberError
+    success: CommandsMathRandomnumberSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsMathCalculator:
@@ -360,14 +1518,191 @@ class CommandsMathCalculator:
     variables: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsMath:
-    calculator: CommandsMathCalculator
-    calc: CommandsMathCalc
-    faculty: CommandsMathFaculty
-    num2word: CommandsMathNum2word
-    plot_function: CommandsMathPlot_function
-    plotfunction: CommandsMathPlotfunction
-    randomnumber: CommandsMathRandomnumber
+class CommandsUtilityAfk:
+    already_afk: CommandsUtilityAfkAlready_afk
+    mentions: CommandsUtilityAfkMentions
+    mentions_one: CommandsUtilityAfkMentions_one
+    opted_out: CommandsUtilityAfkOpted_out
+    removed: CommandsUtilityAfkRemoved
+    removed_no_messages: CommandsUtilityAfkRemoved_no_messages
+    success: CommandsUtilityAfkSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublish:
+    error: CommandsUtilityAutopublishError
+    remove_success: CommandsUtilityAutopublishRemove_success
+    success: CommandsUtilityAutopublishSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAvatarDecoration:
+    description: LocalizedString
+    title: LocalizedString
+    no_decoration: CommandsUtilityAvatarDecorationNo_decoration
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBoosterchannelinfo:
+    info: CommandsUtilityBoosterchannelinfoInfo
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBoosterroleinfo:
+    info: CommandsUtilityBoosterroleinfoInfo
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstars:
+    battlelog: CommandsUtilityBrawlstarsBattlelog
+    brawlers: CommandsUtilityBrawlstarsBrawlers
+    club: CommandsUtilityBrawlstarsClub
+    events: CommandsUtilityBrawlstarsEvents
+    gameModes: CommandsUtilityBrawlstarsGameModes
+    link: CommandsUtilityBrawlstarsLink
+    maps: CommandsUtilityBrawlstarsMaps
+    playerinfo: CommandsUtilityBrawlstarsPlayerinfo
+    results: CommandsUtilityBrawlstarsResults
+    unlink: CommandsUtilityBrawlstarsUnlink
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannel:
+    already_claimed: CommandsUtilityClaimboosterchannelAlready_claimed
+    category_not_found: CommandsUtilityClaimboosterchannelCategory_not_found
+    expired: CommandsUtilityClaimboosterchannelExpired
+    no_booster_channel: CommandsUtilityClaimboosterchannelNo_booster_channel
+    no_booster_role: CommandsUtilityClaimboosterchannelNo_booster_role
+    nobooster: CommandsUtilityClaimboosterchannelNobooster
+    success: CommandsUtilityClaimboosterchannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterrole:
+    already_claimed: CommandsUtilityClaimboosterroleAlready_claimed
+    expired: CommandsUtilityClaimboosterroleExpired
+    invalid_color: CommandsUtilityClaimboosterroleInvalid_color
+    no_booster_role: CommandsUtilityClaimboosterroleNo_booster_role
+    nobooster: CommandsUtilityClaimboosterroleNobooster
+    role_not_found: CommandsUtilityClaimboosterroleRole_not_found
+    success: CommandsUtilityClaimboosterroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterchannel:
+    missingPermission: CommandsUtilityDeleteboosterchannelMissingPermission
+    no_booster_channel: CommandsUtilityDeleteboosterchannelNo_booster_channel
+    success: CommandsUtilityDeleteboosterchannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterrole:
+    missingPermission: CommandsUtilityDeleteboosterroleMissingPermission
+    no_booster_role: CommandsUtilityDeleteboosterroleNo_booster_role
+    success: CommandsUtilityDeleteboosterroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedback:
+    blocked: CommandsUtilityFeedbackBlocked
+    modal: CommandsUtilityFeedbackModal
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityHelp:
+    noDescriptionAvailable: LocalizedString
+    parameters: LocalizedString
+    title: LocalizedString
+    titleNoPages: LocalizedString
+    noCommands: CommandsUtilityHelpNoCommands
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityListscheduled:
+    cancel_button: LocalizedString
+    direct_message: LocalizedString
+    edit_button: LocalizedString
+    message_details: LocalizedString
+    message_id: LocalizedString
+    no_repeat: LocalizedString
+    title: LocalizedString
+    edit_modal: CommandsUtilityListscheduledEdit_modal
+    edit_success: CommandsUtilityListscheduledEdit_success
+    error: CommandsUtilityListscheduledError
+    no_messages: CommandsUtilityListscheduledNo_messages
+    pagination: CommandsUtilityListscheduledPagination
+    truncated: CommandsUtilityListscheduledTruncated
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptin:
+    error: CommandsUtilityMessagetrackingoptinError
+    success: CommandsUtilityMessagetrackingoptinSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptout:
+    error: CommandsUtilityMessagetrackingoptoutError
+    success: CommandsUtilityMessagetrackingoptoutSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduled:
+    error: CommandsUtilityRemovescheduledError
+    no_messages: CommandsUtilityRemovescheduledNo_messages
+    not_found: CommandsUtilityRemovescheduledNot_found
+    select: CommandsUtilityRemovescheduledSelect
+    success: CommandsUtilityRemovescheduledSuccess
+    timeout: CommandsUtilityRemovescheduledTimeout
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReport:
+    accept: CommandsUtilityReportAccept
+    block_reporter: CommandsUtilityReportBlock_reporter
+    blocked: CommandsUtilityReportBlocked
+    invalid_action: CommandsUtilityReportInvalid_action
+    new_report: CommandsUtilityReportNew_report
+    no_permission: CommandsUtilityReportNo_permission
+    no_reason: CommandsUtilityReportNo_reason
+    no_report_channel: CommandsUtilityReportNo_report_channel
+    reason_too_short: CommandsUtilityReportReason_too_short
+    reject: CommandsUtilityReportReject
+    report_channel_not_found: CommandsUtilityReportReport_channel_not_found
+    report_sent: CommandsUtilityReportReport_sent
+    reporter_blocked: CommandsUtilityReportReporter_blocked
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReports:
+    accept: CommandsUtilityReportsAccept
+    block_reporter: CommandsUtilityReportsBlock_reporter
+    blocked: CommandsUtilityReportsBlocked
+    invalid_action: CommandsUtilityReportsInvalid_action
+    new_report: CommandsUtilityReportsNew_report
+    no_permission: CommandsUtilityReportsNo_permission
+    no_reason: CommandsUtilityReportsNo_reason
+    no_report_channel: CommandsUtilityReportsNo_report_channel
+    reason_too_short: CommandsUtilityReportsReason_too_short
+    reject: CommandsUtilityReportsReject
+    report_accepted: CommandsUtilityReportsReport_accepted
+    report_channel_not_found: CommandsUtilityReportsReport_channel_not_found
+    report_rejected: CommandsUtilityReportsReport_rejected
+    report_sent: CommandsUtilityReportsReport_sent
+    reporter_blocked: CommandsUtilityReportsReporter_blocked
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessage:
+    referenceMessage: LocalizedString
+    invalidTime: CommandsUtilitySchedulemessageInvalidTime
+    noBotChannelPermission: CommandsUtilitySchedulemessageNoBotChannelPermission
+    noChannelPermission: CommandsUtilitySchedulemessageNoChannelPermission
+    noDMPermission: CommandsUtilitySchedulemessageNoDMPermission
+    noRepeatPermission: CommandsUtilitySchedulemessageNoRepeatPermission
+    pastTime: CommandsUtilitySchedulemessagePastTime
+    success: CommandsUtilitySchedulemessageSuccess
+    tooManyScheduled: CommandsUtilitySchedulemessageTooManyScheduled
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterchannel:
+    already_set: CommandsUtilitySetupboosterchannelAlready_set
+    missingPermission: CommandsUtilitySetupboosterchannelMissingPermission
+    success: CommandsUtilitySetupboosterchannelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterrole:
+    already_set: CommandsUtilitySetupboosterroleAlready_set
+    missingPermission: CommandsUtilitySetupboosterroleMissingPermission
+    success: CommandsUtilitySetupboosterroleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityTwitch:
+    defaultNotificationMessage: LocalizedString
+    addTwitchLiveNotification: CommandsUtilityTwitchAddTwitchLiveNotification
+    listTwitchLiveNotifications: CommandsUtilityTwitchListTwitchLiveNotifications
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityAvatar:
@@ -382,36 +1717,8 @@ class CommandsUtilityNoBanner:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtility:
-    avatar: CommandsUtilityAvatar
-    banner: CommandsUtilityBanner
-    noBanner: CommandsUtilityNoBanner
-    afk: CommandsUtilityAfk
-    autopublish: CommandsUtilityAutopublish
-    avatarDecoration: CommandsUtilityAvatarDecoration
-    boosterchannelinfo: CommandsUtilityBoosterchannelinfo
-    boosterroleinfo: CommandsUtilityBoosterroleinfo
-    brawlstars: CommandsUtilityBrawlstars
-    claimboosterchannel: CommandsUtilityClaimboosterchannel
-    claimboosterrole: CommandsUtilityClaimboosterrole
-    deleteboosterchannel: CommandsUtilityDeleteboosterchannel
-    deleteboosterrole: CommandsUtilityDeleteboosterrole
-    feedback: CommandsUtilityFeedback
-    help: CommandsUtilityHelp
-    listscheduled: CommandsUtilityListscheduled
-    messagetrackingoptin: CommandsUtilityMessagetrackingoptin
-    messagetrackingoptout: CommandsUtilityMessagetrackingoptout
-    removescheduled: CommandsUtilityRemovescheduled
-    report: CommandsUtilityReport
-    reports: CommandsUtilityReports
-    schedulemessage: CommandsUtilitySchedulemessage
-    setupboosterchannel: CommandsUtilitySetupboosterchannel
-    setupboosterrole: CommandsUtilitySetupboosterrole
-    twitch: CommandsUtilityTwitch
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminAdd_role:
-    multipleSuccess: CommandsAdminAdd_roleMultipleSuccess
+class CommandsAdminAdd_roleMultipleSuccess:
+    action: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminAddroleAlreadyHasRole:
@@ -475,44 +1782,26 @@ class CommandsAdminAddroleUserSelect:
     placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminAddrole:
-    alreadyHasRole: CommandsAdminAddroleAlreadyHasRole
-    cancel: CommandsAdminAddroleCancel
-    confirm: CommandsAdminAddroleConfirm
-    managedRole: CommandsAdminAddroleManagedRole
-    missingPermission: CommandsAdminAddroleMissingPermission
-    missingPermissionBot: CommandsAdminAddroleMissingPermissionBot
-    noRole: CommandsAdminAddroleNoRole
-    noUser: CommandsAdminAddroleNoUser
-    roleSelect: CommandsAdminAddroleRoleSelect
-    roleTooHigh: CommandsAdminAddroleRoleTooHigh
-    roleTooHighBot: CommandsAdminAddroleRoleTooHighBot
-    success: CommandsAdminAddroleSuccess
-    userSelect: CommandsAdminAddroleUserSelect
-    cancelled: LocalizedString
-    multiplePrompt: LocalizedString
-    multipleSuccess: LocalizedString
-    noSelection: LocalizedString
+class CommandsAdminAdministrationTest_bot:
+    all_completed: LocalizedString
+    current_test_cmds: LocalizedString
+    current_test_db: LocalizedString
+    current_test_ping: LocalizedString
+    error: LocalizedString
+    starting: LocalizedString
+    tests_unavailable: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminAdministration:
-    bs_bot_info: LocalizedString
-    bs_download_failed: LocalizedString
-    bs_emoji_created: LocalizedString
-    bs_emoji_failed: LocalizedString
-    console_check: LocalizedString
-    github_auth_test: LocalizedString
-    me: LocalizedString
-    permission_list: LocalizedString
-    permission_result: LocalizedString
-    set_guild_locale: LocalizedString
-    situation_approved: LocalizedString
-    situation_creator_gone: LocalizedString
-    situation_deleted: LocalizedString
-    situation_not_found: LocalizedString
-    benchmark_bot: CommandsAdminAdministrationBenchmark_bot
-    test_bot: CommandsAdminAdministrationTest_bot
-    update: CommandsAdminAdministrationUpdate
+class CommandsAdminAdministrationBenchmark_bot:
+    error: LocalizedString
+    starting: LocalizedString
+    unavailable: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminAdministrationUpdate:
+    connection_failed: LocalizedString
+    http_error: LocalizedString
+    updating: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminBanError:
@@ -543,16 +1832,6 @@ class CommandsAdminBanSuccess:
 class CommandsAdminBanTargetTooHigh:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminBan:
-    error: CommandsAdminBanError
-    forbidden: CommandsAdminBanForbidden
-    missingPermission: CommandsAdminBanMissingPermission
-    missingPermissionBot: CommandsAdminBanMissingPermissionBot
-    success: CommandsAdminBanSuccess
-    targetTooHigh: CommandsAdminBanTargetTooHigh
-    noReasonProvided: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminBoosterRoleError:
@@ -596,21 +1875,47 @@ class CommandsAdminBoosterRoleTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminBoosterRole:
-    error: CommandsAdminBoosterRoleError
-    forbidden: CommandsAdminBoosterRoleForbidden
-    missingPermission: CommandsAdminBoosterRoleMissingPermission
-    missingPermissionBot: CommandsAdminBoosterRoleMissingPermissionBot
-    roleRemoved: CommandsAdminBoosterRoleRoleRemoved
-    roleTooHighBot: CommandsAdminBoosterRoleRoleTooHighBot
-    success: CommandsAdminBoosterRoleSuccess
-    targetTooHigh: CommandsAdminBoosterRoleTargetTooHigh
+class CommandsAdminChannelFarewell:
+    defaultFarewellMessage: LocalizedString
+    memberNumber: LocalizedString
+    alreadySet: CommandsAdminChannelFarewellAlreadySet
+    deleteSuccess: CommandsAdminChannelFarewellDeleteSuccess
+    missingBotPermission: CommandsAdminChannelFarewellMissingBotPermission
+    missingPermission: CommandsAdminChannelFarewellMissingPermission
+    missingPro: CommandsAdminChannelFarewellMissingPro
+    notSet: CommandsAdminChannelFarewellNotSet
+    success: CommandsAdminChannelFarewellSuccess
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminChannel:
-    farewell: CommandsAdminChannelFarewell
-    media: CommandsAdminChannelMedia
-    welcome: CommandsAdminChannelWelcome
+class CommandsAdminChannelMedia:
+    alreadySet: CommandsAdminChannelMediaAlreadySet
+    deleteSuccess: CommandsAdminChannelMediaDeleteSuccess
+    infoMessage: CommandsAdminChannelMediaInfoMessage
+    infoMessageDelete: CommandsAdminChannelMediaInfoMessageDelete
+    missingPermission: CommandsAdminChannelMediaMissingPermission
+    missingPermissionBot: CommandsAdminChannelMediaMissingPermissionBot
+    notSet: CommandsAdminChannelMediaNotSet
+    onlyMedia: CommandsAdminChannelMediaOnlyMedia
+    optedOut: CommandsAdminChannelMediaOptedOut
+    success: CommandsAdminChannelMediaSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcome:
+    defaultWelcomeMessage: LocalizedString
+    memberNumber: LocalizedString
+    alreadySet: CommandsAdminChannelWelcomeAlreadySet
+    deleteSuccess: CommandsAdminChannelWelcomeDeleteSuccess
+    missingBotPermission: CommandsAdminChannelWelcomeMissingBotPermission
+    missingPermission: CommandsAdminChannelWelcomeMissingPermission
+    missingPro: CommandsAdminChannelWelcomeMissingPro
+    notSet: CommandsAdminChannelWelcomeNotSet
+    success: CommandsAdminChannelWelcomeSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminClose_ticketError:
+    ticketNotFound1: LocalizedString
+    ticketNotFound2: LocalizedString
+    ticketNotFound3: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminClose_ticketButton:
@@ -626,10 +1931,21 @@ class CommandsAdminClose_ticketSuccess:
     viewThread: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminClose_ticket:
-    button: CommandsAdminClose_ticketButton
-    success: CommandsAdminClose_ticketSuccess
-    error: CommandsAdminClose_ticketError
+class CommandsAdminCopy7tvAddModal:
+    downloadError: LocalizedString
+    error: LocalizedString
+    invalidNumber: LocalizedString
+    label: LocalizedString
+    limitAnimated: LocalizedString
+    limitStatic: LocalizedString
+    placeholder: LocalizedString
+    reason: LocalizedString
+    title: LocalizedString
+    success: CommandsAdminCopy7tvAddModalSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopy7tvError:
+    notFound: CommandsAdminCopy7tvErrorNotFound
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminCopy7tvMissingPermission:
@@ -642,15 +1958,18 @@ class CommandsAdminCopy7tvMissingPermissionBot:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminCopy7tv:
-    missingPermission: CommandsAdminCopy7tvMissingPermission
-    missingPermissionBot: CommandsAdminCopy7tvMissingPermissionBot
-    footer: LocalizedString
-    noEmotes: LocalizedString
-    notYourEmbed: LocalizedString
+class CommandsAdminCopyEmojiError:
+    description: LocalizedString
     title: LocalizedString
-    addModal: CommandsAdminCopy7tvAddModal
-    error: CommandsAdminCopy7tvError
+    limitReached: CommandsAdminCopyEmojiErrorLimitReached
+    noEmojis: CommandsAdminCopyEmojiErrorNoEmojis
+    proRequired: CommandsAdminCopyEmojiErrorProRequired
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmojiSuccess:
+    description: LocalizedString
+    title: LocalizedString
+    multiple: CommandsAdminCopyEmojiSuccessMultiple
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminCopyEmojiMissingPermission:
@@ -668,15 +1987,6 @@ class CommandsAdminCopyEmojiPartialSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmoji:
-    missingPermission: CommandsAdminCopyEmojiMissingPermission
-    missingPermissionBot: CommandsAdminCopyEmojiMissingPermissionBot
-    partialSuccess: CommandsAdminCopyEmojiPartialSuccess
-    reason: LocalizedString
-    error: CommandsAdminCopyEmojiError
-    success: CommandsAdminCopyEmojiSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminCopyroleMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -692,13 +2002,6 @@ class CommandsAdminCopyroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminCopyrole:
-    missingPermission: CommandsAdminCopyroleMissingPermission
-    missingPermissionBot: CommandsAdminCopyroleMissingPermissionBot
-    success: CommandsAdminCopyroleSuccess
-    reason: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminCreateEmojiMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -707,18 +2010,6 @@ class CommandsAdminCreateEmojiMissingPermission:
 class CommandsAdminCreateEmojiSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCreateEmoji:
-    missingPermission: CommandsAdminCreateEmojiMissingPermission
-    success: CommandsAdminCreateEmojiSuccess
-    allRoles: LocalizedString
-    error: LocalizedString
-    imageDownloadError: LocalizedString
-    roleSelect: LocalizedString
-    roleSelectPlaceholder: LocalizedString
-    role_select: LocalizedString
-    role_selectPlaceholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminCreate_ticketButton:
@@ -748,15 +2039,6 @@ class CommandsAdminCreate_ticketMissingPermission:
 class CommandsAdminCreate_ticketSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCreate_ticket:
-    button: CommandsAdminCreate_ticketButton
-    embed: CommandsAdminCreate_ticketEmbed
-    error: CommandsAdminCreate_ticketError
-    missingBotPermission: CommandsAdminCreate_ticketMissingBotPermission
-    missingPermission: CommandsAdminCreate_ticketMissingPermission
-    success: CommandsAdminCreate_ticketSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminCreateroleForbidden:
@@ -824,43 +2106,6 @@ class CommandsAdminCreateroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminCreaterole:
-    forbidden: CommandsAdminCreateroleForbidden
-    http_error: CommandsAdminCreateroleHttp_error
-    iconTooLarge: CommandsAdminCreateroleIconTooLarge
-    invalidColor: CommandsAdminCreateroleInvalidColor
-    invalidIcon: CommandsAdminCreateroleInvalidIcon
-    missingName: CommandsAdminCreateroleMissingName
-    missingPermission: CommandsAdminCreateroleMissingPermission
-    missingPermissionBot: CommandsAdminCreateroleMissingPermissionBot
-    nameTooLong: CommandsAdminCreateroleNameTooLong
-    notfound: CommandsAdminCreateroleNotfound
-    reasonTooLong: CommandsAdminCreateroleReasonTooLong
-    roleIconsNotEnabled: CommandsAdminCreateroleRoleIconsNotEnabled
-    success: CommandsAdminCreateroleSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminDatabase_sync:
-    aborted: LocalizedString
-    analyzing: LocalizedString
-    backup_error: LocalizedString
-    backup_success: LocalizedString
-    cancel_token: LocalizedString
-    download_error: LocalizedString
-    download_failed: LocalizedString
-    downloading: LocalizedString
-    filter_error: LocalizedString
-    import_error: LocalizedString
-    importing: LocalizedString
-    no_attachment: LocalizedString
-    no_schema_found: LocalizedString
-    preparing_import: LocalizedString
-    schema_prompt: LocalizedString
-    schema_warning: LocalizedString
-    success: LocalizedString
-    timeout: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminDeleteroleForbidden:
     description: LocalizedString
     title: LocalizedString
@@ -901,20 +2146,35 @@ class CommandsAdminDeleteroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminDeleterole:
-    forbidden: CommandsAdminDeleteroleForbidden
-    http_error: CommandsAdminDeleteroleHttp_error
-    missingPermission: CommandsAdminDeleteroleMissingPermission
-    missingPermissionBot: CommandsAdminDeleteroleMissingPermissionBot
-    notfound: CommandsAdminDeleteroleNotfound
-    roleTooHigh: CommandsAdminDeleteroleRoleTooHigh
-    roleTooHighBot: CommandsAdminDeleteroleRoleTooHighBot
-    success: CommandsAdminDeleteroleSuccess
-    noRole: LocalizedString
+class CommandsAdminEmbedButtons:
+    addField: LocalizedString
+    editField: LocalizedString
+    preview: LocalizedString
+    removeField: LocalizedString
+    send: LocalizedString
+    setColor: LocalizedString
+    setDescription: LocalizedString
+    setFooter: LocalizedString
+    setImage: LocalizedString
+    setThumbnail: LocalizedString
+    setTitle: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminDemo_message:
-    confirm: LocalizedString
+class CommandsAdminEmbedModals:
+    colorModal: CommandsAdminEmbedModalsColorModal
+    editFieldModal: CommandsAdminEmbedModalsEditFieldModal
+    fieldModal: CommandsAdminEmbedModalsFieldModal
+    footerModal: CommandsAdminEmbedModalsFooterModal
+    imageModal: CommandsAdminEmbedModalsImageModal
+    removeFieldModal: CommandsAdminEmbedModalsRemoveFieldModal
+    thumbnailModal: CommandsAdminEmbedModalsThumbnailModal
+    titleModal: CommandsAdminEmbedModalsTitleModal
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedSetDescription:
+    descriptionUpdated: LocalizedString
+    message: LocalizedString
+    timeout: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminEmbedMissingPermission:
@@ -927,38 +2187,6 @@ class CommandsAdminEmbedMissingTitle:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminEmbed:
-    missingPermission: CommandsAdminEmbedMissingPermission
-    missingTitle: CommandsAdminEmbedMissingTitle
-    colorUpdated: LocalizedString
-    creatorDescription: LocalizedString
-    creatorTitle: LocalizedString
-    descriptionUpdated: LocalizedString
-    embedSent: LocalizedString
-    fieldAdded: LocalizedString
-    fieldEdited: LocalizedString
-    fieldRemoved: LocalizedString
-    footerUpdated: LocalizedString
-    imageUpdated: LocalizedString
-    invalidColorCode: LocalizedString
-    maxFieldsReached: LocalizedString
-    noFieldsToEdit: LocalizedString
-    noFieldsToRemove: LocalizedString
-    previewSent: LocalizedString
-    thumbnailUpdated: LocalizedString
-    titleUpdated: LocalizedString
-    unauthorizedUser: LocalizedString
-    buttons: CommandsAdminEmbedButtons
-    modals: CommandsAdminEmbedModals
-    setDescription: CommandsAdminEmbedSetDescription
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminFeedback:
-    added: LocalizedString
-    blocked: LocalizedString
-    unblocked: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminJoinToCreateListenerChannelDeleted:
     description: LocalizedString
     title: LocalizedString
@@ -967,11 +2195,6 @@ class CommandsAdminJoinToCreateListenerChannelDeleted:
 class CommandsAdminJoinToCreateListenerSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminJoinToCreateListener:
-    channelDeleted: CommandsAdminJoinToCreateListenerChannelDeleted
-    success: CommandsAdminJoinToCreateListenerSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminJointocreatechannelAlreadySet:
@@ -987,12 +2210,6 @@ class CommandsAdminJointocreatechannelMissingPermission:
 class CommandsAdminJointocreatechannelSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminJointocreatechannel:
-    alreadySet: CommandsAdminJointocreatechannelAlreadySet
-    missingPermission: CommandsAdminJointocreatechannelMissingPermission
-    success: CommandsAdminJointocreatechannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminKickError:
@@ -1025,16 +2242,6 @@ class CommandsAdminKickTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminKick:
-    error: CommandsAdminKickError
-    forbidden: CommandsAdminKickForbidden
-    missingPermission: CommandsAdminKickMissingPermission
-    missingPermissionBot: CommandsAdminKickMissingPermissionBot
-    success: CommandsAdminKickSuccess
-    targetTooHigh: CommandsAdminKickTargetTooHigh
-    noReasonProvided: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminLockAlreadyLocked:
     description: LocalizedString
     title: LocalizedString
@@ -1065,16 +2272,6 @@ class CommandsAdminLockSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminLock:
-    alreadyLocked: CommandsAdminLockAlreadyLocked
-    error: CommandsAdminLockError
-    forbidden: CommandsAdminLockForbidden
-    missingPermission: CommandsAdminLockMissingPermission
-    missingPermissionBot: CommandsAdminLockMissingPermissionBot
-    success: CommandsAdminLockSuccess
-    channelLockedMessage: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminMoveroleError:
     description: LocalizedString
     title: LocalizedString
@@ -1103,15 +2300,6 @@ class CommandsAdminMoveroleRoleTooHigh:
 class CommandsAdminMoveroleSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminMoverole:
-    error: CommandsAdminMoveroleError
-    forbidden: CommandsAdminMoveroleForbidden
-    missingPermission: CommandsAdminMoveroleMissingPermission
-    missingPermissionBot: CommandsAdminMoveroleMissingPermissionBot
-    roleTooHigh: CommandsAdminMoveroleRoleTooHigh
-    success: CommandsAdminMoveroleSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminNicknameChanged:
@@ -1149,16 +2337,6 @@ class CommandsAdminNicknameTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminNickname:
-    changed: CommandsAdminNicknameChanged
-    error: CommandsAdminNicknameError
-    forbidden: CommandsAdminNicknameForbidden
-    missingPermission: CommandsAdminNicknameMissingPermission
-    missingPermissionBot: CommandsAdminNicknameMissingPermissionBot
-    removed: CommandsAdminNicknameRemoved
-    targetTooHigh: CommandsAdminNicknameTargetTooHigh
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminNukeMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -1174,24 +2352,16 @@ class CommandsAdminNukeNotfound:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminNuke:
-    missingPermission: CommandsAdminNukeMissingPermission
-    missingPermissionBot: CommandsAdminNukeMissingPermissionBot
-    notfound: CommandsAdminNukeNotfound
-    cancel: LocalizedString
-    cancelledMessage: LocalizedString
-    confirm: LocalizedString
-    confirmationDescription: LocalizedString
-    confirmationPrompt: LocalizedString
-    confirmationTitle: LocalizedString
-    confirmationWord: LocalizedString
-    forbiddenError: LocalizedString
-    httpError: LocalizedString
-    incorrectConfirmation: LocalizedString
-    nukeReason: LocalizedString
-    nukeSuccessMessage: LocalizedString
-    timeoutMessage: LocalizedString
-    unauthorizedUser: LocalizedString
+class CommandsAdminOpen_ticketError:
+    channelMissingPermission: LocalizedString
+    ticketCreated: LocalizedString
+    ticketNotCreated: LocalizedString
+    ticketNotFound: LocalizedString
+    success: CommandsAdminOpen_ticketErrorSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminOpen_ticketSuccess:
+    ticketCreated: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminOpen_ticketOptedOutWarning:
@@ -1199,12 +2369,6 @@ class CommandsAdminOpen_ticketOptedOutWarning:
     decline: LocalizedString
     declined: LocalizedString
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminOpen_ticket:
-    optedOutWarning: CommandsAdminOpen_ticketOptedOutWarning
-    error: CommandsAdminOpen_ticketError
-    success: CommandsAdminOpen_ticketSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminPurgeError:
@@ -1237,17 +2401,8 @@ class CommandsAdminPurgeSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminPurge:
-    error: CommandsAdminPurgeError
-    forbidden: CommandsAdminPurgeForbidden
-    invalidAmount: CommandsAdminPurgeInvalidAmount
-    missingPermission: CommandsAdminPurgeMissingPermission
-    missingPermissionBot: CommandsAdminPurgeMissingPermissionBot
-    success: CommandsAdminPurgeSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminRemove_role:
-    multipleSuccess: CommandsAdminRemove_roleMultipleSuccess
+class CommandsAdminRemove_roleMultipleSuccess:
+    action: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminRemove_timeoutError:
@@ -1285,17 +2440,6 @@ class CommandsAdminRemove_timeoutTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminRemove_timeout:
-    error: CommandsAdminRemove_timeoutError
-    forbidden: CommandsAdminRemove_timeoutForbidden
-    missingPermission: CommandsAdminRemove_timeoutMissingPermission
-    missingPermissionBot: CommandsAdminRemove_timeoutMissingPermissionBot
-    notTimedOut: CommandsAdminRemove_timeoutNotTimedOut
-    success: CommandsAdminRemove_timeoutSuccess
-    targetTooHigh: CommandsAdminRemove_timeoutTargetTooHigh
-    noReasonProvided: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminRemovejointocreatechannelAlreadySet:
     description: LocalizedString
     title: LocalizedString
@@ -1314,13 +2458,6 @@ class CommandsAdminRemovejointocreatechannelNotSet:
 class CommandsAdminRemovejointocreatechannelSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminRemovejointocreatechannel:
-    alreadySet: CommandsAdminRemovejointocreatechannelAlreadySet
-    missingPermission: CommandsAdminRemovejointocreatechannelMissingPermission
-    notSet: CommandsAdminRemovejointocreatechannelNotSet
-    success: CommandsAdminRemovejointocreatechannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminRemoveroleCancel:
@@ -1378,32 +2515,37 @@ class CommandsAdminRemoveroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminRemoverole:
-    cancel: CommandsAdminRemoveroleCancel
-    confirm: CommandsAdminRemoveroleConfirm
-    doesNotHaveRole: CommandsAdminRemoveroleDoesNotHaveRole
-    managedRole: CommandsAdminRemoveroleManagedRole
-    missingPermission: CommandsAdminRemoveroleMissingPermission
-    missingPermissionBot: CommandsAdminRemoveroleMissingPermissionBot
-    noRole: CommandsAdminRemoveroleNoRole
-    noUser: CommandsAdminRemoveroleNoUser
-    roleTooHigh: CommandsAdminRemoveroleRoleTooHigh
-    roleTooHighBot: CommandsAdminRemoveroleRoleTooHighBot
-    success: CommandsAdminRemoveroleSuccess
-    cancelled: LocalizedString
-    error: LocalizedString
-    multiplePrompt: LocalizedString
-    multipleSuccess: LocalizedString
-    noSelection: LocalizedString
-    selectRoles: LocalizedString
-    selectUsers: LocalizedString
+class CommandsAdminReportsRemove_channel:
+    missingPermission: CommandsAdminReportsRemove_channelMissingPermission
+    noChannel: CommandsAdminReportsRemove_channelNoChannel
+    success: CommandsAdminReportsRemove_channelSuccess
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminReports:
-    remove_channel: CommandsAdminReportsRemove_channel
-    set_channel: CommandsAdminReportsSet_channel
-    show_reports: CommandsAdminReportsShow_reports
-    unblock_reporter: CommandsAdminReportsUnblock_reporter
+class CommandsAdminReportsSet_channel:
+    alreadySet: CommandsAdminReportsSet_channelAlreadySet
+    missingPermission: CommandsAdminReportsSet_channelMissingPermission
+    missingPermissionBot: CommandsAdminReportsSet_channelMissingPermissionBot
+    success: CommandsAdminReportsSet_channelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reports:
+    not_your_reports: LocalizedString
+    not_your_warns: LocalizedString
+    block: CommandsAdminReportsShow_reportsBlock
+    missingPermission: CommandsAdminReportsShow_reportsMissingPermission
+    next: CommandsAdminReportsShow_reportsNext
+    noReports: CommandsAdminReportsShow_reportsNoReports
+    previous: CommandsAdminReportsShow_reportsPrevious
+    remove: CommandsAdminReportsShow_reportsRemove
+    report: CommandsAdminReportsShow_reportsReport
+    resolve: CommandsAdminReportsShow_reportsResolve
+    unblock: CommandsAdminReportsShow_reportsUnblock
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsUnblock_reporter:
+    missingPermission: CommandsAdminReportsUnblock_reporterMissingPermission
+    notBlocked: CommandsAdminReportsUnblock_reporterNotBlocked
+    success: CommandsAdminReportsUnblock_reporterSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminSayError:
@@ -1426,13 +2568,6 @@ class CommandsAdminSaySuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminSay:
-    error: CommandsAdminSayError
-    missingPermission: CommandsAdminSayMissingPermission
-    missingPermissionBot: CommandsAdminSayMissingPermissionBot
-    success: CommandsAdminSaySuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminSetLocaleMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -1441,12 +2576,6 @@ class CommandsAdminSetLocaleMissingPermission:
 class CommandsAdminSetLocaleSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminSetLocale:
-    missingPermission: CommandsAdminSetLocaleMissingPermission
-    success: CommandsAdminSetLocaleSuccess
-    setLocaleReason: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminSlowmodeDisabled:
@@ -1482,22 +2611,6 @@ class CommandsAdminSlowmodeMissingPermission:
 class CommandsAdminSlowmodeMissingPermissionBot:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminSlowmode:
-    disabled: CommandsAdminSlowmodeDisabled
-    enabled: CommandsAdminSlowmodeEnabled
-    error: CommandsAdminSlowmodeError
-    forbidden: CommandsAdminSlowmodeForbidden
-    invalidDuration: CommandsAdminSlowmodeInvalidDuration
-    missingPermission: CommandsAdminSlowmodeMissingPermission
-    missingPermissionBot: CommandsAdminSlowmodeMissingPermissionBot
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminSync:
-    completed: LocalizedString
-    failed: LocalizedString
-    in_progress: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminTimeoutAlreadyTimedOut:
@@ -1540,21 +2653,24 @@ class CommandsAdminTimeoutTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTimeout:
-    alreadyTimedOut: CommandsAdminTimeoutAlreadyTimedOut
-    error: CommandsAdminTimeoutError
-    forbidden: CommandsAdminTimeoutForbidden
-    invalidDuration: CommandsAdminTimeoutInvalidDuration
-    missingPermission: CommandsAdminTimeoutMissingPermission
-    missingPermissionBot: CommandsAdminTimeoutMissingPermissionBot
-    success: CommandsAdminTimeoutSuccess
-    targetTooHigh: CommandsAdminTimeoutTargetTooHigh
-    noReasonProvided: LocalizedString
+class CommandsAdminTrigger_messagesAdd:
+    missingPermission: CommandsAdminTrigger_messagesAddMissingPermission
+    success: CommandsAdminTrigger_messagesAddSuccess
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messages:
-    add: CommandsAdminTrigger_messagesAdd
-    configure: CommandsAdminTrigger_messagesConfigure
+class CommandsAdminTrigger_messagesConfigure:
+    add_channel: CommandsAdminTrigger_messagesConfigureAdd_channel
+    down: CommandsAdminTrigger_messagesConfigureDown
+    missingPermission: CommandsAdminTrigger_messagesConfigureMissingPermission
+    modal: CommandsAdminTrigger_messagesConfigureModal
+    new: CommandsAdminTrigger_messagesConfigureNew
+    next: CommandsAdminTrigger_messagesConfigureNext
+    noTriggerMessages: CommandsAdminTrigger_messagesConfigureNoTriggerMessages
+    previous: CommandsAdminTrigger_messagesConfigurePrevious
+    remove: CommandsAdminTrigger_messagesConfigureRemove
+    remove_channel: CommandsAdminTrigger_messagesConfigureRemove_channel
+    trigger: CommandsAdminTrigger_messagesConfigureTrigger
+    up: CommandsAdminTrigger_messagesConfigureUp
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminUnbanError:
@@ -1587,16 +2703,6 @@ class CommandsAdminUnbanUserNotFound:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminUnban:
-    error: CommandsAdminUnbanError
-    forbidden: CommandsAdminUnbanForbidden
-    missingPermission: CommandsAdminUnbanMissingPermission
-    missingPermissionBot: CommandsAdminUnbanMissingPermissionBot
-    success: CommandsAdminUnbanSuccess
-    userNotFound: CommandsAdminUnbanUserNotFound
-    noReasonProvided: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminUnlockError:
     description: LocalizedString
     title: LocalizedString
@@ -1627,27 +2733,6 @@ class CommandsAdminUnlockSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminUnlock:
-    error: CommandsAdminUnlockError
-    forbidden: CommandsAdminUnlockForbidden
-    missingPermission: CommandsAdminUnlockMissingPermission
-    missingPermissionBot: CommandsAdminUnlockMissingPermissionBot
-    notLocked: CommandsAdminUnlockNotLocked
-    success: CommandsAdminUnlockSuccess
-    channelUnlockedMessage: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminUpdate_text:
-    cancelled: LocalizedString
-    confirm: LocalizedString
-    confirm2: LocalizedString
-    enter_password: LocalizedString
-    expected_password: LocalizedString
-    say_wallah: LocalizedString
-    timeout: LocalizedString
-    wrong_password: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsAdminViewwarnsMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -1658,20 +2743,8 @@ class CommandsAdminViewwarnsNoWarnings:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminViewwarns:
-    missingPermission: CommandsAdminViewwarnsMissingPermission
-    noWarnings: CommandsAdminViewwarnsNoWarnings
-    description: LocalizedString
-    never: LocalizedString
-    nextButton: LocalizedString
-    noReason: LocalizedString
-    pageFooter: LocalizedString
-    prevButton: LocalizedString
-    removeButton: LocalizedString
-    title: LocalizedString
-    unauthorizedUser: LocalizedString
-    warningDetails: LocalizedString
-    warningEntry: LocalizedString
+class CommandsAdminWarnReason:
+    reached_warnings: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminWarnDmNotification:
@@ -1694,13 +2767,13 @@ class CommandsAdminWarnTargetTooHigh:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminWarn:
-    dmNotification: CommandsAdminWarnDmNotification
-    missingPermission: CommandsAdminWarnMissingPermission
-    success: CommandsAdminWarnSuccess
-    targetTooHigh: CommandsAdminWarnTargetTooHigh
-    noReasonProvided: LocalizedString
-    reason: CommandsAdminWarnReason
+class CommandsAdminWarnconfigModal:
+    title: LocalizedString
+    ban_threshold: CommandsAdminWarnconfigModalBan_threshold
+    kick_threshold: CommandsAdminWarnconfigModalKick_threshold
+    timeout_duration: CommandsAdminWarnconfigModalTimeout_duration
+    timeout_threshold: CommandsAdminWarnconfigModalTimeout_threshold
+    warnexpiration: CommandsAdminWarnconfigModalWarnexpiration
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminWarnconfigCurrentConfig:
@@ -1721,14 +2794,6 @@ class CommandsAdminWarnconfigMissingPermission:
 class CommandsAdminWarnconfigSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfig:
-    currentConfig: CommandsAdminWarnconfigCurrentConfig
-    error: CommandsAdminWarnconfigError
-    missingPermission: CommandsAdminWarnconfigMissingPermission
-    success: CommandsAdminWarnconfigSuccess
-    modal: CommandsAdminWarnconfigModal
 
 @dataclass(frozen=True, slots=True)
 class CommandsAiAddcustomAlreadyexists:
@@ -1791,28 +2856,9 @@ class CommandsAiAddcustomSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAiAddcustom:
-    alreadyexists: CommandsAiAddcustomAlreadyexists
-    invalidfrequency_penalty: CommandsAiAddcustomInvalidfrequency_penalty
-    invalidpresence_penalty: CommandsAiAddcustomInvalidpresence_penalty
-    invalidtemperature: CommandsAiAddcustomInvalidtemperature
-    invalidtop_p: CommandsAiAddcustomInvalidtop_p
-    longname: CommandsAiAddcustomLongname
-    longsituation: CommandsAiAddcustomLongsituation
-    namealreadyexists: CommandsAiAddcustomNamealreadyexists
-    notplus: CommandsAiAddcustomNotplus
-    shortname: CommandsAiAddcustomShortname
-    shortsituation: CommandsAiAddcustomShortsituation
-    success: CommandsAiAddcustomSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsAiApprovecustomSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAiApprovecustom:
-    success: CommandsAiApprovecustomSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAiAskError:
@@ -1835,20 +2881,9 @@ class CommandsAiAskSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAiAsk:
-    error: CommandsAiAskError
-    noapi: CommandsAiAskNoapi
-    notoken: CommandsAiAskNotoken
-    success: CommandsAiAskSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsAiTokensSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAiTokens:
-    success: CommandsAiTokensSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsAiDeletecustomNotfound:
@@ -1861,18 +2896,9 @@ class CommandsAiDeletecustomSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAiDeletecustom:
-    notfound: CommandsAiDeletecustomNotfound
-    success: CommandsAiDeletecustomSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsAiDencustomSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAiDencustom:
-    success: CommandsAiDencustomSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsChannelDynamicslowmodeAlreadySet:
@@ -1915,57 +2941,29 @@ class CommandsChannelDynamicslowmodeSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsChannelDynamicslowmode:
-    alreadySet: CommandsChannelDynamicslowmodeAlreadySet
-    channels: CommandsChannelDynamicslowmodeChannels
-    deleteSuccess: CommandsChannelDynamicslowmodeDeleteSuccess
-    missingBotPermission: CommandsChannelDynamicslowmodeMissingBotPermission
-    missingPermission: CommandsChannelDynamicslowmodeMissingPermission
-    noChannels: CommandsChannelDynamicslowmodeNoChannels
-    notSet: CommandsChannelDynamicslowmodeNotSet
-    success: CommandsChannelDynamicslowmodeSuccess
-    reason: LocalizedString
-    resetReason: LocalizedString
+class CommandsGamesBattleshipError:
+    invalidColumn: LocalizedString
+    invalidCoordinate: LocalizedString
+    invalidRow: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGamesBattleship:
-    alreadyAttacked: LocalizedString
-    battleTitle: LocalizedString
-    currentTurn: LocalizedString
-    gameOver: LocalizedString
-    helpAttackInstruction: LocalizedString
-    helpBoards: LocalizedString
-    helpCurrentTurn: LocalizedString
-    helpEnemyBoard: LocalizedString
-    helpGiveUp: LocalizedString
-    helpGiveUpInstruction: LocalizedString
-    helpPlayers: LocalizedString
-    helpPlayersValue: LocalizedString
-    helpTitle: LocalizedString
-    helpToAttack: LocalizedString
-    helpYourBoard: LocalizedString
-    legend: LocalizedString
-    notYourGame: LocalizedString
-    notYourTurn: LocalizedString
-    placementDescription: LocalizedString
-    placementTitle: LocalizedString
-    winner: LocalizedString
-    error: CommandsGamesBattleshipError
+class CommandsGamesConnect4Error:
+    no_plus: CommandsGamesConnect4ErrorNo_plus
 
 @dataclass(frozen=True, slots=True)
-class CommandsGamesConnect4:
-    cellAlreadyTaken: LocalizedString
-    currentTurn: LocalizedString
-    description: LocalizedString
-    descriptionBotEnemy: LocalizedString
-    draw: LocalizedString
-    drop: LocalizedString
-    invalidMove: LocalizedString
-    notYourGame: LocalizedString
-    notYourTurn: LocalizedString
+class CommandsGamesFlagquizButtons:
+    giveUp: LocalizedString
+    guess: LocalizedString
+    hint: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesFlagquizError:
+    hintUsed: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesFlagquizModal:
     title: LocalizedString
-    winner: LocalizedString
-    error: CommandsGamesConnect4Error
+    input: CommandsGamesFlagquizModalInput
 
 @dataclass(frozen=True, slots=True)
 class CommandsGamesFlagquizFailure:
@@ -1988,18 +2986,14 @@ class CommandsGamesFlagquizSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGamesFlagquiz:
-    failure: CommandsGamesFlagquizFailure
-    givenUp: CommandsGamesFlagquizGivenUp
-    initial: CommandsGamesFlagquizInitial
-    success: CommandsGamesFlagquizSuccess
-    description: LocalizedString
-    hint: LocalizedString
-    notYourGame: LocalizedString
+class CommandsGamesHangmanButtons:
+    giveUp: LocalizedString
+    guess: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesHangmanModal:
     title: LocalizedString
-    buttons: CommandsGamesFlagquizButtons
-    error: CommandsGamesFlagquizError
-    modal: CommandsGamesFlagquizModal
+    input: CommandsGamesHangmanModalInput
 
 @dataclass(frozen=True, slots=True)
 class CommandsGamesHangmanError:
@@ -2033,18 +3027,22 @@ class CommandsGamesHangmanWrongGuess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGamesHangman:
-    error: CommandsGamesHangmanError
-    failure: CommandsGamesHangmanFailure
-    givenUp: CommandsGamesHangmanGivenUp
-    initial: CommandsGamesHangmanInitial
-    success: CommandsGamesHangmanSuccess
-    wrongGuess: CommandsGamesHangmanWrongGuess
+class CommandsGamesWordleButtons:
+    giveUp: LocalizedString
+    guess: LocalizedString
+    playHard: LocalizedString
+    playNormal: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesWordleInitial:
     description: LocalizedString
-    notYourGame: LocalizedString
     title: LocalizedString
-    buttons: CommandsGamesHangmanButtons
-    modal: CommandsGamesHangmanModal
+    descriptionextra: CommandsGamesWordleInitialDescriptionextra
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesWordleModal:
+    title: LocalizedString
+    input: CommandsGamesWordleModalInput
 
 @dataclass(frozen=True, slots=True)
 class CommandsGamesWordleError:
@@ -2081,22 +3079,6 @@ class CommandsGamesWordleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGamesWordle:
-    error: CommandsGamesWordleError
-    failure: CommandsGamesWordleFailure
-    givenUp: CommandsGamesWordleGivenUp
-    hardMode: CommandsGamesWordleHardMode
-    pickMode: CommandsGamesWordlePickMode
-    stats: CommandsGamesWordleStats
-    success: CommandsGamesWordleSuccess
-    description: LocalizedString
-    notYourGame: LocalizedString
-    title: LocalizedString
-    buttons: CommandsGamesWordleButtons
-    initial: CommandsGamesWordleInitial
-    modal: CommandsGamesWordleModal
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayAdd_blacklist_roleAlreadyBlacklisted:
     description: LocalizedString
     title: LocalizedString
@@ -2117,13 +3099,6 @@ class CommandsGiveawayAdd_blacklist_roleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayAdd_blacklist_role:
-    alreadyBlacklisted: CommandsGiveawayAdd_blacklist_roleAlreadyBlacklisted
-    missingPermission: CommandsGiveawayAdd_blacklist_roleMissingPermission
-    pro_required: CommandsGiveawayAdd_blacklist_rolePro_required
-    success: CommandsGiveawayAdd_blacklist_roleSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayAdd_blacklist_userAlreadyBlacklisted:
     description: LocalizedString
     title: LocalizedString
@@ -2139,10 +3114,39 @@ class CommandsGiveawayAdd_blacklist_userSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayAdd_blacklist_user:
-    alreadyBlacklisted: CommandsGiveawayAdd_blacklist_userAlreadyBlacklisted
-    missingPermission: CommandsGiveawayAdd_blacklist_userMissingPermission
-    success: CommandsGiveawayAdd_blacklist_userSuccess
+class CommandsGiveawayBuilderAdd_channel_requirement:
+    cancelled: LocalizedString
+    label: LocalizedString
+    placeholder: LocalizedString
+    removed: LocalizedString
+    select: LocalizedString
+    v: CommandsGiveawayBuilderAdd_channel_requirementV
+    value: CommandsGiveawayBuilderAdd_channel_requirementValue
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderChannel:
+    selected: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderDescription:
+    timeout: LocalizedString
+    updated: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderModal:
+    timeout: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderSponsor:
+    cancelled: LocalizedString
+    label: LocalizedString
+    selected: LocalizedString
+    updated: LocalizedString
+    select: CommandsGiveawayBuilderSponsorSelect
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderWinner:
+    updated: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayBuilderChange_winners:
@@ -2237,55 +3241,16 @@ class CommandsGiveawayBuilderVoice_requirement:
     updated: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilder:
-    change_winners: CommandsGiveawayBuilderChange_winners
-    custom_name: CommandsGiveawayBuilderCustom_name
-    day_requirement: CommandsGiveawayBuilderDay_requirement
-    end_time: CommandsGiveawayBuilderEnd_time
-    message: CommandsGiveawayBuilderMessage
-    new_message_requirement: CommandsGiveawayBuilderNew_message_requirement
-    price: CommandsGiveawayBuilderPrice
-    remove_channel_requirement: CommandsGiveawayBuilderRemove_channel_requirement
-    role_requirement: CommandsGiveawayBuilderRole_requirement
-    start_time: CommandsGiveawayBuilderStart_time
-    success: CommandsGiveawayBuilderSuccess
-    voice_requirement: CommandsGiveawayBuilderVoice_requirement
-    cancel: LocalizedString
-    change_description: LocalizedString
-    channel_selected: LocalizedString
-    confirm: LocalizedString
-    enter_description: LocalizedString
-    enter_message: LocalizedString
-    enter_price: LocalizedString
-    false: LocalizedString
-    loading: LocalizedString
-    no_permission: LocalizedString
-    none: LocalizedString
-    not_authorized: LocalizedString
-    preview: LocalizedString
-    true: LocalizedString
-    winners: LocalizedString
-    with_button: LocalizedString
-    add_channel_requirement: CommandsGiveawayBuilderAdd_channel_requirement
-    channel: CommandsGiveawayBuilderChannel
-    description: CommandsGiveawayBuilderDescription
-    modal: CommandsGiveawayBuilderModal
-    sponsor: CommandsGiveawayBuilderSponsor
-    winner: CommandsGiveawayBuilderWinner
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayEditorSuccess:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayEditor:
-    success: CommandsGiveawayEditorSuccess
-    loading: LocalizedString
-    no_permission: LocalizedString
-    not_authorized: LocalizedString
-    not_found: LocalizedString
-    pro_required: LocalizedString
+class CommandsGiveawayEnd_giveawayError:
+    already_ended: CommandsGiveawayEnd_giveawayErrorAlready_ended
+    invalid_message: CommandsGiveawayEnd_giveawayErrorInvalid_message
+    missingPermission: CommandsGiveawayEnd_giveawayErrorMissingPermission
+    no_permission: CommandsGiveawayEnd_giveawayErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayEnd_giveawayDeleted:
@@ -2298,10 +3263,10 @@ class CommandsGiveawayEnd_giveawaySuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway:
-    deleted: CommandsGiveawayEnd_giveawayDeleted
-    success: CommandsGiveawayEnd_giveawaySuccess
-    error: CommandsGiveawayEnd_giveawayError
+class CommandsGiveawayEnd_giveaway_commandError:
+    alreadyEnded: CommandsGiveawayEnd_giveaway_commandErrorAlreadyEnded
+    missingPermission: CommandsGiveawayEnd_giveaway_commandErrorMissingPermission
+    notFound: CommandsGiveawayEnd_giveaway_commandErrorNotFound
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayEnd_giveaway_commandDeleted:
@@ -2314,24 +3279,9 @@ class CommandsGiveawayEnd_giveaway_commandSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway_command:
-    deleted: CommandsGiveawayEnd_giveaway_commandDeleted
-    success: CommandsGiveawayEnd_giveaway_commandSuccess
-    error: CommandsGiveawayEnd_giveaway_commandError
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayEndedGiveawayNo_participants:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEndedGiveaway:
-    no_participants: CommandsGiveawayEndedGiveawayNo_participants
-    button_text: LocalizedString
-    description: LocalizedString
-    dm: LocalizedString
-    title: LocalizedString
-    winnerDM: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayGiveawayEmbedParticipation_failed:
@@ -2356,25 +3306,6 @@ class CommandsGiveawayGiveawayEmbedParticipation_success:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayGiveawayEmbed:
-    participation_failed: CommandsGiveawayGiveawayEmbedParticipation_failed
-    participation_removed: CommandsGiveawayGiveawayEmbedParticipation_removed
-    participation_success: CommandsGiveawayGiveawayEmbedParticipation_success
-    button_text: LocalizedString
-    channel_requirements: LocalizedString
-    day_requirement: LocalizedString
-    description: LocalizedString
-    end_time: LocalizedString
-    footer: LocalizedString
-    new_message_requirement: LocalizedString
-    no_requirements: LocalizedString
-    price: LocalizedString
-    role_requirement: LocalizedString
-    sponsor: LocalizedString
-    title: LocalizedString
-    voice_requirement: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayList_blacklistMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -2383,16 +3314,6 @@ class CommandsGiveawayList_blacklistMissingPermission:
 class CommandsGiveawayList_blacklistNoBlacklist:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayList_blacklist:
-    missingPermission: CommandsGiveawayList_blacklistMissingPermission
-    noBlacklist: CommandsGiveawayList_blacklistNoBlacklist
-    description: LocalizedString
-    empty: LocalizedString
-    roles: LocalizedString
-    title: LocalizedString
-    users: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayRemove_blacklist_roleMissingPermission:
@@ -2410,12 +3331,6 @@ class CommandsGiveawayRemove_blacklist_roleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayRemove_blacklist_role:
-    missingPermission: CommandsGiveawayRemove_blacklist_roleMissingPermission
-    notBlacklisted: CommandsGiveawayRemove_blacklist_roleNotBlacklisted
-    success: CommandsGiveawayRemove_blacklist_roleSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsGiveawayRemove_blacklist_userMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -2431,10 +3346,12 @@ class CommandsGiveawayRemove_blacklist_userSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayRemove_blacklist_user:
-    missingPermission: CommandsGiveawayRemove_blacklist_userMissingPermission
-    notBlacklisted: CommandsGiveawayRemove_blacklist_userNotBlacklisted
-    success: CommandsGiveawayRemove_blacklist_userSuccess
+class CommandsGiveawayReroll_giveawayError:
+    notAuthorized: LocalizedString
+    missingPermission: CommandsGiveawayReroll_giveawayErrorMissingPermission
+    noParticipants: CommandsGiveawayReroll_giveawayErrorNoParticipants
+    notEnded: CommandsGiveawayReroll_giveawayErrorNotEnded
+    notFound: CommandsGiveawayReroll_giveawayErrorNotFound
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayReroll_giveawaySelectOption:
@@ -2447,20 +3364,6 @@ class CommandsGiveawayReroll_giveawaySuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveaway:
-    selectOption: CommandsGiveawayReroll_giveawaySelectOption
-    success: CommandsGiveawayReroll_giveawaySuccess
-    rerollAllWinners: LocalizedString
-    rerollOneWinner: LocalizedString
-    winnerDM: LocalizedString
-    error: CommandsGiveawayReroll_giveawayError
-
-@dataclass(frozen=True, slots=True)
-class CommandsHelpButtons:
-    next: LocalizedString
-    previous: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageBackgroundDisabled:
     description: LocalizedString
     title: LocalizedString
@@ -2471,18 +3374,9 @@ class CommandsImageBackgroundSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageBackground:
-    disabled: CommandsImageBackgroundDisabled
-    success: CommandsImageBackgroundSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageBlurSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageBlur:
-    success: CommandsImageBlurSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageCompressSuccess:
@@ -2490,17 +3384,9 @@ class CommandsImageCompressSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageCompress:
-    success: CommandsImageCompressSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageContourSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageContour:
-    success: CommandsImageContourSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageDetailSuccess:
@@ -2508,17 +3394,9 @@ class CommandsImageDetailSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageDetail:
-    success: CommandsImageDetailSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageEdgeenhanceSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageEdgeenhance:
-    success: CommandsImageEdgeenhanceSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageEmbossSuccess:
@@ -2526,26 +3404,14 @@ class CommandsImageEmbossSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageEmboss:
-    success: CommandsImageEmbossSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageErrorUnknown_filter:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageError:
-    unknown_filter: CommandsImageErrorUnknown_filter
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageFindedgesSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageFindedges:
-    success: CommandsImageFindedgesSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageMirrorInvalidaxis:
@@ -2558,18 +3424,9 @@ class CommandsImageMirrorSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageMirror:
-    invalidaxis: CommandsImageMirrorInvalidaxis
-    success: CommandsImageMirrorSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageRescaleSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageRescale:
-    success: CommandsImageRescaleSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageResizeSuccess:
@@ -2577,17 +3434,9 @@ class CommandsImageResizeSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageResize:
-    success: CommandsImageResizeSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsImageSharpenSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsImageSharpen:
-    success: CommandsImageSharpenSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsImageSmoothSuccess:
@@ -2595,8 +3444,11 @@ class CommandsImageSmoothSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsImageSmooth:
-    success: CommandsImageSmoothSuccess
+class CommandsLevelAddlevelroleError:
+    invalid_level: CommandsLevelAddlevelroleErrorInvalid_level
+    no_permission: CommandsLevelAddlevelroleErrorNo_permission
+    no_pro: CommandsLevelAddlevelroleErrorNo_pro
+    role_exists: CommandsLevelAddlevelroleErrorRole_exists
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelAddlevelroleSuccess:
@@ -2604,20 +3456,72 @@ class CommandsLevelAddlevelroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelrole:
-    success: CommandsLevelAddlevelroleSuccess
-    error: CommandsLevelAddlevelroleError
+class CommandsLevelBlacklistAdd_channel:
+    error: CommandsLevelBlacklistAdd_channelError
+    success: CommandsLevelBlacklistAdd_channelSuccess
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklist:
-    no_reason: LocalizedString
-    add_channel: CommandsLevelBlacklistAdd_channel
-    add_role: CommandsLevelBlacklistAdd_role
-    add_user: CommandsLevelBlacklistAdd_user
-    remove_channel: CommandsLevelBlacklistRemove_channel
-    remove_role: CommandsLevelBlacklistRemove_role
-    remove_user: CommandsLevelBlacklistRemove_user
-    show: CommandsLevelBlacklistShow
+class CommandsLevelBlacklistAdd_role:
+    error: CommandsLevelBlacklistAdd_roleError
+    success: CommandsLevelBlacklistAdd_roleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistAdd_user:
+    error: CommandsLevelBlacklistAdd_userError
+    success: CommandsLevelBlacklistAdd_userSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_channel:
+    error: CommandsLevelBlacklistRemove_channelError
+    success: CommandsLevelBlacklistRemove_channelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_role:
+    error: CommandsLevelBlacklistRemove_roleError
+    success: CommandsLevelBlacklistRemove_roleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_user:
+    error: CommandsLevelBlacklistRemove_userError
+    success: CommandsLevelBlacklistRemove_userSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistShow:
+    channels: LocalizedString
+    description: LocalizedString
+    empty: LocalizedString
+    roles: LocalizedString
+    title: LocalizedString
+    users: LocalizedString
+    error: CommandsLevelBlacklistShowError
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsAdd_channel:
+    success: CommandsLevelBoostsAdd_channelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsAdd_role:
+    success: CommandsLevelBoostsAdd_roleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsAdd_user:
+    success: CommandsLevelBoostsAdd_userSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsError:
+    no_pro: CommandsLevelBoostsErrorNo_pro
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_channel:
+    success: CommandsLevelBoostsRemove_channelSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_role:
+    success: CommandsLevelBoostsRemove_roleSuccess
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_user:
+    success: CommandsLevelBoostsRemove_userSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelBoostsCalculate_user_channel:
@@ -2634,18 +3538,10 @@ class CommandsLevelBoostsShow:
     users: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBoosts:
-    calculate_user_channel: CommandsLevelBoostsCalculate_user_channel
-    show: CommandsLevelBoostsShow
-    additive: LocalizedString
-    multiplicative: LocalizedString
-    add_channel: CommandsLevelBoostsAdd_channel
-    add_role: CommandsLevelBoostsAdd_role
-    add_user: CommandsLevelBoostsAdd_user
-    error: CommandsLevelBoostsError
-    remove_channel: CommandsLevelBoostsRemove_channel
-    remove_role: CommandsLevelBoostsRemove_role
-    remove_user: CommandsLevelBoostsRemove_user
+class CommandsLevelChangelevelupmessageError:
+    message_too_long: CommandsLevelChangelevelupmessageErrorMessage_too_long
+    no_permission: CommandsLevelChangelevelupmessageErrorNo_permission
+    no_pro: CommandsLevelChangelevelupmessageErrorNo_pro
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelChangelevelupmessageSuccess:
@@ -2653,9 +3549,26 @@ class CommandsLevelChangelevelupmessageSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelChangelevelupmessage:
-    success: CommandsLevelChangelevelupmessageSuccess
-    error: CommandsLevelChangelevelupmessageError
+class CommandsLevelChangexpscalingError:
+    invalid_scaling: CommandsLevelChangexpscalingErrorInvalid_scaling
+    no_custom_formula: CommandsLevelChangexpscalingErrorNo_custom_formula
+    no_permission: CommandsLevelChangexpscalingErrorNo_permission
+    no_pro: CommandsLevelChangexpscalingErrorNo_pro
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingFormulas:
+    easy: LocalizedString
+    extreme: LocalizedString
+    hard: LocalizedString
+    medium: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingScalings:
+    custom: LocalizedString
+    easy: LocalizedString
+    extreme: LocalizedString
+    hard: LocalizedString
+    medium: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelChangexpscalingSuccess:
@@ -2663,16 +3576,12 @@ class CommandsLevelChangexpscalingSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscaling:
-    success: CommandsLevelChangexpscalingSuccess
-    xp_examples: LocalizedString
-    error: CommandsLevelChangexpscalingError
-    formulas: CommandsLevelChangexpscalingFormulas
-    scalings: CommandsLevelChangexpscalingScalings
+class CommandsLevelDisablelevelsystemError:
+    already_disabled: CommandsLevelDisablelevelsystemErrorAlready_disabled
+    no_permission: CommandsLevelDisablelevelsystemErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelDisablelevelsystemCancel:
-    _text: LocalizedString
     description: LocalizedString
     title: LocalizedString
 
@@ -2687,14 +3596,10 @@ class CommandsLevelDisablelevelsystemSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelsystem:
-    cancel: CommandsLevelDisablelevelsystemCancel
-    confirmation: CommandsLevelDisablelevelsystemConfirmation
-    success: CommandsLevelDisablelevelsystemSuccess
-    confirm: LocalizedString
-    description: LocalizedString
-    name: LocalizedString
-    error: CommandsLevelDisablelevelsystemError
+class CommandsLevelDisablelevelupmessageError:
+    already_disabled: CommandsLevelDisablelevelupmessageErrorAlready_disabled
+    no_permission: CommandsLevelDisablelevelupmessageErrorNo_permission
+    no_pro: CommandsLevelDisablelevelupmessageErrorNo_pro
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelDisablelevelupmessageSuccess:
@@ -2702,9 +3607,9 @@ class CommandsLevelDisablelevelupmessageSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelupmessage:
-    success: CommandsLevelDisablelevelupmessageSuccess
-    error: CommandsLevelDisablelevelupmessageError
+class CommandsLevelEnablelevelsystemError:
+    already_enabled: CommandsLevelEnablelevelsystemErrorAlready_enabled
+    no_permission: CommandsLevelEnablelevelsystemErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelEnablelevelsystemSuccess:
@@ -2712,11 +3617,10 @@ class CommandsLevelEnablelevelsystemSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelsystem:
-    success: CommandsLevelEnablelevelsystemSuccess
-    description: LocalizedString
-    name: LocalizedString
-    error: CommandsLevelEnablelevelsystemError
+class CommandsLevelEnablelevelupmessageError:
+    already_enabled: CommandsLevelEnablelevelupmessageErrorAlready_enabled
+    no_permission: CommandsLevelEnablelevelupmessageErrorNo_permission
+    no_pro: CommandsLevelEnablelevelupmessageErrorNo_pro
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelEnablelevelupmessageSuccess:
@@ -2724,9 +3628,9 @@ class CommandsLevelEnablelevelupmessageSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelupmessage:
-    success: CommandsLevelEnablelevelupmessageSuccess
-    error: CommandsLevelEnablelevelupmessageError
+class CommandsLevelGivexpError:
+    invalid_amount: CommandsLevelGivexpErrorInvalid_amount
+    no_permission: CommandsLevelGivexpErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelGivexpSuccess:
@@ -2734,19 +3638,23 @@ class CommandsLevelGivexpSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelGivexp:
-    success: CommandsLevelGivexpSuccess
-    error: CommandsLevelGivexpError
+class CommandsLevelRankData:
+    level: LocalizedString
+    xp: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRankError:
+    no_data: CommandsLevelRankErrorNo_data
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelRankSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelRank:
-    success: CommandsLevelRankSuccess
-    data: CommandsLevelRankData
-    error: CommandsLevelRankError
+class CommandsLevelRemovelevelroleError:
+    no_permission: CommandsLevelRemovelevelroleErrorNo_permission
+    no_pro: CommandsLevelRemovelevelroleErrorNo_pro
+    role_not_found: CommandsLevelRemovelevelroleErrorRole_not_found
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelRemovelevelroleSuccess:
@@ -2754,9 +3662,9 @@ class CommandsLevelRemovelevelroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelRemovelevelrole:
-    success: CommandsLevelRemovelevelroleSuccess
-    error: CommandsLevelRemovelevelroleError
+class CommandsLevelSetbackgroundError:
+    invalid_format: CommandsLevelSetbackgroundErrorInvalid_format
+    no_plus: CommandsLevelSetbackgroundErrorNo_plus
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelSetbackgroundSuccess:
@@ -2764,9 +3672,9 @@ class CommandsLevelSetbackgroundSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelSetbackground:
-    success: CommandsLevelSetbackgroundSuccess
-    error: CommandsLevelSetbackgroundError
+class CommandsLevelSetlevelupchannelError:
+    no_permission: CommandsLevelSetlevelupchannelErrorNo_permission
+    no_pro: CommandsLevelSetlevelupchannelErrorNo_pro
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelSetlevelupchannelReset:
@@ -2779,10 +3687,13 @@ class CommandsLevelSetlevelupchannelSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelSetlevelupchannel:
-    reset: CommandsLevelSetlevelupchannelReset
-    success: CommandsLevelSetlevelupchannelSuccess
-    error: CommandsLevelSetlevelupchannelError
+class CommandsLevelSettextcooldownError:
+    invalid_cooldown: CommandsLevelSettextcooldownErrorInvalid_cooldown
+    no_permission: CommandsLevelSettextcooldownErrorNo_permission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSettextcooldownParams:
+    cooldown: CommandsLevelSettextcooldownParamsCooldown
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelSettextcooldownSuccess:
@@ -2790,12 +3701,13 @@ class CommandsLevelSettextcooldownSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldown:
-    success: CommandsLevelSettextcooldownSuccess
-    description: LocalizedString
-    name: LocalizedString
-    error: CommandsLevelSettextcooldownError
-    params: CommandsLevelSettextcooldownParams
+class CommandsLevelSetvoicecooldownError:
+    invalid_cooldown: CommandsLevelSetvoicecooldownErrorInvalid_cooldown
+    no_permission: CommandsLevelSetvoicecooldownErrorNo_permission
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetvoicecooldownParams:
+    cooldown: CommandsLevelSetvoicecooldownParamsCooldown
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelSetvoicecooldownSuccess:
@@ -2803,12 +3715,9 @@ class CommandsLevelSetvoicecooldownSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldown:
-    success: CommandsLevelSetvoicecooldownSuccess
-    description: LocalizedString
-    name: LocalizedString
-    error: CommandsLevelSetvoicecooldownError
-    params: CommandsLevelSetvoicecooldownParams
+class CommandsLevelSetxpError:
+    invalid_amount: CommandsLevelSetxpErrorInvalid_amount
+    no_permission: CommandsLevelSetxpErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelSetxpSuccess:
@@ -2816,9 +3725,14 @@ class CommandsLevelSetxpSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelSetxp:
-    success: CommandsLevelSetxpSuccess
-    error: CommandsLevelSetxpError
+class CommandsLevelShowlevelrolesError:
+    no_permission: CommandsLevelShowlevelrolesErrorNo_permission
+    no_pro: CommandsLevelShowlevelrolesErrorNo_pro
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelShowlevelrolesRemove_role_confirm:
+    cancel_button: LocalizedString
+    confirm_button: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelShowlevelrolesAdd_role_modal:
@@ -2839,31 +3753,9 @@ class CommandsLevelShowlevelrolesSelected_level:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelShowlevelroles:
-    add_role_modal: CommandsLevelShowlevelrolesAdd_role_modal
-    no_roles: CommandsLevelShowlevelrolesNo_roles
-    selected_level: CommandsLevelShowlevelrolesSelected_level
-    add_button: LocalizedString
-    add_role_cancelled: LocalizedString
-    add_role_prompt: LocalizedString
-    cancel_button: LocalizedString
-    data: LocalizedString
-    description: LocalizedString
-    level: LocalizedString
-    next_button: LocalizedString
-    previous_button: LocalizedString
-    remove_button: LocalizedString
-    remove_role_cancelled: LocalizedString
-    remove_role_confirm: LocalizedString
-    remove_role_data: LocalizedString
-    remove_role_prompt: LocalizedString
-    remove_role_select_placeholder: LocalizedString
-    remove_role_success: LocalizedString
-    role_select_placeholder: LocalizedString
-    select_placeholder: LocalizedString
-    title: LocalizedString
-    error: CommandsLevelShowlevelrolesError
-    remove_role_confirm: CommandsLevelShowlevelrolesRemove_role_confirm
+class CommandsLevelTakexpError:
+    invalid_amount: CommandsLevelTakexpErrorInvalid_amount
+    no_permission: CommandsLevelTakexpErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLevelTakexpSuccess:
@@ -2871,26 +3763,21 @@ class CommandsLevelTakexpSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelTakexp:
-    success: CommandsLevelTakexpSuccess
-    error: CommandsLevelTakexpError
+class CommandsLogsBlacklistAdd:
+    description: LocalizedString
+    name: LocalizedString
+    params: CommandsLogsBlacklistAddParams
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelUpdateuserroles:
-    reason: LocalizedString
+class CommandsLogsBlacklistRemove:
+    description: LocalizedString
+    name: LocalizedString
+    params: CommandsLogsBlacklistRemoveParams
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistShow:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklist:
-    show: CommandsLogsBlacklistShow
-    description: LocalizedString
-    name: LocalizedString
-    add: CommandsLogsBlacklistAdd
-    remove: CommandsLogsBlacklistRemove
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistCategoryAlreadyBlacklisted:
@@ -2913,13 +3800,6 @@ class CommandsLogsBlacklistCategoryMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistCategory:
-    alreadyBlacklisted: CommandsLogsBlacklistCategoryAlreadyBlacklisted
-    blacklisted: CommandsLogsBlacklistCategoryBlacklisted
-    missingChannel: CommandsLogsBlacklistCategoryMissingChannel
-    missingPermission: CommandsLogsBlacklistCategoryMissingPermission
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistChannelAlreadyBlacklisted:
     description: LocalizedString
     title: LocalizedString
@@ -2935,25 +3815,12 @@ class CommandsLogsBlacklistChannelMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistChannel:
-    alreadyBlacklisted: CommandsLogsBlacklistChannelAlreadyBlacklisted
-    blacklisted: CommandsLogsBlacklistChannelBlacklisted
-    missingPermission: CommandsLogsBlacklistChannelMissingPermission
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListCategoryAddCategory:
     placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListCategoryMissingPermission:
     description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistListCategory:
-    addCategory: CommandsLogsBlacklistListCategoryAddCategory
-    missingPermission: CommandsLogsBlacklistListCategoryMissingPermission
-    noBlacklistedCategories: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
@@ -2966,26 +3833,12 @@ class CommandsLogsBlacklistListChannelMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistListChannel:
-    addChannel: CommandsLogsBlacklistListChannelAddChannel
-    missingPermission: CommandsLogsBlacklistListChannelMissingPermission
-    noBlacklistedChannels: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListRoleAddRole:
     placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListRoleMissingPermission:
     description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistListRole:
-    addRole: CommandsLogsBlacklistListRoleAddRole
-    missingPermission: CommandsLogsBlacklistListRoleMissingPermission
-    noBlacklistedRoles: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
@@ -2998,26 +3851,12 @@ class CommandsLogsBlacklistListUserMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistListUser:
-    addUser: CommandsLogsBlacklistListUserAddUser
-    missingPermission: CommandsLogsBlacklistListUserMissingPermission
-    noBlacklistedUsers: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListVoiceChannelAddChannel:
     placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistListVoiceChannelMissingPermission:
     description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistListVoiceChannel:
-    addChannel: CommandsLogsBlacklistListVoiceChannelAddChannel
-    missingPermission: CommandsLogsBlacklistListVoiceChannelMissingPermission
-    noBlacklistedChannels: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
@@ -3041,13 +3880,6 @@ class CommandsLogsBlacklistRemoveCategorySuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveCategory:
-    missingChannel: CommandsLogsBlacklistRemoveCategoryMissingChannel
-    missingPermission: CommandsLogsBlacklistRemoveCategoryMissingPermission
-    notBlacklisted: CommandsLogsBlacklistRemoveCategoryNotBlacklisted
-    success: CommandsLogsBlacklistRemoveCategorySuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRemoveChannelMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -3061,12 +3893,6 @@ class CommandsLogsBlacklistRemoveChannelNotBlacklisted:
 class CommandsLogsBlacklistRemoveChannelSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveChannel:
-    missingPermission: CommandsLogsBlacklistRemoveChannelMissingPermission
-    notBlacklisted: CommandsLogsBlacklistRemoveChannelNotBlacklisted
-    success: CommandsLogsBlacklistRemoveChannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRemoveRoleMissingPermission:
@@ -3084,12 +3910,6 @@ class CommandsLogsBlacklistRemoveRoleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveRole:
-    missingPermission: CommandsLogsBlacklistRemoveRoleMissingPermission
-    notBlacklisted: CommandsLogsBlacklistRemoveRoleNotBlacklisted
-    success: CommandsLogsBlacklistRemoveRoleSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRemoveUserMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -3103,12 +3923,6 @@ class CommandsLogsBlacklistRemoveUserNotBlacklisted:
 class CommandsLogsBlacklistRemoveUserSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveUser:
-    missingPermission: CommandsLogsBlacklistRemoveUserMissingPermission
-    notBlacklisted: CommandsLogsBlacklistRemoveUserNotBlacklisted
-    success: CommandsLogsBlacklistRemoveUserSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRemoveVoiceChannelMissingChannel:
@@ -3131,13 +3945,6 @@ class CommandsLogsBlacklistRemoveVoiceChannelSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveVoiceChannel:
-    missingChannel: CommandsLogsBlacklistRemoveVoiceChannelMissingChannel
-    missingPermission: CommandsLogsBlacklistRemoveVoiceChannelMissingPermission
-    notBlacklisted: CommandsLogsBlacklistRemoveVoiceChannelNotBlacklisted
-    success: CommandsLogsBlacklistRemoveVoiceChannelSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRoleAlreadyBlacklisted:
     description: LocalizedString
     title: LocalizedString
@@ -3153,12 +3960,6 @@ class CommandsLogsBlacklistRoleMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRole:
-    alreadyBlacklisted: CommandsLogsBlacklistRoleAlreadyBlacklisted
-    blacklisted: CommandsLogsBlacklistRoleBlacklisted
-    missingPermission: CommandsLogsBlacklistRoleMissingPermission
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistUserAlreadyBlacklisted:
     description: LocalizedString
     title: LocalizedString
@@ -3172,12 +3973,6 @@ class CommandsLogsBlacklistUserBlacklisted:
 class CommandsLogsBlacklistUserMissingPermission:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistUser:
-    alreadyBlacklisted: CommandsLogsBlacklistUserAlreadyBlacklisted
-    blacklisted: CommandsLogsBlacklistUserBlacklisted
-    missingPermission: CommandsLogsBlacklistUserMissingPermission
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistVoiceChannelAlreadyBlacklisted:
@@ -3200,11 +3995,35 @@ class CommandsLogsBlacklistVoiceChannelMissingPermission:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistVoiceChannel:
-    alreadyBlacklisted: CommandsLogsBlacklistVoiceChannelAlreadyBlacklisted
-    blacklisted: CommandsLogsBlacklistVoiceChannelBlacklisted
-    missingChannel: CommandsLogsBlacklistVoiceChannelMissingChannel
-    missingPermission: CommandsLogsBlacklistVoiceChannelMissingPermission
+class CommandsLogsConfigureLogsConfiguration_embed:
+    activate: LocalizedString
+    activated: LocalizedString
+    automodAction: LocalizedString
+    automodRuleCreate: LocalizedString
+    automodRuleDelete: LocalizedString
+    automodRuleUpdate: LocalizedString
+    deactivate: LocalizedString
+    deactivated: LocalizedString
+    guildRoleCreate: LocalizedString
+    guildRoleDelete: LocalizedString
+    guildRoleUpdate: LocalizedString
+    guildUpdate: LocalizedString
+    guild_channelCreate: LocalizedString
+    guild_channelDelete: LocalizedString
+    guild_channelUpdate: LocalizedString
+    inviteCreate: LocalizedString
+    inviteDelete: LocalizedString
+    memberBan: LocalizedString
+    memberJoin: LocalizedString
+    memberLeave: LocalizedString
+    memberUnban: LocalizedString
+    memberUpdate: LocalizedString
+    messageDelete: LocalizedString
+    messageEdit: LocalizedString
+    presenceUpdate: LocalizedString
+    reactionAdd: LocalizedString
+    reactionRemove: LocalizedString
+    userUpdate: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsConfigureLogsConfigurationEmbed:
@@ -3244,13 +4063,6 @@ class CommandsLogsConfigureLogsNoLogEnabled:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsConfigureLogs:
-    configurationEmbed: CommandsLogsConfigureLogsConfigurationEmbed
-    noLogEnabled: CommandsLogsConfigureLogsNoLogEnabled
-    title: LocalizedString
-    configuration_embed: CommandsLogsConfigureLogsConfiguration_embed
-
-@dataclass(frozen=True, slots=True)
 class CommandsLogsRemoveLogChannelMissingPermission:
     description: LocalizedString
     title: LocalizedString
@@ -3264,12 +4076,6 @@ class CommandsLogsRemoveLogChannelNotSet:
 class CommandsLogsRemoveLogChannelSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsRemoveLogChannel:
-    missingPermission: CommandsLogsRemoveLogChannelMissingPermission
-    notSet: CommandsLogsRemoveLogChannelNotSet
-    success: CommandsLogsRemoveLogChannelSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsSetLogChannelAlreadySet:
@@ -3292,13 +4098,6 @@ class CommandsLogsSetLogChannelSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsSetLogChannel:
-    alreadySet: CommandsLogsSetLogChannelAlreadySet
-    botMissingPermission: CommandsLogsSetLogChannelBotMissingPermission
-    missingPermission: CommandsLogsSetLogChannelMissingPermission
-    success: CommandsLogsSetLogChannelSuccess
-
-@dataclass(frozen=True, slots=True)
 class CommandsMathCalcError:
     description: LocalizedString
     title: LocalizedString
@@ -3307,11 +4106,6 @@ class CommandsMathCalcError:
 class CommandsMathCalcSuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathCalc:
-    error: CommandsMathCalcError
-    success: CommandsMathCalcSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsMathFacultyError:
@@ -3324,1981 +4118,6 @@ class CommandsMathFacultyError:
 class CommandsMathFacultySuccess:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathFaculty:
-    error: CommandsMathFacultyError
-    success: CommandsMathFacultySuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathNum2word:
-    description: LocalizedString
-    title: LocalizedString
-    locales: CommandsMathNum2wordLocales
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlot_function:
-    error: LocalizedString
-    no_functions_to_rename: LocalizedString
-    not_clickable: LocalizedString
-    unexpected_error: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionError:
-    _text: LocalizedString
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunction:
-    error: CommandsMathPlotfunctionError
-    default_title: LocalizedString
-    default_x_label: LocalizedString
-    default_y_label: LocalizedString
-    description: LocalizedString
-    extrema: LocalizedString
-    extremum: LocalizedString
-    inflection: LocalizedString
-    inflection_points: LocalizedString
-    no_functions_to_rename: LocalizedString
-    not_clickable: LocalizedString
-    plot_title: LocalizedString
-    unexpected_error: LocalizedString
-    x_axis: LocalizedString
-    y_axis: LocalizedString
-    zero: LocalizedString
-    zeros: LocalizedString
-    buttons: CommandsMathPlotfunctionButtons
-    messages: CommandsMathPlotfunctionMessages
-    modals: CommandsMathPlotfunctionModals
-    select_menus: CommandsMathPlotfunctionSelect_menus
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathRandomnumberError:
-    invalid_amount: LocalizedString
-    invalid_input: LocalizedString
-    invalid_range: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathRandomnumberSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathRandomnumber:
-    error: CommandsMathRandomnumberError
-    success: CommandsMathRandomnumberSuccess
-    not_truly_random: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkAlready_afk:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkMentions:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkMentions_one:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkOpted_out:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkRemoved:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkRemoved_no_messages:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfkSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAfk:
-    already_afk: CommandsUtilityAfkAlready_afk
-    mentions: CommandsUtilityAfkMentions
-    mentions_one: CommandsUtilityAfkMentions_one
-    opted_out: CommandsUtilityAfkOpted_out
-    removed: CommandsUtilityAfkRemoved
-    removed_no_messages: CommandsUtilityAfkRemoved_no_messages
-    success: CommandsUtilityAfkSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishRemove_success:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublish:
-    remove_success: CommandsUtilityAutopublishRemove_success
-    success: CommandsUtilityAutopublishSuccess
-    error: CommandsUtilityAutopublishError
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAvatarDecorationNo_decoration:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityAvatarDecoration:
-    no_decoration: CommandsUtilityAvatarDecorationNo_decoration
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBoosterchannelinfoInfo:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBoosterchannelinfo:
-    info: CommandsUtilityBoosterchannelinfoInfo
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBoosterroleinfoInfo:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBoosterroleinfo:
-    info: CommandsUtilityBoosterroleinfoInfo
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstars:
-    battlelog: CommandsUtilityBrawlstarsBattlelog
-    brawlers: CommandsUtilityBrawlstarsBrawlers
-    club: CommandsUtilityBrawlstarsClub
-    events: CommandsUtilityBrawlstarsEvents
-    gameModes: CommandsUtilityBrawlstarsGameModes
-    link: CommandsUtilityBrawlstarsLink
-    maps: CommandsUtilityBrawlstarsMaps
-    playerinfo: CommandsUtilityBrawlstarsPlayerinfo
-    results: CommandsUtilityBrawlstarsResults
-    unlink: CommandsUtilityBrawlstarsUnlink
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelAlready_claimed:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelCategory_not_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelNo_booster_channel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelNo_booster_role:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelNobooster:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannelSuccess:
-    description: LocalizedString
-    reason: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterchannel:
-    already_claimed: CommandsUtilityClaimboosterchannelAlready_claimed
-    category_not_found: CommandsUtilityClaimboosterchannelCategory_not_found
-    no_booster_channel: CommandsUtilityClaimboosterchannelNo_booster_channel
-    no_booster_role: CommandsUtilityClaimboosterchannelNo_booster_role
-    nobooster: CommandsUtilityClaimboosterchannelNobooster
-    success: CommandsUtilityClaimboosterchannelSuccess
-    expired: CommandsUtilityClaimboosterchannelExpired
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleAlready_claimed:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleInvalid_color:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleNo_booster_role:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleNobooster:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleRole_not_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterroleSuccess:
-    description: LocalizedString
-    reason: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityClaimboosterrole:
-    already_claimed: CommandsUtilityClaimboosterroleAlready_claimed
-    invalid_color: CommandsUtilityClaimboosterroleInvalid_color
-    no_booster_role: CommandsUtilityClaimboosterroleNo_booster_role
-    nobooster: CommandsUtilityClaimboosterroleNobooster
-    role_not_found: CommandsUtilityClaimboosterroleRole_not_found
-    success: CommandsUtilityClaimboosterroleSuccess
-    expired: CommandsUtilityClaimboosterroleExpired
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterchannelMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterchannelNo_booster_channel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterchannel:
-    missingPermission: CommandsUtilityDeleteboosterchannelMissingPermission
-    no_booster_channel: CommandsUtilityDeleteboosterchannelNo_booster_channel
-    success: CommandsUtilityDeleteboosterchannelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterroleMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterroleNo_booster_role:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterroleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityDeleteboosterrole:
-    missingPermission: CommandsUtilityDeleteboosterroleMissingPermission
-    no_booster_role: CommandsUtilityDeleteboosterroleNo_booster_role
-    success: CommandsUtilityDeleteboosterroleSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackBlocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedback:
-    blocked: CommandsUtilityFeedbackBlocked
-    modal: CommandsUtilityFeedbackModal
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityHelpNoCommands:
-    description: LocalizedString
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityHelp:
-    noCommands: CommandsUtilityHelpNoCommands
-    noDescriptionAvailable: LocalizedString
-    parameters: LocalizedString
-    title: LocalizedString
-    titleNoPages: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityListscheduledEdit_modal:
-    content_label: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityListscheduledEdit_success:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityListscheduledNo_messages:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityListscheduledTruncated:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityListscheduled:
-    edit_modal: CommandsUtilityListscheduledEdit_modal
-    edit_success: CommandsUtilityListscheduledEdit_success
-    no_messages: CommandsUtilityListscheduledNo_messages
-    truncated: CommandsUtilityListscheduledTruncated
-    cancel_button: LocalizedString
-    direct_message: LocalizedString
-    edit_button: LocalizedString
-    message_details: LocalizedString
-    message_id: LocalizedString
-    no_repeat: LocalizedString
-    title: LocalizedString
-    error: CommandsUtilityListscheduledError
-    pagination: CommandsUtilityListscheduledPagination
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptinError:
-    already_opted_in: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptinSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptin:
-    error: CommandsUtilityMessagetrackingoptinError
-    success: CommandsUtilityMessagetrackingoptinSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptoutError:
-    already_opted_out: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptoutSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityMessagetrackingoptout:
-    error: CommandsUtilityMessagetrackingoptoutError
-    success: CommandsUtilityMessagetrackingoptoutSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledNo_messages:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledNot_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledSelect:
-    description: LocalizedString
-    placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledTimeout:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduled:
-    no_messages: CommandsUtilityRemovescheduledNo_messages
-    not_found: CommandsUtilityRemovescheduledNot_found
-    select: CommandsUtilityRemovescheduledSelect
-    success: CommandsUtilityRemovescheduledSuccess
-    timeout: CommandsUtilityRemovescheduledTimeout
-    error: CommandsUtilityRemovescheduledError
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportAccept:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportBlock_reporter:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportBlocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportInvalid_action:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportNew_report:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportNo_reason:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportNo_report_channel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportReason_too_short:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportReject:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportReport_channel_not_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportReport_sent:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportReporter_blocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReport:
-    accept: CommandsUtilityReportAccept
-    block_reporter: CommandsUtilityReportBlock_reporter
-    blocked: CommandsUtilityReportBlocked
-    invalid_action: CommandsUtilityReportInvalid_action
-    new_report: CommandsUtilityReportNew_report
-    no_permission: CommandsUtilityReportNo_permission
-    no_reason: CommandsUtilityReportNo_reason
-    no_report_channel: CommandsUtilityReportNo_report_channel
-    reason_too_short: CommandsUtilityReportReason_too_short
-    reject: CommandsUtilityReportReject
-    report_channel_not_found: CommandsUtilityReportReport_channel_not_found
-    report_sent: CommandsUtilityReportReport_sent
-    reporter_blocked: CommandsUtilityReportReporter_blocked
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsAccept:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsBlock_reporter:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsBlocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsInvalid_action:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsNew_report:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsNo_reason:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsNo_report_channel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReason_too_short:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReject:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReport_accepted:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReport_channel_not_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReport_rejected:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReport_sent:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReportsReporter_blocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityReports:
-    accept: CommandsUtilityReportsAccept
-    block_reporter: CommandsUtilityReportsBlock_reporter
-    blocked: CommandsUtilityReportsBlocked
-    invalid_action: CommandsUtilityReportsInvalid_action
-    new_report: CommandsUtilityReportsNew_report
-    no_permission: CommandsUtilityReportsNo_permission
-    no_reason: CommandsUtilityReportsNo_reason
-    no_report_channel: CommandsUtilityReportsNo_report_channel
-    reason_too_short: CommandsUtilityReportsReason_too_short
-    reject: CommandsUtilityReportsReject
-    report_accepted: CommandsUtilityReportsReport_accepted
-    report_channel_not_found: CommandsUtilityReportsReport_channel_not_found
-    report_rejected: CommandsUtilityReportsReport_rejected
-    report_sent: CommandsUtilityReportsReport_sent
-    reporter_blocked: CommandsUtilityReportsReporter_blocked
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageInvalidTime:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageNoBotChannelPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageNoChannelPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageNoDMPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageNoRepeatPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessagePastTime:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessageTooManyScheduled:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySchedulemessage:
-    invalidTime: CommandsUtilitySchedulemessageInvalidTime
-    noBotChannelPermission: CommandsUtilitySchedulemessageNoBotChannelPermission
-    noChannelPermission: CommandsUtilitySchedulemessageNoChannelPermission
-    noDMPermission: CommandsUtilitySchedulemessageNoDMPermission
-    noRepeatPermission: CommandsUtilitySchedulemessageNoRepeatPermission
-    pastTime: CommandsUtilitySchedulemessagePastTime
-    success: CommandsUtilitySchedulemessageSuccess
-    tooManyScheduled: CommandsUtilitySchedulemessageTooManyScheduled
-    referenceMessage: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterchannelAlready_set:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterchannelMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterchannelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterchannel:
-    already_set: CommandsUtilitySetupboosterchannelAlready_set
-    missingPermission: CommandsUtilitySetupboosterchannelMissingPermission
-    success: CommandsUtilitySetupboosterchannelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterroleAlready_set:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterroleMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterroleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilitySetupboosterrole:
-    already_set: CommandsUtilitySetupboosterroleAlready_set
-    missingPermission: CommandsUtilitySetupboosterroleMissingPermission
-    success: CommandsUtilitySetupboosterroleSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityTwitch:
-    defaultNotificationMessage: LocalizedString
-    addTwitchLiveNotification: CommandsUtilityTwitchAddTwitchLiveNotification
-    listTwitchLiveNotifications: CommandsUtilityTwitchListTwitchLiveNotifications
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminAdd_roleMultipleSuccess:
-    action: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminAdministrationTest_bot:
-    all_completed: LocalizedString
-    current_test_cmds: LocalizedString
-    current_test_db: LocalizedString
-    current_test_ping: LocalizedString
-    error: LocalizedString
-    starting: LocalizedString
-    tests_unavailable: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminAdministrationBenchmark_bot:
-    error: LocalizedString
-    starting: LocalizedString
-    unavailable: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminAdministrationUpdate:
-    connection_failed: LocalizedString
-    http_error: LocalizedString
-    updating: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellAlreadySet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellDeleteSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellMissingBotPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellMissingPro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellNotSet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewellSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelFarewell:
-    alreadySet: CommandsAdminChannelFarewellAlreadySet
-    deleteSuccess: CommandsAdminChannelFarewellDeleteSuccess
-    missingBotPermission: CommandsAdminChannelFarewellMissingBotPermission
-    missingPermission: CommandsAdminChannelFarewellMissingPermission
-    missingPro: CommandsAdminChannelFarewellMissingPro
-    notSet: CommandsAdminChannelFarewellNotSet
-    success: CommandsAdminChannelFarewellSuccess
-    defaultFarewellMessage: LocalizedString
-    memberNumber: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaAlreadySet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaDeleteSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaInfoMessage:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaInfoMessageDelete:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaMissingPermissionBot:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaNotSet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaOnlyMedia:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaOptedOut:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMediaSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelMedia:
-    alreadySet: CommandsAdminChannelMediaAlreadySet
-    deleteSuccess: CommandsAdminChannelMediaDeleteSuccess
-    infoMessage: CommandsAdminChannelMediaInfoMessage
-    infoMessageDelete: CommandsAdminChannelMediaInfoMessageDelete
-    missingPermission: CommandsAdminChannelMediaMissingPermission
-    missingPermissionBot: CommandsAdminChannelMediaMissingPermissionBot
-    notSet: CommandsAdminChannelMediaNotSet
-    onlyMedia: CommandsAdminChannelMediaOnlyMedia
-    optedOut: CommandsAdminChannelMediaOptedOut
-    success: CommandsAdminChannelMediaSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeAlreadySet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeDeleteSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeMissingBotPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeMissingPro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeNotSet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcomeSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminChannelWelcome:
-    alreadySet: CommandsAdminChannelWelcomeAlreadySet
-    deleteSuccess: CommandsAdminChannelWelcomeDeleteSuccess
-    missingBotPermission: CommandsAdminChannelWelcomeMissingBotPermission
-    missingPermission: CommandsAdminChannelWelcomeMissingPermission
-    missingPro: CommandsAdminChannelWelcomeMissingPro
-    notSet: CommandsAdminChannelWelcomeNotSet
-    success: CommandsAdminChannelWelcomeSuccess
-    defaultWelcomeMessage: LocalizedString
-    memberNumber: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminClose_ticketError:
-    ticketNotFound1: LocalizedString
-    ticketNotFound2: LocalizedString
-    ticketNotFound3: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopy7tvAddModalSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopy7tvAddModal:
-    success: CommandsAdminCopy7tvAddModalSuccess
-    downloadError: LocalizedString
-    error: LocalizedString
-    invalidNumber: LocalizedString
-    label: LocalizedString
-    limitAnimated: LocalizedString
-    limitStatic: LocalizedString
-    placeholder: LocalizedString
-    reason: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopy7tvErrorNotFound:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopy7tvError:
-    notFound: CommandsAdminCopy7tvErrorNotFound
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiErrorLimitReached:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiErrorNoEmojis:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiErrorProRequired:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiError:
-    limitReached: CommandsAdminCopyEmojiErrorLimitReached
-    noEmojis: CommandsAdminCopyEmojiErrorNoEmojis
-    proRequired: CommandsAdminCopyEmojiErrorProRequired
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiSuccessMultiple:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminCopyEmojiSuccess:
-    multiple: CommandsAdminCopyEmojiSuccessMultiple
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedButtons:
-    addField: LocalizedString
-    editField: LocalizedString
-    preview: LocalizedString
-    removeField: LocalizedString
-    send: LocalizedString
-    setColor: LocalizedString
-    setDescription: LocalizedString
-    setFooter: LocalizedString
-    setImage: LocalizedString
-    setThumbnail: LocalizedString
-    setTitle: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsColorModal:
-    label: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsEditFieldModal:
-    fieldLabel: LocalizedString
-    selectField: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsFieldModal:
-    inlineLabel: LocalizedString
-    nameLabel: LocalizedString
-    title: LocalizedString
-    valueLabel: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsFooterModal:
-    iconLabel: LocalizedString
-    label: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsImageModal:
-    label: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsRemoveFieldModal:
-    fieldLabel: LocalizedString
-    selectField: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsThumbnailModal:
-    label: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModalsTitleModal:
-    label: LocalizedString
-    title: LocalizedString
-    urlLabel: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedModals:
-    colorModal: CommandsAdminEmbedModalsColorModal
-    editFieldModal: CommandsAdminEmbedModalsEditFieldModal
-    fieldModal: CommandsAdminEmbedModalsFieldModal
-    footerModal: CommandsAdminEmbedModalsFooterModal
-    imageModal: CommandsAdminEmbedModalsImageModal
-    removeFieldModal: CommandsAdminEmbedModalsRemoveFieldModal
-    thumbnailModal: CommandsAdminEmbedModalsThumbnailModal
-    titleModal: CommandsAdminEmbedModalsTitleModal
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminEmbedSetDescription:
-    descriptionUpdated: LocalizedString
-    message: LocalizedString
-    timeout: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminOpen_ticketError:
-    channelMissingPermission: LocalizedString
-    ticketCreated: LocalizedString
-    ticketNotCreated: LocalizedString
-    ticketNotFound: LocalizedString
-    success: CommandsAdminOpen_ticketErrorSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminOpen_ticketSuccess:
-    ticketCreated: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminRemove_roleMultipleSuccess:
-    action: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsRemove_channelMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsRemove_channelNoChannel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsRemove_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsRemove_channel:
-    missingPermission: CommandsAdminReportsRemove_channelMissingPermission
-    noChannel: CommandsAdminReportsRemove_channelNoChannel
-    success: CommandsAdminReportsRemove_channelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsSet_channelAlreadySet:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsSet_channelMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsSet_channelMissingPermissionBot:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsSet_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsSet_channel:
-    alreadySet: CommandsAdminReportsSet_channelAlreadySet
-    missingPermission: CommandsAdminReportsSet_channelMissingPermission
-    missingPermissionBot: CommandsAdminReportsSet_channelMissingPermissionBot
-    success: CommandsAdminReportsSet_channelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsBlock:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsNext:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsNoReports:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsPrevious:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsRemove:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsReport:
-    accepted: LocalizedString
-    description: LocalizedString
-    not_accepted: LocalizedString
-    not_resolved: LocalizedString
-    resolved: LocalizedString
-    status: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsResolve:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reportsUnblock:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsShow_reports:
-    block: CommandsAdminReportsShow_reportsBlock
-    missingPermission: CommandsAdminReportsShow_reportsMissingPermission
-    next: CommandsAdminReportsShow_reportsNext
-    noReports: CommandsAdminReportsShow_reportsNoReports
-    previous: CommandsAdminReportsShow_reportsPrevious
-    remove: CommandsAdminReportsShow_reportsRemove
-    report: CommandsAdminReportsShow_reportsReport
-    resolve: CommandsAdminReportsShow_reportsResolve
-    unblock: CommandsAdminReportsShow_reportsUnblock
-    not_your_reports: LocalizedString
-    not_your_warns: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsUnblock_reporterMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsUnblock_reporterNotBlocked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsUnblock_reporterSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminReportsUnblock_reporter:
-    missingPermission: CommandsAdminReportsUnblock_reporterMissingPermission
-    notBlocked: CommandsAdminReportsUnblock_reporterNotBlocked
-    success: CommandsAdminReportsUnblock_reporterSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesAddMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesAddSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesAdd:
-    missingPermission: CommandsAdminTrigger_messagesAddMissingPermission
-    success: CommandsAdminTrigger_messagesAddSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureAdd_channel:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureDown:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureNew:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureNext:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureNoTriggerMessages:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigurePrevious:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureRemove:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureRemove_channel:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureUp:
-    label: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigure:
-    add_channel: CommandsAdminTrigger_messagesConfigureAdd_channel
-    down: CommandsAdminTrigger_messagesConfigureDown
-    missingPermission: CommandsAdminTrigger_messagesConfigureMissingPermission
-    new: CommandsAdminTrigger_messagesConfigureNew
-    next: CommandsAdminTrigger_messagesConfigureNext
-    noTriggerMessages: CommandsAdminTrigger_messagesConfigureNoTriggerMessages
-    previous: CommandsAdminTrigger_messagesConfigurePrevious
-    remove: CommandsAdminTrigger_messagesConfigureRemove
-    remove_channel: CommandsAdminTrigger_messagesConfigureRemove_channel
-    up: CommandsAdminTrigger_messagesConfigureUp
-    modal: CommandsAdminTrigger_messagesConfigureModal
-    trigger: CommandsAdminTrigger_messagesConfigureTrigger
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnReason:
-    reached_warnings: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModalBan_threshold:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModalKick_threshold:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModalTimeout_duration:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModalTimeout_threshold:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModalWarnexpiration:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminWarnconfigModal:
-    ban_threshold: CommandsAdminWarnconfigModalBan_threshold
-    kick_threshold: CommandsAdminWarnconfigModalKick_threshold
-    timeout_duration: CommandsAdminWarnconfigModalTimeout_duration
-    timeout_threshold: CommandsAdminWarnconfigModalTimeout_threshold
-    warnexpiration: CommandsAdminWarnconfigModalWarnexpiration
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesBattleshipError:
-    invalidColumn: LocalizedString
-    invalidCoordinate: LocalizedString
-    invalidRow: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesConnect4ErrorNo_plus:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesConnect4Error:
-    no_plus: CommandsGamesConnect4ErrorNo_plus
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesFlagquizButtons:
-    giveUp: LocalizedString
-    guess: LocalizedString
-    hint: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesFlagquizError:
-    hintUsed: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesFlagquizModalInput:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesFlagquizModal:
-    input: CommandsGamesFlagquizModalInput
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesHangmanButtons:
-    giveUp: LocalizedString
-    guess: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesHangmanModalInput:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesHangmanModal:
-    input: CommandsGamesHangmanModalInput
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesWordleButtons:
-    giveUp: LocalizedString
-    guess: LocalizedString
-    playHard: LocalizedString
-    playNormal: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesWordleInitial:
-    description: LocalizedString
-    title: LocalizedString
-    descriptionextra: CommandsGamesWordleInitialDescriptionextra
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesWordleModalInput:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGamesWordleModal:
-    input: CommandsGamesWordleModalInput
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderAdd_channel_requirementValue:
-    description: LocalizedString
-    updated: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderAdd_channel_requirement:
-    value: CommandsGiveawayBuilderAdd_channel_requirementValue
-    cancelled: LocalizedString
-    label: LocalizedString
-    placeholder: LocalizedString
-    removed: LocalizedString
-    select: LocalizedString
-    v: CommandsGiveawayBuilderAdd_channel_requirementV
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderChannel:
-    selected: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderDescription:
-    timeout: LocalizedString
-    updated: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderModal:
-    timeout: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderSponsorSelect:
-    name: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderSponsor:
-    select: CommandsGiveawayBuilderSponsorSelect
-    cancelled: LocalizedString
-    label: LocalizedString
-    selected: LocalizedString
-    updated: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayBuilderWinner:
-    updated: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveawayErrorAlready_ended:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveawayErrorInvalid_message:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveawayErrorMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveawayErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveawayError:
-    already_ended: CommandsGiveawayEnd_giveawayErrorAlready_ended
-    invalid_message: CommandsGiveawayEnd_giveawayErrorInvalid_message
-    missingPermission: CommandsGiveawayEnd_giveawayErrorMissingPermission
-    no_permission: CommandsGiveawayEnd_giveawayErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway_commandErrorAlreadyEnded:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway_commandErrorMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway_commandErrorNotFound:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayEnd_giveaway_commandError:
-    alreadyEnded: CommandsGiveawayEnd_giveaway_commandErrorAlreadyEnded
-    missingPermission: CommandsGiveawayEnd_giveaway_commandErrorMissingPermission
-    notFound: CommandsGiveawayEnd_giveaway_commandErrorNotFound
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveawayErrorMissingPermission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveawayErrorNoParticipants:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveawayErrorNotEnded:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveawayErrorNotFound:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsGiveawayReroll_giveawayError:
-    missingPermission: CommandsGiveawayReroll_giveawayErrorMissingPermission
-    noParticipants: CommandsGiveawayReroll_giveawayErrorNoParticipants
-    notEnded: CommandsGiveawayReroll_giveawayErrorNotEnded
-    notFound: CommandsGiveawayReroll_giveawayErrorNotFound
-    notAuthorized: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelroleErrorInvalid_level:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelroleErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelroleErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelroleErrorRole_exists:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelAddlevelroleError:
-    invalid_level: CommandsLevelAddlevelroleErrorInvalid_level
-    no_permission: CommandsLevelAddlevelroleErrorNo_permission
-    no_pro: CommandsLevelAddlevelroleErrorNo_pro
-    role_exists: CommandsLevelAddlevelroleErrorRole_exists
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_channel:
-    success: CommandsLevelBlacklistAdd_channelSuccess
-    error: CommandsLevelBlacklistAdd_channelError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_roleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_role:
-    success: CommandsLevelBlacklistAdd_roleSuccess
-    error: CommandsLevelBlacklistAdd_roleError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_userSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_user:
-    success: CommandsLevelBlacklistAdd_userSuccess
-    error: CommandsLevelBlacklistAdd_userError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_channel:
-    success: CommandsLevelBlacklistRemove_channelSuccess
-    error: CommandsLevelBlacklistRemove_channelError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_roleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_role:
-    success: CommandsLevelBlacklistRemove_roleSuccess
-    error: CommandsLevelBlacklistRemove_roleError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_userSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_user:
-    success: CommandsLevelBlacklistRemove_userSuccess
-    error: CommandsLevelBlacklistRemove_userError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistShow:
-    channels: LocalizedString
-    description: LocalizedString
-    empty: LocalizedString
-    roles: LocalizedString
-    title: LocalizedString
-    users: LocalizedString
-    error: CommandsLevelBlacklistShowError
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_channel:
-    success: CommandsLevelBoostsAdd_channelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_roleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_role:
-    success: CommandsLevelBoostsAdd_roleSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_userSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsAdd_user:
-    success: CommandsLevelBoostsAdd_userSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsError:
-    no_pro: CommandsLevelBoostsErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_channelSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_channel:
-    success: CommandsLevelBoostsRemove_channelSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_roleSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_role:
-    success: CommandsLevelBoostsRemove_roleSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_userSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelBoostsRemove_user:
-    success: CommandsLevelBoostsRemove_userSuccess
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangelevelupmessageErrorMessage_too_long:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangelevelupmessageErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangelevelupmessageErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangelevelupmessageError:
-    message_too_long: CommandsLevelChangelevelupmessageErrorMessage_too_long
-    no_permission: CommandsLevelChangelevelupmessageErrorNo_permission
-    no_pro: CommandsLevelChangelevelupmessageErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingErrorInvalid_scaling:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingErrorNo_custom_formula:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingError:
-    invalid_scaling: CommandsLevelChangexpscalingErrorInvalid_scaling
-    no_custom_formula: CommandsLevelChangexpscalingErrorNo_custom_formula
-    no_permission: CommandsLevelChangexpscalingErrorNo_permission
-    no_pro: CommandsLevelChangexpscalingErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingFormulas:
-    easy: LocalizedString
-    extreme: LocalizedString
-    hard: LocalizedString
-    medium: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelChangexpscalingScalings:
-    custom: LocalizedString
-    easy: LocalizedString
-    extreme: LocalizedString
-    hard: LocalizedString
-    medium: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelsystemErrorAlready_disabled:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelsystemErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelsystemError:
-    already_disabled: CommandsLevelDisablelevelsystemErrorAlready_disabled
-    no_permission: CommandsLevelDisablelevelsystemErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelupmessageErrorAlready_disabled:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelupmessageErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelupmessageErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelupmessageError:
-    already_disabled: CommandsLevelDisablelevelupmessageErrorAlready_disabled
-    no_permission: CommandsLevelDisablelevelupmessageErrorNo_permission
-    no_pro: CommandsLevelDisablelevelupmessageErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelsystemErrorAlready_enabled:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelsystemErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelsystemError:
-    already_enabled: CommandsLevelEnablelevelsystemErrorAlready_enabled
-    no_permission: CommandsLevelEnablelevelsystemErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelupmessageErrorAlready_enabled:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelupmessageErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelupmessageErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelEnablelevelupmessageError:
-    already_enabled: CommandsLevelEnablelevelupmessageErrorAlready_enabled
-    no_permission: CommandsLevelEnablelevelupmessageErrorNo_permission
-    no_pro: CommandsLevelEnablelevelupmessageErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelGivexpErrorInvalid_amount:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelGivexpErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelGivexpError:
-    invalid_amount: CommandsLevelGivexpErrorInvalid_amount
-    no_permission: CommandsLevelGivexpErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRankData:
-    level: LocalizedString
-    xp: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRankErrorNo_data:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRankError:
-    no_data: CommandsLevelRankErrorNo_data
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRemovelevelroleErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRemovelevelroleErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRemovelevelroleErrorRole_not_found:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelRemovelevelroleError:
-    no_permission: CommandsLevelRemovelevelroleErrorNo_permission
-    no_pro: CommandsLevelRemovelevelroleErrorNo_pro
-    role_not_found: CommandsLevelRemovelevelroleErrorRole_not_found
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetbackgroundErrorInvalid_format:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetbackgroundErrorNo_plus:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetbackgroundError:
-    invalid_format: CommandsLevelSetbackgroundErrorInvalid_format
-    no_plus: CommandsLevelSetbackgroundErrorNo_plus
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetlevelupchannelErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetlevelupchannelErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetlevelupchannelError:
-    no_permission: CommandsLevelSetlevelupchannelErrorNo_permission
-    no_pro: CommandsLevelSetlevelupchannelErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldownErrorInvalid_cooldown:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldownErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldownError:
-    invalid_cooldown: CommandsLevelSettextcooldownErrorInvalid_cooldown
-    no_permission: CommandsLevelSettextcooldownErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldownParamsCooldown:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSettextcooldownParams:
-    cooldown: CommandsLevelSettextcooldownParamsCooldown
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldownErrorInvalid_cooldown:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldownErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldownError:
-    invalid_cooldown: CommandsLevelSetvoicecooldownErrorInvalid_cooldown
-    no_permission: CommandsLevelSetvoicecooldownErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldownParamsCooldown:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetvoicecooldownParams:
-    cooldown: CommandsLevelSetvoicecooldownParamsCooldown
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetxpErrorInvalid_amount:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetxpErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelSetxpError:
-    invalid_amount: CommandsLevelSetxpErrorInvalid_amount
-    no_permission: CommandsLevelSetxpErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelShowlevelrolesErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelShowlevelrolesErrorNo_pro:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelShowlevelrolesError:
-    no_permission: CommandsLevelShowlevelrolesErrorNo_permission
-    no_pro: CommandsLevelShowlevelrolesErrorNo_pro
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelShowlevelrolesRemove_role_confirm:
-    cancel_button: LocalizedString
-    confirm_button: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelTakexpErrorInvalid_amount:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelTakexpErrorNo_permission:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsLevelTakexpError:
-    invalid_amount: CommandsLevelTakexpErrorInvalid_amount
-    no_permission: CommandsLevelTakexpErrorNo_permission
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistAdd:
-    description: LocalizedString
-    name: LocalizedString
-    params: CommandsLogsBlacklistAddParams
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemove:
-    description: LocalizedString
-    name: LocalizedString
-    params: CommandsLogsBlacklistRemoveParams
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsConfigureLogsConfiguration_embed:
-    activate: LocalizedString
-    activated: LocalizedString
-    automodAction: LocalizedString
-    automodRuleCreate: LocalizedString
-    automodRuleDelete: LocalizedString
-    automodRuleUpdate: LocalizedString
-    deactivate: LocalizedString
-    deactivated: LocalizedString
-    guildRoleCreate: LocalizedString
-    guildRoleDelete: LocalizedString
-    guildRoleUpdate: LocalizedString
-    guildUpdate: LocalizedString
-    guild_channelCreate: LocalizedString
-    guild_channelDelete: LocalizedString
-    guild_channelUpdate: LocalizedString
-    inviteCreate: LocalizedString
-    inviteDelete: LocalizedString
-    memberBan: LocalizedString
-    memberJoin: LocalizedString
-    memberLeave: LocalizedString
-    memberUnban: LocalizedString
-    memberUpdate: LocalizedString
-    messageDelete: LocalizedString
-    messageEdit: LocalizedString
-    presenceUpdate: LocalizedString
-    reactionAdd: LocalizedString
-    reactionRemove: LocalizedString
-    userUpdate: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsMathNum2wordLocales:
@@ -5376,60 +4195,12 @@ class CommandsMathPlotfunctionMessages:
     y_label_changed: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionModalsAdd_function:
-    function_expression: LocalizedString
-    function_expression_placeholder: LocalizedString
-    function_name: LocalizedString
-    function_name_placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionModalsChange_title:
-    new_title: LocalizedString
-    new_title_placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionModalsChange_x_label:
-    new_label: LocalizedString
-    new_label_placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionModalsChange_y_label:
-    new_label: LocalizedString
-    new_label_placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionModalsRename_function:
-    new_name: LocalizedString
-    new_name_placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsMathPlotfunctionModals:
     add_function: CommandsMathPlotfunctionModalsAdd_function
     change_title: CommandsMathPlotfunctionModalsChange_title
     change_x_label: CommandsMathPlotfunctionModalsChange_x_label
     change_y_label: CommandsMathPlotfunctionModalsChange_y_label
     rename_function: CommandsMathPlotfunctionModalsRename_function
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionSelect_menusDerive:
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionSelect_menusIntegrate:
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionSelect_menusRename_function:
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionSelect_menusStyle:
-    placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsMathPlotfunctionSelect_menus:
@@ -5439,22 +4210,54 @@ class CommandsMathPlotfunctionSelect_menus:
     style: CommandsMathPlotfunctionSelect_menusStyle
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishErrorIs_already:
+class CommandsMathPlotfunctionError:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishErrorIs_not:
+class CommandsMathRandomnumberError:
+    invalid_amount: LocalizedString
+    invalid_input: LocalizedString
+    invalid_range: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathRandomnumberSuccess:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishErrorNo_permission:
+class CommandsUtilityAfkAlready_afk:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityAutopublishErrorNot_news_channel:
+class CommandsUtilityAfkMentions:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAfkMentions_one:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAfkOpted_out:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAfkRemoved:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAfkRemoved_no_messages:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAfkSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5464,6 +4267,31 @@ class CommandsUtilityAutopublishError:
     is_not: CommandsUtilityAutopublishErrorIs_not
     no_permission: CommandsUtilityAutopublishErrorNo_permission
     not_news_channel: CommandsUtilityAutopublishErrorNot_news_channel
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishRemove_success:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAvatarDecorationNo_decoration:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBoosterchannelinfoInfo:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBoosterroleinfoInfo:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsBattlelog:
@@ -5489,18 +4317,13 @@ class CommandsUtilityBrawlstarsClub:
     search: CommandsUtilityBrawlstarsClubSearch
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsEventsNotFound:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsEvents:
-    notFound: CommandsUtilityBrawlstarsEventsNotFound
     description: LocalizedString
     notYourEmbed: LocalizedString
     title: LocalizedString
     titleNoPages: LocalizedString
     error: CommandsUtilityBrawlstarsEventsError
+    notFound: CommandsUtilityBrawlstarsEventsNotFound
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsGameModes:
@@ -5519,14 +4342,9 @@ class CommandsUtilityBrawlstarsGameModes:
     wipeout5V5: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsLinkSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsLink:
-    success: CommandsUtilityBrawlstarsLinkSuccess
     error: CommandsUtilityBrawlstarsLinkError
+    success: CommandsUtilityBrawlstarsLinkSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsMaps:
@@ -5635,52 +4453,130 @@ class CommandsUtilityBrawlstarsResults:
     victory: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsUnlinkSuccess:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsUnlink:
-    success: CommandsUtilityBrawlstarsUnlinkSuccess
     error: CommandsUtilityBrawlstarsUnlinkError
+    success: CommandsUtilityBrawlstarsUnlinkSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityClaimboosterchannelExpired:
     reason: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelAlready_claimed:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelCategory_not_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelNo_booster_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelNo_booster_role:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelNobooster:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterchannelSuccess:
+    description: LocalizedString
+    reason: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsUtilityClaimboosterroleExpired:
     reason: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackModalFeedbackdescription:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackModalFeedbacktitle:
-    label: LocalizedString
-    placeholder: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackModalSubmitted:
+class CommandsUtilityClaimboosterroleAlready_claimed:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackModalTimeout:
-    _text: LocalizedString
+class CommandsUtilityClaimboosterroleInvalid_color:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterroleNo_booster_role:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterroleNobooster:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterroleRole_not_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityClaimboosterroleSuccess:
+    description: LocalizedString
+    reason: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterchannelMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterchannelNo_booster_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterchannelSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterroleMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterroleNo_booster_role:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityDeleteboosterroleSuccess:
+    description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityFeedbackModal:
+    description: LocalizedString
+    not_authorized: LocalizedString
+    timeout: LocalizedString
+    title: LocalizedString
     feedbackdescription: CommandsUtilityFeedbackModalFeedbackdescription
     feedbacktitle: CommandsUtilityFeedbackModalFeedbacktitle
     submitted: CommandsUtilityFeedbackModalSubmitted
     timeout: CommandsUtilityFeedbackModalTimeout
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackBlocked:
     description: LocalizedString
-    not_authorized: LocalizedString
     title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityHelpNoCommands:
+    description: LocalizedString
+    label: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityListscheduledError:
@@ -5691,37 +4587,287 @@ class CommandsUtilityListscheduledPagination:
     page_counter: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledErrorNo_messages:
+class CommandsUtilityListscheduledEdit_modal:
+    content_label: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityListscheduledEdit_success:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledErrorNot_found:
+class CommandsUtilityListscheduledNo_messages:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityRemovescheduledErrorTimeout:
+class CommandsUtilityListscheduledTruncated:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptinError:
+    already_opted_in: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptinSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptoutError:
+    already_opted_out: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityMessagetrackingoptoutSuccess:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityRemovescheduledError:
+    not_authorized: LocalizedString
     no_messages: CommandsUtilityRemovescheduledErrorNo_messages
     not_found: CommandsUtilityRemovescheduledErrorNot_found
     timeout: CommandsUtilityRemovescheduledErrorTimeout
-    not_authorized: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityTwitchAddTwitchLiveNotificationSuccess:
+class CommandsUtilityRemovescheduledNo_messages:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledNot_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledSelect:
+    description: LocalizedString
+    placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledTimeout:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportAccept:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportBlock_reporter:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportBlocked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportInvalid_action:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportNew_report:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportNo_reason:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportNo_report_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportReason_too_short:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportReject:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportReport_channel_not_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportReport_sent:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportReporter_blocked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsAccept:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsBlock_reporter:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsBlocked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsInvalid_action:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsNew_report:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsNo_reason:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsNo_report_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReason_too_short:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReject:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReport_accepted:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReport_channel_not_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReport_rejected:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReport_sent:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityReportsReporter_blocked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageInvalidTime:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageNoBotChannelPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageNoChannelPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageNoDMPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageNoRepeatPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessagePastTime:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySchedulemessageTooManyScheduled:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterchannelAlready_set:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterchannelMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterchannelSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterroleAlready_set:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterroleMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilitySetupboosterroleSuccess:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchAddTwitchLiveNotification:
-    success: CommandsUtilityTwitchAddTwitchLiveNotificationSuccess
     error: CommandsUtilityTwitchAddTwitchLiveNotificationError
     errors: CommandsUtilityTwitchAddTwitchLiveNotificationErrors
+    success: CommandsUtilityTwitchAddTwitchLiveNotificationSuccess
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchListTwitchLiveNotifications:
@@ -5731,52 +4877,319 @@ class CommandsUtilityTwitchListTwitchLiveNotifications:
     error: CommandsUtilityTwitchListTwitchLiveNotificationsError
 
 @dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellAlreadySet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellDeleteSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellMissingBotPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellMissingPro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellNotSet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelFarewellSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaAlreadySet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaDeleteSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaInfoMessage:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaInfoMessageDelete:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaMissingPermissionBot:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaNotSet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaOnlyMedia:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaOptedOut:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelMediaSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeAlreadySet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeDeleteSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeMissingBotPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeMissingPro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeNotSet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminChannelWelcomeSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopy7tvAddModalSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopy7tvErrorNotFound:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmojiErrorLimitReached:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmojiErrorNoEmojis:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmojiErrorProRequired:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminCopyEmojiSuccessMultiple:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsColorModal:
+    label: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsEditFieldModal:
+    fieldLabel: LocalizedString
+    selectField: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsFieldModal:
+    inlineLabel: LocalizedString
+    nameLabel: LocalizedString
+    title: LocalizedString
+    valueLabel: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsFooterModal:
+    iconLabel: LocalizedString
+    label: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsImageModal:
+    label: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsRemoveFieldModal:
+    fieldLabel: LocalizedString
+    selectField: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsThumbnailModal:
+    label: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminEmbedModalsTitleModal:
+    label: LocalizedString
+    title: LocalizedString
+    urlLabel: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsAdminOpen_ticketErrorSuccess:
     ticketCreated: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureModalCaseSensitive:
-    label: LocalizedString
-    placeholder: LocalizedString
+class CommandsAdminReportsRemove_channelMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureModalCase_sensitive:
-    label: LocalizedString
-    placeholder: LocalizedString
+class CommandsAdminReportsRemove_channelNoChannel:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureModalResponse:
-    label: LocalizedString
-    placeholder: LocalizedString
+class CommandsAdminReportsRemove_channelSuccess:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureModalTrigger:
+class CommandsAdminReportsSet_channelAlreadySet:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsSet_channelMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsSet_channelMissingPermissionBot:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsSet_channelSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsBlock:
     label: LocalizedString
-    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsNext:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsNoReports:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsPrevious:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsRemove:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsReport:
+    accepted: LocalizedString
+    description: LocalizedString
+    not_accepted: LocalizedString
+    not_resolved: LocalizedString
+    resolved: LocalizedString
+    status: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsResolve:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsShow_reportsUnblock:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsUnblock_reporterMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsUnblock_reporterNotBlocked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminReportsUnblock_reporterSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesAddMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesAddSuccess:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminTrigger_messagesConfigureModal:
+    title: LocalizedString
     caseSensitive: CommandsAdminTrigger_messagesConfigureModalCaseSensitive
     case_sensitive: CommandsAdminTrigger_messagesConfigureModalCase_sensitive
     response: CommandsAdminTrigger_messagesConfigureModalResponse
     trigger: CommandsAdminTrigger_messagesConfigureModalTrigger
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureTriggerAddChannel:
-    description: LocalizedString
-    placeholder: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsAdminTrigger_messagesConfigureTriggerNoTriggerMessages:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsAdminTrigger_messagesConfigureTrigger:
-    addChannel: CommandsAdminTrigger_messagesConfigureTriggerAddChannel
-    noTriggerMessages: CommandsAdminTrigger_messagesConfigureTriggerNoTriggerMessages
     caseInsensitive: LocalizedString
     caseSensitive: LocalizedString
     case_sensitive: LocalizedString
@@ -5784,10 +5197,99 @@ class CommandsAdminTrigger_messagesConfigureTrigger:
     description: LocalizedString
     noChannels: LocalizedString
     title: LocalizedString
+    addChannel: CommandsAdminTrigger_messagesConfigureTriggerAddChannel
+    noTriggerMessages: CommandsAdminTrigger_messagesConfigureTriggerNoTriggerMessages
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureAdd_channel:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureDown:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureNew:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureNext:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureNoTriggerMessages:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigurePrevious:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureRemove:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureRemove_channel:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureUp:
+    label: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfigModalBan_threshold:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfigModalKick_threshold:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfigModalTimeout_duration:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfigModalTimeout_threshold:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminWarnconfigModalWarnexpiration:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesConnect4ErrorNo_plus:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesFlagquizModalInput:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesHangmanModalInput:
+    label: LocalizedString
+    placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsGamesWordleInitialDescriptionextra:
     ja: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGamesWordleModalInput:
+    label: LocalizedString
+    placeholder: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsGiveawayBuilderAdd_channel_requirementV:
@@ -5795,12 +5297,87 @@ class CommandsGiveawayBuilderAdd_channel_requirementV:
     t: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_channelErrorNo_permission:
+class CommandsGiveawayBuilderAdd_channel_requirementValue:
+    description: LocalizedString
+    updated: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayBuilderSponsorSelect:
+    name: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveawayErrorAlready_ended:
     description: LocalizedString
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_channelErrorNo_pro:
+class CommandsGiveawayEnd_giveawayErrorInvalid_message:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveawayErrorMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveawayErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveaway_commandErrorAlreadyEnded:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveaway_commandErrorMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayEnd_giveaway_commandErrorNotFound:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayReroll_giveawayErrorMissingPermission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayReroll_giveawayErrorNoParticipants:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayReroll_giveawayErrorNotEnded:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsGiveawayReroll_giveawayErrorNotFound:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelAddlevelroleErrorInvalid_level:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelAddlevelroleErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelAddlevelroleErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelAddlevelroleErrorRole_exists:
     description: LocalizedString
     title: LocalizedString
 
@@ -5810,7 +5387,7 @@ class CommandsLevelBlacklistAdd_channelError:
     no_pro: CommandsLevelBlacklistAdd_channelErrorNo_pro
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_roleErrorNo_permission:
+class CommandsLevelBlacklistAdd_channelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5819,7 +5396,7 @@ class CommandsLevelBlacklistAdd_roleError:
     no_permission: CommandsLevelBlacklistAdd_roleErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistAdd_userErrorNo_permission:
+class CommandsLevelBlacklistAdd_roleSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5828,7 +5405,7 @@ class CommandsLevelBlacklistAdd_userError:
     no_permission: CommandsLevelBlacklistAdd_userErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_channelErrorNo_permission:
+class CommandsLevelBlacklistAdd_userSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5837,7 +5414,7 @@ class CommandsLevelBlacklistRemove_channelError:
     no_permission: CommandsLevelBlacklistRemove_channelErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_roleErrorNo_permission:
+class CommandsLevelBlacklistRemove_channelSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5846,7 +5423,7 @@ class CommandsLevelBlacklistRemove_roleError:
     no_permission: CommandsLevelBlacklistRemove_roleErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistRemove_userErrorNo_permission:
+class CommandsLevelBlacklistRemove_roleSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5855,7 +5432,7 @@ class CommandsLevelBlacklistRemove_userError:
     no_permission: CommandsLevelBlacklistRemove_userErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelBlacklistShowErrorNo_permission:
+class CommandsLevelBlacklistRemove_userSuccess:
     description: LocalizedString
     title: LocalizedString
 
@@ -5864,16 +5441,238 @@ class CommandsLevelBlacklistShowError:
     no_permission: CommandsLevelBlacklistShowErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistAddParamsChannel:
+class CommandsLevelBoostsAdd_channelSuccess:
     description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsAdd_roleSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsAdd_userSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_channelSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_roleSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBoostsRemove_userSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangelevelupmessageErrorMessage_too_long:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangelevelupmessageErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangelevelupmessageErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingErrorInvalid_scaling:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingErrorNo_custom_formula:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelChangexpscalingErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelsystemErrorAlready_disabled:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelsystemErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelupmessageErrorAlready_disabled:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelupmessageErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelupmessageErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelsystemErrorAlready_enabled:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelsystemErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelupmessageErrorAlready_enabled:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelupmessageErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelEnablelevelupmessageErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelGivexpErrorInvalid_amount:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelGivexpErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRankErrorNo_data:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRemovelevelroleErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRemovelevelroleErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelRemovelevelroleErrorRole_not_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetbackgroundErrorInvalid_format:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetbackgroundErrorNo_plus:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetlevelupchannelErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetlevelupchannelErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSettextcooldownErrorInvalid_cooldown:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSettextcooldownErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSettextcooldownParamsCooldown:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetvoicecooldownErrorInvalid_cooldown:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetvoicecooldownErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetvoicecooldownParamsCooldown:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetxpErrorInvalid_amount:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelSetxpErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelShowlevelrolesErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelShowlevelrolesErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelTakexpErrorInvalid_amount:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelTakexpErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistAddParams:
     channel: CommandsLogsBlacklistAddParamsChannel
-
-@dataclass(frozen=True, slots=True)
-class CommandsLogsBlacklistRemoveParamsChannel:
-    description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsLogsBlacklistRemoveParams:
@@ -5907,6 +5706,74 @@ class CommandsMathNum2wordLocalesPt:
     _text: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionModalsAdd_function:
+    function_expression: LocalizedString
+    function_expression_placeholder: LocalizedString
+    function_name: LocalizedString
+    function_name_placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionModalsChange_title:
+    new_title: LocalizedString
+    new_title_placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionModalsChange_x_label:
+    new_label: LocalizedString
+    new_label_placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionModalsChange_y_label:
+    new_label: LocalizedString
+    new_label_placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionModalsRename_function:
+    new_name: LocalizedString
+    new_name_placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionSelect_menusDerive:
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionSelect_menusIntegrate:
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionSelect_menusRename_function:
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionSelect_menusStyle:
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishErrorIs_already:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishErrorIs_not:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityAutopublishErrorNot_news_channel:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsBattlelogDescription:
     battleTime: LocalizedString
     battle_time: LocalizedString
@@ -5925,21 +5792,6 @@ class CommandsUtilityBrawlstarsBattlelogDescription:
     teamPlayer: LocalizedString
     trophyChange: LocalizedString
     trophy_change: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBattlelogErrorNotFound:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBattlelogErrorNotLinked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBattlelogErrorUserNotLinked:
-    description: LocalizedString
-    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsBattlelogError:
@@ -5962,33 +5814,16 @@ class CommandsUtilityBrawlstarsBrawlersDescription:
     star_powers: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBrawlersErrorNotFound:
-    _text: LocalizedString
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBrawlersErrorNotLinked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsBrawlersError:
     notFound: CommandsUtilityBrawlstarsBrawlersErrorNotFound
     notLinked: CommandsUtilityBrawlstarsBrawlersErrorNotLinked
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsBrawlersSearchError:
-    description: LocalizedString
-    invalidInput: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsBrawlersSearch:
-    error: CommandsUtilityBrawlstarsBrawlersSearchError
     label: LocalizedString
     placeholder: LocalizedString
     title: LocalizedString
+    error: CommandsUtilityBrawlstarsBrawlersSearchError
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsClubDescription:
@@ -5996,39 +5831,22 @@ class CommandsUtilityBrawlstarsClubDescription:
     overview: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsClubErrorNotFound:
-    _text: LocalizedString
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsClubError:
     notFound: CommandsUtilityBrawlstarsClubErrorNotFound
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsClubSearchError:
-    description: LocalizedString
-    invalidInput: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsClubSearch:
-    error: CommandsUtilityBrawlstarsClubSearchError
     label: LocalizedString
     placeholder: LocalizedString
     title: LocalizedString
+    error: CommandsUtilityBrawlstarsClubSearchError
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsEventsError:
     notFound: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsLinkErrorAlreadyLinked:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsLinkErrorNotFound:
+class CommandsUtilityBrawlstarsEventsNotFound:
     description: LocalizedString
     title: LocalizedString
 
@@ -6036,6 +5854,11 @@ class CommandsUtilityBrawlstarsLinkErrorNotFound:
 class CommandsUtilityBrawlstarsLinkError:
     alreadyLinked: CommandsUtilityBrawlstarsLinkErrorAlreadyLinked
     notFound: CommandsUtilityBrawlstarsLinkErrorNotFound
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsLinkSuccess:
+    description: LocalizedString
+    title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsPlayerinfoDescription:
@@ -6050,6 +5873,211 @@ class CommandsUtilityBrawlstarsPlayerinfoDescription:
     trophies: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsPlayerinfoError:
+    notFound: CommandsUtilityBrawlstarsPlayerinfoErrorNotFound
+    notLinked: CommandsUtilityBrawlstarsPlayerinfoErrorNotLinked
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsUnlinkError:
+    notLinked: CommandsUtilityBrawlstarsUnlinkErrorNotLinked
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsUnlinkSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackModalFeedbackdescription:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackModalFeedbacktitle:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackModalSubmitted:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackModalTimeout:
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledErrorNo_messages:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledErrorNot_found:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityRemovescheduledErrorTimeout:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityTwitchAddTwitchLiveNotificationError:
+    missingBotPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingBotPermissions
+    missingPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingPermissions
+    twitchNameNotFound: CommandsUtilityTwitchAddTwitchLiveNotificationErrorTwitchNameNotFound
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityTwitchAddTwitchLiveNotificationErrors:
+    missingBotPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsMissingBotPermissions
+    missingPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsMissingPermissions
+    notYourNotification: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsNotYourNotification
+    twitchNameNotFound: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsTwitchNameNotFound
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityTwitchAddTwitchLiveNotificationSuccess:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityTwitchListTwitchLiveNotificationsError:
+    missingPermissions: CommandsUtilityTwitchListTwitchLiveNotificationsErrorMissingPermissions
+    noNotifications: CommandsUtilityTwitchListTwitchLiveNotificationsErrorNoNotifications
+    notYourNotification: CommandsUtilityTwitchListTwitchLiveNotificationsErrorNotYourNotification
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureModalCaseSensitive:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureModalCase_sensitive:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureModalResponse:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureModalTrigger:
+    label: LocalizedString
+    placeholder: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureTriggerAddChannel:
+    description: LocalizedString
+    placeholder: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsAdminTrigger_messagesConfigureTriggerNoTriggerMessages:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistAdd_channelErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistAdd_channelErrorNo_pro:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistAdd_roleErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistAdd_userErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_channelErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_roleErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistRemove_userErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLevelBlacklistShowErrorNo_permission:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistAddParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsLogsBlacklistRemoveParamsChannel:
+    description: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBattlelogErrorNotFound:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBattlelogErrorNotLinked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBattlelogErrorUserNotLinked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBrawlersErrorNotFound:
+    _text: LocalizedString
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBrawlersErrorNotLinked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsBrawlersSearchError:
+    description: LocalizedString
+    invalidInput: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsClubErrorNotFound:
+    _text: LocalizedString
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsClubSearchError:
+    description: LocalizedString
+    invalidInput: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsLinkErrorAlreadyLinked:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class CommandsUtilityBrawlstarsLinkErrorNotFound:
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsPlayerinfoErrorNotFound:
     _text: LocalizedString
     description: LocalizedString
@@ -6061,18 +6089,9 @@ class CommandsUtilityBrawlstarsPlayerinfoErrorNotLinked:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsPlayerinfoError:
-    notFound: CommandsUtilityBrawlstarsPlayerinfoErrorNotFound
-    notLinked: CommandsUtilityBrawlstarsPlayerinfoErrorNotLinked
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityBrawlstarsUnlinkErrorNotLinked:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityBrawlstarsUnlinkError:
-    notLinked: CommandsUtilityBrawlstarsUnlinkErrorNotLinked
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingBotPermissions:
@@ -6088,12 +6107,6 @@ class CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingPermissions:
 class CommandsUtilityTwitchAddTwitchLiveNotificationErrorTwitchNameNotFound:
     description: LocalizedString
     title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityTwitchAddTwitchLiveNotificationError:
-    missingBotPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingBotPermissions
-    missingPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorMissingPermissions
-    twitchNameNotFound: CommandsUtilityTwitchAddTwitchLiveNotificationErrorTwitchNameNotFound
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchAddTwitchLiveNotificationErrorsMissingBotPermissions:
@@ -6116,13 +6129,6 @@ class CommandsUtilityTwitchAddTwitchLiveNotificationErrorsTwitchNameNotFound:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class CommandsUtilityTwitchAddTwitchLiveNotificationErrors:
-    missingBotPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsMissingBotPermissions
-    missingPermissions: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsMissingPermissions
-    notYourNotification: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsNotYourNotification
-    twitchNameNotFound: CommandsUtilityTwitchAddTwitchLiveNotificationErrorsTwitchNameNotFound
-
-@dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchListTwitchLiveNotificationsErrorMissingPermissions:
     description: LocalizedString
     title: LocalizedString
@@ -6135,12 +6141,6 @@ class CommandsUtilityTwitchListTwitchLiveNotificationsErrorNoNotifications:
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityTwitchListTwitchLiveNotificationsErrorNotYourNotification:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityTwitchListTwitchLiveNotificationsError:
-    missingPermissions: CommandsUtilityTwitchListTwitchLiveNotificationsErrorMissingPermissions
-    noNotifications: CommandsUtilityTwitchListTwitchLiveNotificationsErrorNoNotifications
-    notYourNotification: CommandsUtilityTwitchListTwitchLiveNotificationsErrorNotYourNotification
 
 def build_commands() -> Commands:
     _n_commands_admin_add_role_multipleSuccess = CommandsAdminAdd_roleMultipleSuccess(
@@ -6465,13 +6465,13 @@ def build_commands() -> Commands:
         media=_n_commands_admin_channel_media,
         welcome=_n_commands_admin_channel_welcome,
     )
+    _n_commands_admin_close_ticket_button = CommandsAdminClose_ticketButton(
+        label=LocalizedString('commands.admin.close_ticket.button.label'),
+    )
     _n_commands_admin_close_ticket_error = CommandsAdminClose_ticketError(
         ticketNotFound1=LocalizedString('commands.admin.close_ticket.error.ticketNotFound1'),
         ticketNotFound2=LocalizedString('commands.admin.close_ticket.error.ticketNotFound2'),
         ticketNotFound3=LocalizedString('commands.admin.close_ticket.error.ticketNotFound3'),
-    )
-    _n_commands_admin_close_ticket_button = CommandsAdminClose_ticketButton(
-        label=LocalizedString('commands.admin.close_ticket.button.label'),
     )
     _n_commands_admin_close_ticket_success = CommandsAdminClose_ticketSuccess(
         description=LocalizedString('commands.admin.close_ticket.success.description'),
@@ -6546,15 +6546,6 @@ def build_commands() -> Commands:
         proRequired=_n_commands_admin_copyEmoji_error_proRequired,
         title=LocalizedString('commands.admin.copyEmoji.error.title'),
     )
-    _n_commands_admin_copyEmoji_success_multiple = CommandsAdminCopyEmojiSuccessMultiple(
-        description=LocalizedString('commands.admin.copyEmoji.success.multiple.description'),
-        title=LocalizedString('commands.admin.copyEmoji.success.multiple.title'),
-    )
-    _n_commands_admin_copyEmoji_success = CommandsAdminCopyEmojiSuccess(
-        description=LocalizedString('commands.admin.copyEmoji.success.description'),
-        multiple=_n_commands_admin_copyEmoji_success_multiple,
-        title=LocalizedString('commands.admin.copyEmoji.success.title'),
-    )
     _n_commands_admin_copyEmoji_missingPermission = CommandsAdminCopyEmojiMissingPermission(
         description=LocalizedString('commands.admin.copyEmoji.missingPermission.description'),
         title=LocalizedString('commands.admin.copyEmoji.missingPermission.title'),
@@ -6566,6 +6557,15 @@ def build_commands() -> Commands:
     _n_commands_admin_copyEmoji_partialSuccess = CommandsAdminCopyEmojiPartialSuccess(
         description=LocalizedString('commands.admin.copyEmoji.partialSuccess.description'),
         title=LocalizedString('commands.admin.copyEmoji.partialSuccess.title'),
+    )
+    _n_commands_admin_copyEmoji_success_multiple = CommandsAdminCopyEmojiSuccessMultiple(
+        description=LocalizedString('commands.admin.copyEmoji.success.multiple.description'),
+        title=LocalizedString('commands.admin.copyEmoji.success.multiple.title'),
+    )
+    _n_commands_admin_copyEmoji_success = CommandsAdminCopyEmojiSuccess(
+        description=LocalizedString('commands.admin.copyEmoji.success.description'),
+        multiple=_n_commands_admin_copyEmoji_success_multiple,
+        title=LocalizedString('commands.admin.copyEmoji.success.title'),
     )
     _n_commands_admin_copyEmoji = CommandsAdminCopyEmoji(
         error=_n_commands_admin_copyEmoji_error,
@@ -6789,6 +6789,14 @@ def build_commands() -> Commands:
         setThumbnail=LocalizedString('commands.admin.embed.buttons.setThumbnail'),
         setTitle=LocalizedString('commands.admin.embed.buttons.setTitle'),
     )
+    _n_commands_admin_embed_missingPermission = CommandsAdminEmbedMissingPermission(
+        description=LocalizedString('commands.admin.embed.missingPermission.description'),
+        title=LocalizedString('commands.admin.embed.missingPermission.title'),
+    )
+    _n_commands_admin_embed_missingTitle = CommandsAdminEmbedMissingTitle(
+        description=LocalizedString('commands.admin.embed.missingTitle.description'),
+        title=LocalizedString('commands.admin.embed.missingTitle.title'),
+    )
     _n_commands_admin_embed_modals_colorModal = CommandsAdminEmbedModalsColorModal(
         label=LocalizedString('commands.admin.embed.modals.colorModal.label'),
         title=LocalizedString('commands.admin.embed.modals.colorModal.title'),
@@ -6841,14 +6849,6 @@ def build_commands() -> Commands:
         descriptionUpdated=LocalizedString('commands.admin.embed.setDescription.descriptionUpdated'),
         message=LocalizedString('commands.admin.embed.setDescription.message'),
         timeout=LocalizedString('commands.admin.embed.setDescription.timeout'),
-    )
-    _n_commands_admin_embed_missingPermission = CommandsAdminEmbedMissingPermission(
-        description=LocalizedString('commands.admin.embed.missingPermission.description'),
-        title=LocalizedString('commands.admin.embed.missingPermission.title'),
-    )
-    _n_commands_admin_embed_missingTitle = CommandsAdminEmbedMissingTitle(
-        description=LocalizedString('commands.admin.embed.missingTitle.description'),
-        title=LocalizedString('commands.admin.embed.missingTitle.title'),
     )
     _n_commands_admin_embed = CommandsAdminEmbed(
         buttons=_n_commands_admin_embed_buttons,
@@ -7085,14 +7085,14 @@ def build_commands() -> Commands:
         ticketNotCreated=LocalizedString('commands.admin.open_ticket.error.ticketNotCreated'),
         ticketNotFound=LocalizedString('commands.admin.open_ticket.error.ticketNotFound'),
     )
-    _n_commands_admin_open_ticket_success = CommandsAdminOpen_ticketSuccess(
-        ticketCreated=LocalizedString('commands.admin.open_ticket.success.ticketCreated'),
-    )
     _n_commands_admin_open_ticket_optedOutWarning = CommandsAdminOpen_ticketOptedOutWarning(
         confirm=LocalizedString('commands.admin.open_ticket.optedOutWarning.confirm'),
         decline=LocalizedString('commands.admin.open_ticket.optedOutWarning.decline'),
         declined=LocalizedString('commands.admin.open_ticket.optedOutWarning.declined'),
         description=LocalizedString('commands.admin.open_ticket.optedOutWarning.description'),
+    )
+    _n_commands_admin_open_ticket_success = CommandsAdminOpen_ticketSuccess(
+        ticketCreated=LocalizedString('commands.admin.open_ticket.success.ticketCreated'),
     )
     _n_commands_admin_open_ticket = CommandsAdminOpen_ticket(
         error=_n_commands_admin_open_ticket_error,
@@ -7503,6 +7503,16 @@ def build_commands() -> Commands:
         missingPermission=_n_commands_admin_trigger_messages_add_missingPermission,
         success=_n_commands_admin_trigger_messages_add_success,
     )
+    _n_commands_admin_trigger_messages_configure_add_channel = CommandsAdminTrigger_messagesConfigureAdd_channel(
+        label=LocalizedString('commands.admin.trigger_messages.configure.add_channel.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_down = CommandsAdminTrigger_messagesConfigureDown(
+        label=LocalizedString('commands.admin.trigger_messages.configure.down.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_missingPermission = CommandsAdminTrigger_messagesConfigureMissingPermission(
+        description=LocalizedString('commands.admin.trigger_messages.configure.missingPermission.description'),
+        title=LocalizedString('commands.admin.trigger_messages.configure.missingPermission.title'),
+    )
     _n_commands_admin_trigger_messages_configure_modal_caseSensitive = CommandsAdminTrigger_messagesConfigureModalCaseSensitive(
         label=LocalizedString('commands.admin.trigger_messages.configure.modal.caseSensitive.label'),
         placeholder=LocalizedString('commands.admin.trigger_messages.configure.modal.caseSensitive.placeholder'),
@@ -7526,6 +7536,25 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.admin.trigger_messages.configure.modal.title'),
         trigger=_n_commands_admin_trigger_messages_configure_modal_trigger,
     )
+    _n_commands_admin_trigger_messages_configure_new = CommandsAdminTrigger_messagesConfigureNew(
+        label=LocalizedString('commands.admin.trigger_messages.configure.new.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_next = CommandsAdminTrigger_messagesConfigureNext(
+        label=LocalizedString('commands.admin.trigger_messages.configure.next.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_noTriggerMessages = CommandsAdminTrigger_messagesConfigureNoTriggerMessages(
+        description=LocalizedString('commands.admin.trigger_messages.configure.noTriggerMessages.description'),
+        title=LocalizedString('commands.admin.trigger_messages.configure.noTriggerMessages.title'),
+    )
+    _n_commands_admin_trigger_messages_configure_previous = CommandsAdminTrigger_messagesConfigurePrevious(
+        label=LocalizedString('commands.admin.trigger_messages.configure.previous.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_remove = CommandsAdminTrigger_messagesConfigureRemove(
+        label=LocalizedString('commands.admin.trigger_messages.configure.remove.label'),
+    )
+    _n_commands_admin_trigger_messages_configure_remove_channel = CommandsAdminTrigger_messagesConfigureRemove_channel(
+        label=LocalizedString('commands.admin.trigger_messages.configure.remove_channel.label'),
+    )
     _n_commands_admin_trigger_messages_configure_trigger_addChannel = CommandsAdminTrigger_messagesConfigureTriggerAddChannel(
         description=LocalizedString('commands.admin.trigger_messages.configure.trigger.addChannel.description'),
         placeholder=LocalizedString('commands.admin.trigger_messages.configure.trigger.addChannel.placeholder'),
@@ -7545,35 +7574,6 @@ def build_commands() -> Commands:
         noChannels=LocalizedString('commands.admin.trigger_messages.configure.trigger.noChannels'),
         noTriggerMessages=_n_commands_admin_trigger_messages_configure_trigger_noTriggerMessages,
         title=LocalizedString('commands.admin.trigger_messages.configure.trigger.title'),
-    )
-    _n_commands_admin_trigger_messages_configure_add_channel = CommandsAdminTrigger_messagesConfigureAdd_channel(
-        label=LocalizedString('commands.admin.trigger_messages.configure.add_channel.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_down = CommandsAdminTrigger_messagesConfigureDown(
-        label=LocalizedString('commands.admin.trigger_messages.configure.down.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_missingPermission = CommandsAdminTrigger_messagesConfigureMissingPermission(
-        description=LocalizedString('commands.admin.trigger_messages.configure.missingPermission.description'),
-        title=LocalizedString('commands.admin.trigger_messages.configure.missingPermission.title'),
-    )
-    _n_commands_admin_trigger_messages_configure_new = CommandsAdminTrigger_messagesConfigureNew(
-        label=LocalizedString('commands.admin.trigger_messages.configure.new.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_next = CommandsAdminTrigger_messagesConfigureNext(
-        label=LocalizedString('commands.admin.trigger_messages.configure.next.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_noTriggerMessages = CommandsAdminTrigger_messagesConfigureNoTriggerMessages(
-        description=LocalizedString('commands.admin.trigger_messages.configure.noTriggerMessages.description'),
-        title=LocalizedString('commands.admin.trigger_messages.configure.noTriggerMessages.title'),
-    )
-    _n_commands_admin_trigger_messages_configure_previous = CommandsAdminTrigger_messagesConfigurePrevious(
-        label=LocalizedString('commands.admin.trigger_messages.configure.previous.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_remove = CommandsAdminTrigger_messagesConfigureRemove(
-        label=LocalizedString('commands.admin.trigger_messages.configure.remove.label'),
-    )
-    _n_commands_admin_trigger_messages_configure_remove_channel = CommandsAdminTrigger_messagesConfigureRemove_channel(
-        label=LocalizedString('commands.admin.trigger_messages.configure.remove_channel.label'),
     )
     _n_commands_admin_trigger_messages_configure_up = CommandsAdminTrigger_messagesConfigureUp(
         label=LocalizedString('commands.admin.trigger_messages.configure.up.label'),
@@ -7695,9 +7695,6 @@ def build_commands() -> Commands:
         warningDetails=LocalizedString('commands.admin.viewwarns.warningDetails'),
         warningEntry=LocalizedString('commands.admin.viewwarns.warningEntry'),
     )
-    _n_commands_admin_warn_reason = CommandsAdminWarnReason(
-        reached_warnings=LocalizedString('commands.admin.warn.reason.reached_warnings'),
-    )
     _n_commands_admin_warn_dmNotification = CommandsAdminWarnDmNotification(
         description=LocalizedString('commands.admin.warn.dmNotification.description'),
         title=LocalizedString('commands.admin.warn.dmNotification.title'),
@@ -7705,6 +7702,9 @@ def build_commands() -> Commands:
     _n_commands_admin_warn_missingPermission = CommandsAdminWarnMissingPermission(
         description=LocalizedString('commands.admin.warn.missingPermission.description'),
         title=LocalizedString('commands.admin.warn.missingPermission.title'),
+    )
+    _n_commands_admin_warn_reason = CommandsAdminWarnReason(
+        reached_warnings=LocalizedString('commands.admin.warn.reason.reached_warnings'),
     )
     _n_commands_admin_warn_success = CommandsAdminWarnSuccess(
         description=LocalizedString('commands.admin.warn.success.description'),
@@ -7721,6 +7721,18 @@ def build_commands() -> Commands:
         reason=_n_commands_admin_warn_reason,
         success=_n_commands_admin_warn_success,
         targetTooHigh=_n_commands_admin_warn_targetTooHigh,
+    )
+    _n_commands_admin_warnconfig_currentConfig = CommandsAdminWarnconfigCurrentConfig(
+        description=LocalizedString('commands.admin.warnconfig.currentConfig.description'),
+        title=LocalizedString('commands.admin.warnconfig.currentConfig.title'),
+    )
+    _n_commands_admin_warnconfig_error = CommandsAdminWarnconfigError(
+        invalidInput=LocalizedString('commands.admin.warnconfig.error.invalidInput'),
+        title=LocalizedString('commands.admin.warnconfig.error.title'),
+    )
+    _n_commands_admin_warnconfig_missingPermission = CommandsAdminWarnconfigMissingPermission(
+        description=LocalizedString('commands.admin.warnconfig.missingPermission.description'),
+        title=LocalizedString('commands.admin.warnconfig.missingPermission.title'),
     )
     _n_commands_admin_warnconfig_modal_ban_threshold = CommandsAdminWarnconfigModalBan_threshold(
         label=LocalizedString('commands.admin.warnconfig.modal.ban_threshold.label'),
@@ -7749,18 +7761,6 @@ def build_commands() -> Commands:
         timeout_threshold=_n_commands_admin_warnconfig_modal_timeout_threshold,
         title=LocalizedString('commands.admin.warnconfig.modal.title'),
         warnexpiration=_n_commands_admin_warnconfig_modal_warnexpiration,
-    )
-    _n_commands_admin_warnconfig_currentConfig = CommandsAdminWarnconfigCurrentConfig(
-        description=LocalizedString('commands.admin.warnconfig.currentConfig.description'),
-        title=LocalizedString('commands.admin.warnconfig.currentConfig.title'),
-    )
-    _n_commands_admin_warnconfig_error = CommandsAdminWarnconfigError(
-        invalidInput=LocalizedString('commands.admin.warnconfig.error.invalidInput'),
-        title=LocalizedString('commands.admin.warnconfig.error.title'),
-    )
-    _n_commands_admin_warnconfig_missingPermission = CommandsAdminWarnconfigMissingPermission(
-        description=LocalizedString('commands.admin.warnconfig.missingPermission.description'),
-        title=LocalizedString('commands.admin.warnconfig.missingPermission.title'),
     )
     _n_commands_admin_warnconfig_success = CommandsAdminWarnconfigSuccess(
         description=LocalizedString('commands.admin.warnconfig.success.description'),
@@ -8029,6 +8029,20 @@ def build_commands() -> Commands:
         tickle=_n_commands_fun_tickle,
         wave=_n_commands_fun_wave,
     )
+    _n_commands_games_akinator = CommandsGamesAkinator(
+        back=LocalizedString('commands.games.akinator.back'),
+        description=LocalizedString('commands.games.akinator.description'),
+        end=LocalizedString('commands.games.akinator.end'),
+        idk=LocalizedString('commands.games.akinator.idk'),
+        no=LocalizedString('commands.games.akinator.no'),
+        no_answer=LocalizedString('commands.games.akinator.no_answer'),
+        notYourGame=LocalizedString('commands.games.akinator.notYourGame'),
+        probably=LocalizedString('commands.games.akinator.probably'),
+        probably_not=LocalizedString('commands.games.akinator.probably_not'),
+        result=LocalizedString('commands.games.akinator.result'),
+        title=LocalizedString('commands.games.akinator.title'),
+        yes=LocalizedString('commands.games.akinator.yes'),
+    )
     _n_commands_games_battleship_error = CommandsGamesBattleshipError(
         invalidColumn=LocalizedString('commands.games.battleship.error.invalidColumn'),
         invalidCoordinate=LocalizedString('commands.games.battleship.error.invalidCoordinate'),
@@ -8087,14 +8101,6 @@ def build_commands() -> Commands:
     _n_commands_games_flagquiz_error = CommandsGamesFlagquizError(
         hintUsed=LocalizedString('commands.games.flagquiz.error.hintUsed'),
     )
-    _n_commands_games_flagquiz_modal_input = CommandsGamesFlagquizModalInput(
-        label=LocalizedString('commands.games.flagquiz.modal.input.label'),
-        placeholder=LocalizedString('commands.games.flagquiz.modal.input.placeholder'),
-    )
-    _n_commands_games_flagquiz_modal = CommandsGamesFlagquizModal(
-        input=_n_commands_games_flagquiz_modal_input,
-        title=LocalizedString('commands.games.flagquiz.modal.title'),
-    )
     _n_commands_games_flagquiz_failure = CommandsGamesFlagquizFailure(
         description=LocalizedString('commands.games.flagquiz.failure.description'),
         title=LocalizedString('commands.games.flagquiz.failure.title'),
@@ -8106,6 +8112,14 @@ def build_commands() -> Commands:
     _n_commands_games_flagquiz_initial = CommandsGamesFlagquizInitial(
         description=LocalizedString('commands.games.flagquiz.initial.description'),
         title=LocalizedString('commands.games.flagquiz.initial.title'),
+    )
+    _n_commands_games_flagquiz_modal_input = CommandsGamesFlagquizModalInput(
+        label=LocalizedString('commands.games.flagquiz.modal.input.label'),
+        placeholder=LocalizedString('commands.games.flagquiz.modal.input.placeholder'),
+    )
+    _n_commands_games_flagquiz_modal = CommandsGamesFlagquizModal(
+        input=_n_commands_games_flagquiz_modal_input,
+        title=LocalizedString('commands.games.flagquiz.modal.title'),
     )
     _n_commands_games_flagquiz_success = CommandsGamesFlagquizSuccess(
         description=LocalizedString('commands.games.flagquiz.success.description'),
@@ -8128,14 +8142,6 @@ def build_commands() -> Commands:
         giveUp=LocalizedString('commands.games.hangman.buttons.giveUp'),
         guess=LocalizedString('commands.games.hangman.buttons.guess'),
     )
-    _n_commands_games_hangman_modal_input = CommandsGamesHangmanModalInput(
-        label=LocalizedString('commands.games.hangman.modal.input.label'),
-        placeholder=LocalizedString('commands.games.hangman.modal.input.placeholder'),
-    )
-    _n_commands_games_hangman_modal = CommandsGamesHangmanModal(
-        input=_n_commands_games_hangman_modal_input,
-        title=LocalizedString('commands.games.hangman.modal.title'),
-    )
     _n_commands_games_hangman_error = CommandsGamesHangmanError(
         description=LocalizedString('commands.games.hangman.error.description'),
         invalidInput=LocalizedString('commands.games.hangman.error.invalidInput'),
@@ -8152,6 +8158,14 @@ def build_commands() -> Commands:
     _n_commands_games_hangman_initial = CommandsGamesHangmanInitial(
         description=LocalizedString('commands.games.hangman.initial.description'),
         title=LocalizedString('commands.games.hangman.initial.title'),
+    )
+    _n_commands_games_hangman_modal_input = CommandsGamesHangmanModalInput(
+        label=LocalizedString('commands.games.hangman.modal.input.label'),
+        placeholder=LocalizedString('commands.games.hangman.modal.input.placeholder'),
+    )
+    _n_commands_games_hangman_modal = CommandsGamesHangmanModal(
+        input=_n_commands_games_hangman_modal_input,
+        title=LocalizedString('commands.games.hangman.modal.title'),
     )
     _n_commands_games_hangman_success = CommandsGamesHangmanSuccess(
         description=LocalizedString('commands.games.hangman.success.description'),
@@ -8173,84 +8187,6 @@ def build_commands() -> Commands:
         success=_n_commands_games_hangman_success,
         title=LocalizedString('commands.games.hangman.title'),
         wrongGuess=_n_commands_games_hangman_wrongGuess,
-    )
-    _n_commands_games_wordle_buttons = CommandsGamesWordleButtons(
-        giveUp=LocalizedString('commands.games.wordle.buttons.giveUp'),
-        guess=LocalizedString('commands.games.wordle.buttons.guess'),
-        playHard=LocalizedString('commands.games.wordle.buttons.playHard'),
-        playNormal=LocalizedString('commands.games.wordle.buttons.playNormal'),
-    )
-    _n_commands_games_wordle_initial_descriptionextra = CommandsGamesWordleInitialDescriptionextra(
-        ja=LocalizedString('commands.games.wordle.initial.descriptionextra.ja'),
-    )
-    _n_commands_games_wordle_initial = CommandsGamesWordleInitial(
-        description=LocalizedString('commands.games.wordle.initial.description'),
-        descriptionextra=_n_commands_games_wordle_initial_descriptionextra,
-        title=LocalizedString('commands.games.wordle.initial.title'),
-    )
-    _n_commands_games_wordle_modal_input = CommandsGamesWordleModalInput(
-        label=LocalizedString('commands.games.wordle.modal.input.label'),
-        placeholder=LocalizedString('commands.games.wordle.modal.input.placeholder'),
-    )
-    _n_commands_games_wordle_modal = CommandsGamesWordleModal(
-        input=_n_commands_games_wordle_modal_input,
-        title=LocalizedString('commands.games.wordle.modal.title'),
-    )
-    _n_commands_games_wordle_error = CommandsGamesWordleError(
-        description=LocalizedString('commands.games.wordle.error.description'),
-        invalidInput=LocalizedString('commands.games.wordle.error.invalidInput'),
-        title=LocalizedString('commands.games.wordle.error.title'),
-    )
-    _n_commands_games_wordle_failure = CommandsGamesWordleFailure(
-        description=LocalizedString('commands.games.wordle.failure.description'),
-        title=LocalizedString('commands.games.wordle.failure.title'),
-    )
-    _n_commands_games_wordle_givenUp = CommandsGamesWordleGivenUp(
-        description=LocalizedString('commands.games.wordle.givenUp.description'),
-        title=LocalizedString('commands.games.wordle.givenUp.title'),
-    )
-    _n_commands_games_wordle_hardMode = CommandsGamesWordleHardMode(
-        title=LocalizedString('commands.games.wordle.hardMode.title'),
-    )
-    _n_commands_games_wordle_pickMode = CommandsGamesWordlePickMode(
-        description=LocalizedString('commands.games.wordle.pickMode.description'),
-        title=LocalizedString('commands.games.wordle.pickMode.title'),
-    )
-    _n_commands_games_wordle_stats = CommandsGamesWordleStats(
-        title=LocalizedString('commands.games.wordle.stats.title'),
-    )
-    _n_commands_games_wordle_success = CommandsGamesWordleSuccess(
-        description=LocalizedString('commands.games.wordle.success.description'),
-        title=LocalizedString('commands.games.wordle.success.title'),
-    )
-    _n_commands_games_wordle = CommandsGamesWordle(
-        buttons=_n_commands_games_wordle_buttons,
-        description=LocalizedString('commands.games.wordle.description'),
-        error=_n_commands_games_wordle_error,
-        failure=_n_commands_games_wordle_failure,
-        givenUp=_n_commands_games_wordle_givenUp,
-        hardMode=_n_commands_games_wordle_hardMode,
-        initial=_n_commands_games_wordle_initial,
-        modal=_n_commands_games_wordle_modal,
-        notYourGame=LocalizedString('commands.games.wordle.notYourGame'),
-        pickMode=_n_commands_games_wordle_pickMode,
-        stats=_n_commands_games_wordle_stats,
-        success=_n_commands_games_wordle_success,
-        title=LocalizedString('commands.games.wordle.title'),
-    )
-    _n_commands_games_akinator = CommandsGamesAkinator(
-        back=LocalizedString('commands.games.akinator.back'),
-        description=LocalizedString('commands.games.akinator.description'),
-        end=LocalizedString('commands.games.akinator.end'),
-        idk=LocalizedString('commands.games.akinator.idk'),
-        no=LocalizedString('commands.games.akinator.no'),
-        no_answer=LocalizedString('commands.games.akinator.no_answer'),
-        notYourGame=LocalizedString('commands.games.akinator.notYourGame'),
-        probably=LocalizedString('commands.games.akinator.probably'),
-        probably_not=LocalizedString('commands.games.akinator.probably_not'),
-        result=LocalizedString('commands.games.akinator.result'),
-        title=LocalizedString('commands.games.akinator.title'),
-        yes=LocalizedString('commands.games.akinator.yes'),
     )
     _n_commands_games_memory = CommandsGamesMemory(
         game_over=LocalizedString('commands.games.memory.game_over'),
@@ -8303,6 +8239,70 @@ def build_commands() -> Commands:
         notYourTurn=LocalizedString('commands.games.tic_tac_toe.notYourTurn'),
         title=LocalizedString('commands.games.tic_tac_toe.title'),
         winner=LocalizedString('commands.games.tic_tac_toe.winner'),
+    )
+    _n_commands_games_wordle_buttons = CommandsGamesWordleButtons(
+        giveUp=LocalizedString('commands.games.wordle.buttons.giveUp'),
+        guess=LocalizedString('commands.games.wordle.buttons.guess'),
+        playHard=LocalizedString('commands.games.wordle.buttons.playHard'),
+        playNormal=LocalizedString('commands.games.wordle.buttons.playNormal'),
+    )
+    _n_commands_games_wordle_error = CommandsGamesWordleError(
+        description=LocalizedString('commands.games.wordle.error.description'),
+        invalidInput=LocalizedString('commands.games.wordle.error.invalidInput'),
+        title=LocalizedString('commands.games.wordle.error.title'),
+    )
+    _n_commands_games_wordle_failure = CommandsGamesWordleFailure(
+        description=LocalizedString('commands.games.wordle.failure.description'),
+        title=LocalizedString('commands.games.wordle.failure.title'),
+    )
+    _n_commands_games_wordle_givenUp = CommandsGamesWordleGivenUp(
+        description=LocalizedString('commands.games.wordle.givenUp.description'),
+        title=LocalizedString('commands.games.wordle.givenUp.title'),
+    )
+    _n_commands_games_wordle_hardMode = CommandsGamesWordleHardMode(
+        title=LocalizedString('commands.games.wordle.hardMode.title'),
+    )
+    _n_commands_games_wordle_initial_descriptionextra = CommandsGamesWordleInitialDescriptionextra(
+        ja=LocalizedString('commands.games.wordle.initial.descriptionextra.ja'),
+    )
+    _n_commands_games_wordle_initial = CommandsGamesWordleInitial(
+        description=LocalizedString('commands.games.wordle.initial.description'),
+        descriptionextra=_n_commands_games_wordle_initial_descriptionextra,
+        title=LocalizedString('commands.games.wordle.initial.title'),
+    )
+    _n_commands_games_wordle_modal_input = CommandsGamesWordleModalInput(
+        label=LocalizedString('commands.games.wordle.modal.input.label'),
+        placeholder=LocalizedString('commands.games.wordle.modal.input.placeholder'),
+    )
+    _n_commands_games_wordle_modal = CommandsGamesWordleModal(
+        input=_n_commands_games_wordle_modal_input,
+        title=LocalizedString('commands.games.wordle.modal.title'),
+    )
+    _n_commands_games_wordle_pickMode = CommandsGamesWordlePickMode(
+        description=LocalizedString('commands.games.wordle.pickMode.description'),
+        title=LocalizedString('commands.games.wordle.pickMode.title'),
+    )
+    _n_commands_games_wordle_stats = CommandsGamesWordleStats(
+        title=LocalizedString('commands.games.wordle.stats.title'),
+    )
+    _n_commands_games_wordle_success = CommandsGamesWordleSuccess(
+        description=LocalizedString('commands.games.wordle.success.description'),
+        title=LocalizedString('commands.games.wordle.success.title'),
+    )
+    _n_commands_games_wordle = CommandsGamesWordle(
+        buttons=_n_commands_games_wordle_buttons,
+        description=LocalizedString('commands.games.wordle.description'),
+        error=_n_commands_games_wordle_error,
+        failure=_n_commands_games_wordle_failure,
+        givenUp=_n_commands_games_wordle_givenUp,
+        hardMode=_n_commands_games_wordle_hardMode,
+        initial=_n_commands_games_wordle_initial,
+        modal=_n_commands_games_wordle_modal,
+        notYourGame=LocalizedString('commands.games.wordle.notYourGame'),
+        pickMode=_n_commands_games_wordle_pickMode,
+        stats=_n_commands_games_wordle_stats,
+        success=_n_commands_games_wordle_success,
+        title=LocalizedString('commands.games.wordle.title'),
     )
     _n_commands_games = CommandsGames(
         akinator=_n_commands_games_akinator,
@@ -8372,36 +8372,15 @@ def build_commands() -> Commands:
         v=_n_commands_giveaway_builder_add_channel_requirement_v,
         value=_n_commands_giveaway_builder_add_channel_requirement_value,
     )
-    _n_commands_giveaway_builder_channel = CommandsGiveawayBuilderChannel(
-        selected=LocalizedString('commands.giveaway.builder.channel.selected'),
-    )
-    _n_commands_giveaway_builder_description = CommandsGiveawayBuilderDescription(
-        timeout=LocalizedString('commands.giveaway.builder.description.timeout'),
-        updated=LocalizedString('commands.giveaway.builder.description.updated'),
-    )
-    _n_commands_giveaway_builder_modal = CommandsGiveawayBuilderModal(
-        timeout=LocalizedString('commands.giveaway.builder.modal.timeout'),
-    )
-    _n_commands_giveaway_builder_sponsor_select = CommandsGiveawayBuilderSponsorSelect(
-        name=LocalizedString('commands.giveaway.builder.sponsor.select.name'),
-        placeholder=LocalizedString('commands.giveaway.builder.sponsor.select.placeholder'),
-    )
-    _n_commands_giveaway_builder_sponsor = CommandsGiveawayBuilderSponsor(
-        cancelled=LocalizedString('commands.giveaway.builder.sponsor.cancelled'),
-        label=LocalizedString('commands.giveaway.builder.sponsor.label'),
-        select=_n_commands_giveaway_builder_sponsor_select,
-        selected=LocalizedString('commands.giveaway.builder.sponsor.selected'),
-        updated=LocalizedString('commands.giveaway.builder.sponsor.updated'),
-    )
-    _n_commands_giveaway_builder_winner = CommandsGiveawayBuilderWinner(
-        updated=LocalizedString('commands.giveaway.builder.winner.updated'),
-    )
     _n_commands_giveaway_builder_change_winners = CommandsGiveawayBuilderChange_winners(
         description=LocalizedString('commands.giveaway.builder.change_winners.description'),
         label=LocalizedString('commands.giveaway.builder.change_winners.label'),
         placeholder=LocalizedString('commands.giveaway.builder.change_winners.placeholder'),
         title=LocalizedString('commands.giveaway.builder.change_winners.title'),
         updated=LocalizedString('commands.giveaway.builder.change_winners.updated'),
+    )
+    _n_commands_giveaway_builder_channel = CommandsGiveawayBuilderChannel(
+        selected=LocalizedString('commands.giveaway.builder.channel.selected'),
     )
     _n_commands_giveaway_builder_custom_name = CommandsGiveawayBuilderCustom_name(
         description=LocalizedString('commands.giveaway.builder.custom_name.description'),
@@ -8417,6 +8396,10 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.giveaway.builder.day_requirement.title'),
         updated=LocalizedString('commands.giveaway.builder.day_requirement.updated'),
     )
+    _n_commands_giveaway_builder_description = CommandsGiveawayBuilderDescription(
+        timeout=LocalizedString('commands.giveaway.builder.description.timeout'),
+        updated=LocalizedString('commands.giveaway.builder.description.updated'),
+    )
     _n_commands_giveaway_builder_end_time = CommandsGiveawayBuilderEnd_time(
         description=LocalizedString('commands.giveaway.builder.end_time.description'),
         label=LocalizedString('commands.giveaway.builder.end_time.label'),
@@ -8429,6 +8412,9 @@ def build_commands() -> Commands:
         timeout=LocalizedString('commands.giveaway.builder.message.timeout'),
         too_long=LocalizedString('commands.giveaway.builder.message.too_long'),
         updated=LocalizedString('commands.giveaway.builder.message.updated'),
+    )
+    _n_commands_giveaway_builder_modal = CommandsGiveawayBuilderModal(
+        timeout=LocalizedString('commands.giveaway.builder.modal.timeout'),
     )
     _n_commands_giveaway_builder_new_message_requirement = CommandsGiveawayBuilderNew_message_requirement(
         description=LocalizedString('commands.giveaway.builder.new_message_requirement.description'),
@@ -8458,6 +8444,17 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.giveaway.builder.role_requirement.title'),
         updated=LocalizedString('commands.giveaway.builder.role_requirement.updated'),
     )
+    _n_commands_giveaway_builder_sponsor_select = CommandsGiveawayBuilderSponsorSelect(
+        name=LocalizedString('commands.giveaway.builder.sponsor.select.name'),
+        placeholder=LocalizedString('commands.giveaway.builder.sponsor.select.placeholder'),
+    )
+    _n_commands_giveaway_builder_sponsor = CommandsGiveawayBuilderSponsor(
+        cancelled=LocalizedString('commands.giveaway.builder.sponsor.cancelled'),
+        label=LocalizedString('commands.giveaway.builder.sponsor.label'),
+        select=_n_commands_giveaway_builder_sponsor_select,
+        selected=LocalizedString('commands.giveaway.builder.sponsor.selected'),
+        updated=LocalizedString('commands.giveaway.builder.sponsor.updated'),
+    )
     _n_commands_giveaway_builder_start_time = CommandsGiveawayBuilderStart_time(
         description=LocalizedString('commands.giveaway.builder.start_time.description'),
         label=LocalizedString('commands.giveaway.builder.start_time.label'),
@@ -8475,6 +8472,9 @@ def build_commands() -> Commands:
         placeholder=LocalizedString('commands.giveaway.builder.voice_requirement.placeholder'),
         title=LocalizedString('commands.giveaway.builder.voice_requirement.title'),
         updated=LocalizedString('commands.giveaway.builder.voice_requirement.updated'),
+    )
+    _n_commands_giveaway_builder_winner = CommandsGiveawayBuilderWinner(
+        updated=LocalizedString('commands.giveaway.builder.winner.updated'),
     )
     _n_commands_giveaway_builder = CommandsGiveawayBuilder(
         add_channel_requirement=_n_commands_giveaway_builder_add_channel_requirement,
@@ -8524,6 +8524,10 @@ def build_commands() -> Commands:
         pro_required=LocalizedString('commands.giveaway.editor.pro_required'),
         success=_n_commands_giveaway_editor_success,
     )
+    _n_commands_giveaway_end_giveaway_deleted = CommandsGiveawayEnd_giveawayDeleted(
+        description=LocalizedString('commands.giveaway.end_giveaway.deleted.description'),
+        title=LocalizedString('commands.giveaway.end_giveaway.deleted.title'),
+    )
     _n_commands_giveaway_end_giveaway_error_already_ended = CommandsGiveawayEnd_giveawayErrorAlready_ended(
         description=LocalizedString('commands.giveaway.end_giveaway.error.already_ended.description'),
         title=LocalizedString('commands.giveaway.end_giveaway.error.already_ended.title'),
@@ -8546,10 +8550,6 @@ def build_commands() -> Commands:
         missingPermission=_n_commands_giveaway_end_giveaway_error_missingPermission,
         no_permission=_n_commands_giveaway_end_giveaway_error_no_permission,
     )
-    _n_commands_giveaway_end_giveaway_deleted = CommandsGiveawayEnd_giveawayDeleted(
-        description=LocalizedString('commands.giveaway.end_giveaway.deleted.description'),
-        title=LocalizedString('commands.giveaway.end_giveaway.deleted.title'),
-    )
     _n_commands_giveaway_end_giveaway_success = CommandsGiveawayEnd_giveawaySuccess(
         description=LocalizedString('commands.giveaway.end_giveaway.success.description'),
         title=LocalizedString('commands.giveaway.end_giveaway.success.title'),
@@ -8558,6 +8558,10 @@ def build_commands() -> Commands:
         deleted=_n_commands_giveaway_end_giveaway_deleted,
         error=_n_commands_giveaway_end_giveaway_error,
         success=_n_commands_giveaway_end_giveaway_success,
+    )
+    _n_commands_giveaway_end_giveaway_command_deleted = CommandsGiveawayEnd_giveaway_commandDeleted(
+        description=LocalizedString('commands.giveaway.end_giveaway_command.deleted.description'),
+        title=LocalizedString('commands.giveaway.end_giveaway_command.deleted.title'),
     )
     _n_commands_giveaway_end_giveaway_command_error_alreadyEnded = CommandsGiveawayEnd_giveaway_commandErrorAlreadyEnded(
         description=LocalizedString('commands.giveaway.end_giveaway_command.error.alreadyEnded.description'),
@@ -8575,10 +8579,6 @@ def build_commands() -> Commands:
         alreadyEnded=_n_commands_giveaway_end_giveaway_command_error_alreadyEnded,
         missingPermission=_n_commands_giveaway_end_giveaway_command_error_missingPermission,
         notFound=_n_commands_giveaway_end_giveaway_command_error_notFound,
-    )
-    _n_commands_giveaway_end_giveaway_command_deleted = CommandsGiveawayEnd_giveaway_commandDeleted(
-        description=LocalizedString('commands.giveaway.end_giveaway_command.deleted.description'),
-        title=LocalizedString('commands.giveaway.end_giveaway_command.deleted.title'),
     )
     _n_commands_giveaway_end_giveaway_command_success = CommandsGiveawayEnd_giveaway_commandSuccess(
         description=LocalizedString('commands.giveaway.end_giveaway_command.success.description'),
@@ -8826,6 +8826,10 @@ def build_commands() -> Commands:
     _n_commands_image_error = CommandsImageError(
         unknown_filter=_n_commands_image_error_unknown_filter,
     )
+    _n_commands_image_filesize = CommandsImageFilesize(
+        description=LocalizedString('commands.image.filesize.description'),
+        title=LocalizedString('commands.image.filesize.title'),
+    )
     _n_commands_image_findedges_success = CommandsImageFindedgesSuccess(
         description=LocalizedString('commands.image.findedges.success.description'),
         title=LocalizedString('commands.image.findedges.success.title'),
@@ -8872,10 +8876,6 @@ def build_commands() -> Commands:
     )
     _n_commands_image_smooth = CommandsImageSmooth(
         success=_n_commands_image_smooth_success,
-    )
-    _n_commands_image_filesize = CommandsImageFilesize(
-        description=LocalizedString('commands.image.filesize.description'),
-        title=LocalizedString('commands.image.filesize.title'),
     )
     _n_commands_image_typenotsupported = CommandsImageTypenotsupported(
         description=LocalizedString('commands.image.typenotsupported.description'),
@@ -9071,6 +9071,10 @@ def build_commands() -> Commands:
     _n_commands_level_boosts_add_user = CommandsLevelBoostsAdd_user(
         success=_n_commands_level_boosts_add_user_success,
     )
+    _n_commands_level_boosts_calculate_user_channel = CommandsLevelBoostsCalculate_user_channel(
+        description=LocalizedString('commands.level.boosts.calculate_user_channel.description'),
+        title=LocalizedString('commands.level.boosts.calculate_user_channel.title'),
+    )
     _n_commands_level_boosts_error_no_pro = CommandsLevelBoostsErrorNo_pro(
         description=LocalizedString('commands.level.boosts.error.no_pro.description'),
         title=LocalizedString('commands.level.boosts.error.no_pro.title'),
@@ -9098,10 +9102,6 @@ def build_commands() -> Commands:
     )
     _n_commands_level_boosts_remove_user = CommandsLevelBoostsRemove_user(
         success=_n_commands_level_boosts_remove_user_success,
-    )
-    _n_commands_level_boosts_calculate_user_channel = CommandsLevelBoostsCalculate_user_channel(
-        description=LocalizedString('commands.level.boosts.calculate_user_channel.description'),
-        title=LocalizedString('commands.level.boosts.calculate_user_channel.title'),
     )
     _n_commands_level_boosts_show = CommandsLevelBoostsShow(
         channels=LocalizedString('commands.level.boosts.show.channels'),
@@ -9195,6 +9195,14 @@ def build_commands() -> Commands:
         success=_n_commands_level_changexpscaling_success,
         xp_examples=LocalizedString('commands.level.changexpscaling.xp_examples'),
     )
+    _n_commands_level_disablelevelsystem_cancel = CommandsLevelDisablelevelsystemCancel(
+        description=LocalizedString('commands.level.disablelevelsystem.cancel.description'),
+        title=LocalizedString('commands.level.disablelevelsystem.cancel.title'),
+    )
+    _n_commands_level_disablelevelsystem_confirmation = CommandsLevelDisablelevelsystemConfirmation(
+        description=LocalizedString('commands.level.disablelevelsystem.confirmation.description'),
+        title=LocalizedString('commands.level.disablelevelsystem.confirmation.title'),
+    )
     _n_commands_level_disablelevelsystem_error_already_disabled = CommandsLevelDisablelevelsystemErrorAlready_disabled(
         description=LocalizedString('commands.level.disablelevelsystem.error.already_disabled.description'),
         title=LocalizedString('commands.level.disablelevelsystem.error.already_disabled.title'),
@@ -9206,15 +9214,6 @@ def build_commands() -> Commands:
     _n_commands_level_disablelevelsystem_error = CommandsLevelDisablelevelsystemError(
         already_disabled=_n_commands_level_disablelevelsystem_error_already_disabled,
         no_permission=_n_commands_level_disablelevelsystem_error_no_permission,
-    )
-    _n_commands_level_disablelevelsystem_cancel = CommandsLevelDisablelevelsystemCancel(
-        _text=LocalizedString('commands.level.disablelevelsystem.cancel'),
-        description=LocalizedString('commands.level.disablelevelsystem.cancel.description'),
-        title=LocalizedString('commands.level.disablelevelsystem.cancel.title'),
-    )
-    _n_commands_level_disablelevelsystem_confirmation = CommandsLevelDisablelevelsystemConfirmation(
-        description=LocalizedString('commands.level.disablelevelsystem.confirmation.description'),
-        title=LocalizedString('commands.level.disablelevelsystem.confirmation.title'),
     )
     _n_commands_level_disablelevelsystem_success = CommandsLevelDisablelevelsystemSuccess(
         description=LocalizedString('commands.level.disablelevelsystem.success.description'),
@@ -9320,6 +9319,16 @@ def build_commands() -> Commands:
     _n_commands_level_givexp = CommandsLevelGivexp(
         error=_n_commands_level_givexp_error,
         success=_n_commands_level_givexp_success,
+    )
+    _n_commands_level_leaderboard = CommandsLevelLeaderboard(
+        data=LocalizedString('commands.level.leaderboard.data'),
+        next=LocalizedString('commands.level.leaderboard.next'),
+        no_data=LocalizedString('commands.level.leaderboard.no_data'),
+        notYourEmbed=LocalizedString('commands.level.leaderboard.notYourEmbed'),
+        page=LocalizedString('commands.level.leaderboard.page'),
+        previous=LocalizedString('commands.level.leaderboard.previous'),
+        title=LocalizedString('commands.level.leaderboard.title'),
+        titleNoPages=LocalizedString('commands.level.leaderboard.titleNoPages'),
     )
     _n_commands_level_rank_data = CommandsLevelRankData(
         level=LocalizedString('commands.level.rank.data.level'),
@@ -9490,6 +9499,13 @@ def build_commands() -> Commands:
         error=_n_commands_level_setxp_error,
         success=_n_commands_level_setxp_success,
     )
+    _n_commands_level_showlevelroles_add_role_modal = CommandsLevelShowlevelrolesAdd_role_modal(
+        invalid_level=LocalizedString('commands.level.showlevelroles.add_role_modal.invalid_level'),
+        level_label=LocalizedString('commands.level.showlevelroles.add_role_modal.level_label'),
+        level_placeholder=LocalizedString('commands.level.showlevelroles.add_role_modal.level_placeholder'),
+        success=LocalizedString('commands.level.showlevelroles.add_role_modal.success'),
+        title=LocalizedString('commands.level.showlevelroles.add_role_modal.title'),
+    )
     _n_commands_level_showlevelroles_error_no_permission = CommandsLevelShowlevelrolesErrorNo_permission(
         description=LocalizedString('commands.level.showlevelroles.error.no_permission.description'),
         title=LocalizedString('commands.level.showlevelroles.error.no_permission.title'),
@@ -9502,20 +9518,13 @@ def build_commands() -> Commands:
         no_permission=_n_commands_level_showlevelroles_error_no_permission,
         no_pro=_n_commands_level_showlevelroles_error_no_pro,
     )
-    _n_commands_level_showlevelroles_remove_role_confirm = CommandsLevelShowlevelrolesRemove_role_confirm(
-        cancel_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.cancel_button'),
-        confirm_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.confirm_button'),
-    )
-    _n_commands_level_showlevelroles_add_role_modal = CommandsLevelShowlevelrolesAdd_role_modal(
-        invalid_level=LocalizedString('commands.level.showlevelroles.add_role_modal.invalid_level'),
-        level_label=LocalizedString('commands.level.showlevelroles.add_role_modal.level_label'),
-        level_placeholder=LocalizedString('commands.level.showlevelroles.add_role_modal.level_placeholder'),
-        success=LocalizedString('commands.level.showlevelroles.add_role_modal.success'),
-        title=LocalizedString('commands.level.showlevelroles.add_role_modal.title'),
-    )
     _n_commands_level_showlevelroles_no_roles = CommandsLevelShowlevelrolesNo_roles(
         description=LocalizedString('commands.level.showlevelroles.no_roles.description'),
         title=LocalizedString('commands.level.showlevelroles.no_roles.title'),
+    )
+    _n_commands_level_showlevelroles_remove_role_confirm = CommandsLevelShowlevelrolesRemove_role_confirm(
+        cancel_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.cancel_button'),
+        confirm_button=LocalizedString('commands.level.showlevelroles.remove_role_confirm.confirm_button'),
     )
     _n_commands_level_showlevelroles_selected_level = CommandsLevelShowlevelrolesSelected_level(
         description=LocalizedString('commands.level.showlevelroles.selected_level.description'),
@@ -9546,6 +9555,11 @@ def build_commands() -> Commands:
         selected_level=_n_commands_level_showlevelroles_selected_level,
         title=LocalizedString('commands.level.showlevelroles.title'),
     )
+    _n_commands_level_showxpscalings = CommandsLevelShowxpscalings(
+        data=LocalizedString('commands.level.showxpscalings.data'),
+        description=LocalizedString('commands.level.showxpscalings.description'),
+        title=LocalizedString('commands.level.showxpscalings.title'),
+    )
     _n_commands_level_takexp_error_invalid_amount = CommandsLevelTakexpErrorInvalid_amount(
         description=LocalizedString('commands.level.takexp.error.invalid_amount.description'),
         title=LocalizedString('commands.level.takexp.error.invalid_amount.title'),
@@ -9568,21 +9582,6 @@ def build_commands() -> Commands:
     )
     _n_commands_level_updateuserroles = CommandsLevelUpdateuserroles(
         reason=LocalizedString('commands.level.updateuserroles.reason'),
-    )
-    _n_commands_level_leaderboard = CommandsLevelLeaderboard(
-        data=LocalizedString('commands.level.leaderboard.data'),
-        next=LocalizedString('commands.level.leaderboard.next'),
-        no_data=LocalizedString('commands.level.leaderboard.no_data'),
-        notYourEmbed=LocalizedString('commands.level.leaderboard.notYourEmbed'),
-        page=LocalizedString('commands.level.leaderboard.page'),
-        previous=LocalizedString('commands.level.leaderboard.previous'),
-        title=LocalizedString('commands.level.leaderboard.title'),
-        titleNoPages=LocalizedString('commands.level.leaderboard.titleNoPages'),
-    )
-    _n_commands_level_showxpscalings = CommandsLevelShowxpscalings(
-        data=LocalizedString('commands.level.showxpscalings.data'),
-        description=LocalizedString('commands.level.showxpscalings.description'),
-        title=LocalizedString('commands.level.showxpscalings.title'),
     )
     _n_commands_level = CommandsLevel(
         addlevelrole=_n_commands_level_addlevelrole,
@@ -9897,36 +9896,6 @@ def build_commands() -> Commands:
         missingChannel=_n_commands_logs_blacklistVoiceChannel_missingChannel,
         missingPermission=_n_commands_logs_blacklistVoiceChannel_missingPermission,
     )
-    _n_commands_logs_configureLogs_configuration_embed = CommandsLogsConfigureLogsConfiguration_embed(
-        activate=LocalizedString('commands.logs.configureLogs.configuration_embed.activate'),
-        activated=LocalizedString('commands.logs.configureLogs.configuration_embed.activated'),
-        automodAction=LocalizedString('commands.logs.configureLogs.configuration_embed.automodAction'),
-        automodRuleCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleCreate'),
-        automodRuleDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleDelete'),
-        automodRuleUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleUpdate'),
-        deactivate=LocalizedString('commands.logs.configureLogs.configuration_embed.deactivate'),
-        deactivated=LocalizedString('commands.logs.configureLogs.configuration_embed.deactivated'),
-        guildRoleCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleCreate'),
-        guildRoleDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleDelete'),
-        guildRoleUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleUpdate'),
-        guildUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildUpdate'),
-        guild_channelCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelCreate'),
-        guild_channelDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelDelete'),
-        guild_channelUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelUpdate'),
-        inviteCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.inviteCreate'),
-        inviteDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.inviteDelete'),
-        memberBan=LocalizedString('commands.logs.configureLogs.configuration_embed.memberBan'),
-        memberJoin=LocalizedString('commands.logs.configureLogs.configuration_embed.memberJoin'),
-        memberLeave=LocalizedString('commands.logs.configureLogs.configuration_embed.memberLeave'),
-        memberUnban=LocalizedString('commands.logs.configureLogs.configuration_embed.memberUnban'),
-        memberUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.memberUpdate'),
-        messageDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.messageDelete'),
-        messageEdit=LocalizedString('commands.logs.configureLogs.configuration_embed.messageEdit'),
-        presenceUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.presenceUpdate'),
-        reactionAdd=LocalizedString('commands.logs.configureLogs.configuration_embed.reactionAdd'),
-        reactionRemove=LocalizedString('commands.logs.configureLogs.configuration_embed.reactionRemove'),
-        userUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.userUpdate'),
-    )
     _n_commands_logs_configureLogs_configurationEmbed = CommandsLogsConfigureLogsConfigurationEmbed(
         activate=LocalizedString('commands.logs.configureLogs.configurationEmbed.activate'),
         activated=LocalizedString('commands.logs.configureLogs.configurationEmbed.activated'),
@@ -9957,6 +9926,36 @@ def build_commands() -> Commands:
         reactionRemove=LocalizedString('commands.logs.configureLogs.configurationEmbed.reactionRemove'),
         title=LocalizedString('commands.logs.configureLogs.configurationEmbed.title'),
         userUpdate=LocalizedString('commands.logs.configureLogs.configurationEmbed.userUpdate'),
+    )
+    _n_commands_logs_configureLogs_configuration_embed = CommandsLogsConfigureLogsConfiguration_embed(
+        activate=LocalizedString('commands.logs.configureLogs.configuration_embed.activate'),
+        activated=LocalizedString('commands.logs.configureLogs.configuration_embed.activated'),
+        automodAction=LocalizedString('commands.logs.configureLogs.configuration_embed.automodAction'),
+        automodRuleCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleCreate'),
+        automodRuleDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleDelete'),
+        automodRuleUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.automodRuleUpdate'),
+        deactivate=LocalizedString('commands.logs.configureLogs.configuration_embed.deactivate'),
+        deactivated=LocalizedString('commands.logs.configureLogs.configuration_embed.deactivated'),
+        guildRoleCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleCreate'),
+        guildRoleDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleDelete'),
+        guildRoleUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildRoleUpdate'),
+        guildUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guildUpdate'),
+        guild_channelCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelCreate'),
+        guild_channelDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelDelete'),
+        guild_channelUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.guild_channelUpdate'),
+        inviteCreate=LocalizedString('commands.logs.configureLogs.configuration_embed.inviteCreate'),
+        inviteDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.inviteDelete'),
+        memberBan=LocalizedString('commands.logs.configureLogs.configuration_embed.memberBan'),
+        memberJoin=LocalizedString('commands.logs.configureLogs.configuration_embed.memberJoin'),
+        memberLeave=LocalizedString('commands.logs.configureLogs.configuration_embed.memberLeave'),
+        memberUnban=LocalizedString('commands.logs.configureLogs.configuration_embed.memberUnban'),
+        memberUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.memberUpdate'),
+        messageDelete=LocalizedString('commands.logs.configureLogs.configuration_embed.messageDelete'),
+        messageEdit=LocalizedString('commands.logs.configureLogs.configuration_embed.messageEdit'),
+        presenceUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.presenceUpdate'),
+        reactionAdd=LocalizedString('commands.logs.configureLogs.configuration_embed.reactionAdd'),
+        reactionRemove=LocalizedString('commands.logs.configureLogs.configuration_embed.reactionRemove'),
+        userUpdate=LocalizedString('commands.logs.configureLogs.configuration_embed.userUpdate'),
     )
     _n_commands_logs_configureLogs_noLogEnabled = CommandsLogsConfigureLogsNoLogEnabled(
         description=LocalizedString('commands.logs.configureLogs.noLogEnabled.description'),
@@ -10040,6 +10039,18 @@ def build_commands() -> Commands:
     _n_commands_math_calc = CommandsMathCalc(
         error=_n_commands_math_calc_error,
         success=_n_commands_math_calc_success,
+    )
+    _n_commands_math_calculator = CommandsMathCalculator(
+        command_description=LocalizedString('commands.math.calculator.command_description'),
+        command_name=LocalizedString('commands.math.calculator.command_name'),
+        equation=LocalizedString('commands.math.calculator.equation'),
+        error=LocalizedString('commands.math.calculator.error'),
+        history=LocalizedString('commands.math.calculator.history'),
+        invalid_assignment=LocalizedString('commands.math.calculator.invalid_assignment'),
+        result=LocalizedString('commands.math.calculator.result'),
+        title=LocalizedString('commands.math.calculator.title'),
+        unauthorizedUser=LocalizedString('commands.math.calculator.unauthorizedUser'),
+        variables=LocalizedString('commands.math.calculator.variables'),
     )
     _n_commands_math_faculty_error = CommandsMathFacultyError(
         invalid_input=LocalizedString('commands.math.faculty.error.invalid_input'),
@@ -10148,6 +10159,10 @@ def build_commands() -> Commands:
         zoom_in=LocalizedString('commands.math.plotfunction.buttons.zoom_in'),
         zoom_out=LocalizedString('commands.math.plotfunction.buttons.zoom_out'),
     )
+    _n_commands_math_plotfunction_error = CommandsMathPlotfunctionError(
+        description=LocalizedString('commands.math.plotfunction.error.description'),
+        title=LocalizedString('commands.math.plotfunction.error.title'),
+    )
     _n_commands_math_plotfunction_messages = CommandsMathPlotfunctionMessages(
         error_occurred=LocalizedString('commands.math.plotfunction.messages.error_occurred'),
         function_added=LocalizedString('commands.math.plotfunction.messages.function_added'),
@@ -10213,11 +10228,6 @@ def build_commands() -> Commands:
         rename_function=_n_commands_math_plotfunction_select_menus_rename_function,
         style=_n_commands_math_plotfunction_select_menus_style,
     )
-    _n_commands_math_plotfunction_error = CommandsMathPlotfunctionError(
-        _text=LocalizedString('commands.math.plotfunction.error'),
-        description=LocalizedString('commands.math.plotfunction.error.description'),
-        title=LocalizedString('commands.math.plotfunction.error.title'),
-    )
     _n_commands_math_plotfunction = CommandsMathPlotfunction(
         buttons=_n_commands_math_plotfunction_buttons,
         default_title=LocalizedString('commands.math.plotfunction.default_title'),
@@ -10255,18 +10265,6 @@ def build_commands() -> Commands:
         error=_n_commands_math_randomnumber_error,
         not_truly_random=LocalizedString('commands.math.randomnumber.not_truly_random'),
         success=_n_commands_math_randomnumber_success,
-    )
-    _n_commands_math_calculator = CommandsMathCalculator(
-        command_description=LocalizedString('commands.math.calculator.command_description'),
-        command_name=LocalizedString('commands.math.calculator.command_name'),
-        equation=LocalizedString('commands.math.calculator.equation'),
-        error=LocalizedString('commands.math.calculator.error'),
-        history=LocalizedString('commands.math.calculator.history'),
-        invalid_assignment=LocalizedString('commands.math.calculator.invalid_assignment'),
-        result=LocalizedString('commands.math.calculator.result'),
-        title=LocalizedString('commands.math.calculator.title'),
-        unauthorizedUser=LocalizedString('commands.math.calculator.unauthorizedUser'),
-        variables=LocalizedString('commands.math.calculator.variables'),
     )
     _n_commands_math = CommandsMath(
         calc=_n_commands_math_calc,
@@ -10349,6 +10347,9 @@ def build_commands() -> Commands:
         remove_success=_n_commands_utility_autopublish_remove_success,
         success=_n_commands_utility_autopublish_success,
     )
+    _n_commands_utility_avatar = CommandsUtilityAvatar(
+        title=LocalizedString('commands.utility.avatar.title'),
+    )
     _n_commands_utility_avatarDecoration_no_decoration = CommandsUtilityAvatarDecorationNo_decoration(
         description=LocalizedString('commands.utility.avatarDecoration.no_decoration.description'),
         title=LocalizedString('commands.utility.avatarDecoration.no_decoration.title'),
@@ -10357,6 +10358,9 @@ def build_commands() -> Commands:
         description=LocalizedString('commands.utility.avatarDecoration.description'),
         no_decoration=_n_commands_utility_avatarDecoration_no_decoration,
         title=LocalizedString('commands.utility.avatarDecoration.title'),
+    )
+    _n_commands_utility_banner = CommandsUtilityBanner(
+        title=LocalizedString('commands.utility.banner.title'),
     )
     _n_commands_utility_boosterchannelinfo_info = CommandsUtilityBoosterchannelinfoInfo(
         description=LocalizedString('commands.utility.boosterchannelinfo.info.description'),
@@ -10692,9 +10696,6 @@ def build_commands() -> Commands:
         results=_n_commands_utility_brawlstars_results,
         unlink=_n_commands_utility_brawlstars_unlink,
     )
-    _n_commands_utility_claimboosterchannel_expired = CommandsUtilityClaimboosterchannelExpired(
-        reason=LocalizedString('commands.utility.claimboosterchannel.expired.reason'),
-    )
     _n_commands_utility_claimboosterchannel_already_claimed = CommandsUtilityClaimboosterchannelAlready_claimed(
         description=LocalizedString('commands.utility.claimboosterchannel.already_claimed.description'),
         title=LocalizedString('commands.utility.claimboosterchannel.already_claimed.title'),
@@ -10702,6 +10703,9 @@ def build_commands() -> Commands:
     _n_commands_utility_claimboosterchannel_category_not_found = CommandsUtilityClaimboosterchannelCategory_not_found(
         description=LocalizedString('commands.utility.claimboosterchannel.category_not_found.description'),
         title=LocalizedString('commands.utility.claimboosterchannel.category_not_found.title'),
+    )
+    _n_commands_utility_claimboosterchannel_expired = CommandsUtilityClaimboosterchannelExpired(
+        reason=LocalizedString('commands.utility.claimboosterchannel.expired.reason'),
     )
     _n_commands_utility_claimboosterchannel_no_booster_channel = CommandsUtilityClaimboosterchannelNo_booster_channel(
         description=LocalizedString('commands.utility.claimboosterchannel.no_booster_channel.description'),
@@ -10729,12 +10733,12 @@ def build_commands() -> Commands:
         nobooster=_n_commands_utility_claimboosterchannel_nobooster,
         success=_n_commands_utility_claimboosterchannel_success,
     )
-    _n_commands_utility_claimboosterrole_expired = CommandsUtilityClaimboosterroleExpired(
-        reason=LocalizedString('commands.utility.claimboosterrole.expired.reason'),
-    )
     _n_commands_utility_claimboosterrole_already_claimed = CommandsUtilityClaimboosterroleAlready_claimed(
         description=LocalizedString('commands.utility.claimboosterrole.already_claimed.description'),
         title=LocalizedString('commands.utility.claimboosterrole.already_claimed.title'),
+    )
+    _n_commands_utility_claimboosterrole_expired = CommandsUtilityClaimboosterroleExpired(
+        reason=LocalizedString('commands.utility.claimboosterrole.expired.reason'),
     )
     _n_commands_utility_claimboosterrole_invalid_color = CommandsUtilityClaimboosterroleInvalid_color(
         description=LocalizedString('commands.utility.claimboosterrole.invalid_color.description'),
@@ -10800,6 +10804,10 @@ def build_commands() -> Commands:
         no_booster_role=_n_commands_utility_deleteboosterrole_no_booster_role,
         success=_n_commands_utility_deleteboosterrole_success,
     )
+    _n_commands_utility_feedback_blocked = CommandsUtilityFeedbackBlocked(
+        description=LocalizedString('commands.utility.feedback.blocked.description'),
+        title=LocalizedString('commands.utility.feedback.blocked.title'),
+    )
     _n_commands_utility_feedback_modal_feedbackdescription = CommandsUtilityFeedbackModalFeedbackdescription(
         label=LocalizedString('commands.utility.feedback.modal.feedbackdescription.label'),
         placeholder=LocalizedString('commands.utility.feedback.modal.feedbackdescription.placeholder'),
@@ -10813,7 +10821,6 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.utility.feedback.modal.submitted.title'),
     )
     _n_commands_utility_feedback_modal_timeout = CommandsUtilityFeedbackModalTimeout(
-        _text=LocalizedString('commands.utility.feedback.modal.timeout'),
         title=LocalizedString('commands.utility.feedback.modal.timeout.title'),
     )
     _n_commands_utility_feedback_modal = CommandsUtilityFeedbackModal(
@@ -10824,10 +10831,6 @@ def build_commands() -> Commands:
         submitted=_n_commands_utility_feedback_modal_submitted,
         timeout=_n_commands_utility_feedback_modal_timeout,
         title=LocalizedString('commands.utility.feedback.modal.title'),
-    )
-    _n_commands_utility_feedback_blocked = CommandsUtilityFeedbackBlocked(
-        description=LocalizedString('commands.utility.feedback.blocked.description'),
-        title=LocalizedString('commands.utility.feedback.blocked.title'),
     )
     _n_commands_utility_feedback = CommandsUtilityFeedback(
         blocked=_n_commands_utility_feedback_blocked,
@@ -10844,12 +10847,6 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.utility.help.title'),
         titleNoPages=LocalizedString('commands.utility.help.titleNoPages'),
     )
-    _n_commands_utility_listscheduled_error = CommandsUtilityListscheduledError(
-        not_authorized=LocalizedString('commands.utility.listscheduled.error.not_authorized'),
-    )
-    _n_commands_utility_listscheduled_pagination = CommandsUtilityListscheduledPagination(
-        page_counter=LocalizedString('commands.utility.listscheduled.pagination.page_counter'),
-    )
     _n_commands_utility_listscheduled_edit_modal = CommandsUtilityListscheduledEdit_modal(
         content_label=LocalizedString('commands.utility.listscheduled.edit_modal.content_label'),
         title=LocalizedString('commands.utility.listscheduled.edit_modal.title'),
@@ -10858,9 +10855,15 @@ def build_commands() -> Commands:
         description=LocalizedString('commands.utility.listscheduled.edit_success.description'),
         title=LocalizedString('commands.utility.listscheduled.edit_success.title'),
     )
+    _n_commands_utility_listscheduled_error = CommandsUtilityListscheduledError(
+        not_authorized=LocalizedString('commands.utility.listscheduled.error.not_authorized'),
+    )
     _n_commands_utility_listscheduled_no_messages = CommandsUtilityListscheduledNo_messages(
         description=LocalizedString('commands.utility.listscheduled.no_messages.description'),
         title=LocalizedString('commands.utility.listscheduled.no_messages.title'),
+    )
+    _n_commands_utility_listscheduled_pagination = CommandsUtilityListscheduledPagination(
+        page_counter=LocalizedString('commands.utility.listscheduled.pagination.page_counter'),
     )
     _n_commands_utility_listscheduled_truncated = CommandsUtilityListscheduledTruncated(
         description=LocalizedString('commands.utility.listscheduled.truncated.description'),
@@ -10904,6 +10907,9 @@ def build_commands() -> Commands:
     _n_commands_utility_messagetrackingoptout = CommandsUtilityMessagetrackingoptout(
         error=_n_commands_utility_messagetrackingoptout_error,
         success=_n_commands_utility_messagetrackingoptout_success,
+    )
+    _n_commands_utility_noBanner = CommandsUtilityNoBanner(
+        title=LocalizedString('commands.utility.noBanner.title'),
     )
     _n_commands_utility_removescheduled_error_no_messages = CommandsUtilityRemovescheduledErrorNo_messages(
         description=LocalizedString('commands.utility.removescheduled.error.no_messages.description'),
@@ -11241,15 +11247,6 @@ def build_commands() -> Commands:
         addTwitchLiveNotification=_n_commands_utility_twitch_addTwitchLiveNotification,
         defaultNotificationMessage=LocalizedString('commands.utility.twitch.defaultNotificationMessage'),
         listTwitchLiveNotifications=_n_commands_utility_twitch_listTwitchLiveNotifications,
-    )
-    _n_commands_utility_avatar = CommandsUtilityAvatar(
-        title=LocalizedString('commands.utility.avatar.title'),
-    )
-    _n_commands_utility_banner = CommandsUtilityBanner(
-        title=LocalizedString('commands.utility.banner.title'),
-    )
-    _n_commands_utility_noBanner = CommandsUtilityNoBanner(
-        title=LocalizedString('commands.utility.noBanner.title'),
     )
     _n_commands_utility = CommandsUtility(
         afk=_n_commands_utility_afk,

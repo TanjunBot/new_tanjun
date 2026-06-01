@@ -7,78 +7,13 @@ from locale_keys.types import LocalizedString, ResolveMap
 
 
 @dataclass(frozen=True, slots=True)
-class AdminChannels:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminEmoji:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminJointocreate:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminLocalegroup:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminMessaging:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminModeration:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminPurgegroup:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminReport:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminRole:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminRolemanage:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminSetup:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class Admin:
-    channels: AdminChannels
-    emoji: AdminEmoji
-    jointocreate: AdminJointocreate
-    localegroup: AdminLocalegroup
-    messaging: AdminMessaging
-    moderation: AdminModeration
-    purgegroup: AdminPurgegroup
-    report: AdminReport
-    role: AdminRole
-    rolemanage: AdminRolemanage
-    setup: AdminSetup
     description: LocalizedString
     name: LocalizedString
     addrole: AdminAddrole
     ban: AdminBan
     boosterrole: AdminBoosterrole
+    channels: AdminChannels
     copy7tv: AdminCopy7tv
     copyemoji: AdminCopyemoji
     copyrole: AdminCopyrole
@@ -87,18 +22,28 @@ class Admin:
     createticket: AdminCreateticket
     deleterole: AdminDeleterole
     embed: AdminEmbed
+    emoji: AdminEmoji
+    jointocreate: AdminJointocreate
     jtc: AdminJtc
     kick: AdminKick
+    localegroup: AdminLocalegroup
     lock: AdminLock
+    messaging: AdminMessaging
+    moderation: AdminModeration
     moverole: AdminMoverole
     nickname: AdminNickname
     nuke: AdminNuke
     purge: AdminPurge
+    purgegroup: AdminPurgegroup
     removerole: AdminRemoverole
     removetimeout: AdminRemovetimeout
+    report: AdminReport
+    role: AdminRole
+    rolemanage: AdminRolemanage
     rps: AdminRps
     say: AdminSay
     setlocale: AdminSetlocale
+    setup: AdminSetup
     slowmode: AdminSlowmode
     timeout: AdminTimeout
     tm: AdminTm
@@ -227,11 +172,6 @@ class AdminRemovetimeout:
     params: AdminRemovetimeoutParams
 
 @dataclass(frozen=True, slots=True)
-class AdminRpsRemovechannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class AdminRps:
     removechannel: AdminRpsRemovechannel
     setchannel: AdminRpsSetchannel
@@ -263,14 +203,9 @@ class AdminTimeout:
     params: AdminTimeoutParams
 
 @dataclass(frozen=True, slots=True)
-class AdminTmConfigure:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class AdminTm:
-    configure: AdminTmConfigure
     add: AdminTmAdd
+    configure: AdminTmConfigure
 
 @dataclass(frozen=True, slots=True)
 class AdminTriggermessages:
@@ -291,17 +226,267 @@ class AdminUnlock:
     params: AdminUnlockParams
 
 @dataclass(frozen=True, slots=True)
-class AdminWarnConfig:
+class AdminWarn:
+    description: LocalizedString
+    name: LocalizedString
+    add: AdminWarnAdd
+    config: AdminWarnConfig
+    view: AdminWarnView
+
+@dataclass(frozen=True, slots=True)
+class AdminJointocreate:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminWarn:
-    config: AdminWarnConfig
+class AdminReport:
     description: LocalizedString
     name: LocalizedString
-    add: AdminWarnAdd
-    view: AdminWarnView
+
+@dataclass(frozen=True, slots=True)
+class AdminRole:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminModeration:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminChannels:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminMessaging:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminEmoji:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminSetup:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminRolemanage:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminPurgegroup:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminLocalegroup:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminAddroleParams:
+    role: AdminAddroleParamsRole
+    user: AdminAddroleParamsUser
+
+@dataclass(frozen=True, slots=True)
+class AdminBanParams:
+    deletemessagedays: AdminBanParamsDeletemessagedays
+    reason: AdminBanParamsReason
+    user: AdminBanParamsUser
+
+@dataclass(frozen=True, slots=True)
+class AdminBoosterroleParams:
+    role: AdminBoosterroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class AdminCopy7tvParams:
+    twitch: AdminCopy7tvParamsTwitch
+
+@dataclass(frozen=True, slots=True)
+class AdminCopyemojiParams:
+    emoji: AdminCopyemojiParamsEmoji
+
+@dataclass(frozen=True, slots=True)
+class AdminCopyroleParams:
+    copymembers: AdminCopyroleParamsCopymembers
+    role: AdminCopyroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class AdminCreateemojiParams:
+    imageUrl: AdminCreateemojiParamsImageUrl
+    name: AdminCreateemojiParamsName
+    roles: AdminCreateemojiParamsRoles
+
+@dataclass(frozen=True, slots=True)
+class AdminCreateroleParams:
+    color: AdminCreateroleParamsColor
+    displayemoji: AdminCreateroleParamsDisplayemoji
+    displayicon: AdminCreateroleParamsDisplayicon
+    hoist: AdminCreateroleParamsHoist
+    mentionable: AdminCreateroleParamsMentionable
+    name: AdminCreateroleParamsName
+    reason: AdminCreateroleParamsReason
+
+@dataclass(frozen=True, slots=True)
+class AdminCreateticketParams:
+    channel: AdminCreateticketParamsChannel
+    description: AdminCreateticketParamsDescription
+    introduction: AdminCreateticketParamsIntroduction
+    name: AdminCreateticketParamsName
+    pingrole: AdminCreateticketParamsPingrole
+    summarychannel: AdminCreateticketParamsSummarychannel
+
+@dataclass(frozen=True, slots=True)
+class AdminDeleteroleParams:
+    reason: AdminDeleteroleParamsReason
+    role: AdminDeleteroleParamsRole
+
+@dataclass(frozen=True, slots=True)
+class AdminEmbedParams:
+    channel: AdminEmbedParamsChannel
+    title: AdminEmbedParamsTitle
+
+@dataclass(frozen=True, slots=True)
+class AdminJtcRemovechannel:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminJtcRemovechannelParams
+
+@dataclass(frozen=True, slots=True)
+class AdminJtcSetchannel:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminJtcSetchannelParams
+
+@dataclass(frozen=True, slots=True)
+class AdminKickParams:
+    reason: AdminKickParamsReason
+    user: AdminKickParamsUser
+
+@dataclass(frozen=True, slots=True)
+class AdminLockParams:
+    channel: AdminLockParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class AdminMoveroleParams:
+    copymembers: AdminMoveroleParamsCopymembers
+    position: AdminMoveroleParamsPosition
+    role: AdminMoveroleParamsRole
+    targetrole: AdminMoveroleParamsTargetrole
+
+@dataclass(frozen=True, slots=True)
+class AdminNicknameParams:
+    member: AdminNicknameParamsMember
+    nickname: AdminNicknameParamsNickname
+
+@dataclass(frozen=True, slots=True)
+class AdminNukeParams:
+    channel: AdminNukeParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class AdminPurgeParams:
+    amount: AdminPurgeParamsAmount
+    channel: AdminPurgeParamsChannel
+    setting: AdminPurgeParamsSetting
+
+@dataclass(frozen=True, slots=True)
+class AdminRemoveroleParams:
+    role: AdminRemoveroleParamsRole
+    user: AdminRemoveroleParamsUser
+
+@dataclass(frozen=True, slots=True)
+class AdminRemovetimeoutParams:
+    member: AdminRemovetimeoutParamsMember
+    reason: AdminRemovetimeoutParamsReason
+
+@dataclass(frozen=True, slots=True)
+class AdminRpsSetchannel:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminRpsSetchannelParams
+
+@dataclass(frozen=True, slots=True)
+class AdminRpsShowreports:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminRpsShowreportsParams
+
+@dataclass(frozen=True, slots=True)
+class AdminRpsUnblockreporter:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminRpsUnblockreporterParams
+
+@dataclass(frozen=True, slots=True)
+class AdminRpsRemovechannel:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminSayParams:
+    channel: AdminSayParamsChannel
+    message: AdminSayParamsMessage
+
+@dataclass(frozen=True, slots=True)
+class AdminSetlocaleParams:
+    locale: AdminSetlocaleParamsLocale
+
+@dataclass(frozen=True, slots=True)
+class AdminSlowmodeParams:
+    channel: AdminSlowmodeParamsChannel
+    seconds: AdminSlowmodeParamsSeconds
+
+@dataclass(frozen=True, slots=True)
+class AdminTimeoutParams:
+    duration: AdminTimeoutParamsDuration
+    member: AdminTimeoutParamsMember
+    reason: AdminTimeoutParamsReason
+
+@dataclass(frozen=True, slots=True)
+class AdminTmAdd:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminTmAddParams
+
+@dataclass(frozen=True, slots=True)
+class AdminTmConfigure:
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminTriggermessagesParams:
+    message: AdminTriggermessagesParamsMessage
+
+@dataclass(frozen=True, slots=True)
+class AdminUnbanParams:
+    reason: AdminUnbanParamsReason
+    username: AdminUnbanParamsUsername
+
+@dataclass(frozen=True, slots=True)
+class AdminUnlockParams:
+    channel: AdminUnlockParamsChannel
+
+@dataclass(frozen=True, slots=True)
+class AdminWarnAdd:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminWarnAddParams
+
+@dataclass(frozen=True, slots=True)
+class AdminWarnView:
+    description: LocalizedString
+    name: LocalizedString
+    params: AdminWarnViewParams
+
+@dataclass(frozen=True, slots=True)
+class AdminWarnConfig:
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class AdminAddroleParamsRole:
@@ -312,11 +497,6 @@ class AdminAddroleParamsRole:
 class AdminAddroleParamsUser:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminAddroleParams:
-    role: AdminAddroleParamsRole
-    user: AdminAddroleParamsUser
 
 @dataclass(frozen=True, slots=True)
 class AdminBanParamsDeletemessagedays:
@@ -334,30 +514,16 @@ class AdminBanParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminBanParams:
-    deletemessagedays: AdminBanParamsDeletemessagedays
-    reason: AdminBanParamsReason
-    user: AdminBanParamsUser
-
-@dataclass(frozen=True, slots=True)
 class AdminBoosterroleParamsRole:
     description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminBoosterroleParams:
-    role: AdminBoosterroleParamsRole
-
-@dataclass(frozen=True, slots=True)
-class AdminCopy7tvParams:
-    twitch: AdminCopy7tvParamsTwitch
+class AdminCopy7tvParamsTwitch:
+    username: AdminCopy7tvParamsTwitchUsername
 
 @dataclass(frozen=True, slots=True)
 class AdminCopyemojiParamsEmoji:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminCopyemojiParams:
-    emoji: AdminCopyemojiParamsEmoji
 
 @dataclass(frozen=True, slots=True)
 class AdminCopyroleParamsCopymembers:
@@ -370,11 +536,6 @@ class AdminCopyroleParamsCopymembers:
 class AdminCopyroleParamsRole:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminCopyroleParams:
-    copymembers: AdminCopyroleParamsCopymembers
-    role: AdminCopyroleParamsRole
 
 @dataclass(frozen=True, slots=True)
 class AdminCreateemojiParamsImageUrl:
@@ -390,12 +551,6 @@ class AdminCreateemojiParamsName:
 class AdminCreateemojiParamsRoles:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminCreateemojiParams:
-    imageUrl: AdminCreateemojiParamsImageUrl
-    name: AdminCreateemojiParamsName
-    roles: AdminCreateemojiParamsRoles
 
 @dataclass(frozen=True, slots=True)
 class AdminCreateroleParamsColor:
@@ -433,16 +588,6 @@ class AdminCreateroleParamsReason:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminCreateroleParams:
-    color: AdminCreateroleParamsColor
-    displayemoji: AdminCreateroleParamsDisplayemoji
-    displayicon: AdminCreateroleParamsDisplayicon
-    hoist: AdminCreateroleParamsHoist
-    mentionable: AdminCreateroleParamsMentionable
-    name: AdminCreateroleParamsName
-    reason: AdminCreateroleParamsReason
-
-@dataclass(frozen=True, slots=True)
 class AdminCreateticketParamsChannel:
     description: LocalizedString
     name: LocalizedString
@@ -473,15 +618,6 @@ class AdminCreateticketParamsSummarychannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminCreateticketParams:
-    channel: AdminCreateticketParamsChannel
-    description: AdminCreateticketParamsDescription
-    introduction: AdminCreateticketParamsIntroduction
-    name: AdminCreateticketParamsName
-    pingrole: AdminCreateticketParamsPingrole
-    summarychannel: AdminCreateticketParamsSummarychannel
-
-@dataclass(frozen=True, slots=True)
 class AdminDeleteroleParamsReason:
     description: LocalizedString
     name: LocalizedString
@@ -490,11 +626,6 @@ class AdminDeleteroleParamsReason:
 class AdminDeleteroleParamsRole:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminDeleteroleParams:
-    reason: AdminDeleteroleParamsReason
-    role: AdminDeleteroleParamsRole
 
 @dataclass(frozen=True, slots=True)
 class AdminEmbedParamsChannel:
@@ -507,21 +638,12 @@ class AdminEmbedParamsTitle:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminEmbedParams:
-    channel: AdminEmbedParamsChannel
-    title: AdminEmbedParamsTitle
+class AdminJtcRemovechannelParams:
+    channel: AdminJtcRemovechannelParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class AdminJtcRemovechannel:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminJtcRemovechannelParams
-
-@dataclass(frozen=True, slots=True)
-class AdminJtcSetchannel:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminJtcSetchannelParams
+class AdminJtcSetchannelParams:
+    channel: AdminJtcSetchannelParamsChannel
 
 @dataclass(frozen=True, slots=True)
 class AdminKickParamsReason:
@@ -534,18 +656,18 @@ class AdminKickParamsUser:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminKickParams:
-    reason: AdminKickParamsReason
-    user: AdminKickParamsUser
-
-@dataclass(frozen=True, slots=True)
 class AdminLockParamsChannel:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminLockParams:
-    channel: AdminLockParamsChannel
+class AdminMoveroleParamsPosition:
+    above: LocalizedString
+    below: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+    above: AdminMoveroleParamsPositionAbove
+    below: AdminMoveroleParamsPositionBelow
 
 @dataclass(frozen=True, slots=True)
 class AdminMoveroleParamsCopymembers:
@@ -563,13 +685,6 @@ class AdminMoveroleParamsTargetrole:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminMoveroleParams:
-    copymembers: AdminMoveroleParamsCopymembers
-    role: AdminMoveroleParamsRole
-    targetrole: AdminMoveroleParamsTargetrole
-    position: AdminMoveroleParamsPosition
-
-@dataclass(frozen=True, slots=True)
 class AdminNicknameParamsMember:
     description: LocalizedString
     name: LocalizedString
@@ -580,18 +695,9 @@ class AdminNicknameParamsNickname:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminNicknameParams:
-    member: AdminNicknameParamsMember
-    nickname: AdminNicknameParamsNickname
-
-@dataclass(frozen=True, slots=True)
 class AdminNukeParamsChannel:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminNukeParams:
-    channel: AdminNukeParamsChannel
 
 @dataclass(frozen=True, slots=True)
 class AdminPurgeParamsAmount:
@@ -619,12 +725,6 @@ class AdminPurgeParamsSetting:
     userNotPinned: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminPurgeParams:
-    amount: AdminPurgeParamsAmount
-    channel: AdminPurgeParamsChannel
-    setting: AdminPurgeParamsSetting
-
-@dataclass(frozen=True, slots=True)
 class AdminRemoveroleParamsRole:
     description: LocalizedString
     name: LocalizedString
@@ -633,11 +733,6 @@ class AdminRemoveroleParamsRole:
 class AdminRemoveroleParamsUser:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminRemoveroleParams:
-    role: AdminRemoveroleParamsRole
-    user: AdminRemoveroleParamsUser
 
 @dataclass(frozen=True, slots=True)
 class AdminRemovetimeoutParamsMember:
@@ -650,27 +745,16 @@ class AdminRemovetimeoutParamsReason:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminRemovetimeoutParams:
-    member: AdminRemovetimeoutParamsMember
-    reason: AdminRemovetimeoutParamsReason
+class AdminRpsSetchannelParams:
+    channel: AdminRpsSetchannelParamsChannel
 
 @dataclass(frozen=True, slots=True)
-class AdminRpsSetchannel:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminRpsSetchannelParams
+class AdminRpsShowreportsParams:
+    user: AdminRpsShowreportsParamsUser
 
 @dataclass(frozen=True, slots=True)
-class AdminRpsShowreports:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminRpsShowreportsParams
-
-@dataclass(frozen=True, slots=True)
-class AdminRpsUnblockreporter:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminRpsUnblockreporterParams
+class AdminRpsUnblockreporterParams:
+    user: AdminRpsUnblockreporterParamsUser
 
 @dataclass(frozen=True, slots=True)
 class AdminSayParamsChannel:
@@ -683,18 +767,9 @@ class AdminSayParamsMessage:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminSayParams:
-    channel: AdminSayParamsChannel
-    message: AdminSayParamsMessage
-
-@dataclass(frozen=True, slots=True)
 class AdminSetlocaleParamsLocale:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminSetlocaleParams:
-    locale: AdminSetlocaleParamsLocale
 
 @dataclass(frozen=True, slots=True)
 class AdminSlowmodeParamsChannel:
@@ -705,11 +780,6 @@ class AdminSlowmodeParamsChannel:
 class AdminSlowmodeParamsSeconds:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminSlowmodeParams:
-    channel: AdminSlowmodeParamsChannel
-    seconds: AdminSlowmodeParamsSeconds
 
 @dataclass(frozen=True, slots=True)
 class AdminTimeoutParamsDuration:
@@ -727,25 +797,15 @@ class AdminTimeoutParamsReason:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminTimeoutParams:
-    duration: AdminTimeoutParamsDuration
-    member: AdminTimeoutParamsMember
-    reason: AdminTimeoutParamsReason
-
-@dataclass(frozen=True, slots=True)
-class AdminTmAdd:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminTmAddParams
+class AdminTmAddParams:
+    casesensitive: AdminTmAddParamsCasesensitive
+    response: AdminTmAddParamsResponse
+    trigger: AdminTmAddParamsTrigger
 
 @dataclass(frozen=True, slots=True)
 class AdminTriggermessagesParamsMessage:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminTriggermessagesParams:
-    message: AdminTriggermessagesParamsMessage
 
 @dataclass(frozen=True, slots=True)
 class AdminUnbanParamsReason:
@@ -758,30 +818,18 @@ class AdminUnbanParamsUsername:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminUnbanParams:
-    reason: AdminUnbanParamsReason
-    username: AdminUnbanParamsUsername
-
-@dataclass(frozen=True, slots=True)
 class AdminUnlockParamsChannel:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminUnlockParams:
-    channel: AdminUnlockParamsChannel
+class AdminWarnAddParams:
+    member: AdminWarnAddParamsMember
+    reason: AdminWarnAddParamsReason
 
 @dataclass(frozen=True, slots=True)
-class AdminWarnAdd:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminWarnAddParams
-
-@dataclass(frozen=True, slots=True)
-class AdminWarnView:
-    description: LocalizedString
-    name: LocalizedString
-    params: AdminWarnViewParams
+class AdminWarnViewParams:
+    member: AdminWarnViewParamsMember
 
 @dataclass(frozen=True, slots=True)
 class AdminCopy7tvParamsTwitchUsername:
@@ -789,17 +837,9 @@ class AdminCopy7tvParamsTwitchUsername:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminCopy7tvParamsTwitch:
-    username: AdminCopy7tvParamsTwitchUsername
-
-@dataclass(frozen=True, slots=True)
 class AdminJtcRemovechannelParamsChannel:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminJtcRemovechannelParams:
-    channel: AdminJtcRemovechannelParamsChannel
 
 @dataclass(frozen=True, slots=True)
 class AdminJtcSetchannelParamsChannel:
@@ -807,25 +847,12 @@ class AdminJtcSetchannelParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminJtcSetchannelParams:
-    channel: AdminJtcSetchannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
 class AdminMoveroleParamsPositionAbove:
-    _text: LocalizedString
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class AdminMoveroleParamsPositionBelow:
-    _text: LocalizedString
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminMoveroleParamsPosition:
-    above: AdminMoveroleParamsPositionAbove
-    below: AdminMoveroleParamsPositionBelow
     description: LocalizedString
     name: LocalizedString
 
@@ -835,25 +862,13 @@ class AdminRpsSetchannelParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminRpsSetchannelParams:
-    channel: AdminRpsSetchannelParamsChannel
-
-@dataclass(frozen=True, slots=True)
 class AdminRpsShowreportsParamsUser:
     description: LocalizedString
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminRpsShowreportsParams:
-    user: AdminRpsShowreportsParamsUser
-
-@dataclass(frozen=True, slots=True)
 class AdminRpsUnblockreporterParamsUser:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminRpsUnblockreporterParams:
-    user: AdminRpsUnblockreporterParamsUser
 
 @dataclass(frozen=True, slots=True)
 class AdminTmAddParamsCasesensitive:
@@ -873,12 +888,6 @@ class AdminTmAddParamsTrigger:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminTmAddParams:
-    casesensitive: AdminTmAddParamsCasesensitive
-    response: AdminTmAddParamsResponse
-    trigger: AdminTmAddParamsTrigger
-
-@dataclass(frozen=True, slots=True)
 class AdminWarnAddParamsMember:
     description: LocalizedString
 
@@ -887,17 +896,8 @@ class AdminWarnAddParamsReason:
     description: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminWarnAddParams:
-    member: AdminWarnAddParamsMember
-    reason: AdminWarnAddParamsReason
-
-@dataclass(frozen=True, slots=True)
 class AdminWarnViewParamsMember:
     description: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminWarnViewParams:
-    member: AdminWarnViewParamsMember
 
 def build_admin() -> Admin:
     _n_admin_addrole_params_role = AdminAddroleParamsRole(
@@ -949,6 +949,10 @@ def build_admin() -> Admin:
         description=LocalizedString('admin.boosterrole.description'),
         name=LocalizedString('admin.boosterrole.name'),
         params=_n_admin_boosterrole_params,
+    )
+    _n_admin_channels = AdminChannels(
+        description=LocalizedString('admin.channels.description'),
+        name=LocalizedString('admin.channels.name'),
     )
     _n_admin_copy7tv_params_twitch_username = AdminCopy7tvParamsTwitchUsername(
         description=LocalizedString('admin.copy7tv.params.twitch.username.description'),
@@ -1130,6 +1134,14 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.embed.name'),
         params=_n_admin_embed_params,
     )
+    _n_admin_emoji = AdminEmoji(
+        description=LocalizedString('admin.emoji.description'),
+        name=LocalizedString('admin.emoji.name'),
+    )
+    _n_admin_jointocreate = AdminJointocreate(
+        description=LocalizedString('admin.jointocreate.description'),
+        name=LocalizedString('admin.jointocreate.name'),
+    )
     _n_admin_jtc_removechannel_params_channel = AdminJtcRemovechannelParamsChannel(
         description=LocalizedString('admin.jtc.removechannel.params.channel.description'),
         name=LocalizedString('admin.jtc.removechannel.params.channel.name'),
@@ -1175,6 +1187,10 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.kick.name'),
         params=_n_admin_kick_params,
     )
+    _n_admin_localegroup = AdminLocalegroup(
+        description=LocalizedString('admin.localegroup.description'),
+        name=LocalizedString('admin.localegroup.name'),
+    )
     _n_admin_lock_params_channel = AdminLockParamsChannel(
         description=LocalizedString('admin.lock.params.channel.description'),
         name=LocalizedString('admin.lock.params.channel.name'),
@@ -1187,13 +1203,23 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.lock.name'),
         params=_n_admin_lock_params,
     )
+    _n_admin_messaging = AdminMessaging(
+        description=LocalizedString('admin.messaging.description'),
+        name=LocalizedString('admin.messaging.name'),
+    )
+    _n_admin_moderation = AdminModeration(
+        description=LocalizedString('admin.moderation.description'),
+        name=LocalizedString('admin.moderation.name'),
+    )
+    _n_admin_moverole_params_copymembers = AdminMoveroleParamsCopymembers(
+        false=LocalizedString('admin.moverole.params.copymembers.false'),
+        true=LocalizedString('admin.moverole.params.copymembers.true'),
+    )
     _n_admin_moverole_params_position_above = AdminMoveroleParamsPositionAbove(
-        _text=LocalizedString('admin.moverole.params.position.above'),
         description=LocalizedString('admin.moverole.params.position.above.description'),
         name=LocalizedString('admin.moverole.params.position.above.name'),
     )
     _n_admin_moverole_params_position_below = AdminMoveroleParamsPositionBelow(
-        _text=LocalizedString('admin.moverole.params.position.below'),
         description=LocalizedString('admin.moverole.params.position.below.description'),
         name=LocalizedString('admin.moverole.params.position.below.name'),
     )
@@ -1202,10 +1228,6 @@ def build_admin() -> Admin:
         below=_n_admin_moverole_params_position_below,
         description=LocalizedString('admin.moverole.params.position.description'),
         name=LocalizedString('admin.moverole.params.position.name'),
-    )
-    _n_admin_moverole_params_copymembers = AdminMoveroleParamsCopymembers(
-        false=LocalizedString('admin.moverole.params.copymembers.false'),
-        true=LocalizedString('admin.moverole.params.copymembers.true'),
     )
     _n_admin_moverole_params_role = AdminMoveroleParamsRole(
         description=LocalizedString('admin.moverole.params.role.description'),
@@ -1287,6 +1309,10 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.purge.name'),
         params=_n_admin_purge_params,
     )
+    _n_admin_purgegroup = AdminPurgegroup(
+        description=LocalizedString('admin.purgegroup.description'),
+        name=LocalizedString('admin.purgegroup.name'),
+    )
     _n_admin_removerole_params_role = AdminRemoveroleParamsRole(
         description=LocalizedString('admin.removerole.params.role.description'),
         name=LocalizedString('admin.removerole.params.role.name'),
@@ -1320,6 +1346,22 @@ def build_admin() -> Admin:
         description=LocalizedString('admin.removetimeout.description'),
         name=LocalizedString('admin.removetimeout.name'),
         params=_n_admin_removetimeout_params,
+    )
+    _n_admin_report = AdminReport(
+        description=LocalizedString('admin.report.description'),
+        name=LocalizedString('admin.report.name'),
+    )
+    _n_admin_role = AdminRole(
+        description=LocalizedString('admin.role.description'),
+        name=LocalizedString('admin.role.name'),
+    )
+    _n_admin_rolemanage = AdminRolemanage(
+        description=LocalizedString('admin.rolemanage.description'),
+        name=LocalizedString('admin.rolemanage.name'),
+    )
+    _n_admin_rps_removechannel = AdminRpsRemovechannel(
+        description=LocalizedString('admin.rps.removechannel.description'),
+        name=LocalizedString('admin.rps.removechannel.name'),
     )
     _n_admin_rps_setchannel_params_channel = AdminRpsSetchannelParamsChannel(
         description=LocalizedString('admin.rps.setchannel.params.channel.description'),
@@ -1356,10 +1398,6 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.rps.unblockreporter.name'),
         params=_n_admin_rps_unblockreporter_params,
     )
-    _n_admin_rps_removechannel = AdminRpsRemovechannel(
-        description=LocalizedString('admin.rps.removechannel.description'),
-        name=LocalizedString('admin.rps.removechannel.name'),
-    )
     _n_admin_rps = AdminRps(
         removechannel=_n_admin_rps_removechannel,
         setchannel=_n_admin_rps_setchannel,
@@ -1394,6 +1432,10 @@ def build_admin() -> Admin:
         description=LocalizedString('admin.setlocale.description'),
         name=LocalizedString('admin.setlocale.name'),
         params=_n_admin_setlocale_params,
+    )
+    _n_admin_setup = AdminSetup(
+        description=LocalizedString('admin.setup.description'),
+        name=LocalizedString('admin.setup.name'),
     )
     _n_admin_slowmode_params_channel = AdminSlowmodeParamsChannel(
         description=LocalizedString('admin.slowmode.params.channel.description'),
@@ -1522,6 +1564,10 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.warn.add.name'),
         params=_n_admin_warn_add_params,
     )
+    _n_admin_warn_config = AdminWarnConfig(
+        description=LocalizedString('admin.warn.config.description'),
+        name=LocalizedString('admin.warn.config.name'),
+    )
     _n_admin_warn_view_params_member = AdminWarnViewParamsMember(
         description=LocalizedString('admin.warn.view.params.member.description'),
     )
@@ -1533,60 +1579,12 @@ def build_admin() -> Admin:
         name=LocalizedString('admin.warn.view.name'),
         params=_n_admin_warn_view_params,
     )
-    _n_admin_warn_config = AdminWarnConfig(
-        description=LocalizedString('admin.warn.config.description'),
-        name=LocalizedString('admin.warn.config.name'),
-    )
     _n_admin_warn = AdminWarn(
         add=_n_admin_warn_add,
         config=_n_admin_warn_config,
         description=LocalizedString('admin.warn.description'),
         name=LocalizedString('admin.warn.name'),
         view=_n_admin_warn_view,
-    )
-    _n_admin_channels = AdminChannels(
-        description=LocalizedString('admin.channels.description'),
-        name=LocalizedString('admin.channels.name'),
-    )
-    _n_admin_emoji = AdminEmoji(
-        description=LocalizedString('admin.emoji.description'),
-        name=LocalizedString('admin.emoji.name'),
-    )
-    _n_admin_jointocreate = AdminJointocreate(
-        description=LocalizedString('admin.jointocreate.description'),
-        name=LocalizedString('admin.jointocreate.name'),
-    )
-    _n_admin_localegroup = AdminLocalegroup(
-        description=LocalizedString('admin.localegroup.description'),
-        name=LocalizedString('admin.localegroup.name'),
-    )
-    _n_admin_messaging = AdminMessaging(
-        description=LocalizedString('admin.messaging.description'),
-        name=LocalizedString('admin.messaging.name'),
-    )
-    _n_admin_moderation = AdminModeration(
-        description=LocalizedString('admin.moderation.description'),
-        name=LocalizedString('admin.moderation.name'),
-    )
-    _n_admin_purgegroup = AdminPurgegroup(
-        description=LocalizedString('admin.purgegroup.description'),
-        name=LocalizedString('admin.purgegroup.name'),
-    )
-    _n_admin_report = AdminReport(
-        description=LocalizedString('admin.report.description'),
-        name=LocalizedString('admin.report.name'),
-    )
-    _n_admin_role = AdminRole(
-        description=LocalizedString('admin.role.description'),
-        name=LocalizedString('admin.role.name'),
-    )
-    _n_admin_rolemanage = AdminRolemanage(
-        description=LocalizedString('admin.rolemanage.description'),
-        name=LocalizedString('admin.rolemanage.name'),
-    )
-    _n_admin_setup = AdminSetup(
-        description=LocalizedString('admin.setup.description'),
-        name=LocalizedString('admin.setup.name'),
     )
     _n_admin = Admin(
         addrole=_n_admin_addrole,

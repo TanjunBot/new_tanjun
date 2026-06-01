@@ -250,10 +250,12 @@ def _build_tree(keys: dict[str, tuple[str, ...]], dynamic: dict[str, dict[str, s
     def _merge_groups_into_children(node: TreeNode) -> None:
         for group_seg, fields in list(node.groups.items()):
             child = node.children.get(group_seg)
-            if child is not None:
-                for fname, fkey in fields.items():
-                    child.leaves[fname] = fkey
-                del node.groups[group_seg]
+            if child is None:
+                child = TreeNode(path=node.path + (group_seg,))
+                node.children[group_seg] = child
+            for fname, fkey in fields.items():
+                child.leaves[fname] = fkey
+            del node.groups[group_seg]
         for child in node.children.values():
             _merge_groups_into_children(child)
         for child in node.bracket_children.values():
