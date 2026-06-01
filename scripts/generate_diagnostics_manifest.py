@@ -12,6 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import tests.mock_config as mock_config
+
+mock_config.patch_config_module()
+
 from diagnostics.tree import MANIFEST_PATH, collect_tree_paths, iter_tree_paths
 from tests.helpers.extension_loader import fire_cog_on_ready, load_all_extensions, make_bot_for_extensions
 
