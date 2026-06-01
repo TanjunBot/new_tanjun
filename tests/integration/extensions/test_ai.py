@@ -61,11 +61,11 @@ async def test_root_command_name_is_ai_name():
     assert get_tree_command_names(bot) == ["ai_name"]
 
 
-async def test_root_group_has_4_entries():
+async def test_root_group_has_5_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "ai_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 4
+    assert len(get_subcommand_names(root)) == 5
 
 
 async def test_subcommand_ai_askgpt_name_registered():
@@ -80,6 +80,13 @@ async def test_subcommand_ai_asktanjuwun_name_registered():
     root = find_tree_group(bot, "ai_name")
     assert root is not None
     assert "ai_asktanjuwun_name" in get_subcommand_names(root)
+
+
+async def test_subcommand_ai_tokens_name_registered():
+    bot = await load_extension_bot(EXTENSION)
+    root = find_tree_group(bot, "ai_name")
+    assert root is not None
+    assert "ai_tokens_name" in get_subcommand_names(root)
 
 
 async def test_subcommand_ai_customsituations_name_registered():

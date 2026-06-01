@@ -8,6 +8,7 @@ import utility
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.ask_gpt import ask_gpt
 from commands.ai.delete_custom_situation import delete_custom_situation
+from commands.ai.show_tokens import show_tokens
 from services.ai_service import AiService
 
 
@@ -245,6 +246,29 @@ class AiCommands(discord.app_commands.Group):
             frequency_penalty=frequencypenalty,
             presence_penalty=presencepenalty,
         )
+
+    @app_commands.command(
+        name=app_commands.locale_str("ai_tokens_name"),
+        description=app_commands.locale_str("ai_tokens_description"),
+    )
+    async def tokens_command(self, interaction: discord.Interaction) -> None:
+        from typing import cast
+
+        await interaction.response.defer()
+
+        command_info = utility.CommandInfo(
+            user=interaction.user,
+            channel=cast(discord.abc.GuildChannel, interaction.channel),
+            guild=interaction.guild,
+            command=interaction.command,
+            locale=interaction.locale,  # type: ignore[arg-type]
+            message=interaction.message,
+            permissions=interaction.permissions,
+            reply=interaction.followup.send,
+            client=interaction.client,
+        )
+
+        await show_tokens(command_info)
 
 
 class AiCog(commands.Cog):
