@@ -201,8 +201,19 @@ def _missing_localization_issue_exists(g: Github, locale: str, key: str) -> bool
     return g.search_issues(query).totalCount > 0
 
 
+def _missing_localization_resolved(locale: str, key: str) -> bool:
+    from localizer import tanjunLocalizer
+
+    entries = tanjunLocalizer.load_translations(locale)
+    entry = tanjunLocalizer.get_translation(entries, key)
+    return entry is not None and bool(entry.translation.strip())
+
+
 def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
     if not GithubAuthToken:
+        return
+
+    if _missing_localization_resolved(locale, key):
         return
 
     title = _missing_localization_issue_title(locale, key)

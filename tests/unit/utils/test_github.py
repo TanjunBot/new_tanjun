@@ -143,6 +143,18 @@ class TestSyncHelpers:
 
         mock_github.assert_not_called()
 
+    def test_sync_create_missing_localization_issue_skips_when_translation_exists(self):
+        from utils.github import _sync_create_missing_localization_issue
+
+        with (
+            patch("utils.github.GithubAuthToken", "token"),
+            patch("utils.github.Github") as mock_github,
+            patch("utils.github._missing_localization_resolved", return_value=True),
+        ):
+            _sync_create_missing_localization_issue("fr", "admin.emoji.name")
+
+        mock_github.assert_not_called()
+
     def test_sync_create_feedback_issue(self):
         from utils.github import _sync_create_feedback_issue
 
