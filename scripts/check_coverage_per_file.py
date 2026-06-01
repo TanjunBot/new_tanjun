@@ -64,7 +64,8 @@ def _is_low_coverage_exception(filepath: str) -> bool:
     """Return True if filepath is a known low-coverage file exempt from per-file gate."""
     normalized = filepath.replace("\\", "/")  # Handle Windows backslashes
     for exc in _LOW_COVERAGE_EXEMPTIONS:
-        if normalized.endswith(exc):
+        # Ensure match on path/separator boundary (not just trailing substring)
+        if normalized == exc or normalized.endswith("/" + exc):
             return True
     return False
 

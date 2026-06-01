@@ -216,9 +216,9 @@ jobs:
           coverage combine coverage-*.dat
           coverage xml -o ../coverage.xml
           coverage json -o ../coverage.json
+          coverage report --fail-under=85
           mv .coverage ../
           cd ..
-          coverage report --data-file=.coverage --fail-under=85
           python scripts/check_coverage_per_file.py --min 85 --coverage-json coverage.json
       - uses: actions/upload-artifact@v4
         if: always()
