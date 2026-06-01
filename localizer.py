@@ -4,20 +4,14 @@ import asyncio
 import json
 import time
 from string import Template
-from typing import Any, cast
-
+from typing import Any, cast, overload
 import discord
 from pydantic import BaseModel
-
 from utility import missingLocalization
 from utils.async_io import run_blocking
-
-TRANSLATION_NOT_FOUND: str = "err: no translation found."
-
-CACHE_TTL: float = 300.0  # 5 minutes
-
+TRANSLATION_NOT_FOUND: str = 'err: no translation found.'
+CACHE_TTL: float = 300.0
 reported_missing: set[tuple[str, str]] = set()
-
 
 class TranslationEntry(BaseModel):
     """A single translation entry with metadata.
@@ -32,7 +26,6 @@ class TranslationEntry(BaseModel):
     description:
         An optional human-readable description of what this translation is for.
     """
-
     identifier: str
     translation: str
     description: str | None = None
@@ -40,12 +33,7 @@ class TranslationEntry(BaseModel):
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> TranslationEntry:
         """Create a TranslationEntry from a raw JSON dict (backward compat)."""
-        return cls(
-            identifier=str(data.get("identifier", "")),
-            translation=str(data.get("translation", "")),
-            description=str(data.get("description")) if data.get("description") else None,
-        )
-
+        return cls(identifier=str(data.get('identifier', '')), translation=str(data.get('translation', '')), description=str(data.get('description')) if data.get('description') else None)
 
 class LocalizerService:
     """Typed service for loading, caching and rendering translations.
@@ -59,10 +47,6 @@ class LocalizerService:
         self._cache: dict[str, tuple[list[TranslationEntry], float]] = {}
         self._cache_ttl: float = CACHE_TTL
 
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
     @staticmethod
     def _normalize_locale(locale: discord.Locale | str) -> str:
         """Normalize a locale value to a short identifier (e.g. ``de``, ``en``).
@@ -72,54 +56,54 @@ class LocalizerService:
         GitHub issues for languages that the bot does not ship locale files for.
         """
         raw = str(locale.value if isinstance(locale, discord.Locale) else locale)
-        if raw in ("en", "en-US", "en-GB"):
-            return "en"
-        if raw.startswith("de"):
-            return "de"
-        if raw.startswith("ko"):
-            return "ko"
-        if raw.startswith("da"):
-            return "da"
-        if raw.startswith("hr"):
-            return "hr"
-        if raw.startswith("bg"):
-            return "bg"
-        if raw.startswith("it"):
-            return "it"
-        if raw.startswith("cs"):
-            return "cs"
-        if raw.startswith("lt"):
-            return "lt"
-        if raw in ("zh-CN", "zh-Hans"):
-            return "zh-CN"
-        if raw in ("zh-TW", "zh-Hant"):
-            return "zh-TW"
-        if raw.startswith("ja") or raw == "jp":
-            return "ja"
-        if raw.startswith("id"):
-            return "id"
-        if raw in ("es", "es-ES", "es-419"):
-            return "es-419"
-        if raw.startswith("hu"):
-            return "hu"
-        if raw.startswith("el"):
-            return "el"
-        if raw.startswith("nl"):
-            return "nl"
-        if raw.startswith("fr"):
-            return "fr"
-        if raw.startswith("fi"):
-            return "fi"
-        if raw.startswith("hi"):
-            return "hi"
-        if raw.startswith("vi"):
-            return "vi"
-        return "en"
+        if raw in ('en', 'en-US', 'en-GB'):
+            return 'en'
+        if raw.startswith('de'):
+            return 'de'
+        if raw.startswith('ko'):
+            return 'ko'
+        if raw.startswith('da'):
+            return 'da'
+        if raw.startswith('hr'):
+            return 'hr'
+        if raw.startswith('bg'):
+            return 'bg'
+        if raw.startswith('it'):
+            return 'it'
+        if raw.startswith('cs'):
+            return 'cs'
+        if raw.startswith('lt'):
+            return 'lt'
+        if raw in ('zh-CN', 'zh-Hans'):
+            return 'zh-CN'
+        if raw in ('zh-TW', 'zh-Hant'):
+            return 'zh-TW'
+        if raw.startswith('ja') or raw == 'jp':
+            return 'ja'
+        if raw.startswith('id'):
+            return 'id'
+        if raw in ('es', 'es-ES', 'es-419'):
+            return 'es-419'
+        if raw.startswith('hu'):
+            return 'hu'
+        if raw.startswith('el'):
+            return 'el'
+        if raw.startswith('nl'):
+            return 'nl'
+        if raw.startswith('fr'):
+            return 'fr'
+        if raw.startswith('fi'):
+            return 'fi'
+        if raw.startswith('hi'):
+            return 'hi'
+        if raw.startswith('vi'):
+            return 'vi'
+        return 'en'
 
     @staticmethod
     def _validate_json(data: object) -> list[TranslationEntry] | None:
         """Parse and validate raw JSON data into a list of TranslationEntry."""
-        if not isinstance(data, list) or not all(isinstance(entry, dict) for entry in data):
+        if not isinstance(data, list) or not all((isinstance(entry, dict) for entry in data)):
             return None
         entries: list[TranslationEntry] = []
         for entry in cast(list[dict[str, object]], data):
@@ -133,13 +117,11 @@ class LocalizerService:
         """Synchronous translation loader with caching and English fallback."""
         now = time.time()
         cached = self._cache.get(locale)
-        if cached and (now - cached[1]) < self._cache_ttl:
+        if cached and now - cached[1] < self._cache_ttl:
             return cached[0]
-
         result: list[TranslationEntry] = []
-
         try:
-            with open(f"locales/{locale}.json", encoding="utf-8") as file:
+            with open(f'locales/{locale}.json', encoding='utf-8') as file:
                 data: object = json.load(file)
                 parsed = self._validate_json(data)
                 if parsed is not None:
@@ -150,25 +132,22 @@ class LocalizerService:
             pass
         except json.JSONDecodeError:
             print(f"Error decoding JSON from the translation file for locale '{locale}'.")
-
-        # Fallback to English if the requested locale failed and isn't English itself
-        if not result and locale != "en":
-            en_cached = self._cache.get("en")
-            if en_cached and (now - en_cached[1]) < self._cache_ttl:
+        if not result and locale != 'en':
+            en_cached = self._cache.get('en')
+            if en_cached and now - en_cached[1] < self._cache_ttl:
                 result = en_cached[0]
             else:
                 try:
-                    with open("locales/en.json", encoding="utf-8") as file:
+                    with open('locales/en.json', encoding='utf-8') as file:
                         fallback_data: object = json.load(file)
                         parsed = self._validate_json(fallback_data)
                         if parsed is not None:
-                            self._cache["en"] = (parsed, now)
+                            self._cache['en'] = (parsed, now)
                             result = parsed
                         else:
                             print("Invalid translation schema for locale 'en'.")
                 except (FileNotFoundError, json.JSONDecodeError):
                     pass
-
         self._cache[locale] = (result, now)
         return result
 
@@ -178,8 +157,7 @@ class LocalizerService:
         for entry in entries:
             if entry.identifier.lower() == lower_key:
                 return entry
-
-        alt_key = lower_key.replace(".", "_") if "." in lower_key else lower_key.replace("_", ".")
+        alt_key = lower_key.replace('.', '_') if '.' in lower_key else lower_key.replace('_', '.')
         if alt_key != lower_key:
             for entry in entries:
                 if entry.identifier.lower() == alt_key:
@@ -202,19 +180,13 @@ class LocalizerService:
                 if exc is not None:
                     print(f"Exception in missingLocalization task for key '{key}' in locale '{locale_str}': {exc}")
                     import traceback
-
                     traceback.print_exception(type(exc), exc, exc.__traceback__)
-
             task.add_done_callback(_handle_task_exception)
         except RuntimeError:
             try:
                 asyncio.run(missingLocalization(locale_str, key))
             except Exception as e:
                 print(f"Exception in missingLocalization for key '{key}' in locale '{locale_str}': {e}")
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
 
     async def load_locale(self, locale: str) -> list[TranslationEntry]:
         """Async: load translations for *locale* off the event loop."""
@@ -236,11 +208,7 @@ class LocalizerService:
         """
         return await run_blocking(self._load_sync, locale)
 
-    def get_translation(
-        self,
-        translations: list[TranslationEntry],
-        key: str,
-    ) -> TranslationEntry | None:
+    def get_translation(self, translations: list[TranslationEntry], key: str) -> TranslationEntry | None:
         """Retrieve a translation entry by its identifier (case-insensitive).
 
         Parameters
@@ -257,12 +225,15 @@ class LocalizerService:
         """
         return self._find_entry(translations, key)
 
-    def localize(
-        self,
-        locale: discord.Locale | str,
-        key: str,
-        **args: str | int | float,
-    ) -> str:
+    @overload
+    def localize(self, locale: discord.Locale | str, key: str, **args: str | int | float) -> str:
+        ...
+
+    @overload
+    def localize(self, locale: discord.Locale | str, key: 'LocaleKey', **args: str | int | float) -> str:
+        ...
+
+    def localize(self, locale: discord.Locale | str, key: str, **args: str | int | float) -> str:
         """Retrieve the localized text for *locale* and substitute placeholders.
 
         Parameters
@@ -284,26 +255,19 @@ class LocalizerService:
         locale_str = self._normalize_locale(locale)
         translations = self._load_sync(locale_str)
         entry = self._find_entry(translations, key)
-
         if entry is None:
             print(f"No translation found for key '{key}' in locale '{locale_str}'.")
             self._report_missing(locale_str, key)
             return TRANSLATION_NOT_FOUND
-
         template = Template(entry.translation)
         return str(template.safe_substitute(args))
 
-    def test_localize(
-        self,
-        locale: str,
-        key: str,
-        **args: Any,
-    ) -> str:
+    def test_localize(self, locale: str, key: str, **args: Any) -> str:
         """Test-oriented lookup: falls back to German on missing keys."""
         translations = self._load_sync(locale)
         entry = self._find_entry(translations, key)
         if entry is None:
-            return self.localize("de", key, **args) if locale != "de" else f"No translation found for key '{key}'."
+            return self.localize('de', key, **args) if locale != 'de' else f"No translation found for key '{key}'."
         template = Template(entry.translation)
         return template.safe_substitute(args)
 
@@ -314,8 +278,10 @@ class LocalizerService:
     def reload_locales(self) -> None:
         """Clear the translation cache so the next load re-reads from disk."""
         self._cache.clear()
-
-
-# Backward-compatible alias so ``from localizer import tanjunLocalizer``
-# continues to work without changes across 120+ import sites.
 tanjunLocalizer = LocalizerService()
+
+def __getattr__(name: str) -> Any:
+    if name == 'LocaleKey':
+        from locale_keys._literal_keys import LocaleKey
+        return LocaleKey
+    raise AttributeError(name)

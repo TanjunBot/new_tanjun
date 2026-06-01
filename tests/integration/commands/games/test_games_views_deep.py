@@ -1,9 +1,7 @@
 from __future__ import annotations
-
+from locale_keys import locale
 from unittest.mock import AsyncMock, MagicMock, patch
-
 import pytest
-
 from commands.games.connect4 import Connect4, connect4
 from commands.games.rps import rps
 from commands.games.tic_tac_toe import TicTacToe, tic_tac_toe
@@ -60,10 +58,7 @@ async def test_tic_tac_toe_vs_member(mock_update, admin_command_info):
 
 @patch("commands.games.rps.random.choice", return_value="paper")
 async def test_rps_vs_bot_draw(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    rock = tanjunLocalizer.localize(locale, "commands.games.rps.rock")
+    rock = locale.commands.games.rps.rock(admin_command_info.locale)
     mock_choice.return_value = rock
     await rps(admin_command_info, None)
     admin_command_info.user.id = admin_command_info.user.id
@@ -76,11 +71,9 @@ async def test_rps_vs_bot_draw(mock_choice, admin_command_info):
 
 @patch("commands.games.rps.random.choice", return_value="scissors")
 async def test_rps_vs_bot_win(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    rock = tanjunLocalizer.localize(locale, "commands.games.rps.rock")
-    scissors = tanjunLocalizer.localize(locale, "commands.games.rps.scissors")
+    loc = admin_command_info.locale
+    rock = locale.commands.games.rps.rock(loc)
+    scissors = locale.commands.games.rps.scissors(loc)
     mock_choice.return_value = scissors
     bot = make_target_member()
     bot.bot = True
@@ -94,11 +87,9 @@ async def test_rps_vs_bot_win(mock_choice, admin_command_info):
 
 @patch("commands.games.rps.random.choice")
 async def test_rps_vs_bot_lose(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    rock = tanjunLocalizer.localize(locale, "commands.games.rps.rock")
-    paper = tanjunLocalizer.localize(locale, "commands.games.rps.paper")
+    loc = admin_command_info.locale
+    rock = locale.commands.games.rps.rock(loc)
+    paper = locale.commands.games.rps.paper(loc)
     mock_choice.return_value = paper
     await rps(admin_command_info, None)
     view = _view_from_reply(admin_command_info)
@@ -110,10 +101,7 @@ async def test_rps_vs_bot_lose(mock_choice, admin_command_info):
 
 @patch("commands.games.rps.random.choice")
 async def test_rps_paper_vs_bot(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    paper = tanjunLocalizer.localize(locale, "commands.games.rps.paper")
+    paper = locale.commands.games.rps.paper(admin_command_info.locale)
     mock_choice.return_value = paper
     await rps(admin_command_info, None)
     view = _view_from_reply(admin_command_info)
@@ -141,10 +129,7 @@ async def test_rps_pvp_second_player(admin_command_info):
 
 @patch("commands.games.rps.random.choice")
 async def test_rps_scissors_vs_bot(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    scissors = tanjunLocalizer.localize(locale, "commands.games.rps.scissors")
+    scissors = locale.commands.games.rps.scissors(admin_command_info.locale)
     mock_choice.return_value = scissors
     await rps(admin_command_info, None)
     view = _view_from_reply(admin_command_info)
@@ -155,12 +140,10 @@ async def test_rps_scissors_vs_bot(mock_choice, admin_command_info):
 
 
 @patch("commands.games.rps.random.choice")
-async def test_rps_paper_vs_bot(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
-    paper = tanjunLocalizer.localize(locale, "commands.games.rps.paper")
-    rock = tanjunLocalizer.localize(locale, "commands.games.rps.rock")
+async def test_rps_paper_vs_bot_rock(mock_choice, admin_command_info):
+    loc = admin_command_info.locale
+    paper = locale.commands.games.rps.paper(loc)
+    rock = locale.commands.games.rps.rock(loc)
     mock_choice.return_value = rock
     await rps(admin_command_info, None)
     view = _view_from_reply(admin_command_info)
@@ -173,22 +156,20 @@ async def test_rps_paper_vs_bot(mock_choice, admin_command_info):
 
 @patch("commands.games.rps.random.choice")
 async def test_rps_scissors_pvp_second_player(mock_choice, admin_command_info):
-    from localizer import tanjunLocalizer
-
-    locale = admin_command_info.locale
+    loc = admin_command_info.locale
     p2 = make_target_member(user_id=222222222)
     await rps(admin_command_info, p2)
     view = _view_from_reply(admin_command_info)
     interaction = make_view_interaction(admin_command_info.user)
     interaction.message = MagicMock(edit=AsyncMock())
     interaction.response.defer = AsyncMock()
-    rock = tanjunLocalizer.localize(locale, "commands.games.rps.rock")
+    rock = locale.commands.games.rps.rock(loc)
     await view.rock(interaction, MagicMock())
     p2_view = interaction.message.edit.await_args.kwargs.get("view")
     p2_interaction = make_view_interaction(p2)
     p2_interaction.message = MagicMock(edit=AsyncMock())
     p2_interaction.response.defer = AsyncMock()
-    scissors = tanjunLocalizer.localize(locale, "commands.games.rps.scissors")
+    scissors = locale.commands.games.rps.scissors(loc)
     await p2_view.scissors(p2_interaction, MagicMock())
     p2_interaction.message.edit.assert_awaited()
 
@@ -228,8 +209,6 @@ async def test_rps_wrong_player_scissors(admin_command_info):
 
 
 async def _pvp_second_choice(admin_command_info, p1_method, p2_method):
-
-    locale = admin_command_info.locale
     p2 = make_target_member(user_id=222222222)
     await rps(admin_command_info, p2)
     view = _view_from_reply(admin_command_info)
@@ -246,27 +225,15 @@ async def _pvp_second_choice(admin_command_info, p1_method, p2_method):
 
 
 async def test_rps_pvp_p2_rock(admin_command_info):
-    await _pvp_second_choice(
-        admin_command_info,
-        lambda v, i: v.paper(i, MagicMock()),
-        lambda v, i: v.rock(i, MagicMock()),
-    )
+    await _pvp_second_choice(admin_command_info, lambda v, i: v.paper(i, MagicMock()), lambda v, i: v.rock(i, MagicMock()))
 
 
 async def test_rps_pvp_p2_paper(admin_command_info):
-    await _pvp_second_choice(
-        admin_command_info,
-        lambda v, i: v.scissors(i, MagicMock()),
-        lambda v, i: v.paper(i, MagicMock()),
-    )
+    await _pvp_second_choice(admin_command_info, lambda v, i: v.scissors(i, MagicMock()), lambda v, i: v.paper(i, MagicMock()))
 
 
 async def test_rps_pvp_p1_scissors(admin_command_info):
-    await _pvp_second_choice(
-        admin_command_info,
-        lambda v, i: v.scissors(i, MagicMock()),
-        lambda v, i: v.rock(i, MagicMock()),
-    )
+    await _pvp_second_choice(admin_command_info, lambda v, i: v.scissors(i, MagicMock()), lambda v, i: v.rock(i, MagicMock()))
 
 
 @patch("commands.games.connect4.Connect4.update_board", new_callable=AsyncMock)

@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
-
 
 class LocaleFileHealthCheck(HealthCheck):
     """Health check for locale file integrity.
@@ -22,24 +20,16 @@ class LocaleFileHealthCheck(HealthCheck):
     3. All required translation keys are present in all files
     4. No missing translations compared to en.json (warning only)
     """
-
-    REQUIRED_KEYS = [
-        "commands.help.select.placeholder",
-        "commands.help.select.title",
-        "commands.help.timeout.title",
-        "commands.admin.addrole.missingPermission.title",
-    ]
-
-    LOCALE_DIR = "locales"
-    LOCALES = ["en", "de", "ko", "bg", "cs", "da", "el", "es-419", "fi", "fr", "hi", "hr", "hu", "id", "it", "ja", "lt", "nl", "vi", "zh-CN", "zh-TW"]
+    LOCALE_DIR = 'locales'
+    LOCALES = ['en', 'de', 'ko', 'bg', 'cs', 'da', 'el', 'es-419', 'fi', 'fr', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'lt', 'nl', 'vi', 'zh-CN', 'zh-TW']
 
     @property
     def name(self) -> str:
-        return "Locale Files"
+        return 'Locale Files'
 
     @property
     def critical(self) -> bool:
-        return True  # Bot cannot communicate without translations
+        return True
 
     async def run(self) -> HealthCheckResult:
         missing_files: list[str] = []
@@ -47,69 +37,38 @@ class LocaleFileHealthCheck(HealthCheck):
         missing_keys: list[str] = []
         locale_data: dict[str, list[dict]] = {}
         warnings: list[str] = []
-
         for locale in self.LOCALES:
-            filepath = Path(self.LOCALE_DIR) / f"{locale}.json"
-
-            # Check file exists
+            filepath = Path(self.LOCALE_DIR) / f'{locale}.json'
             if not filepath.exists():
                 missing_files.append(locale)
                 continue
-
-            # Check valid JSON
             try:
-                with filepath.open(encoding="utf-8") as f:
+                with filepath.open(encoding='utf-8') as f:
                     data = json.load(f)
             except json.JSONDecodeError as e:
-                invalid_json.append(f"{locale}: {e}")
+                invalid_json.append(f'{locale}: {e}')
                 continue
-
-            # Validate it's a list of dicts
-            if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
-                invalid_json.append(f"{locale}: expected array of objects")
+            if not isinstance(data, list) or not all((isinstance(item, dict) for item in data)):
+                invalid_json.append(f'{locale}: expected array of objects')
                 continue
-
             locale_data[locale] = data
-
-            # Check required keys
-            identifiers = {
-                entry.get("identifier")
-                for entry in data
-                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
-            }
-            for key in self.REQUIRED_KEYS:
-                if key not in identifiers:
-                    missing_keys.append(f"{locale}:{key}")
-
-        # Cross-locale comparison: warn about keys in en.json missing from others
-        for other_locale in [loc for loc in self.LOCALES if loc != "en" and loc in locale_data]:
-            en_ids: set[str] = {
-                str(entry["identifier"])
-                for entry in locale_data["en"]
-                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
-            }
-            other_ids: set[str] = {
-                str(entry["identifier"])
-                for entry in locale_data[other_locale]
-                if isinstance(entry, dict) and isinstance(entry.get("identifier"), str)
-            }
-            missing_from_other = en_ids - other_ids
-            if missing_from_other:
-                # Limit to first 20 to avoid absurdly long messages
-                sample = sorted(missing_from_other)[:20]
-                if len(missing_from_other) > 20:
-                    warnings.append(
-                        f"en.json has {len(missing_from_other)} entries not in "
-                        f"{other_locale}.json (showing first 20): {', '.join(sample)}"
-                    )
-                else:
-                    warnings.append(
-                        f"en.json has {len(missing_from_other)} entries not in {other_locale}.json: {', '.join(sample)}"
-                    )
-
+        en_dot_keys: set[str] = set()
+        if 'en' in locale_data:
+            en_dot_keys = {str(entry['identifier']) for entry in locale_data['en'] if isinstance(entry, dict) and isinstance(entry.get('identifier'), str) and ('.' in str(entry['identifier']))}
+        for loc, data in locale_data.items():
+            identifiers = {str(entry['identifier']) for entry in data if isinstance(entry, dict) and isinstance(entry.get('identifier'), str)}
+            dup_count = len([entry for entry in data if isinstance(entry, dict) and isinstance(entry.get('identifier'), str)]) - len(identifiers)
+            if dup_count:
+                missing_keys.append(f'{loc}:duplicate_identifiers:{dup_count}')
+            if loc != 'en' and en_dot_keys:
+                missing_from_en = sorted(en_dot_keys - identifiers)
+                if missing_from_en:
+                    sample = missing_from_en[:20]
+                    missing_keys.append(f"{loc}:missing_{len(missing_from_en)}_dot_keys:{','.join(sample)}")
+                    if len(missing_from_en) > 20:
+                        warnings.append(f'{loc}.json missing {len(missing_from_en)} dot keys vs en.json (showing first 20)')
         issues: list[str] = []
         status = HealthStatus.HEALTHY
-
         if missing_files:
             issues.append(f"Missing files: {', '.join(missing_files)}")
             status = HealthStatus.CRITICAL
@@ -120,24 +79,11 @@ class LocaleFileHealthCheck(HealthCheck):
             issues.append(f"Missing required keys: {', '.join(missing_keys)}")
             if status != HealthStatus.CRITICAL:
                 status = HealthStatus.DEGRADED
-
         if status == HealthStatus.HEALTHY:
             if warnings:
-                return HealthCheckResult(
-                    self.name,
-                    HealthStatus.HEALTHY,
-                    f"Locale files exist, parse correctly, and contain all required keys. "
-                    f"Warnings: {len(warnings)} translation mismatch(es) detected.",
-                    details={"warnings": warnings},
-                )
-            return HealthCheckResult(
-                self.name,
-                status,
-                "Locale files are valid and contain all required keys.",
-            )
-
+                return HealthCheckResult(self.name, HealthStatus.HEALTHY, f'Locale files exist, parse correctly, and contain all required keys. Warnings: {len(warnings)} translation mismatch(es) detected.', details={'warnings': warnings})
+            return HealthCheckResult(self.name, status, 'Locale files are valid and contain all required keys.')
         details = {}
         if warnings:
-            details["warnings"] = warnings
-
-        return HealthCheckResult(self.name, status, "; ".join(issues), details=details or None)
+            details['warnings'] = warnings
+        return HealthCheckResult(self.name, status, '; '.join(issues), details=details or None)

@@ -1,105 +1,42 @@
+from locale_keys import locale
 from datetime import UTC, datetime, timedelta
-
 import discord
-
 import utility
 from api import add_warning, get_warn_config, get_warnings
-from localizer import tanjunLocalizer
 
-
-async def warn_user(command_info: utility.CommandInfo, member: discord.Member, reason: str | None = None) -> None:
-    if (
-        isinstance(command_info.user, discord.Member)
-        and isinstance(command_info.channel, discord.abc.GuildChannel)
-        and not command_info.channel.permissions_for(command_info.user).kick_members
-    ):
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.missingPermission.title"),
-            description=tanjunLocalizer.localize(
-                str(command_info.locale), "commands.admin.warn.missingPermission.description"
-            ),
-        )
+async def warn_user(command_info: utility.CommandInfo, member: discord.Member, reason: str | None=None) -> None:
+    if isinstance(command_info.user, discord.Member) and isinstance(command_info.channel, discord.abc.GuildChannel) and (not command_info.channel.permissions_for(command_info.user).kick_members):
+        embed = utility.tanjunEmbed(title=locale.commands.admin.warn.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.warn.missingPermission.description(str(command_info.locale)))
         await command_info.reply(embed=embed)
         return
-
-    if isinstance(command_info.user, discord.Member) and member.top_role >= command_info.user.top_role:  # type: ignore[misc, union-attr]
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.targetTooHigh.title"),
-            description=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.targetTooHigh.description"),
-        )
+    if isinstance(command_info.user, discord.Member) and member.top_role >= command_info.user.top_role:
+        embed = utility.tanjunEmbed(title=locale.commands.admin.warn.targetTooHigh.title(str(command_info.locale)), description=locale.commands.admin.warn.targetTooHigh.description(str(command_info.locale)))
         await command_info.reply(embed=embed)
         return
-
     assert command_info.guild is not None
     guild_id = command_info.guild.id
     user_id = member.id
-
     warn_config = await get_warn_config(guild_id)
-
     expire_date = datetime.now(UTC) + timedelta(days=warn_config.expiration_days)
-
-    await add_warning(guild_id, user_id, reason, expire_date, command_info.user.id)  # type: ignore[arg-type]
+    await add_warning(guild_id, user_id, reason, expire_date, command_info.user.id)
     warn_count = 0
-    async for _ in get_warnings(guild_id, user_id):  # type: ignore[arg-type]
+    async for _ in get_warnings(guild_id, user_id):
         warn_count += 1
-
-    embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.success.title"),
-        description=tanjunLocalizer.localize(
-            command_info.locale,
-            "commands.admin.warn.success.description",
-            user=member.name,
-            reason=(
-                reason
-                if reason
-                else tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.noReasonProvided")
-            ),
-            count=warn_count,
-        ),
-    )
+    embed = utility.tanjunEmbed(title=locale.commands.admin.warn.success.title(str(command_info.locale)), description=locale.commands.admin.warn.success.description(command_info.locale, user=member.name, reason=reason if reason else locale.commands.admin.warn.noReasonProvided(str(command_info.locale)), count=warn_count))
     await command_info.reply(embed=embed)
-
     locale_str = str(command_info.locale)
-
-    # Check for escalated actions based on warn count
     if warn_config:
         if warn_count >= warn_config.ban_threshold:
-            # Ban the user
-            await member.ban(
-                reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count)
-            )
+            await member.ban(reason=locale.commands.admin.warn.reason.reached_warnings(locale_str, count=warn_count))
         elif warn_count >= warn_config.kick_threshold:
-            # Kick the user
-            await member.kick(
-                reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count)
-            )
+            await member.kick(reason=locale.commands.admin.warn.reason.reached_warnings(locale_str, count=warn_count))
         elif warn_count >= warn_config.timeout_threshold:
-            # Timeout the user
             timeout_duration = warn_config.timeout_duration
             duration = timedelta(minutes=timeout_duration)
             until = discord.utils.utcnow() + duration
-            await member.timeout(
-                until,
-                reason=tanjunLocalizer.localize(locale_str, "commands.admin.warn.reason.reached_warnings", count=warn_count),
-            )
-
-    # DM the warned user
+            await member.timeout(until, reason=locale.commands.admin.warn.reason.reached_warnings(locale_str, count=warn_count))
     try:
-        dm_embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.dmNotification.title"),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.admin.warn.dmNotification.description",
-                guild=command_info.guild.name,
-                reason=(
-                    reason
-                    if reason
-                    else tanjunLocalizer.localize(str(command_info.locale), "commands.admin.warn.noReasonProvided")
-                ),
-                count=warn_count,
-            ),
-        )
+        dm_embed = utility.tanjunEmbed(title=locale.commands.admin.warn.dmNotification.title(str(command_info.locale)), description=locale.commands.admin.warn.dmNotification.description(command_info.locale, guild=command_info.guild.name, reason=reason if reason else locale.commands.admin.warn.noReasonProvided(str(command_info.locale)), count=warn_count))
         await member.send(embed=dm_embed)
     except discord.Forbidden:
-        # If we can't DM the user, we'll just ignore it
         pass

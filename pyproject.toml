@@ -145,7 +145,7 @@ version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
+include = ["ai*", "loops*", "assets*", "health*", "locales*", "locale_keys*", "commands*", "minigames*", "extensions*", "utils*"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]
