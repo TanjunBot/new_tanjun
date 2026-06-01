@@ -9,7 +9,7 @@ async def club(command_info: command_info, club_tag: str):
     service = get_brawlstars_service()
     club_info = await service.get_club(club_tag)
     if not club_info:
-        return await command_info.reply(locale.commands.utility.brawlstars.club.error.notFound(command_info.locale))
+        return await command_info.reply(locale.commands.utility.brawlstars.club.error.notFound._text(command_info.locale))
     club_name = club_info.name
     club_description = club_info.description or ''
     required_trophies = club_info.required_trophies

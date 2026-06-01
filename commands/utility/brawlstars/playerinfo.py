@@ -21,7 +21,7 @@ async def player_info(command_info: CommandInfo, player_tag: str | None=None) ->
     service = get_brawlstars_service()
     player = await service.get_player(player_tag)
     if not player:
-        await command_info.reply(locale.commands.utility.brawlstars.playerinfo.error.notFound(command_info.locale))
+        await command_info.reply(locale.commands.utility.brawlstars.playerinfo.error.notFound._text(command_info.locale))
         return
     description = ''
     description += locale.commands.utility.brawlstars.playerinfo.description.trophies(command_info.locale, trophies=player.trophies)
@@ -34,7 +34,7 @@ async def player_info(command_info: CommandInfo, player_tag: str | None=None) ->
         description += locale.commands.utility.brawlstars.playerinfo.description.club(command_info.locale, tag=player.club.tag, name=player.club.name)
     description += '\n'
     if player.x3vs3_victories != 0:
-        description += locale.commands.utility.brawlstars.playerinfo.description['3v3Victories'](command_info.locale, victories=player.x3vs3_victories)
+        description += locale.commands.utility.brawlstars.playerinfo.description._3v3Victories(command_info.locale, victories=player.x3vs3_victories)
     description += '\n'
     if player.solo_victories != 0:
         description += locale.commands.utility.brawlstars.playerinfo.description.soloVictories(command_info.locale, victories=player.solo_victories)

@@ -17,7 +17,11 @@ async def events(command_info: command_info):
         end_time = event.end_time
         end_timestamp = date_time_to_timestamp(isoTimeToDate(end_time))
         map_ = event.event.map
-        map_locale = getattr(locale.commands.utility.brawlstars.maps, field_name(map_))(command_info.locale)
+        map_locale = getattr(locale.commands.utility.brawlstars.maps, field_name(map_), None)
+        if map_locale is not None:
+            map_locale = map_locale(command_info.locale)
+        else:
+            map_locale = map_
         mode = event.event.mode
         mode_locale = getattr(locale.commands.utility.brawlstars.gameModes, field_name(mode))(command_info.locale)
         description = locale.commands.utility.brawlstars.events.description(command_info.locale, start_time=start_timestamp, end_time=end_timestamp, map_=map_locale, mode=mode_locale)

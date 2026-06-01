@@ -21,7 +21,7 @@ async def brawlers(command_info: command_info, player_tag: str=None):
     service = get_brawlstars_service()
     player_info = await service.get_player(player_tag)
     if not player_info:
-        return await command_info.reply(locale.commands.utility.brawlstars.brawlers.error.notFound(command_info.locale))
+        return await command_info.reply(locale.commands.utility.brawlstars.brawlers.error.notFound._text(command_info.locale))
     player_name = player_info.name
     total_brawlers = len(player_info.brawlers)
 

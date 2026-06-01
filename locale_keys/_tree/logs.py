@@ -329,6 +329,17 @@ class LogsConfigure:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class LogsGuildChannelUpdateTypes:
+    category: LocalizedString
+    forum: LocalizedString
+    news: LocalizedString
+    stage: LocalizedString
+    text: LocalizedString
+    voice: LocalizedString
+    resolve: ResolveMap
+
+
+@dataclass(frozen=True, slots=True)
 class LogsGuildChannelUpdate:
     category: LocalizedString
     defaultAutoArchiveDuration: LocalizedString
@@ -354,6 +365,7 @@ class LogsGuildChannelUpdate:
     title: LocalizedString
     topic: LocalizedString
     type: LocalizedString
+    types: LogsGuildChannelUpdateTypes
     updated_by: LocalizedString
     yes: LocalizedString
 
@@ -1229,6 +1241,26 @@ def build_logs() -> Logs:
         type=LocalizedString('logs.guildChannelDelete.type'),
         types=_n_logs_guildChannelDelete_types,
     )
+    _n_logs_guildChannelUpdate_types_resolve = ResolveMap(
+        'logs.guildChannelUpdate.types.',
+        {
+            'category': LocalizedString('logs.guildChannelUpdate.types.category'),
+            'forum': LocalizedString('logs.guildChannelUpdate.types.forum'),
+            'news': LocalizedString('logs.guildChannelUpdate.types.news'),
+            'stage': LocalizedString('logs.guildChannelUpdate.types.stage'),
+            'text': LocalizedString('logs.guildChannelUpdate.types.text'),
+            'voice': LocalizedString('logs.guildChannelUpdate.types.voice'),
+        },
+    )
+    _n_logs_guildChannelUpdate_types = LogsGuildChannelUpdateTypes(
+        category=LocalizedString('logs.guildChannelUpdate.types.category'),
+        forum=LocalizedString('logs.guildChannelUpdate.types.forum'),
+        news=LocalizedString('logs.guildChannelUpdate.types.news'),
+        resolve=_n_logs_guildChannelUpdate_types_resolve,
+        stage=LocalizedString('logs.guildChannelUpdate.types.stage'),
+        text=LocalizedString('logs.guildChannelUpdate.types.text'),
+        voice=LocalizedString('logs.guildChannelUpdate.types.voice'),
+    )
     _n_logs_guildChannelUpdate = LogsGuildChannelUpdate(
         category=LocalizedString('logs.guildChannelUpdate.category'),
         defaultAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultAutoArchiveDuration'),
@@ -1254,6 +1286,7 @@ def build_logs() -> Logs:
         title=LocalizedString('logs.guildChannelUpdate.title'),
         topic=LocalizedString('logs.guildChannelUpdate.topic'),
         type=LocalizedString('logs.guildChannelUpdate.type'),
+        types=_n_logs_guildChannelUpdate_types,
         updated_by=LocalizedString('logs.guildChannelUpdate.updated_by'),
         yes=LocalizedString('logs.guildChannelUpdate.yes'),
     )
