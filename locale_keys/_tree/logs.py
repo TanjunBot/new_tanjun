@@ -131,6 +131,36 @@ class LogsGuildChannelDelete:
     types: LogsGuildChannelDeleteTypes
 
 @dataclass(frozen=True, slots=True)
+class LogsGuildChannelUpdate:
+    category: LocalizedString
+    defaultAutoArchiveDuration: LocalizedString
+    defaultThreadAutoArchiveDuration: LocalizedString
+    mention: LocalizedString
+    name: LocalizedString
+    no: LocalizedString
+    nsfw: LocalizedString
+    permissionOverwriteAddedAllow: LocalizedString
+    permissionOverwriteAddedDeny: LocalizedString
+    permissionOverwriteAddedNeutral: LocalizedString
+    permissionOverwriteAllowed: LocalizedString
+    permissionOverwriteDenied: LocalizedString
+    permissionOverwriteModified: LocalizedString
+    permissionOverwriteNeutral: LocalizedString
+    permissionOverwriteNew: LocalizedString
+    permissionOverwriteRemovedAllow: LocalizedString
+    permissionOverwriteRemovedDeny: LocalizedString
+    permissionOverwriteRemovedNeutral: LocalizedString
+    permissionOverwriteTarget: LocalizedString
+    permissionOverwrites: LocalizedString
+    slowmodeDelay: LocalizedString
+    title: LocalizedString
+    topic: LocalizedString
+    type: LocalizedString
+    updated_by: LocalizedString
+    yes: LocalizedString
+    types: LogsGuildChannelUpdateTypes
+
+@dataclass(frozen=True, slots=True)
 class LogsGuildUpdate:
     addedEmojis: LocalizedString
     addedFeatures: LocalizedString
@@ -329,35 +359,6 @@ class LogsBlacklist:
 class LogsConfigure:
     description: LocalizedString
     name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class LogsGuildChannelUpdate:
-    category: LocalizedString
-    defaultAutoArchiveDuration: LocalizedString
-    defaultThreadAutoArchiveDuration: LocalizedString
-    mention: LocalizedString
-    name: LocalizedString
-    no: LocalizedString
-    nsfw: LocalizedString
-    permissionOverwriteAddedAllow: LocalizedString
-    permissionOverwriteAddedDeny: LocalizedString
-    permissionOverwriteAddedNeutral: LocalizedString
-    permissionOverwriteAllowed: LocalizedString
-    permissionOverwriteDenied: LocalizedString
-    permissionOverwriteModified: LocalizedString
-    permissionOverwriteNeutral: LocalizedString
-    permissionOverwriteNew: LocalizedString
-    permissionOverwriteRemovedAllow: LocalizedString
-    permissionOverwriteRemovedDeny: LocalizedString
-    permissionOverwriteRemovedNeutral: LocalizedString
-    permissionOverwriteTarget: LocalizedString
-    permissionOverwrites: LocalizedString
-    slowmodeDelay: LocalizedString
-    title: LocalizedString
-    topic: LocalizedString
-    type: LocalizedString
-    updated_by: LocalizedString
-    yes: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsGuildRoleCreate:
@@ -608,6 +609,15 @@ class LogsGuildChannelCreateTypes:
 
 @dataclass(frozen=True, slots=True)
 class LogsGuildChannelDeleteTypes:
+    category: LocalizedString
+    forum: LocalizedString
+    stage: LocalizedString
+    text: LocalizedString
+    voice: LocalizedString
+    resolve: ResolveMap
+
+@dataclass(frozen=True, slots=True)
+class LogsGuildChannelUpdateTypes:
     category: LocalizedString
     forum: LocalizedString
     stage: LocalizedString
@@ -1232,6 +1242,24 @@ def build_logs() -> Logs:
         type=LocalizedString('logs.guildChannelDelete.type'),
         types=_n_logs_guildChannelDelete_types,
     )
+    _n_logs_guildChannelUpdate_types_resolve = ResolveMap(
+        'logs.guildChannelUpdate.types.',
+        {
+            'category': LocalizedString('logs.guildChannelUpdate.types.category'),
+            'forum': LocalizedString('logs.guildChannelUpdate.types.forum'),
+            'stage': LocalizedString('logs.guildChannelUpdate.types.stage'),
+            'text': LocalizedString('logs.guildChannelUpdate.types.text'),
+            'voice': LocalizedString('logs.guildChannelUpdate.types.voice'),
+        },
+    )
+    _n_logs_guildChannelUpdate_types = LogsGuildChannelUpdateTypes(
+        category=LocalizedString('logs.guildChannelUpdate.types.category'),
+        forum=LocalizedString('logs.guildChannelUpdate.types.forum'),
+        resolve=_n_logs_guildChannelUpdate_types_resolve,
+        stage=LocalizedString('logs.guildChannelUpdate.types.stage'),
+        text=LocalizedString('logs.guildChannelUpdate.types.text'),
+        voice=LocalizedString('logs.guildChannelUpdate.types.voice'),
+    )
     _n_logs_guildChannelUpdate = LogsGuildChannelUpdate(
         category=LocalizedString('logs.guildChannelUpdate.category'),
         defaultAutoArchiveDuration=LocalizedString('logs.guildChannelUpdate.defaultAutoArchiveDuration'),
@@ -1257,6 +1285,7 @@ def build_logs() -> Logs:
         title=LocalizedString('logs.guildChannelUpdate.title'),
         topic=LocalizedString('logs.guildChannelUpdate.topic'),
         type=LocalizedString('logs.guildChannelUpdate.type'),
+        types=_n_logs_guildChannelUpdate_types,
         updated_by=LocalizedString('logs.guildChannelUpdate.updated_by'),
         yes=LocalizedString('logs.guildChannelUpdate.yes'),
     )

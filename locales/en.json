@@ -27872,6 +27872,46 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildChannelUpdate.types.category",
+    "source_string": "Category",
+    "translation": "Category",
+    "context": "Logging feature copy: guild Channel Update.types.category.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.forum",
+    "source_string": "Forum channel",
+    "translation": "Forum channel",
+    "context": "Logging feature copy: guild Channel Update.types.forum.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.stage",
+    "source_string": "Stage channel",
+    "translation": "Stage channel",
+    "context": "Logging feature copy: guild Channel Update.types.stage.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.text",
+    "source_string": "Text channel",
+    "translation": "Text channel",
+    "context": "Logging feature copy: guild Channel Update.types.text.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.voice",
+    "source_string": "Voice channel",
+    "translation": "Voice channel",
+    "context": "Logging feature copy: guild Channel Update.types.voice.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guildChannelUpdate.updated_by",
     "source_string": "Updated from ${updater}",
     "translation": "Updated from ${updater}",
