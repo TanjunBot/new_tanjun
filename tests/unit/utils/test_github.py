@@ -43,6 +43,12 @@ class TestShouldReportException:
     def test_skips_task_already_launched(self):
         assert should_report_exception(RuntimeError("Task is already launched and is not completed.")) is False
 
+    def test_skips_command_not_found(self):
+        class CommandNotFound(Exception):
+            __module__ = "discord.ext.commands.errors"
+
+        assert should_report_exception(CommandNotFound('Command "synnc" is not found')) is False
+
 
 class TestReportBotException:
     @pytest.mark.asyncio

@@ -52,6 +52,9 @@ def should_report_exception(exc: BaseException) -> bool:
     if isinstance(exc, RuntimeError) and "task is already launched" in str(exc).lower():
         return False
 
+    if type(exc).__name__ == "CommandNotFound" and (type(exc).__module__ or "").startswith("discord"):
+        return False
+
     return True
 
 
