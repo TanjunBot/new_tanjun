@@ -13,7 +13,8 @@ from discord import app_commands
 from discord.ext import commands
 
 from config import sentry_dsn
-from localizer import tanjunLocalizer
+from locale_keys import locale as l10n
+from locale_keys.types import LocalizedString
 from utility import ErrorEmbedCategory
 from utils.exception_reporter import handle_discord_event_error
 from utils.github import report_bot_exception
@@ -126,11 +127,14 @@ class ErrorHandlerCog(commands.Cog):
         locale_key: str = "errors.unexpected_error",
         **kwargs: Any,
     ) -> discord.Embed:
-        title_key = f"{locale_key}.title"
-        desc_key = f"{locale_key}.description"
-
-        title: str = tanjunLocalizer.localize(locale, title_key, **kwargs)
-        description: str = tanjunLocalizer.localize(locale, desc_key, **kwargs)
+        error_name = locale_key.split(".", 1)[1]
+        if hasattr(l10n.errors, error_name):
+            error_node = getattr(l10n.errors, error_name)
+            title = error_node.title(locale, **kwargs)
+            description = error_node.description(locale, **kwargs)
+        else:
+            title = LocalizedString(f"{locale_key}.title")(locale, **kwargs)
+            description = LocalizedString(f"{locale_key}.description")(locale, **kwargs)
 
         return discord.Embed(
             title=title if "no translation found" not in title.lower() else "Error",
