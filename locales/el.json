@@ -34750,5 +34750,93 @@
     "context": "UI copy for twitch.username. English: \"twitch_username\".",
     "labels": "",
     "max_length": 32
+  },
+  {
+    "identifier": "channel.name",
+    "source_string": "channel",
+    "translation": "channel",
+    "context": "Display name for `/channel` command group. Used in `extensions/channel.py`.",
+    "labels": "",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.name",
+    "source_string": "advanced_ttt",
+    "translation": "advanced_ttt",
+    "context": "Display name for `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "commands, embed_title",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.description",
+    "source_string": "Play Ultimate Tic-Tac-Toe (9 boards in a 3x3 grid)",
+    "translation": "Play Ultimate Tic-Tac-Toe (9 boards in a 3x3 grid)",
+    "context": "Description for `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "description",
+    "max_length": 100
+  },
+  {
+    "identifier": "games.advanced.ttt.params.user.name",
+    "source_string": "user",
+    "translation": "user",
+    "context": "Option name for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "games.advanced.ttt.params.user.description",
+    "source_string": "${reporter} has reported ${user}.\nReason: ${reason}",
+    "translation": "${reporter} has reported ${user}.\nReason: ${reason}",
+    "context": "Option description for `user` on `/games advanced_ttt`. Used in `extensions/games.py`.",
+    "labels": "command_option_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "attachment",
+    "source_string": "attachment",
+    "translation": "attachment",
+    "context": "Display name for the `attachment` option on `/utility report`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "anonymous",
+    "source_string": "anonymous",
+    "translation": "anonymous",
+    "context": "Display name for the `anonymous` option on `/utility report`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "utility.report.params.attachment.name",
+    "source_string": "attachment",
+    "translation": "attachment",
+    "context": "Display name of the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "utility.report.params.attachment.description",
+    "source_string": "Evidence file for the report (optional)",
+    "translation": "Evidence file for the report (optional)",
+    "context": "Help text for the `attachment` option on `/utility report`. Used in `extensions/utility.py`.",
+    "labels": "command_option_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "utility.report.params.anonymous.name",
+    "source_string": "anonymous",
+    "translation": "anonymous",
+    "context": "Display name of the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
+    "labels": "command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "utility.report.params.anonymous.description",
+    "source_string": "Submit the report without revealing your identity (optional)",
+    "translation": "Submit the report without revealing your identity (optional)",
+    "context": "Help text for the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
+    "labels": "command_option_description",
+    "max_length": 100
   }
 ]

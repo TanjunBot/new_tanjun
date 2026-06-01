@@ -46,6 +46,12 @@ def should_report_exception(exc: BaseException) -> bool:
         if "10008" in msg and "unknown message" in msg:
             return False
 
+    if type(exc).__name__ == "ClientConnectionResetError":
+        return False
+
+    if isinstance(exc, RuntimeError) and "task is already launched" in str(exc).lower():
+        return False
+
     return True
 
 
