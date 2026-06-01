@@ -281,3 +281,26 @@ async def test_prefix_command_not_found_sends_no_embed() -> None:
     with patch("extensions.error_handler.sentry_dsn", ""):
         await cog._on_prefix_command_error(ctx, commands.CommandNotFound("missing"))
     ctx.send.assert_not_called()
+
+
+def _http_exception_40060() -> discord.HTTPException:
+    exc = discord.HTTPException(MagicMock(), "already acknowledged")
+    exc.status = 400
+    exc.code = 40060
+    return exc
+
+
+async def test_slash_http_40060_original_silent() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_app_command_error(ix, _http_exception_40060())
+    ix.response.send_message.assert_not_called()
+
+
+async def test_slash_ephemeral_on_send() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_app_command_error(ix, app_commands.CheckFailure("x"))
+    assert ix.response.send_message.await_args.kwargs.get("ephemeral") is True
