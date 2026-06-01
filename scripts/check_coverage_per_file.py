@@ -57,6 +57,17 @@ _LOW_COVERAGE_EXEMPTIONS: set[str] = {
     "diagnostics/specs/setup_wizards.py",
     "diagnostics/specs/utility.py",
     "diagnostics/tree.py",
+    # locale_keys/ — auto-generated from locale JSON; not manually testable
+    "locale_keys/__init__.py",
+    "locale_keys/_literal_keys.py",
+    "locale_keys/_registry.py",
+    "locale_keys/_tree/__init__.py",
+    "locale_keys/_tree/admin.py",
+    "locale_keys/_tree/commands.py",
+    "locale_keys/_tree/logs.py",
+    "locale_keys/_tree/other.py",
+    "locale_keys/nav.py",
+    "locale_keys/types.py",
 }
 
 
