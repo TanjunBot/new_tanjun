@@ -34562,17 +34562,17 @@
   {
     "identifier": "admin.messaging.description",
     "source_string": "Messaging commands",
-    "translation": "Messaging commands",
+    "translation": "メッセージコマンド",
     "context": "Short description of `/messaging` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
-    "labels": "admin, command_description",
+    "labels": "ja.json",
     "max_length": 100
   },
   {
     "identifier": "admin.messaging.name",
     "source_string": "messaging",
-    "translation": "messaging",
+    "translation": "メッセージング",
     "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
-    "labels": "admin, command_name",
+    "labels": "ja.json",
     "max_length": 32
   },
   {
