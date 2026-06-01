@@ -119,11 +119,11 @@ def discover_extension_specs(extension: str) -> list[CommandBehaviorSpec]:
         if root_commands:
             for path_parts, command in _iter_command_leaves(root_commands):
                 callback = command.callback
-                command_entries.append((" ".join(path_parts), callback.__name__, command))
+                command_entries.append((" ".join(path_parts), getattr(callback, '__name__', 'unknown'), command))
         elif hasattr(group, "walk_commands"):
             for command in group.walk_commands():
                 callback = command.callback
-                method_name = callback.__name__
+                method_name = getattr(callback, '__name__', 'unknown')
                 command_entries.append(
                     (_tree_path_for_command(command, method_name), method_name, command)
                 )
