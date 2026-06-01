@@ -37,7 +37,6 @@ EXTENSION_COGS = {
 }
 
 TREE_ROOT_AFTER_READY = {
-    "extensions.admin": "admin_name",
     "extensions.ai": "ai_name",
     "extensions.channel": "channel_name",
     "extensions.fun": "funcmd_name",
@@ -48,8 +47,25 @@ TREE_ROOT_AFTER_READY = {
     "extensions.logs": "logs_name",
     "extensions.math": "math_name",
     "extensions.minigames": "minigame_name",
-    "extensions.utility": "utilitycmd_name",
 }
+
+ADMIN_TREE_ROOTS = (
+    "admin_warn_name",
+    "admin_role_name",
+    "admin_rolemanage_name",
+    "admin_report_name",
+    "admin_triggermessages_name",
+    "admin_jointocreate_name",
+    "admin_moderation_name",
+    "admin_purgegroup_name",
+    "admin_channels_name",
+    "admin_messaging_name",
+    "admin_emoji_name",
+    "admin_setup_name",
+    "admin_localegroup_name",
+)
+
+UTILITY_TREE_ROOTS = ("utilitycmd_name", "utility_scheduledmessage_name")
 
 NO_COG_EXTENSIONS = {"extensions.health_check"}
 
@@ -101,6 +117,19 @@ async def test_all_extensions_register_expected_cogs(extension_bot):
 async def test_on_ready_registers_tree_root(extension: str, root_name: str):
     bot = await load_extension_bot(extension)
     assert root_name in get_tree_command_names(bot)
+
+
+@pytest.mark.parametrize("root_name", ADMIN_TREE_ROOTS)
+async def test_admin_on_ready_registers_tree_roots(root_name: str):
+    bot = await load_extension_bot("extensions.admin")
+    assert root_name in get_tree_command_names(bot)
+
+
+async def test_utility_on_ready_registers_tree_roots():
+    bot = await load_extension_bot("extensions.utility")
+    names = get_tree_command_names(bot)
+    for root_name in UTILITY_TREE_ROOTS:
+        assert root_name in names
 
 
 async def test_setup_wizards_registers_tree_at_load(extension_bot):

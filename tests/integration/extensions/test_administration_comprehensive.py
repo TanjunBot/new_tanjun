@@ -164,67 +164,50 @@ class TestFeedbackCommands:
 
 @pytest.mark.asyncio
 class TestTestBot:
-    async def test_tests_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_diagnostics_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
-        with patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", False):
-            await cog.test_bot(ctx)
-        assert sent.edit.await_count >= 1
-
-    async def test_ping_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
-        ctx = make_context(bot)
-        sent = MagicMock()
-        sent.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock(side_effect=RuntimeError("ping fail"))),
-        ):
+        with patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", False):
             await cog.test_bot(ctx)
         sent.edit.assert_awaited()
 
-    async def test_database_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_diagnostics_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
         with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock(side_effect=RuntimeError("db fail"))),
+            patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", True),
+            patch(
+                "extensions.administration.DiagnosticsRunner",
+                autospec=True,
+            ) as mock_runner_cls,
         ):
+            mock_runner = mock_runner_cls.return_value
+            mock_runner.run_all = AsyncMock(side_effect=RuntimeError("diagnostics fail"))
             await cog.test_bot(ctx)
         sent.edit.assert_awaited()
 
-    async def test_commands_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_diagnostics_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
+        mock_runner = MagicMock()
+        mock_runner.run_all = AsyncMock()
         with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock()),
-            patch.object(admin_mod, "test_commands", new=AsyncMock(side_effect=RuntimeError("cmds fail"))),
+            patch.object(admin_mod, "DIAGNOSTICS_AVAILABLE", True),
+            patch(
+                "extensions.administration.DiagnosticsRunner",
+                return_value=mock_runner,
+            ),
         ):
             await cog.test_bot(ctx)
-        sent.edit.assert_awaited()
-
-    async def test_all_completed(self, cog: AdministrationCog, bot: MagicMock) -> None:
-        ctx = make_context(bot)
-        sent = MagicMock()
-        sent.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock()),
-            patch.object(admin_mod, "test_commands", new=AsyncMock()),
-        ):
-            await cog.test_bot(ctx)
-        sent.edit.assert_awaited()
+        mock_runner.run_all.assert_awaited_once()
 
 
 @pytest.mark.asyncio
