@@ -50,7 +50,6 @@ class TanjunTranslator(app_commands.Translator):
             normalized = _normalize_discord_command_name(current)
             if normalized is None:
                 return None
-            assert normalized is not None
             current = normalized
 
         return current
