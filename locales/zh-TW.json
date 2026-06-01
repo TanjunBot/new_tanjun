@@ -34515,7 +34515,7 @@
     "identifier": "admin.channels.description",
     "source_string": "Channel management",
     "translation": "Channel management",
-    "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "context": "Help text describing the `attachment` option on `/utility schedulemessage` (shown when the user focuses that option). Used in `extensions/utility.py`.",
     "labels": "admin, command_description",
     "max_length": 100
   },
@@ -34523,7 +34523,7 @@
     "identifier": "admin.channels.name",
     "source_string": "channels",
     "translation": "channels",
-    "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_1\".",
     "labels": "admin, command_name",
     "max_length": 32
   },
@@ -34531,7 +34531,7 @@
     "identifier": "admin.emoji.description",
     "source_string": "Emoji commands",
     "translation": "Emoji commands",
-    "context": "Short description of `/emoji` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_2\".",
     "labels": "admin, command_description",
     "max_length": 100
   },
@@ -34539,7 +34539,103 @@
     "identifier": "admin.emoji.name",
     "source_string": "emoji",
     "translation": "emoji",
-    "context": "Slash command name for `/emoji` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_3\".",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.messaging.description",
+    "source_string": "Messaging commands",
+    "translation": "Messaging commands",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_4\".",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.messaging.name",
+    "source_string": "messaging",
+    "translation": "messaging",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_5\".",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.moderation.description",
+    "source_string": "Moderation commands",
+    "translation": "Moderation commands",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_6\".",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.moderation.name",
+    "source_string": "mod",
+    "translation": "mod",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_7\".",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.purgegroup.description",
+    "source_string": "Purge messages",
+    "translation": "Purge messages",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_8\".",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.purgegroup.name",
+    "source_string": "purge",
+    "translation": "purge",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_9\".",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.rolemanage.description",
+    "source_string": "Advanced role management",
+    "translation": "Advanced role management",
+    "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"file_10\".",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.rolemanage.name",
+    "source_string": "role_manage",
+    "translation": "role_manage",
+    "context": "Slash command name for `/moderation` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.name",
+    "source_string": "copy_7tv",
+    "translation": "copy_7tv",
+    "context": "Short description of `/moderation` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.copy7tv.params.twitch.username.name",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "Slash command name for `/channels` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_option_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "twitch.username",
+    "source_string": "twitch_username",
+    "translation": "twitch_username",
+    "context": "Short description of `/channels` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.messaging.name",
+    "source_string": "messaging",
+    "translation": "messaging",
+    "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "admin, command_name",
     "max_length": 32
   },
@@ -34552,42 +34648,42 @@
     "max_length": 100
   },
   {
-    "identifier": "admin.messaging.name",
-    "source_string": "messaging",
-    "translation": "messaging",
-    "context": "Slash command name for `/messaging` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "identifier": "admin.emoji.name",
+    "source_string": "emoji",
+    "translation": "emoji",
+    "context": "Slash command name for `/emoji` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "admin, command_name",
     "max_length": 32
   },
   {
-    "identifier": "admin.moderation.description",
-    "source_string": "Moderation commands",
-    "translation": "Moderation commands",
-    "context": "Short description of `/moderation` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "identifier": "admin.emoji.description",
+    "source_string": "Emoji commands",
+    "translation": "Emoji commands",
+    "context": "Short description of `/emoji` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
     "labels": "admin, command_description",
     "max_length": 100
   },
   {
-    "identifier": "admin.moderation.name",
-    "source_string": "mod",
-    "translation": "mod",
-    "context": "Slash command name for `/moderation` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "identifier": "admin.setup.name",
+    "source_string": "setup",
+    "translation": "setup",
+    "context": "Slash command name for `/setup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "admin, command_name",
     "max_length": 32
   },
   {
-    "identifier": "admin.purgegroup.description",
-    "source_string": "Purge messages",
-    "translation": "Purge messages",
-    "context": "Short description of `/purgegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "identifier": "admin.setup.description",
+    "source_string": "Server setup commands",
+    "translation": "Server setup commands",
+    "context": "Short description of `/setup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
     "labels": "admin, command_description",
     "max_length": 100
   },
   {
-    "identifier": "admin.purgegroup.name",
-    "source_string": "purge",
-    "translation": "purge",
-    "context": "Slash command name for `/purgegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "identifier": "admin.rolemanage.name",
+    "source_string": "role_manage",
+    "translation": "role_manage",
+    "context": "Slash command name for `/rolemanage` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "admin, command_name",
     "max_length": 32
   },
@@ -34600,12 +34696,36 @@
     "max_length": 100
   },
   {
-    "identifier": "admin.rolemanage.name",
-    "source_string": "role_manage",
-    "translation": "role_manage",
-    "context": "Slash command name for `/rolemanage` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "identifier": "admin.purgegroup.name",
+    "source_string": "purge",
+    "translation": "purge",
+    "context": "Slash command name for `/purgegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
     "labels": "admin, command_name",
     "max_length": 32
+  },
+  {
+    "identifier": "admin.purgegroup.description",
+    "source_string": "Purge messages",
+    "translation": "Purge messages",
+    "context": "Short description of `/purgegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
+  },
+  {
+    "identifier": "admin.localegroup.name",
+    "source_string": "locale",
+    "translation": "locale",
+    "context": "Slash command name for `/localegroup` (lowercase, no spaces; registered via locale_str). Discord shows this in the command list. Used in `extensions/admin.py`.",
+    "labels": "admin, command_name",
+    "max_length": 32
+  },
+  {
+    "identifier": "admin.localegroup.description",
+    "source_string": "Server language",
+    "translation": "Server language",
+    "context": "Short description of `/localegroup` in Discord's slash command browser (max ~100 characters). Used in `extensions/admin.py`.",
+    "labels": "admin, command_description",
+    "max_length": 100
   },
   {
     "identifier": "admin.copy7tv.name",
