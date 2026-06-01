@@ -48,6 +48,17 @@ class _TranslatorBase:
         pass
 
 
+class _TranslationContextLocation:
+    command_name = 0
+    command_description = 1
+    group_name = 2
+    group_description = 3
+    parameter_name = 4
+    parameter_description = 5
+    choice_name = 6
+    other = 7
+
+
 # Patch the discord mock BEFORE importing localizer/translator modules
 _orig_discord = __import__("sys").modules.get("discord")
 if _orig_discord is not None:
@@ -56,6 +67,7 @@ if _orig_discord is not None:
         MagicMock() if isinstance(_orig_discord.app_commands, MagicMock) else _orig_discord.app_commands
     )
     _orig_discord.app_commands.Translator = _TranslatorBase
+    _orig_discord.app_commands.TranslationContextLocation = _TranslationContextLocation
 
 import tests.mock_config  # noqa: F401, E402 – side-effect import
 from localizer import (  # noqa: E402
@@ -65,7 +77,7 @@ from localizer import (  # noqa: E402
     TranslationEntry,
     tanjunLocalizer,
 )
-from translator import TanjunTranslator  # noqa: E402
+from translator import TanjunTranslator, _normalize_discord_command_name  # noqa: E402
 
 FAKE_DE = _Locale("de")
 FAKE_EN_US = _Locale("en-US")
@@ -585,6 +597,33 @@ class TestTanjunTranslator:
                 r = loop.run_until_complete(t.translate(s, MagicMock(), MagicMock()))
                 loop.close()
                 assert r is None
+        finally:
+            restore()
+
+    def test_normalize_discord_command_name(self) -> None:
+        assert _normalize_discord_command_name("Utilisateur") == "utilisateur"
+        assert _normalize_discord_command_name("cooldown time") == "cooldown_time"
+        assert _normalize_discord_command_name("  ") is None
+
+    def test_translate_normalizes_command_names(self, service: LocalizerService, locale_dir: Path) -> None:
+        restore = _chdir(locale_dir)
+        try:
+            fr = locale_dir / "fr.json"
+            fr.write_text(
+                json.dumps([{"identifier": "user", "translation": "Utilisateur"}]),
+                encoding="utf-8",
+            )
+            t = TanjunTranslator(localizer=service)
+            s = MagicMock()
+            s.__str__ = lambda self: "user"
+            context = MagicMock()
+            location = MagicMock()
+            location.name = "parameter_name"
+            context.location = location
+            loop = asyncio.new_event_loop()
+            r = loop.run_until_complete(t.translate(s, _Locale("fr"), context))
+            loop.close()
+            assert r == "utilisateur"
         finally:
             restore()
 
