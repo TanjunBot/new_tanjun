@@ -4,7 +4,7 @@ import re
 from typing import Any
 import discord
 from discord import app_commands
-from localizer import TRANSLATION_NOT_FOUND, LocalizerService
+from localizer import TRANSLATION_NOT_FOUND, LocalizerService, tanjunLocalizer
 _DISCORD_NAME_LOCATION_NAMES = frozenset({'command_name', 'group_name', 'parameter_name'})
 
 def _normalize_discord_command_name(name: str) -> str | None:

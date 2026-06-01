@@ -1,4 +1,5 @@
 from locale_keys import locale
+from locale_keys.types import LocalizedString
 from typing import cast
 import discord
 from discord import app_commands
@@ -78,7 +79,7 @@ class FunCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        utility_cmds = FunCommands(name=locale.funcmd.name.discord_key, description=locale.funcmd.description.discord_key)
+        utility_cmds = FunCommands(name=LocalizedString("funcmd.name").discord_key, description=LocalizedString("funcmd.description").discord_key)
         if self.bot.tree:
             self.bot.tree.add_command(utility_cmds)
 

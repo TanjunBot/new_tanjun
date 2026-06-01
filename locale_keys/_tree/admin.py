@@ -661,13 +661,23 @@ class AdminLockParamsChannel:
     name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
-class AdminMoveroleParamsPosition:
-    above: LocalizedString
-    below: LocalizedString
+class AdminMoveroleParamsPositionAbove:
+    _text: LocalizedString
     description: LocalizedString
     name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminMoveroleParamsPositionBelow:
+    _text: LocalizedString
+    description: LocalizedString
+    name: LocalizedString
+
+@dataclass(frozen=True, slots=True)
+class AdminMoveroleParamsPosition:
     above: AdminMoveroleParamsPositionAbove
     below: AdminMoveroleParamsPositionBelow
+    description: LocalizedString
+    name: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class AdminMoveroleParamsCopymembers:
@@ -843,16 +853,6 @@ class AdminJtcRemovechannelParamsChannel:
 
 @dataclass(frozen=True, slots=True)
 class AdminJtcSetchannelParamsChannel:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminMoveroleParamsPositionAbove:
-    description: LocalizedString
-    name: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class AdminMoveroleParamsPositionBelow:
     description: LocalizedString
     name: LocalizedString
 
@@ -1216,10 +1216,12 @@ def build_admin() -> Admin:
         true=LocalizedString('admin.moverole.params.copymembers.true'),
     )
     _n_admin_moverole_params_position_above = AdminMoveroleParamsPositionAbove(
+        _text=LocalizedString('admin.moverole.params.position.above'),
         description=LocalizedString('admin.moverole.params.position.above.description'),
         name=LocalizedString('admin.moverole.params.position.above.name'),
     )
     _n_admin_moverole_params_position_below = AdminMoveroleParamsPositionBelow(
+        _text=LocalizedString('admin.moverole.params.position.below'),
         description=LocalizedString('admin.moverole.params.position.below.description'),
         name=LocalizedString('admin.moverole.params.position.below.name'),
     )

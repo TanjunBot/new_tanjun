@@ -250,12 +250,16 @@ def _build_tree(keys: dict[str, tuple[str, ...]], dynamic: dict[str, dict[str, s
     def _merge_groups_into_children(node: TreeNode) -> None:
         for group_seg, fields in list(node.groups.items()):
             child = node.children.get(group_seg)
-            if child is None:
+            if child is not None:
+                for fname, fkey in fields.items():
+                    child.leaves[fname] = fkey
+                del node.groups[group_seg]
+            elif group_seg not in node.leaves and group_seg not in node.bracket_children:
                 child = TreeNode(path=node.path + (group_seg,))
+                for fname, fkey in fields.items():
+                    child.leaves[fname] = fkey
                 node.children[group_seg] = child
-            for fname, fkey in fields.items():
-                child.leaves[fname] = fkey
-            del node.groups[group_seg]
+                del node.groups[group_seg]
         for child in node.children.values():
             _merge_groups_into_children(child)
         for child in node.bracket_children.values():
@@ -422,7 +426,7 @@ def _emit_class_def(node: TreeNode, lines: list[str]) -> None:
         lines.append(f"    {_sanitize_field(group_seg)}: {group_class}")
 
     for leaf_name in sorted(node.leaves):
-        if leaf_name in node.groups:
+        if leaf_name in node.groups or leaf_name in node.children:
             continue
         lines.append(f"    {_sanitize_field(leaf_name)}: LocalizedString")
 

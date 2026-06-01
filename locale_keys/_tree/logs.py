@@ -8,10 +8,8 @@ from locale_keys.types import LocalizedString, ResolveMap
 
 @dataclass(frozen=True, slots=True)
 class Logs:
-    automodRuleCreate: LocalizedString
     description: LocalizedString
     name: LocalizedString
-    permissions: LocalizedString
     automodAction: LogsAutomodAction
     automodRuleCreate: LogsAutomodRuleCreate
     automodRuleDelete: LogsAutomodRuleDelete

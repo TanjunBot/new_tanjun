@@ -1195,12 +1195,17 @@ class CommandsLevelChangexpscaling:
     success: CommandsLevelChangexpscalingSuccess
 
 @dataclass(frozen=True, slots=True)
+class CommandsLevelDisablelevelsystemCancel:
+    _text: LocalizedString
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsLevelDisablelevelsystem:
-    cancel: LocalizedString
+    cancel: CommandsLevelDisablelevelsystemCancel
     confirm: LocalizedString
     description: LocalizedString
     name: LocalizedString
-    cancel: CommandsLevelDisablelevelsystemCancel
     confirmation: CommandsLevelDisablelevelsystemConfirmation
     error: CommandsLevelDisablelevelsystemError
     success: CommandsLevelDisablelevelsystemSuccess
@@ -1283,7 +1288,6 @@ class CommandsLevelShowlevelroles:
     previous_button: LocalizedString
     remove_button: LocalizedString
     remove_role_cancelled: LocalizedString
-    remove_role_confirm: LocalizedString
     remove_role_data: LocalizedString
     remove_role_prompt: LocalizedString
     remove_role_select_placeholder: LocalizedString
@@ -1474,12 +1478,18 @@ class CommandsMathPlot_function:
     unexpected_error: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class CommandsMathPlotfunctionError:
+    _text: LocalizedString
+    description: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsMathPlotfunction:
+    error: CommandsMathPlotfunctionError
     default_title: LocalizedString
     default_x_label: LocalizedString
     default_y_label: LocalizedString
     description: LocalizedString
-    error: LocalizedString
     extrema: LocalizedString
     extremum: LocalizedString
     inflection: LocalizedString
@@ -1493,7 +1503,6 @@ class CommandsMathPlotfunction:
     zero: LocalizedString
     zeros: LocalizedString
     buttons: CommandsMathPlotfunctionButtons
-    error: CommandsMathPlotfunctionError
     messages: CommandsMathPlotfunctionMessages
     modals: CommandsMathPlotfunctionModals
     select_menus: CommandsMathPlotfunctionSelect_menus
@@ -3581,11 +3590,6 @@ class CommandsLevelDisablelevelsystemError:
     no_permission: CommandsLevelDisablelevelsystemErrorNo_permission
 
 @dataclass(frozen=True, slots=True)
-class CommandsLevelDisablelevelsystemCancel:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsLevelDisablelevelsystemConfirmation:
     description: LocalizedString
     title: LocalizedString
@@ -4210,11 +4214,6 @@ class CommandsMathPlotfunctionSelect_menus:
     style: CommandsMathPlotfunctionSelect_menusStyle
 
 @dataclass(frozen=True, slots=True)
-class CommandsMathPlotfunctionError:
-    description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
 class CommandsMathRandomnumberError:
     invalid_amount: LocalizedString
     invalid_input: LocalizedString
@@ -4558,15 +4557,19 @@ class CommandsUtilityDeleteboosterroleSuccess:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
+class CommandsUtilityFeedbackModalTimeout:
+    _text: LocalizedString
+    title: LocalizedString
+
+@dataclass(frozen=True, slots=True)
 class CommandsUtilityFeedbackModal:
+    timeout: CommandsUtilityFeedbackModalTimeout
     description: LocalizedString
     not_authorized: LocalizedString
-    timeout: LocalizedString
     title: LocalizedString
     feedbackdescription: CommandsUtilityFeedbackModalFeedbackdescription
     feedbacktitle: CommandsUtilityFeedbackModalFeedbacktitle
     submitted: CommandsUtilityFeedbackModalSubmitted
-    timeout: CommandsUtilityFeedbackModalTimeout
 
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityFeedbackBlocked:
@@ -5899,10 +5902,6 @@ class CommandsUtilityFeedbackModalFeedbacktitle:
 @dataclass(frozen=True, slots=True)
 class CommandsUtilityFeedbackModalSubmitted:
     description: LocalizedString
-    title: LocalizedString
-
-@dataclass(frozen=True, slots=True)
-class CommandsUtilityFeedbackModalTimeout:
     title: LocalizedString
 
 @dataclass(frozen=True, slots=True)
@@ -9195,10 +9194,6 @@ def build_commands() -> Commands:
         success=_n_commands_level_changexpscaling_success,
         xp_examples=LocalizedString('commands.level.changexpscaling.xp_examples'),
     )
-    _n_commands_level_disablelevelsystem_cancel = CommandsLevelDisablelevelsystemCancel(
-        description=LocalizedString('commands.level.disablelevelsystem.cancel.description'),
-        title=LocalizedString('commands.level.disablelevelsystem.cancel.title'),
-    )
     _n_commands_level_disablelevelsystem_confirmation = CommandsLevelDisablelevelsystemConfirmation(
         description=LocalizedString('commands.level.disablelevelsystem.confirmation.description'),
         title=LocalizedString('commands.level.disablelevelsystem.confirmation.title'),
@@ -9218,6 +9213,11 @@ def build_commands() -> Commands:
     _n_commands_level_disablelevelsystem_success = CommandsLevelDisablelevelsystemSuccess(
         description=LocalizedString('commands.level.disablelevelsystem.success.description'),
         title=LocalizedString('commands.level.disablelevelsystem.success.title'),
+    )
+    _n_commands_level_disablelevelsystem_cancel = CommandsLevelDisablelevelsystemCancel(
+        _text=LocalizedString('commands.level.disablelevelsystem.cancel'),
+        description=LocalizedString('commands.level.disablelevelsystem.cancel.description'),
+        title=LocalizedString('commands.level.disablelevelsystem.cancel.title'),
     )
     _n_commands_level_disablelevelsystem = CommandsLevelDisablelevelsystem(
         cancel=_n_commands_level_disablelevelsystem_cancel,
@@ -10159,10 +10159,6 @@ def build_commands() -> Commands:
         zoom_in=LocalizedString('commands.math.plotfunction.buttons.zoom_in'),
         zoom_out=LocalizedString('commands.math.plotfunction.buttons.zoom_out'),
     )
-    _n_commands_math_plotfunction_error = CommandsMathPlotfunctionError(
-        description=LocalizedString('commands.math.plotfunction.error.description'),
-        title=LocalizedString('commands.math.plotfunction.error.title'),
-    )
     _n_commands_math_plotfunction_messages = CommandsMathPlotfunctionMessages(
         error_occurred=LocalizedString('commands.math.plotfunction.messages.error_occurred'),
         function_added=LocalizedString('commands.math.plotfunction.messages.function_added'),
@@ -10227,6 +10223,11 @@ def build_commands() -> Commands:
         integrate=_n_commands_math_plotfunction_select_menus_integrate,
         rename_function=_n_commands_math_plotfunction_select_menus_rename_function,
         style=_n_commands_math_plotfunction_select_menus_style,
+    )
+    _n_commands_math_plotfunction_error = CommandsMathPlotfunctionError(
+        _text=LocalizedString('commands.math.plotfunction.error'),
+        description=LocalizedString('commands.math.plotfunction.error.description'),
+        title=LocalizedString('commands.math.plotfunction.error.title'),
     )
     _n_commands_math_plotfunction = CommandsMathPlotfunction(
         buttons=_n_commands_math_plotfunction_buttons,
@@ -10821,6 +10822,7 @@ def build_commands() -> Commands:
         title=LocalizedString('commands.utility.feedback.modal.submitted.title'),
     )
     _n_commands_utility_feedback_modal_timeout = CommandsUtilityFeedbackModalTimeout(
+        _text=LocalizedString('commands.utility.feedback.modal.timeout'),
         title=LocalizedString('commands.utility.feedback.modal.timeout.title'),
     )
     _n_commands_utility_feedback_modal = CommandsUtilityFeedbackModal(

@@ -32,11 +32,11 @@ async def subscribe_to_twitch_online_notification(twitch_uuid: str) -> None:
         return
     service.stream_status[twitch_uuid] = False
 
-def parse_twitch_notification_message(message: str | None, locale: str, twitch_name: str) -> str:
+def parse_twitch_notification_message(message: str | None, loc: str, twitch_name: str) -> str:
     """Parse a notification message template, replacing {name} with the Twitch user's name."""
     service = get_twitch_service()
     if service is None:
         if not message:
-            return locale.commands.utility.twitch.defaultNotificationMessage(locale).replace('{name}', twitch_name)
+            return locale.commands.utility.twitch.defaultNotificationMessage(loc).replace('{name}', twitch_name)
         return message.replace('{name}', twitch_name)
-    return service.parse_notification_message(message, locale, twitch_name)
+    return service.parse_notification_message(message, loc, twitch_name)

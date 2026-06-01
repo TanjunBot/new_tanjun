@@ -5,10 +5,11 @@ from pathlib import Path
 
 from diagnostics.models import CheckOutcome
 from locale_keys import locale
+from locale_keys.types import LocalizedString
 
 _LOCALES_DIR = Path(__file__).resolve().parents[1] / "locales"
 
-_SAMPLE_LOOKUPS: tuple[tuple[str, object], ...] = (
+_SAMPLE_LOOKUPS: tuple[tuple[str, LocalizedString], ...] = (
     ("starting", locale.commands.admin.administration.test_bot.starting),
     ("all_completed", locale.commands.admin.administration.test_bot.all_completed),
     ("error", locale.commands.admin.administration.test_bot.error),
