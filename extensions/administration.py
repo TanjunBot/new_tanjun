@@ -7,7 +7,6 @@ import asyncio
 import json
 import os
 import re
-import subprocess
 import tempfile
 import time
 from typing import Any
@@ -573,15 +572,32 @@ class AdministrationCog(commands.Cog):
     async def database_sync(self, ctx: commands.Context, url: str | None=None) -> None:
         if ctx.author.id not in config.adminIds:
             return
+
+        _MAX_LOG = 1900
+
+        def _truncate_log(text: str) -> str:
+            if len(text) > _MAX_LOG:
+                return text[:_MAX_LOG] + '\n... (truncated)'
+            return text
+
+        thread = await ctx.channel.create_thread(
+            name=f'Database Sync — {ctx.author.display_name}',
+            message=None,
+            type=discord.ChannelType.public_thread,
+        )
+
+        async def _thread_send(content: str | None = None, embed: discord.Embed | None = None, file: discord.File | None = None) -> None:
+            await thread.send(content=content, embed=embed, file=file)
+
         attachment_url = None
         if ctx.message.attachments:
             attachment_url = ctx.message.attachments[0].url
         elif url:
             attachment_url = url
         else:
-            await ctx.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.no_attachment(self._locale(ctx)), title='Database Sync'))
+            await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.no_attachment(self._locale(ctx)), title='Database Sync'))
             return
-        status_msg = await ctx.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.downloading(self._locale(ctx)), title='Database Sync'))
+        status_msg = await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.downloading(self._locale(ctx)), title='Database Sync'))
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp:
                 if resp.status != 200:
@@ -601,36 +617,44 @@ class AdministrationCog(commands.Cog):
         if not detected_schemas:
             schemas.add(l10n.commands.admin.database_sync.no_schema_found(self._locale(ctx)))
         schema_list = '\n'.join([f'- `{s}`' for s in schemas])
-        await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.schema_prompt(self._locale(ctx), schema_list=schema_list), title='Database Sync'))
+        await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.schema_prompt(self._locale(ctx), schema_list=schema_list), title='Database Sync'))
 
         def check(m: discord.Message) -> bool:
-            return m.author == ctx.author and m.channel == ctx.channel
+            return m.author == ctx.author and m.channel == thread
         try:
             confirmation_message = await self.bot.wait_for('message', check=check, timeout=60.0)
         except TimeoutError:
-            await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.timeout(self._locale(ctx)), title='Database Sync'))
+            await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.timeout(self._locale(ctx)), title='Database Sync'))
             return
         selected_schema = confirmation_message.content.strip()
         cancel_token = l10n.commands.admin.database_sync.cancel_token(self._locale(ctx)).lower()
         if selected_schema.lower() == cancel_token:
-            await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.aborted(self._locale(ctx)), title='Database Sync'))
+            await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.aborted(self._locale(ctx)), title='Database Sync'))
             return
         if detected_schemas and selected_schema not in detected_schemas:
-            await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.schema_warning(self._locale(ctx)), title='Database Sync'))
+            await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.schema_warning(self._locale(ctx)), title='Database Sync'))
             return
-        await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.preparing_import(self._locale(ctx), schema=selected_schema), title='Database Sync'))
+        await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.preparing_import(self._locale(ctx), schema=selected_schema), title='Database Sync'))
         assert config.database_user is not None
         assert config.database_password is not None
         assert config.database_schema is not None
         backup_file = 'current_db_backup.sql'
         defaults_file = _mysql_defaults_file(config.database_user, config.database_password, config.database_ip, config.database_port)
-        dump_command = ['mysqldump', f'--defaults-extra-file={defaults_file}', config.database_schema]
         try:
-            with open(backup_file, 'w') as f:
-                subprocess.run(dump_command, stdout=f, check=True)
-            await ctx.channel.send(embed=success_embed(l10n.commands.admin.database_sync.backup_success(self._locale(ctx)), title='Database Sync'), file=discord.File(backup_file))
+            await _thread_send(embed=embed_or_wrap('Running mysqldump…', title='Database Sync'))
+            proc = await asyncio.create_subprocess_exec(
+                'mysqldump', f'--defaults-extra-file={defaults_file}', config.database_schema,
+                stdout=open(backup_file, 'w'),
+                stderr=asyncio.subprocess.PIPE,
+            )
+            _, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                stderr_text = _truncate_log(stderr.decode(errors='replace')) if stderr else ''
+                await _thread_send(embed=error_embed(f"mysqldump failed (exit {proc.returncode}):\n```\n{stderr_text}\n```", title='Database Sync'))
+                return
+            await _thread_send(embed=success_embed(l10n.commands.admin.database_sync.backup_success(self._locale(ctx)), title='Database Sync'), file=discord.File(backup_file))
         except Exception as e:
-            await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.backup_error(self._locale(ctx), error=e), title='Database Sync'))
+            await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.backup_error(self._locale(ctx), error=e), title='Database Sync'))
             return
         finally:
             with contextlib.suppress(OSError):
@@ -643,23 +667,57 @@ class AdministrationCog(commands.Cog):
                 target_schema=config.database_schema,
             )
             if not _has_executable_sql(filtered_content):
-                await ctx.channel.send(embed=error_embed('The selected schema produced an empty import file. Please choose a schema that exists in the dump.', title='Database Sync'))
+                await _thread_send(embed=error_embed('The selected schema produced an empty import file. Please choose a schema that exists in the dump.', title='Database Sync'))
                 return
             with open(filtered_sql_file, 'w', encoding='utf-8') as f_out:
                 f_out.write(filtered_content)
         except Exception as e:
-            await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.filter_error(self._locale(ctx), error=e), title='Database Sync'))
+            await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.filter_error(self._locale(ctx), error=e), title='Database Sync'))
             return
-        await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.importing(self._locale(ctx), schema=config.database_schema), title='Database Sync'))
         db_recreate_cmd = f'DROP DATABASE IF EXISTS `{config.database_schema}`; CREATE DATABASE `{config.database_schema}`;'
         import_defaults_file = _mysql_defaults_file(config.database_user, config.database_password, config.database_ip, config.database_port)
         try:
-            subprocess.run(['mysql', f'--defaults-extra-file={import_defaults_file}', '-e', db_recreate_cmd], check=True)
-            with open(filtered_sql_file) as f:
-                subprocess.run(['mysql', f'--defaults-extra-file={import_defaults_file}', config.database_schema], stdin=f, check=True)
-            await ctx.channel.send(embed=success_embed(l10n.commands.admin.database_sync.success(self._locale(ctx)), title='Database Sync'))
-        except subprocess.CalledProcessError as e:
-            await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.import_error(self._locale(ctx), error=e), title='Database Sync'))
+            await _thread_send(embed=embed_or_wrap('Dropping and recreating database…', title='Database Sync'))
+            proc = await asyncio.create_subprocess_exec(
+                'mysql', f'--defaults-extra-file={import_defaults_file}', '-e', db_recreate_cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                stderr_text = _truncate_log(stderr.decode(errors='replace')) if stderr else ''
+                await _thread_send(embed=error_embed(f"Database recreate failed (exit {proc.returncode}):\n```\n{stderr_text}\n```", title='Database Sync'))
+                return
+            if stdout and stdout.decode(errors='replace').strip():
+                await _thread_send(f"```\n{_truncate_log(stdout.decode(errors='replace'))}\n```")
+
+            await _thread_send(embed=embed_or_wrap('Importing data…', title='Database Sync'))
+            with open(filtered_sql_file, 'rb') as f:
+                proc = await asyncio.create_subprocess_exec(
+                    'mysql', f'--defaults-extra-file={import_defaults_file}', config.database_schema,
+                    stdin=f,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                stdout, stderr = await proc.communicate()
+            if proc.returncode != 0:
+                stdout_text = stdout.decode(errors='replace') if stdout else ''
+                stderr_text = stderr.decode(errors='replace') if stderr else ''
+                log_output = _truncate_log(stderr_text or stdout_text or f'exit code {proc.returncode}')
+                await _thread_send(embed=error_embed(f"Import failed (exit {proc.returncode}):\n```\n{log_output}\n```", title='Database Sync'))
+                return
+
+            if stdout:
+                stdout_text = stdout.decode(errors='replace')
+                if stdout_text.strip():
+                    await _thread_send(f"```\n{_truncate_log(stdout_text)}\n```")
+            if stderr:
+                stderr_text = stderr.decode(errors='replace')
+                if stderr_text.strip():
+                    await _thread_send(f"```\n{_truncate_log(stderr_text)}\n```")
+            await _thread_send(embed=success_embed(l10n.commands.admin.database_sync.success(self._locale(ctx)), title='Database Sync'))
+        except Exception as e:
+            await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.import_error(self._locale(ctx), error=e), title='Database Sync'))
         finally:
             with contextlib.suppress(OSError):
                 os.unlink(import_defaults_file)
