@@ -2830,11 +2830,35 @@ async def get_claimed_booster_role(
     return await booster_service.get_all_claims(ClaimedBoosterType.ROLE) or None
 
 
+_log_enables_table_ensured = False
+_log_enables_table_lock = asyncio.Lock()
+
+
+async def _ensure_log_enables_table() -> None:
+    global _log_enables_table_ensured
+    if _log_enables_table_ensured:
+        return
+    async with _log_enables_table_lock:
+        if _log_enables_table_ensured:
+            return
+        result = await execute_action(get_table_definitions()["log_enables"])
+        if result is None:
+            return
+        _log_enables_table_ensured = True
+
+
+async def _ensure_log_enable_row(guild_id: str) -> None:
+    await _ensure_log_enables_table()
+    await execute_action(
+        "INSERT INTO log_enables (guild_id) VALUES (%s) "
+        "ON DUPLICATE KEY UPDATE guild_id = guild_id",
+        (guild_id,),
+    )
+    _log_enable_cache.invalidate(str(guild_id))
+
+
 async def set_log_channel(guild_id: str, channel_id: str) -> None:
-    existing = await execute_query("SELECT 1 FROM log_enables WHERE guild_id = %s", (guild_id,))
-    if not existing:
-        await execute_action("REPLACE INTO log_enables (guild_id) VALUES (%s)", (guild_id,))
-        _log_enable_cache.invalidate(str(guild_id))
+    await _ensure_log_enable_row(guild_id)
     await execute_action("DELETE FROM log_channel WHERE guild_id = %s", (guild_id,))
     await execute_action(
         "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s)",
@@ -2894,6 +2918,7 @@ _LOG_ENABLE_COLUMNS = frozenset(
 
 
 async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
+    await _ensure_log_enable_row(guild_id)
     query = "UPDATE log_enables SET "
     end_query = " WHERE guild_id = %s"
     params: list[Any] = []
@@ -2954,6 +2979,7 @@ _LOG_ENABLE_SELECT = (
 
 
 async def _fetch_log_enable_from_db(guild_id: str) -> LogEnableModel:
+    await _ensure_log_enables_table()
     result = await execute_query(_LOG_ENABLE_SELECT, (guild_id,))
     if result and result[0]:
         return LogEnableModel.from_row(result[0])

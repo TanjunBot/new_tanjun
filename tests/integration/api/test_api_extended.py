@@ -780,7 +780,10 @@ class TestLogChannelApi:
             patch("api.execute_action", new=AsyncMock()) as action,
         ):
             await set_log_channel(GUILD_ID, CHANNEL_ID)
-        assert action.await_count == 3
+        sqls = [call.args[0] for call in action.await_args_list]
+        assert any("CREATE TABLE" in sql and "log_enables" in sql for sql in sqls)
+        assert any("INSERT INTO log_enables" in sql and "ON DUPLICATE KEY" in sql for sql in sqls)
+        assert any("INSERT INTO log_channel" in sql for sql in sqls)
 
     @pytest.mark.asyncio
     async def test_set_log_channel_existing_guild(self, bot_with_pool):
@@ -843,17 +846,25 @@ class TestLogChannelApi:
     async def test_set_log_enable(self, bot_with_pool, field: str):
         from api import set_log_enable
 
-        with patch("api.execute_action", new=AsyncMock()) as action:
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[(1,)])),
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await set_log_enable(GUILD_ID, **{field: False})
-        assert field in action.call_args[0][0]
+        update_calls = [c for c in action.await_args_list if field in c.args[0] and "UPDATE log_enables" in c.args[0]]
+        assert update_calls
 
     @pytest.mark.asyncio
     async def test_set_log_enable_no_valid_fields(self, bot_with_pool):
         from api import set_log_enable
 
-        with patch("api.execute_action", new=AsyncMock()) as action:
+        with (
+            patch("api.execute_query", new=AsyncMock(return_value=[(1,)])),
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await set_log_enable(GUILD_ID, unknown_field=True)
-        action.assert_not_awaited()
+        update_calls = [c for c in action.await_args_list if "UPDATE log_enables" in c.args[0]]
+        assert not update_calls
 
     @pytest.mark.asyncio
     async def test_get_and_remove_log_channel(self, bot_with_pool):
