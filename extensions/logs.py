@@ -1632,11 +1632,11 @@ class LogsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild) -> None:
-        log_enable = after.guild and (await get_log_enable(after.guild.id)).guild_update
+        log_enable = after and (await get_log_enable(after.id)).guild_update
         if not log_enable:
             return
 
-        locale = after.locale if hasattr(after, "preferred_locale") else "en_US"
+        locale = after.preferred_locale if hasattr(after, "preferred_locale") else "en_US"
         description_parts = []
 
         keiner_locale = tanjunLocalizer.localize(locale, "logs.guildUpdate.none")
@@ -2658,7 +2658,7 @@ class LogsCog(commands.Cog):
             if any(str(role.id) == blacklisted_role for role in after.author.roles):  # type: ignore[union-attr]
                 return
 
-        locale = after.guild.preferred_locale if hasattr(after, "preferred_locale") else "en_US"  # type: ignore[union-attr]
+        locale = after.guild.preferred_locale if hasattr(after.guild, "preferred_locale") else "en_US"  # type: ignore[union-attr]
         description_parts = []
 
         description_parts.append(
