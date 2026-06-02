@@ -42,7 +42,18 @@ async def _invoke_prefix_command(cog: Any, command: Any, bot: Any) -> None:
     status_message = MagicMock()
     status_message.edit = AsyncMock()
     ctx.send = AsyncMock(return_value=status_message)
-    ctx.message = type("Msg", (), {"attachments": [], "content": "diag", "guild": guild})()
+    ctx.message = type(
+        "Msg",
+        (),
+        {
+            "id": 1,
+            "attachments": [],
+            "content": "diag",
+            "author": author,
+            "channel": channel,
+            "guild": guild,
+        },
+    )()
 
     # command may be a Command object (with .callback) from cog.get_commands(),
     # or already a raw callable (bound method) passed directly in tests
