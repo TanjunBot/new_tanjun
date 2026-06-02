@@ -61,7 +61,9 @@ class LogBlacklistRepository:
     async def is_entity_blacklisted(self, guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
         """Check whether a specific entity is blacklisted."""
         from api import execute_query
+        from utils.schema_ensure import ensure_table_schema
 
+        await ensure_table_schema(blacklist_type.table)
         table = blacklist_type.table
         column = blacklist_type.column
         query = f"SELECT {column} FROM {table} WHERE guild_id = %s AND {column} = %s"
