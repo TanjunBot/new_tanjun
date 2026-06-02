@@ -542,8 +542,24 @@ class AdministrationCog(commands.Cog):
             type=discord.ChannelType.public_thread,
         )
 
-        async def _thread_send(content: str | None = None, embed: discord.Embed | None = None, file: discord.File | None = None) -> discord.Message:
-            return await thread.send(content=content, embed=embed, file=file)
+        async def _thread_send(
+            content: str | None = None,
+            embed: discord.Embed | None = None,
+            file: discord.File | None = None,
+        ) -> discord.Message | None:
+            try:
+                return await thread.send(content=content, embed=embed, file=file)
+            except Exception:
+                return None
+
+        async def _edit_status(msg: discord.Message | None, **kwargs: object) -> bool:
+            if msg is None:
+                await _thread_send(
+                    embed=error_embed('Database sync could not update status in thread.', title='Database Sync'),
+                )
+                return False
+            await msg.edit(**kwargs)
+            return True
 
         attachment_url = None
         if ctx.message.attachments:
@@ -554,18 +570,32 @@ class AdministrationCog(commands.Cog):
             await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.no_attachment(self._locale(ctx)), title='Database Sync'))
             return
         status_msg = await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.downloading(self._locale(ctx)), title='Database Sync'))
+        if status_msg is None:
+            return
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp:
                 if resp.status != 200:
-                    await status_msg.edit(embed=error_embed(l10n.commands.admin.database_sync.download_failed(self._locale(ctx), status=resp.status), title='Database Sync'))
+                    if not await _edit_status(
+                        status_msg,
+                        embed=error_embed(l10n.commands.admin.database_sync.download_failed(self._locale(ctx), status=resp.status), title='Database Sync'),
+                    ):
+                        return
                     return
                 content = await resp.read()
             with open('temp_import.sql', 'wb') as f:
                 f.write(content)
         except Exception as e:
-            await status_msg.edit(embed=error_embed(l10n.commands.admin.database_sync.download_error(self._locale(ctx), error=e), title='Database Sync'))
+            if not await _edit_status(
+                status_msg,
+                embed=error_embed(l10n.commands.admin.database_sync.download_error(self._locale(ctx), error=e), title='Database Sync'),
+            ):
+                return
             return
-        await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'))
+        if not await _edit_status(
+            status_msg,
+            embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'),
+        ):
+            return
         with open('temp_import.sql', encoding='utf-8', errors='ignore') as f:
             sql_content = f.read()
         detected_schemas = extract_schemas_from_sql(sql_content)
