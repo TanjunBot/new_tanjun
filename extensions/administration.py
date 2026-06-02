@@ -115,7 +115,7 @@ class AdministrationCog(commands.Cog):
             'database_sync': ('Imports SQL from attachment or URL, selects schema, backs up current DB, recreates target schema and imports.', 'Sync database from SQL backup', 't.database_sync [url] (or attach .sql)'),
         }
         for name, (help_text, brief_text, usage_text) in docs.items():
-            cmd = self.get_command(name)
+            cmd = self.bot.get_command(name)
             if cmd is None:
                 continue
             cmd.help = help_text
