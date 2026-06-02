@@ -7,6 +7,7 @@ Welcome to the Tanjun documentation! Tanjun is a powerful, feature-rich Discord 
 - [Getting Started](user-manual.md#getting-started)
 - [Architecture Overview](architecture.md)
 - [Database Schema](database-schema.md)
+- [Admin Commands](admin-commands.md)
 - [Contributing Guide](https://github.com/TanjunBot/new_tanjun/blob/development/CONTRIBUTING.md)
 
 ## Project Overview
@@ -37,6 +38,7 @@ Tanjun is an all-in-one Discord bot designed for server management and community
 
 - [**Architecture**](architecture.md) — Internal structure, modules, and design patterns
 - [**Database Schema**](database-schema.md) — Complete table definitions and relationships
+- [**Admin Commands**](admin-commands.md) — Internal owner/admin maintenance command reference
 - [**User Manual**](user-manual.md) — Guide for server owners and administrators
 - [**Contributing**](https://github.com/TanjunBot/new_tanjun/blob/development/CONTRIBUTING.md) — Development setup, coding standards, PR process
 
