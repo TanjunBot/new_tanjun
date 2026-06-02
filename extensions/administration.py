@@ -42,30 +42,66 @@ def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
         f.write(content)
     return path
 
+_CURRENT_DB_MARKER_RE = re.compile('^\\s*--\\s*Current Database:\\s*`([^`]+)`', re.IGNORECASE)
+_QUALIFIED_SCHEMA_RE = re.compile('`([^`]+)`\\.`[^`]+`')
+
+
+def _dump_uses_current_db_sections(sql_content: str) -> bool:
+    return _CURRENT_DB_MARKER_RE.search(sql_content) is not None
+
+
 def _extract_schemas_from_sql(sql_content: str) -> set[str]:
     schemas: set[str] = set()
     for line in sql_content.splitlines():
-        current_db_match = re.search('^\\s*--\\s*Current Database:\\s*`([^`]+)`', line, re.IGNORECASE)
+        current_db_match = _CURRENT_DB_MARKER_RE.search(line)
         use_match = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
         create_match = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        qualified_match = _QUALIFIED_SCHEMA_RE.search(line)
         if current_db_match:
             schemas.add(current_db_match.group(1))
         elif create_match:
             schemas.add(create_match.group(1))
         elif use_match:
             schemas.add(use_match.group(1))
+        elif qualified_match:
+            schemas.add(qualified_match.group(1))
     return schemas
 
 
-def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str) -> str:
+def _transform_dump_line(line: str, selected_schema: str, target_schema: str) -> str:
+    mod_line = re.sub('DEFINER\\s*=\\s*`[^`]+`@`[^`]+`\\s*', '', line, flags=re.IGNORECASE)
+    mod_line = re.sub('SQL\\s+SECURITY\\s+DEFINER\\s*', '', mod_line, flags=re.IGNORECASE)
+    mod_line = re.sub(f'(CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
+    mod_line = re.sub(f'(USE\\s+)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
+    mod_line = re.sub(f'`{re.escape(selected_schema)}`\\.', f'`{target_schema}`.', mod_line, flags=re.IGNORECASE)
+    return mod_line
+
+
+def _filter_sql_dump_legacy(sql_content: str, selected_schema: str, target_schema: str) -> str:
+    current_schema: str | None = None
+    selected_lower = selected_schema.lower()
+    output_lines: list[str] = []
+    for line in sql_content.splitlines(keepends=True):
+        use_m = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        create_m = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        if create_m:
+            current_schema = create_m.group(1)
+        elif use_m:
+            current_schema = use_m.group(1)
+        if current_schema is not None and current_schema.lower() != selected_lower:
+            continue
+        output_lines.append(_transform_dump_line(line, selected_schema, target_schema))
+    return ''.join(output_lines)
+
+
+def _filter_sql_dump_sections(sql_content: str, selected_schema: str, target_schema: str) -> str:
     current_schema: str | None = None
     seen_current_db_marker = False
     selected_lower = selected_schema.lower()
     header_lines: list[str] = []
     selected_lines: list[str] = []
-    output_lines: list[str] = []
     for line in sql_content.splitlines(keepends=True):
-        current_db_marker_m = re.search('^\\s*--\\s*Current Database:\\s*`([^`]+)`', line, re.IGNORECASE)
+        current_db_marker_m = _CURRENT_DB_MARKER_RE.search(line)
         use_m = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
         create_m = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
         if current_db_marker_m:
@@ -80,17 +116,14 @@ def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str)
             continue
         if current_schema is not None and current_schema.lower() == selected_lower:
             selected_lines.append(line)
-    output_lines.extend(header_lines)
-    output_lines.extend(selected_lines)
-    transformed_lines: list[str] = []
-    for line in output_lines:
-        mod_line = re.sub('DEFINER\\s*=\\s*`[^`]+`@`[^`]+`\\s*', '', line, flags=re.IGNORECASE)
-        mod_line = re.sub('SQL\\s+SECURITY\\s+DEFINER\\s*', '', mod_line, flags=re.IGNORECASE)
-        mod_line = re.sub(f'(CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
-        mod_line = re.sub(f'(USE\\s+)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
-        mod_line = re.sub(f'`{re.escape(selected_schema)}`\\.', f'`{target_schema}`.', mod_line, flags=re.IGNORECASE)
-        transformed_lines.append(mod_line)
+    transformed_lines = [_transform_dump_line(line, selected_schema, target_schema) for line in header_lines + selected_lines]
     return ''.join(transformed_lines)
+
+
+def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str) -> str:
+    if _dump_uses_current_db_sections(sql_content):
+        return _filter_sql_dump_sections(sql_content, selected_schema, target_schema)
+    return _filter_sql_dump_legacy(sql_content, selected_schema, target_schema)
 
 
 def _has_executable_sql(sql_content: str) -> bool:

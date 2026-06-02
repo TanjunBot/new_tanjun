@@ -260,6 +260,9 @@ def make_text_channel(channel_id: int=444444444, guild: MagicMock | None=None) -
     channel.clone = AsyncMock(return_value=channel)
     channel.delete = AsyncMock()
     channel.permissions_for = MagicMock(return_value=MagicMock())
+    thread = MagicMock()
+    thread.send = AsyncMock(return_value=MagicMock(edit=AsyncMock()))
+    channel.create_thread = AsyncMock(return_value=thread)
     return channel
 
 def make_command_info(user: MagicMock | None=None, guild: MagicMock | None=None, channel: MagicMock | None=None, locale: str='en-US', reply: AsyncMock | None=None, client: MagicMock | None=None, **kwargs: Any) -> CommandInfo:
