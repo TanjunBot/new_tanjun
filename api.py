@@ -268,6 +268,11 @@ async def _execute_with_retry(
             async with conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 _result = await callback(cursor, conn)
+                if not is_write:
+                    try:
+                        await conn.rollback()
+                    except Exception:
+                        pass
             _elapsed = time.monotonic() - _start
             try:
                 from extensions.prometheus_metrics import record_db_query
@@ -292,12 +297,22 @@ async def _execute_with_retry(
             if not is_write:
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                if is_write and conn is not None:
+                    try:
+                        await conn.rollback()
+                    except Exception:
+                        pass
                 print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
                 last_exception = e
                 if "connection" in err_str or "timeout" in err_str:
                     broken_connection = True
                 continue
+            if is_write and conn is not None:
+                try:
+                    await conn.rollback()
+                except Exception:
+                    pass
             _elapsed = time.monotonic() - _start
             try:
                 from extensions.prometheus_metrics import record_db_query
@@ -578,6 +593,10 @@ async def execute_query_iter(
                 async for row in cursor:
                     yielded_any = True
                     yield row
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
             return
         except TimeoutError:
             broken_connection = True
