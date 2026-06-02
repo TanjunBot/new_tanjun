@@ -10,6 +10,9 @@ import pytest
 from utils.github import (
     _recent_reports,
     addFeedback,
+    begin_missing_localization_capture,
+    cleanup_captured_missing_localization_issues,
+    end_missing_localization_capture,
     missingLocalization,
     report_bot_exception,
     report_bot_exception_sync,
@@ -183,3 +186,39 @@ class TestSyncHelpers:
 
         mock_repo.create_issue.assert_called_once()
         assert "Alice" in mock_repo.create_issue.call_args[1]["body"]
+
+
+class TestMissingLocalizationCleanup:
+    @pytest.mark.asyncio
+    async def test_cleanup_captured_missing_localization_issues_closes_created_issues(self):
+        issue = MagicMock()
+        issue.number = 123
+        issue_to_close = MagicMock()
+        mock_repo = MagicMock()
+        mock_repo.create_issue.return_value = issue
+        mock_repo.get_issue.return_value = issue_to_close
+        mock_g = MagicMock()
+        mock_g.get_repo.return_value = mock_repo
+        mock_g.search_issues.return_value.totalCount = 0
+
+        with (
+            patch("utils.github.GithubAuthToken", "token"),
+            patch("utils.github.Github", return_value=mock_g),
+            patch("utils.github._missing_localization_resolved", return_value=False),
+        ):
+            begin_missing_localization_capture()
+            from utils.github import _sync_create_missing_localization_issue
+
+            _sync_create_missing_localization_issue("fr-FR", "commands.test.title")
+            end_missing_localization_capture()
+            closed = await cleanup_captured_missing_localization_issues()
+
+        assert closed == 1
+        issue_to_close.edit.assert_called_once_with(state="closed")
+
+    @pytest.mark.asyncio
+    async def test_cleanup_without_capture_does_nothing(self):
+        begin_missing_localization_capture()
+        end_missing_localization_capture()
+        closed = await cleanup_captured_missing_localization_issues()
+        assert closed == 0

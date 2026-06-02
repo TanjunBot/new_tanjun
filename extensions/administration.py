@@ -33,6 +33,7 @@ except ImportError:
     DIAGNOSTICS_AVAILABLE = False
     BenchmarkRunner = None
 from utility import addFeedback, embed_or_wrap, error_embed, missingLocalization, success_embed, tanjunEmbed, warning_embed
+from utils.github import begin_missing_localization_capture, cleanup_captured_missing_localization_issues, end_missing_localization_capture
 
 def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
     """Create a temporary MySQL defaults file with credentials. Returns the file path."""
@@ -214,6 +215,7 @@ class AdministrationCog(commands.Cog):
             await message.edit(embed=tanjunEmbed(title='Bot Diagnostics', description=l10n.commands.admin.administration.test_bot.tests_unavailable(locale)))
             return
         thread = None
+        begin_missing_localization_capture()
         try:
             thread_name = f'bot-diagnostics-{ctx.message.id}'
             thread = await message.create_thread(name=thread_name[:100])
@@ -223,6 +225,11 @@ class AdministrationCog(commands.Cog):
             await message.edit(embed=error_embed(l10n.commands.admin.administration.test_bot.error(locale, test_name='Diagnostics', error=e), title='Bot Diagnostics'))
             if thread is not None:
                 await thread.send(f'Diagnostics aborted: {e}')
+        finally:
+            end_missing_localization_capture()
+            closed_count = await cleanup_captured_missing_localization_issues()
+            if thread is not None and closed_count:
+                await thread.send(f"Closed {closed_count} temporary missing-localization issue(s) created during this diagnostics run.")
 
     @commands.command()
     async def benchmark_bot(self, ctx: commands.Context) -> None:

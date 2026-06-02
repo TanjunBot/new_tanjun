@@ -18,6 +18,8 @@ _REPO = 'TanjunBot/new_tanjun'
 _EXCEPTION_LABELS = ('bug', 'bot exception')
 _DEDUP_TTL_SEC = 3600.0
 _recent_reports: dict[str, float] = {}
+_capture_missing_localization_issues = False
+_captured_missing_localization_issue_numbers: set[int] = set()
 
 def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
     if not isinstance(exc_type, type):
@@ -128,6 +130,25 @@ async def missingLocalization(locale: str, key: str) -> None:
     """Create a GitHub issue reporting a missing localization."""
     await run_blocking(_sync_create_missing_localization_issue, locale, key)
 
+
+def begin_missing_localization_capture() -> None:
+    global _capture_missing_localization_issues
+    _capture_missing_localization_issues = True
+    _captured_missing_localization_issue_numbers.clear()
+
+
+def end_missing_localization_capture() -> None:
+    global _capture_missing_localization_issues
+    _capture_missing_localization_issues = False
+
+
+async def cleanup_captured_missing_localization_issues() -> int:
+    issue_numbers = list(_captured_missing_localization_issue_numbers)
+    _captured_missing_localization_issue_numbers.clear()
+    if not issue_numbers:
+        return 0
+    return await run_blocking(_sync_close_missing_localization_issues, issue_numbers)
+
 def _missing_localization_issue_title(locale: str, key: str) -> str:
     return f'Missing localization: {key} ({locale})'
 
@@ -156,9 +177,29 @@ def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
             return
         repo = g.get_repo(_REPO)
         label = repo.get_label('missing localization')
-        repo.create_issue(title=title, body=f'Missing translation for key `{key}` in locale `{locale}`.', labels=[label])
+        created = repo.create_issue(title=title, body=f'Missing translation for key `{key}` in locale `{locale}`.', labels=[label])
+        if _capture_missing_localization_issues:
+            number = getattr(created, "number", None)
+            if isinstance(number, int):
+                _captured_missing_localization_issue_numbers.add(number)
     except Exception as report_error:
         logger.error('Failed to create missing localization issue: %s', report_error)
+
+
+def _sync_close_missing_localization_issues(issue_numbers: list[int]) -> int:
+    if not GithubAuthToken:
+        return 0
+    closed = 0
+    g = Github(GithubAuthToken)
+    repo = g.get_repo(_REPO)
+    for issue_number in issue_numbers:
+        try:
+            issue = repo.get_issue(issue_number)
+            issue.edit(state="closed")
+            closed += 1
+        except Exception as close_error:
+            logger.error('Failed to close missing localization issue #%s: %s', issue_number, close_error)
+    return closed
 
 async def addFeedback(content: str, author: str) -> None:
     """Create a GitHub issue with user feedback."""
