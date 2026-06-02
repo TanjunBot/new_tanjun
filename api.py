@@ -1514,47 +1514,9 @@ async def create_tables(bot=None) -> None:
         for table_name in sorted(batch):
             await execute_action(tables[table_name], bot=bot)
 
-    # Run schema migrations for existing tables that need column additions
-    migrations = [
-        # Add attachments column to scheduledMessages for attachment support
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `attachments` TEXT DEFAULT NULL
-         AFTER `repeatAmount`""",
-        # Add discord_message_id column to scheduledMessages for exact-match deletion
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
-         AFTER `attachments`,
-         ADD INDEX `idx_discord_message` (`discord_message_id`)""",
-        """ALTER TABLE `reports`
-         ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
-         AFTER `created_at`,
-         ADD COLUMN `status_updated_at` TIMESTAMP DEFAULT NULL
-         AFTER `status`,
-         ADD COLUMN `status_updated_by` VARCHAR(20) DEFAULT NULL
-         AFTER `status_updated_at`,
-         ADD INDEX `idx_status` (`status`)""",
-        """ALTER TABLE `level`
-         ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
-        """ALTER TABLE `warnings`
-         ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
-        """ALTER TABLE `giveaway`
-         ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
-    ]
-    for migration in migrations:
-        try:
-            await execute_action(migration, bot=bot)
-        except Exception as exc:
-            exc_str = str(exc).lower()
-            if (
-                "column already exists" in exc_str
-                or "duplicate column" in exc_str
-                or "duplicate column name" in exc_str
-                or "duplicate key name" in exc_str
-            ):
-                logging.debug("Migration skipped (already applied): %s", migration[:60])
-            else:
-                logging.exception("Unexpected migration error: %s", migration[:60])
-                raise
+    from utils.schema_ensure import run_startup_migrations
+
+    await run_startup_migrations(bot=bot)
 
 
 # ── Warning functions (delegated to WarningRepository) ───────────────────────────
