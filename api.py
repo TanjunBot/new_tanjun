@@ -369,9 +369,11 @@ async def preload_guild_configs(bot=None) -> None:
     if pool is None:
         return
     _guild_config_cache.clear()
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute(query), timeout=_QUERY_TIMEOUT)
             async for row in cursor:
                 guild_id = str(row[0])
@@ -388,8 +390,16 @@ async def preload_guild_configs(bot=None) -> None:
                         "voice_cooldown": row[8],
                     },
                 )
+    except TimeoutError:
+        broken_connection = True
+        print("Error preloading guild configs: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error preloading guild configs: {e}")
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
 
 
 async def _get_cached_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryModel]]:
@@ -416,9 +426,11 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
     pool = _get_pool()
     if pool is None:
         return default
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute(query, (guild_id,)), timeout=_QUERY_TIMEOUT)
             row = await cursor.fetchone()
             if row:
@@ -436,8 +448,16 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
                 return data.get(key, default)
             # Cache the miss (no levelConfig row for this guild)
             _guild_config_cache.set(guild_id, {})
+    except TimeoutError:
+        broken_connection = True
+        print(f"Error caching guild config for {guild_id}: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error caching guild config for {guild_id}: {e}")
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
     return default
 
 
@@ -472,14 +492,16 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
     safe_id = _query_safe_id(query)
     _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn:
-                async with conn.cursor() as cursor:
-                    await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
-                await conn.commit()
+            async with conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
+            await conn.commit()
             return
         except TimeoutError:
+            broken_connection = True
             msg = f"Timeout on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
             print(msg)
             last_exception = TimeoutError(msg)
@@ -488,6 +510,8 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
             continue
         except Exception as e:
             err_str = str(e).lower()
+            if "connection" in err_str or "timeout" in err_str:
+                broken_connection = True
             # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
             retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
@@ -505,6 +529,9 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
                 pass
             print(f"Error during execute_batch: {e} — {safe_id}")
             raise
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
 
     if last_exception:
         _elapsed = time.monotonic() - _start
@@ -601,23 +628,31 @@ async def transaction(bot=None):
 
     for attempt in range(_MAX_DB_RETRIES):
         safe_id = str(uuid.uuid4())
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn:
-                try:
-                    yield conn
-                    await conn.commit()
-                except Exception:
-                    await conn.rollback()
-                    raise
+            try:
+                yield conn
+                await conn.commit()
+            except Exception:
+                await conn.rollback()
+                raise
             return
         except TimeoutError:
+            broken_connection = True
             print(f"Timeout on transaction acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
-        except Exception:
+        except Exception as e:
+            err_str = str(e).lower()
+            if "connection" in err_str or "timeout" in err_str:
+                broken_connection = True
             raise
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
     raise RuntimeError(f"Could not acquire database connection after {_MAX_DB_RETRIES} attempts [{safe_id}]")
 
 
@@ -1407,14 +1442,24 @@ async def create_tables(bot=None) -> None:
     pool = _get_pool()
     if pool is None:
         return
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute("SHOW TABLES"), timeout=_QUERY_TIMEOUT)
             existing = {row[0] for row in await cursor.fetchall()}
+    except TimeoutError:
+        broken_connection = True
+        print("Error discovering existing tables: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error discovering existing tables: {e}")
         return
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
 
     # Build dependency map: table -> list of tables it depends on (via FK REFERENCES)
     dependencies = {
