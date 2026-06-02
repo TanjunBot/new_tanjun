@@ -15,6 +15,71 @@ from utils import schema_ensure  # noqa: E402
 pytestmark = pytest.mark.unit
 
 
+class TestSchemaEnsureHelpers:
+    def test_extract_table_name_from_alter(self) -> None:
+        assert schema_ensure.extract_table_name_from_alter("ALTER TABLE `foo` ADD COLUMN `x` INT") == "foo"
+        assert schema_ensure.extract_table_name_from_alter("SELECT 1") is None
+
+    def test_is_benign_migration_error(self) -> None:
+        assert schema_ensure.is_benign_migration_error(Exception("Duplicate column name 'x'"))
+        assert not schema_ensure.is_benign_migration_error(Exception("syntax error"))
+
+
+class TestEnsureTableSchema:
+    @pytest.mark.asyncio
+    async def test_ensure_table_schema_from_table_def(self) -> None:
+        from api import get_table_defs
+
+        table_def = get_table_defs()["mediaChannel"]
+        with (
+            patch.object(schema_ensure, "ensure_columns_from_table_def", new=AsyncMock()) as ensure_cols,
+            patch("api.get_table_defs", return_value={"mediaChannel": table_def}),
+        ):
+            await schema_ensure.ensure_table_schema("mediaChannel")
+        ensure_cols.assert_awaited_once_with(table_def, None)
+
+    @pytest.mark.asyncio
+    async def test_ensure_table_schema_from_ddl_when_not_in_defs(self) -> None:
+        ddl = "CREATE TABLE IF NOT EXISTS `legacy` (`id` INT)"
+        with (
+            patch("api.get_table_defs", return_value={}),
+            patch("api.get_table_definitions", return_value={"legacy": ddl}),
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=False)),
+            patch.object(schema_ensure, "ensure_table_from_ddl", new=AsyncMock()) as ensure_ddl,
+        ):
+            await schema_ensure.ensure_table_schema("legacy")
+        ensure_ddl.assert_awaited_once_with(ddl, None)
+
+
+class TestEnsureColumnsFromTableDef:
+    @pytest.mark.asyncio
+    async def test_adds_missing_columns(self) -> None:
+        from api import get_table_defs
+
+        table_def = get_table_defs()["mediaChannel"]
+        with (
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=True)),
+            patch.object(schema_ensure, "column_exists", new=AsyncMock(return_value=False)),
+            patch("api.execute_action", new=AsyncMock(return_value=True)) as action,
+        ):
+            await schema_ensure.ensure_columns_from_table_def(table_def)
+        assert action.await_count == len(table_def.columns)
+
+    @pytest.mark.asyncio
+    async def test_creates_table_when_absent(self) -> None:
+        from api import get_table_defs
+
+        table_def = get_table_defs()["mediaChannel"]
+        with (
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=False)),
+            patch.object(schema_ensure, "ensure_table_from_ddl", new=AsyncMock()) as ensure_ddl,
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
+            await schema_ensure.ensure_columns_from_table_def(table_def)
+        ensure_ddl.assert_awaited_once()
+        action.assert_not_awaited()
+
+
 class TestRunAlterMigration:
     @pytest.mark.asyncio
     async def test_skips_when_table_missing_and_not_in_definitions(self) -> None:
@@ -61,6 +126,30 @@ class TestRunAlterMigration:
                 table_name="scheduledMessages",
             )
         assert ok is True
+
+    @pytest.mark.asyncio
+    async def test_unexpected_error_raises(self) -> None:
+        with (
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=True)),
+            patch("api.execute_action", new=AsyncMock(side_effect=Exception("syntax error"))),
+            pytest.raises(Exception, match="syntax error"),
+        ):
+            await schema_ensure.run_alter_migration(
+                "ALTER TABLE `level` ADD INDEX `idx` (`guild_id`)",
+                table_name="level",
+            )
+
+    @pytest.mark.asyncio
+    async def test_returns_false_when_execute_action_returns_none(self) -> None:
+        with (
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=True)),
+            patch("api.execute_action", new=AsyncMock(return_value=None)),
+        ):
+            ok = await schema_ensure.run_alter_migration(
+                "ALTER TABLE `level` ADD INDEX `idx` (`guild_id`)",
+                table_name="level",
+            )
+        assert ok is False
 
 
 class TestMigrateReportsStatusColumns:
@@ -111,6 +200,18 @@ class TestMigrateReportsStatusColumns:
         ):
             await schema_ensure.migrate_reports_status_columns()
         action.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_reports_still_missing_after_create_logs_and_returns(self) -> None:
+        ddl = "CREATE TABLE IF NOT EXISTS `reports` (`id` INT)"
+        with (
+            patch.object(schema_ensure, "table_exists", new=AsyncMock(return_value=False)),
+            patch("api.get_table_definitions", return_value={"reports": ddl}),
+            patch.object(schema_ensure, "ensure_table_from_ddl", new=AsyncMock()),
+            patch.object(schema_ensure, "run_alter_migration", new=AsyncMock()) as migrate,
+        ):
+            await schema_ensure.migrate_reports_status_columns()
+        migrate.assert_not_awaited()
 
 
 class TestRunStartupMigrations:

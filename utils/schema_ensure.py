@@ -124,7 +124,7 @@ async def run_alter_migration(sql: str, *, table_name: str | None = None, bot: A
             logging.debug("Migration skipped (already applied or benign): %s", sql[:80])
             return True
         logging.exception("Unexpected migration error: %s", sql[:80])
-        return False
+        raise
 
 
 async def migrate_reports_status_columns(bot: Any = None) -> None:
