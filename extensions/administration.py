@@ -55,6 +55,63 @@ def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
 class AdministrationCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self._apply_command_docs()
+
+    def _apply_command_docs(self) -> None:
+        docs: dict[str, tuple[str, str, str]] = {
+            'sync': ('Syncs application commands to Discord.', 'Sync commands', 't.sync'),
+            'feedback': ('Stores internal feedback text.', 'Store feedback', 't.feedback <text>'),
+            'blockFeedback': ('Blocks a user from feedback features.', 'Block feedback user', 't.blockFeedback @user'),
+            'unblockFeedback': ('Unblocks a user from feedback features.', 'Unblock feedback user', 't.unblockFeedback @user'),
+            'test_bot': ('Runs the diagnostics suite.', 'Run diagnostics', 't.test_bot'),
+            'benchmark_bot': ('Runs the benchmark suite.', 'Run benchmarks', 't.benchmark_bot'),
+            'test_translation': ('Sends translation test output.', 'Test translations', 't.test_translation'),
+            'update': ('Runs maintenance steps and triggers restart endpoint.', 'Run maintenance update', 't.update'),
+            'welcome': ('Triggers welcome flow for a user.', 'Test welcome flow', 't.welcome [@user]'),
+            'farewell': ('Triggers farewell flow for a user.', 'Test farewell flow', 't.farewell [@user]'),
+            'onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus': ('Sends the hardcoded long text message.', 'Send long meme text', 't.onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus'),
+            'bsstarpoweremojis': ('Imports Brawl Stars star power emojis.', 'Import star power emojis', 't.bsstarpoweremojis [start]'),
+            'bsgadgetsemojis': ('Imports Brawl Stars gadget emojis.', 'Import gadget emojis', 't.bsgadgetsemojis [start]'),
+            'bsaccdata': ('Fetches and prints Brawl Stars account data.', 'Show Brawl Stars data', 't.bsaccdata <player_tag_without_hash>'),
+            'editembedmessage': ('Sends and edits a test embed message.', 'Test embed edit', 't.editembedmessage'),
+            'setguildlocale': ('Sets guild preferred locale.', 'Set guild locale', 't.setguildlocale <locale>'),
+            'testgithubauthtoken': ('Runs the GitHub auth token test path.', 'Test GitHub auth path', 't.testgithubauthtoken'),
+            'testupdateuserroles': ('Runs user role update logic test.', 'Test role updates', 't.testupdateuserroles'),
+            'testgetcorrectnextnumber': ('Prints sequence output for counting mode logic.', 'Test counting sequence', 't.testgetcorrectnextnumber <mode> <numbers>'),
+            'sendUpdateTextToAllAdmins': ('Broadcasts update text after confirmation flow.', 'Broadcast update message', 't.sendUpdateTextToAllAdmins'),
+            'sendDemoIsNoMoreToAllAdmins': ('Broadcasts demo deprecation text after confirmation flow.', 'Broadcast demo deprecation', 't.sendDemoIsNoMoreToAllAdmins'),
+            'me': ('Shows bot identity in current guild.', 'Show bot identity', 't.me'),
+            'permissionTest': ('Checks composite channel permissions.', 'Check permissions', 't.permissionTest'),
+            'permissionTest2': ('Checks manage_messages permission.', 'Check manage_messages', 't.permissionTest2'),
+            'listPermissions': ('Lists bot permissions for a channel.', 'List bot permissions', 't.listPermissions [#channel]'),
+            'database_sync': ('Imports SQL from attachment or URL, selects schema, backs up current DB, recreates target schema and imports.', 'Sync database from SQL backup', 't.database_sync [url] (or attach .sql)'),
+        }
+        for name, (help_text, brief_text, usage_text) in docs.items():
+            cmd = self.get_command(name)
+            if cmd is None:
+                continue
+            cmd.help = help_text
+            cmd.brief = brief_text
+            cmd.usage = usage_text
+
+    async def cog_check(self, ctx: commands.Context) -> bool:
+        if ctx.author.id in config.adminIds:
+            return True
+        await ctx.send(embed=warning_embed('You are not allowed to use this command.', title='Permission Denied'))
+        return False
+
+    async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if isinstance(error, commands.CheckFailure):
+            return
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(embed=error_embed(f'Missing required argument: `{error.param.name}`.', title='Invalid Command Usage'))
+            return
+        if isinstance(error, commands.BadArgument):
+            await ctx.send(embed=error_embed('One or more command arguments are invalid.', title='Invalid Command Usage'))
+            return
+        if isinstance(error, commands.BadUnionArgument):
+            await ctx.send(embed=error_embed('Could not parse one or more arguments for this command.', title='Invalid Command Usage'))
+            return
 
     def _locale(self, ctx: commands.Context) -> str:
         """Get locale string from context."""
