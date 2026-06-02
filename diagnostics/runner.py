@@ -117,6 +117,10 @@ class DiagnosticsRunner:
         detail = outcome.message or "OK"
         return f"{label} `{outcome.check_id}`: {detail}"
 
+    @staticmethod
+    def _is_failure(outcome: CheckOutcome) -> bool:
+        return not outcome.passed and not (outcome.skipped and outcome.skip_allowed)
+
     async def _report_phase(self, phase: PhaseResult, *, compact_passed: bool = False) -> None:
         header = (
             f"**Phase {phase.phase_id}: {phase.title}** — "
@@ -377,6 +381,22 @@ class DiagnosticsRunner:
         ]
         if s.aborted:
             summary_lines.append(f"Aborted: {s.abort_message}")
+        failed_outcomes = [
+            outcome
+            for phase in s.phases
+            for outcome in phase.outcomes
+            if self._is_failure(outcome)
+        ]
+        if failed_outcomes:
+            summary_lines.append("")
+            summary_lines.append("Failures:")
+            for outcome in failed_outcomes[:8]:
+                detail = (outcome.message or "No details").replace("\n", " ").strip()
+                if len(detail) > 180:
+                    detail = detail[:177] + "..."
+                summary_lines.append(f"- {outcome.check_id}: {detail}")
+            if len(failed_outcomes) > 8:
+                summary_lines.append(f"- ...and {len(failed_outcomes) - 8} more")
         summary_lines.append(f"Status: {'OK' if s.ok else 'FAILED'}")
         summary_body = "\n".join(summary_lines)
         if s.ok:
