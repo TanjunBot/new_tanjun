@@ -135,6 +135,27 @@ async def test_command_not_found_sends_no_embed() -> None:
     ix.followup.send.assert_not_called()
 
 
+async def test_app_check_failure_uses_inferred_missing_permissions() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    captured_kwargs: dict[str, Any] = {}
+
+    def _capture(_locale: str, key: str, **kwargs: Any) -> str:
+        if key == "errors.missing_permissions.description":
+            captured_kwargs.update(kwargs)
+        return key
+
+    with (
+        patch("localizer.tanjunLocalizer.localize", side_effect=_capture),
+        patch("extensions.error_handler.sentry_dsn", ""),
+        patch("extensions.error_handler._infer_missing_permissions_from_interaction", return_value="Manage Messages"),
+    ):
+        await cog._on_app_command_error(ix, app_commands.CheckFailure("generic check failed"))
+
+    assert captured_kwargs["missing_permissions"] == "Manage Messages"
+    ix.response.send_message.assert_awaited_once()
+
+
 async def test_unknown_error_reports_to_sentry_when_configured() -> None:
     cog = await _cog()
     ix = _interaction()

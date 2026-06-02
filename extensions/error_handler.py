@@ -89,6 +89,45 @@ def _get_locale_from_context(ctx: commands.Context) -> str:
     return _normalize_locale(locale_str)
 
 
+def _format_permissions(perms: list[str]) -> str:
+    return ", ".join(str(p).replace("_", " ").title() for p in perms)
+
+
+def _extract_missing_permissions(error: BaseException) -> str | None:
+    perms = getattr(error, "missing_permissions", None)
+    if perms:
+        return _format_permissions([str(p) for p in perms])
+    perm = getattr(error, "missing_permission", None)
+    if perm:
+        return _format_permissions([str(perm)])
+    return None
+
+
+def _infer_missing_permissions_from_interaction(
+    interaction: discord.Interaction,
+) -> str | None:
+    command = getattr(interaction, "command", None)
+    user = getattr(interaction, "user", None)
+    if command is None or user is None:
+        return None
+    required = getattr(command, "default_permissions", None)
+    if required is None:
+        required = getattr(command, "default_member_permissions", None)
+    guild_permissions = getattr(user, "guild_permissions", None)
+    if required is None or guild_permissions is None:
+        return None
+    try:
+        if hasattr(required, "__iter__"):
+            missing = [name for name, needed in required if needed and not getattr(guild_permissions, name, False)]
+        else:
+            missing = []
+    except Exception:
+        return None
+    if not missing:
+        return None
+    return _format_permissions(missing)
+
+
 class ErrorHandlerCog(commands.Cog):
     """Cog that registers a global tree.on_error handler at startup."""
 
@@ -202,11 +241,7 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         elif isinstance(original, commands.CheckFailure):
-            missing_permissions = None
-            if isinstance(original, (commands.MissingPermissions, commands.BotMissingPermissions)):
-                perms = getattr(original, "missing_permissions", None)
-                if perms:
-                    missing_permissions = ", ".join(str(p).replace("_", " ").title() for p in perms)
+            missing_permissions = _extract_missing_permissions(original)
 
             embed = await self._build_error_embed_from_locale(
                 locale,
@@ -303,13 +338,9 @@ class ErrorHandlerCog(commands.Cog):
             )
 
         elif isinstance(original, app_commands.CheckFailure):
-            # Covers MissingPermissions, BotMissingPermissions, etc.
-            missing_permissions = None
-            if isinstance(original, (app_commands.MissingPermissions, app_commands.BotMissingPermissions)):
-                # Extract missing permissions and format as comma-separated list
-                perms = getattr(original, "missing_permissions", None)
-                if perms:
-                    missing_permissions = ", ".join(str(p).replace("_", " ").title() for p in perms)
+            missing_permissions = _extract_missing_permissions(original)
+            if missing_permissions is None:
+                missing_permissions = _infer_missing_permissions_from_interaction(interaction)
 
             embed = await self._build_error_embed(
                 interaction,
