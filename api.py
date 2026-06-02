@@ -2841,16 +2841,20 @@ async def _ensure_log_enables_table() -> None:
     async with _log_enables_table_lock:
         if _log_enables_table_ensured:
             return
-        await execute_action(get_table_definitions()["log_enables"])
+        result = await execute_action(get_table_definitions()["log_enables"])
+        if result is None:
+            return
         _log_enables_table_ensured = True
 
 
 async def _ensure_log_enable_row(guild_id: str) -> None:
     await _ensure_log_enables_table()
-    existing = await execute_query("SELECT 1 FROM log_enables WHERE guild_id = %s", (guild_id,))
-    if not existing:
-        await execute_action("REPLACE INTO log_enables (guild_id) VALUES (%s)", (guild_id,))
-        _log_enable_cache.invalidate(str(guild_id))
+    await execute_action(
+        "INSERT INTO log_enables (guild_id) VALUES (%s) "
+        "ON DUPLICATE KEY UPDATE guild_id = guild_id",
+        (guild_id,),
+    )
+    _log_enable_cache.invalidate(str(guild_id))
 
 
 async def set_log_channel(guild_id: str, channel_id: str) -> None:

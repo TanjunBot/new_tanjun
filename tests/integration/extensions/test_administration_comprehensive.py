@@ -1,4 +1,5 @@
 from __future__ import annotations
+from io import BytesIO, StringIO
 from locale_keys import locale
 from contextlib import asynccontextmanager
 from typing import Any
@@ -860,6 +861,40 @@ def _mock_create_subprocess_exec(*, import_returncode: int = 0, verify_table_cou
     return patch('asyncio.create_subprocess_exec', side_effect=_create_subprocess_exec)
 
 
+def _database_sync_open_mock(
+    sql_content: bytes | str,
+    *,
+    fail_filtered_write: bool = False,
+) -> Any:
+    sql_text = sql_content.decode() if isinstance(sql_content, bytes) else sql_content
+    real_open = open
+
+    def open_side_effect(path: str, *args: Any, **kwargs: Any) -> Any:
+        path_str = str(path)
+        mode = args[0] if args and isinstance(args[0], str) else kwargs.get('mode', 'r')
+        if path_str == 'temp_import.sql' and 'b' not in mode:
+            return StringIO(sql_text)
+        if path_str == 'filtered_import.sql' and 'w' in mode:
+            if fail_filtered_write:
+                raise OSError('cannot write filter')
+            handle = MagicMock()
+            handle.__enter__ = MagicMock(return_value=handle)
+            handle.__exit__ = MagicMock(return_value=False)
+            handle.write = MagicMock()
+            return handle
+        if path_str == 'filtered_import.sql' and 'rb' in mode:
+            return BytesIO(sql_text.encode())
+        if path_str.endswith('_only.sql') and 'w' in mode:
+            handle = MagicMock()
+            handle.__enter__ = MagicMock(return_value=handle)
+            handle.__exit__ = MagicMock(return_value=False)
+            handle.write = MagicMock()
+            return handle
+        return real_open(path, *args, **kwargs)
+
+    return patch('builtins.open', side_effect=open_side_effect)
+
+
 @pytest.mark.asyncio
 class TestDatabaseSync:
 
@@ -966,6 +1001,74 @@ class TestDatabaseSync:
             await cog.database_sync(ctx, url='http://example.com/dump.sql')
         run_mock.assert_not_called()
 
+    async def test_mysqldump_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+
+        async def mock_exec(*args: Any, **kwargs: Any) -> MagicMock:
+            proc = MagicMock()
+            if args and args[0] == 'mysqldump':
+                proc.returncode = 1
+                proc.communicate = AsyncMock(return_value=(b'', b'dump failed'))
+            else:
+                proc.returncode = 0
+                proc.communicate = AsyncMock(return_value=(b'', b''))
+            return proc
+
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            patch('asyncio.create_subprocess_exec', side_effect=mock_exec),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
+        ):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
+
+    async def test_import_verification_unreadable_table_count(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(verify_table_count='not-a-number'),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
+        ):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
+
     async def test_full_import_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
@@ -986,13 +1089,15 @@ class TestDatabaseSync:
         bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
         attachment = MagicMock()
         attachment.url = 'http://example.com/dump.sql'
-        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), _mock_create_subprocess_exec(), patch('extensions.administration.discord.File', return_value=MagicMock()), patch('extensions.administration.os.path.exists', return_value=True), patch('extensions.administration.os.remove'), patch('extensions.administration.os.unlink'), patch('builtins.open', create=True) as mock_open:
-            file_handle = MagicMock()
-            file_handle.__enter__ = MagicMock(return_value=file_handle)
-            file_handle.__exit__ = MagicMock(return_value=False)
-            file_handle.write = MagicMock()
-            file_handle.read = MagicMock(return_value='')
-            mock_open.return_value = file_handle
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
+        ):
             await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_import_subprocess_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
@@ -1000,7 +1105,7 @@ class TestDatabaseSync:
         status = MagicMock()
         status.edit = AsyncMock()
         _database_sync_thread_ctx(ctx, status=status)
-        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\n'
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -1013,12 +1118,15 @@ class TestDatabaseSync:
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
         bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
-        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), _mock_create_subprocess_exec(import_returncode=1), patch('extensions.administration.discord.File', return_value=MagicMock()), patch('extensions.administration.os.path.exists', return_value=True), patch('extensions.administration.os.remove'), patch('extensions.administration.os.unlink'), patch('builtins.open', create=True) as mock_open:
-            file_handle = MagicMock()
-            file_handle.__enter__ = MagicMock(return_value=file_handle)
-            file_handle.__exit__ = MagicMock(return_value=False)
-            file_handle.write = MagicMock()
-            mock_open.return_value = file_handle
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(import_returncode=1),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
+        ):
             await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_no_schema_in_dump(self, cog: AdministrationCog, bot: MagicMock) -> None:
@@ -1063,6 +1171,34 @@ class TestDatabaseSync:
         with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.database_sync(ctx)
 
+    async def test_filtered_import_validation_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'USE `testdb`;\nSELECT 1;\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
+        ):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
+
     async def test_filter_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
@@ -1081,13 +1217,13 @@ class TestDatabaseSync:
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
         bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
-        real_open = open
-
-        def failing_open(path: str, *args: Any, **kwargs: Any):
-            if path == 'filtered_import.sql' and 'w' in args:
-                raise OSError('cannot write filter')
-            return real_open(path, *args, **kwargs)
-        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), _mock_create_subprocess_exec(), patch('extensions.administration.discord.File', return_value=MagicMock()), patch('extensions.administration.os.unlink'), patch('builtins.open', side_effect=failing_open):
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content, fail_filtered_write=True),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
+        ):
             await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
 class TestHelpers:

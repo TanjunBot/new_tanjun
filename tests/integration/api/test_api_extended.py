@@ -782,7 +782,7 @@ class TestLogChannelApi:
             await set_log_channel(GUILD_ID, CHANNEL_ID)
         sqls = [call.args[0] for call in action.await_args_list]
         assert any("CREATE TABLE" in sql and "log_enables" in sql for sql in sqls)
-        assert any("REPLACE INTO log_enables" in sql for sql in sqls)
+        assert any("INSERT INTO log_enables" in sql and "ON DUPLICATE KEY" in sql for sql in sqls)
         assert any("INSERT INTO log_channel" in sql for sql in sqls)
 
     @pytest.mark.asyncio

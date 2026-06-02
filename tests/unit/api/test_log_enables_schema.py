@@ -50,32 +50,46 @@ class TestEnsureLogEnablesTable:
 
     @pytest.mark.asyncio
     async def test_get_log_enable_ensures_table_before_select(self) -> None:
-        action = AsyncMock()
-        query = AsyncMock(return_value=None)
-        with patch("api.execute_action", new=action), patch("api.execute_query", new=query):
+        call_order: list[str] = []
+
+        async def track_action(query: str, params=None, bot=None) -> int:
+            if "CREATE TABLE" in query and "log_enables" in query:
+                call_order.append("create")
+            return 1
+
+        async def track_query(query: str, params=None, bot=None) -> None:
+            if "FROM log_enables" in query:
+                call_order.append("select")
+            return None
+
+        with patch("api.execute_action", side_effect=track_action), patch("api.execute_query", side_effect=track_query):
             result = await get_log_enable(GUILD_ID)
-        create_calls = [c for c in action.await_args_list if "log_enables" in c.args[0] and "CREATE TABLE" in c.args[0]]
-        assert len(create_calls) == 1
-        select_calls = [c for c in query.await_args_list if "FROM log_enables" in c.args[0]]
-        assert len(select_calls) == 1
+        assert call_order.index("create") < call_order.index("select")
         assert result.guild_id == str(GUILD_ID)
 
     @pytest.mark.asyncio
     async def test_set_log_enable_ensures_table_and_row(self) -> None:
-        action = AsyncMock()
-        query = AsyncMock(return_value=None)
-        with patch("api.execute_action", new=action), patch("api.execute_query", new=query):
+        action = AsyncMock(return_value=1)
+        with patch("api.execute_action", new=action):
             await set_log_enable(GUILD_ID, memberJoin=False)
         sqls = [c.args[0] for c in action.await_args_list]
         assert any("CREATE TABLE" in sql and "log_enables" in sql for sql in sqls)
-        assert any("REPLACE INTO log_enables" in sql for sql in sqls)
+        assert any("INSERT INTO log_enables" in sql and "ON DUPLICATE KEY" in sql for sql in sqls)
         assert any("UPDATE log_enables" in sql for sql in sqls)
 
     @pytest.mark.asyncio
-    async def test_ensure_log_enable_row_skips_replace_when_row_exists(self) -> None:
-        action = AsyncMock()
-        query = AsyncMock(return_value=[(1,)])
-        with patch("api.execute_action", new=action), patch("api.execute_query", new=query):
+    async def test_ensure_log_enables_table_retries_after_failed_ddl(self) -> None:
+        action = AsyncMock(side_effect=[None, 1])
+        with patch("api.execute_action", new=action):
+            await _ensure_log_enables_table()
+            await _ensure_log_enables_table()
+        create_calls = [c for c in action.await_args_list if "CREATE TABLE" in c.args[0]]
+        assert len(create_calls) == 2
+
+    @pytest.mark.asyncio
+    async def test_ensure_log_enable_row_uses_upsert(self) -> None:
+        action = AsyncMock(return_value=1)
+        with patch("api.execute_action", new=action):
             await _ensure_log_enable_row(GUILD_ID)
-        replace_calls = [c for c in action.await_args_list if "REPLACE INTO log_enables" in c.args[0]]
-        assert not replace_calls
+        upsert_calls = [c for c in action.await_args_list if "ON DUPLICATE KEY" in c.args[0]]
+        assert upsert_calls
