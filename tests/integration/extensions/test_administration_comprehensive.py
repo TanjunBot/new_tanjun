@@ -934,8 +934,9 @@ class TestDatabaseSync:
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
         bot.wait_for = AsyncMock(return_value=_confirmation_msg('unknown_schema', ctx.author, ctx.channel))
-        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), patch('extensions.administration.subprocess.run', side_effect=RuntimeError('dump fail')):
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), patch('extensions.administration.subprocess.run') as run_mock:
             await cog.database_sync(ctx, url='http://example.com/dump.sql')
+        run_mock.assert_not_called()
 
     async def test_full_import_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)

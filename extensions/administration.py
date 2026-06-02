@@ -80,6 +80,19 @@ def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str)
     return ''.join(output_lines)
 
 
+def _has_executable_sql(sql_content: str) -> bool:
+    for raw_line in sql_content.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith('--') or line.startswith('/*') or line.startswith('*/'):
+            continue
+        if line.startswith('/*!'):
+            continue
+        return True
+    return False
+
+
 class AdministrationCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot) -> None:
@@ -583,8 +596,9 @@ class AdministrationCog(commands.Cog):
         await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'))
         with open('temp_import.sql', encoding='utf-8', errors='ignore') as f:
             sql_content = f.read()
-        schemas = _extract_schemas_from_sql(sql_content)
-        if not schemas:
+        detected_schemas = _extract_schemas_from_sql(sql_content)
+        schemas = set(detected_schemas)
+        if not detected_schemas:
             schemas.add(l10n.commands.admin.database_sync.no_schema_found(self._locale(ctx)))
         schema_list = '\n'.join([f'- `{s}`' for s in schemas])
         await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.schema_prompt(self._locale(ctx), schema_list=schema_list), title='Database Sync'))
@@ -601,8 +615,9 @@ class AdministrationCog(commands.Cog):
         if selected_schema.lower() == cancel_token:
             await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.aborted(self._locale(ctx)), title='Database Sync'))
             return
-        if selected_schema not in schemas and l10n.commands.admin.database_sync.no_schema_found(self._locale(ctx)) not in list(schemas)[0]:
-            await ctx.channel.send(embed=warning_embed(l10n.commands.admin.database_sync.schema_warning(self._locale(ctx)), title='Database Sync'))
+        if detected_schemas and selected_schema not in detected_schemas:
+            await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.schema_warning(self._locale(ctx)), title='Database Sync'))
+            return
         await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.preparing_import(self._locale(ctx), schema=selected_schema), title='Database Sync'))
         assert config.database_user is not None
         assert config.database_password is not None
@@ -627,6 +642,9 @@ class AdministrationCog(commands.Cog):
                 selected_schema=selected_schema,
                 target_schema=config.database_schema,
             )
+            if not _has_executable_sql(filtered_content):
+                await ctx.channel.send(embed=error_embed('The selected schema produced an empty import file. Please choose a schema that exists in the dump.', title='Database Sync'))
+                return
             with open(filtered_sql_file, 'w', encoding='utf-8') as f_out:
                 f_out.write(filtered_content)
         except Exception as e:
