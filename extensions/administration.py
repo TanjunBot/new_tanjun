@@ -45,38 +45,52 @@ def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
 def _extract_schemas_from_sql(sql_content: str) -> set[str]:
     schemas: set[str] = set()
     for line in sql_content.splitlines():
+        current_db_match = re.search('^\\s*--\\s*Current Database:\\s*`([^`]+)`', line, re.IGNORECASE)
         use_match = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
         create_match = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
-        qualified_match = re.search('`([^`]+)`\\.`[^`]+`', line)
-        if create_match:
+        if current_db_match:
+            schemas.add(current_db_match.group(1))
+        elif create_match:
             schemas.add(create_match.group(1))
         elif use_match:
             schemas.add(use_match.group(1))
-        elif qualified_match:
-            schemas.add(qualified_match.group(1))
     return schemas
 
 
 def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str) -> str:
-    current_schema = None
+    current_schema: str | None = None
+    seen_current_db_marker = False
     selected_lower = selected_schema.lower()
+    header_lines: list[str] = []
+    selected_lines: list[str] = []
     output_lines: list[str] = []
     for line in sql_content.splitlines(keepends=True):
+        current_db_marker_m = re.search('^\\s*--\\s*Current Database:\\s*`([^`]+)`', line, re.IGNORECASE)
         use_m = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
         create_m = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
-        if create_m:
+        if current_db_marker_m:
+            current_schema = current_db_marker_m.group(1)
+            seen_current_db_marker = True
+        elif create_m:
             current_schema = create_m.group(1)
         elif use_m:
             current_schema = use_m.group(1)
-        if current_schema is not None and current_schema.lower() != selected_lower:
+        if not seen_current_db_marker:
+            header_lines.append(line)
             continue
+        if current_schema is not None and current_schema.lower() == selected_lower:
+            selected_lines.append(line)
+    output_lines.extend(header_lines)
+    output_lines.extend(selected_lines)
+    transformed_lines: list[str] = []
+    for line in output_lines:
         mod_line = re.sub('DEFINER\\s*=\\s*`[^`]+`@`[^`]+`\\s*', '', line, flags=re.IGNORECASE)
         mod_line = re.sub('SQL\\s+SECURITY\\s+DEFINER\\s*', '', mod_line, flags=re.IGNORECASE)
         mod_line = re.sub(f'(CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
         mod_line = re.sub(f'(USE\\s+)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
         mod_line = re.sub(f'`{re.escape(selected_schema)}`\\.', f'`{target_schema}`.', mod_line, flags=re.IGNORECASE)
-        output_lines.append(mod_line)
-    return ''.join(output_lines)
+        transformed_lines.append(mod_line)
+    return ''.join(transformed_lines)
 
 
 def _has_executable_sql(sql_content: str) -> bool:
@@ -90,6 +104,41 @@ def _has_executable_sql(sql_content: str) -> bool:
             continue
         return True
     return False
+
+
+def _extract_table_names_from_sql(sql_content: str) -> list[str]:
+    names: list[str] = []
+    for line in sql_content.splitlines():
+        m = re.search('^\\s*CREATE\\s+TABLE\\s+`([^`]+)`', line, re.IGNORECASE)
+        if m:
+            names.append(m.group(1))
+    return names
+
+
+def _extract_use_schemas(sql_content: str) -> list[str]:
+    schemas: list[str] = []
+    for line in sql_content.splitlines():
+        m = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        if m:
+            schemas.append(m.group(1))
+    return schemas
+
+
+def _validate_filtered_import_sql(sql_content: str, target_schema: str) -> tuple[bool, str, list[str]]:
+    if not _has_executable_sql(sql_content):
+        return False, 'The selected schema produced an empty import file. Please choose a schema that exists in the dump.', []
+    lower = sql_content.lower()
+    if f'create database `{target_schema.lower()}`' not in lower and f'use `{target_schema.lower()}`' not in lower:
+        return False, 'The filtered import does not include CREATE/USE statements for the target schema.', []
+    use_schemas = _extract_use_schemas(sql_content)
+    invalid_use = [name for name in use_schemas if name.lower() != target_schema.lower()]
+    if invalid_use:
+        bad = ', '.join(sorted(set(invalid_use))[:5])
+        return False, f'The filtered import still references other schemas in USE statements: {bad}', []
+    table_names = _extract_table_names_from_sql(sql_content)
+    if not table_names:
+        return False, 'The filtered import does not contain any CREATE TABLE statements.', []
+    return True, '', table_names
 
 
 class AdministrationCog(commands.Cog):
@@ -660,16 +709,21 @@ class AdministrationCog(commands.Cog):
             with contextlib.suppress(OSError):
                 os.unlink(defaults_file)
         filtered_sql_file = 'filtered_import.sql'
+        selected_dump_file = f'{selected_schema}_only.sql'
+        expected_table_names: list[str] = []
         try:
             filtered_content = _filter_sql_dump(
                 sql_content,
                 selected_schema=selected_schema,
                 target_schema=config.database_schema,
             )
-            if not _has_executable_sql(filtered_content):
-                await _thread_send(embed=error_embed('The selected schema produced an empty import file. Please choose a schema that exists in the dump.', title='Database Sync'))
+            is_valid, validation_error, expected_table_names = _validate_filtered_import_sql(filtered_content, config.database_schema)
+            if not is_valid:
+                await _thread_send(embed=error_embed(validation_error, title='Database Sync'))
                 return
             with open(filtered_sql_file, 'w', encoding='utf-8') as f_out:
+                f_out.write(filtered_content)
+            with open(selected_dump_file, 'w', encoding='utf-8') as f_out:
                 f_out.write(filtered_content)
         except Exception as e:
             await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.filter_error(self._locale(ctx), error=e), title='Database Sync'))
@@ -715,6 +769,36 @@ class AdministrationCog(commands.Cog):
                 stderr_text = stderr.decode(errors='replace')
                 if stderr_text.strip():
                     await _thread_send(f"```\n{_truncate_log(stderr_text)}\n```")
+            verify_sql = (
+                f"USE `{config.database_schema}`; "
+                "SELECT COUNT(*) FROM information_schema.tables "
+                f"WHERE table_schema='{config.database_schema}';"
+            )
+            verify_proc = await asyncio.create_subprocess_exec(
+                'mysql', f'--defaults-extra-file={import_defaults_file}', '-N', '-B', '-e', verify_sql,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            verify_stdout, verify_stderr = await verify_proc.communicate()
+            if verify_proc.returncode != 0:
+                verify_error = _truncate_log((verify_stderr or b'').decode(errors='replace'))
+                await _thread_send(embed=error_embed(f'Post-import verification failed:\n```\n{verify_error}\n```', title='Database Sync'))
+                return
+            table_count_text = (verify_stdout or b'').decode(errors='replace').strip()
+            try:
+                imported_table_count = int(table_count_text.splitlines()[-1])
+            except (ValueError, IndexError):
+                await _thread_send(embed=error_embed('Post-import verification returned an unreadable table count.', title='Database Sync'))
+                return
+            expected_table_count = len(set(expected_table_names))
+            if imported_table_count < expected_table_count or imported_table_count == 0:
+                await _thread_send(
+                    embed=error_embed(
+                        f'Post-import verification failed: expected at least {expected_table_count} tables, found {imported_table_count}.',
+                        title='Database Sync',
+                    ),
+                )
+                return
             await _thread_send(embed=success_embed(l10n.commands.admin.database_sync.success(self._locale(ctx)), title='Database Sync'))
         except Exception as e:
             await _thread_send(embed=error_embed(l10n.commands.admin.database_sync.import_error(self._locale(ctx), error=e), title='Database Sync'))
