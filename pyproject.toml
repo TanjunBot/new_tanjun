@@ -167,6 +167,8 @@ source = ["."]
 omit = [
     "tests/*",
     "build/*",
+    "locale_keys/_literal_keys.py",
+    "locale_keys/_registry.py",
 ]
 branch = true
 
