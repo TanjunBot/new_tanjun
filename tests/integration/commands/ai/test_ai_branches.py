@@ -115,7 +115,7 @@ async def test_show_tokens_with_balance(mock_service, admin_command_info):
         return_value=TokenOverview(free_token=100, plus_token=50, paid_token=25, used_token=10)
     )
     await show_tokens(admin_command_info)
-    mock_service.initialize_user.assert_not_awaited()
+    mock_service.initialize_user.assert_not_called()
     admin_command_info.reply.assert_awaited_once()
 
 

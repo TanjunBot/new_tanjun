@@ -46,6 +46,10 @@ Tanjun is configured through environment variables defined in a `.env` file. Thi
 | `prometheus_port` | Port for Prometheus metrics endpoint (default: `9090`) |
 | `healthcheck_port` | Port for health check endpoint (default: `8080`) |
 | `sentry_dsn` | Sentry DSN for error tracking |
+| `UPTIME_KUMA_PUSH_TOKEN` | Uptime Kuma push monitor token (optional; omit to disable heartbeats) |
+| `UPTIME_KUMA_STATUS_URL` | Uptime Kuma base URL (default: `https://status.tanjun.bot`) |
+| `HEALTH_ALERT_CHANNEL_ID` | Discord channel ID for internal health-check failure alerts |
+| `HEALTH_ALERT_USER_ID` | Discord user ID to ping with health-check failure alerts |
 
 ### Bot Behavior
 
@@ -87,6 +91,8 @@ openai_tokens=10000
 log_level=INFO
 prometheus_port=9090
 healthcheck_port=8080
+UPTIME_KUMA_PUSH_TOKEN=your_push_token_from_uptime_kuma
+# UPTIME_KUMA_STATUS_URL=https://status.tanjun.bot
 ```
 
 > See [.env.example](https://github.com/TanjunBot/new_tanjun/blob/development/.env.example) in the repository for the latest template.

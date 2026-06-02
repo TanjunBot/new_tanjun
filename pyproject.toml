@@ -16,7 +16,7 @@ authors = [
 
 dependencies = [
     "pywin32==311; sys_platform == 'win32'",
-    "aiohttp==3.13.5",
+    "aiohttp==3.14.0",
     "akinator-python==1.6.0",
     "annotated-types==0.7.0",
     "anyio==4.13.0",
@@ -145,7 +145,7 @@ version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ai*", "loops*", "assets*", "health*", "locales*", "commands*", "minigames*", "extensions*", "utils*"]
+include = ["ai*", "loops*", "assets*", "health*", "locales*", "locale_keys*", "commands*", "minigames*", "extensions*", "utils*"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]
@@ -167,6 +167,8 @@ source = ["."]
 omit = [
     "tests/*",
     "build/*",
+    "locale_keys/_literal_keys.py",
+    "locale_keys/_registry.py",
 ]
 branch = true
 

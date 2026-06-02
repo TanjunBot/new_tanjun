@@ -1,22 +1,10 @@
+from locale_keys import locale
 import discord
-
-from localizer import tanjunLocalizer
 from utility import CommandInfo, tanjunEmbed
 
-
 async def avatar(command_info: CommandInfo, user: discord.Member) -> None:
-    embed = tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            command_info.locale,
-            "commands.utility.avatar.title",
-            user=user.display_name,
-        ),
-    )
-    embed.set_image(
-        url=user.display_avatar.url
-        if user.display_avatar
-        else f"https://cdn.discordapp.com/embed/avatars/{(user.id >> 22) % 6}.png"
-    )
+    embed = tanjunEmbed(title=locale.commands.utility.avatar.title(command_info.locale, user=user.display_name))
+    embed.set_image(url=user.display_avatar.url if user.display_avatar else f'https://cdn.discordapp.com/embed/avatars/{(user.id >> 22) % 6}.png')
     if user.guild_avatar and user.avatar:
         embed.set_thumbnail(url=user.avatar.url)
     await command_info.reply(embed=embed)

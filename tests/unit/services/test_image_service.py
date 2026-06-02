@@ -55,8 +55,7 @@ class TestImageService:
         assert len(result) > 0
 
     def test_format_error_embed(self):
-        with patch("localizer.tanjunLocalizer.localize", return_value="Error"):
-            embed = ImageService.format_error_embed("en-US", "invalid_format")
+        embed = ImageService.format_error_embed("en-US", "error.unknown_filter")
         assert embed is not None
 
     def test_validate_attachment_filesize(self):

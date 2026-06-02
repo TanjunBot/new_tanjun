@@ -289,11 +289,16 @@ class TestTwitchServiceParseNotification:
         assert result == "Go watch Streamer!"
 
     def test_default_message_when_none(self, service: TwitchService):
-        with patch(
-            "services.twitch_service.tanjunLocalizer.localize",
-            return_value="Default {name} live",
-        ):
+        import services.twitch_service as twitch_mod
+        # _locale is a frozen dataclass; replace the module-level reference instead
+        orig = twitch_mod._locale
+        mock_locale = MagicMock()
+        mock_locale.commands.utility.twitch.defaultNotificationMessage = MagicMock(return_value="Default {name} live")
+        twitch_mod._locale = mock_locale
+        try:
             result = service.parse_notification_message(None, "en-US", "Streamer")
+        finally:
+            twitch_mod._locale = orig
         assert result == "Default Streamer live"
 
 

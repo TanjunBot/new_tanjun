@@ -13,7 +13,8 @@ from discord import app_commands
 from discord.ext import commands
 
 from config import sentry_dsn
-from localizer import tanjunLocalizer
+from locale_keys import locale as l10n
+from locale_keys.types import LocalizedString
 from utility import ErrorEmbedCategory
 from utils.exception_reporter import handle_discord_event_error
 from utils.github import report_bot_exception
@@ -62,6 +63,13 @@ def _set_sentry_context(interaction: discord.Interaction) -> None:
         logger.debug("Failed to set Sentry context", exc_info=True)
 
 
+def _normalize_locale(locale_str: str | None) -> str:
+    if locale_str is None:
+        return "en"
+    primary_lang = str(locale_str).split("-")[0].split("_")[0].lower()
+    return primary_lang if primary_lang else "en"
+
+
 def _get_locale(interaction: discord.Interaction) -> str:
     """Resolve a usable locale string from the interaction.
 
@@ -71,16 +79,14 @@ def _get_locale(interaction: discord.Interaction) -> str:
     locale_str = None
     if interaction.guild_locale is not None:
         locale_str = interaction.guild_locale.value
-    # Fall back to user locale when guild locale is unavailable (DMs etc.)
     elif interaction.locale is not None:
         locale_str = interaction.locale.value
+    return _normalize_locale(locale_str)
 
-    if locale_str is None:
-        return "en"
 
-    # Normalize to primary language subtag: "de-DE" -> "de", "en_US" -> "en"
-    primary_lang = str(locale_str).split("-")[0].split("_")[0].lower()
-    return primary_lang if primary_lang else "en"
+def _get_locale_from_context(ctx: commands.Context) -> str:
+    locale_str = str(ctx.guild.preferred_locale) if ctx.guild is not None else None
+    return _normalize_locale(locale_str)
 
 
 class ErrorHandlerCog(commands.Cog):
@@ -114,6 +120,28 @@ class ErrorHandlerCog(commands.Cog):
             context["command"] = interaction.command.qualified_name
         return context
 
+    async def _build_error_embed_from_locale(
+        self,
+        locale: str,
+        category: ErrorEmbedCategory = ErrorEmbedCategory.UNEXPECTED,
+        locale_key: str = "errors.unexpected_error",
+        **kwargs: Any,
+    ) -> discord.Embed:
+        error_name = locale_key.split(".", 1)[1]
+        if hasattr(l10n.errors, error_name):
+            error_node = getattr(l10n.errors, error_name)
+            title = error_node.title(locale, **kwargs)
+            description = error_node.description(locale, **kwargs)
+        else:
+            title = LocalizedString(f"{locale_key}.title")(locale, **kwargs)
+            description = LocalizedString(f"{locale_key}.description")(locale, **kwargs)
+
+        return discord.Embed(
+            title=title if "no translation found" not in title.lower() else "Error",
+            description=description if "no translation found" not in description.lower() else "An unexpected error occurred.",
+            colour=category.value,
+        )
+
     async def _build_error_embed(
         self,
         interaction: discord.Interaction,
@@ -121,33 +149,139 @@ class ErrorHandlerCog(commands.Cog):
         locale_key: str = "errors.unexpected_error",
         **kwargs: Any,
     ) -> discord.Embed:
-        """Build a localized error embed for the given translation key.
-
-        Parameters
-        ----------
-        interaction:
-            The interaction to derive the locale and guild from.
-        category:
-            The error category to determine embed colour.
-        locale_key:
-            The dot-notation localizer key (e.g. ``"errors.cooldown"``).
-        **kwargs:
-            Extra substitution variables for the translation template.
-        """
-        locale = _get_locale(interaction)
-
-        title_key = f"{locale_key}.title"
-        desc_key = f"{locale_key}.description"
-
-        title: str = tanjunLocalizer.localize(locale, title_key, **kwargs)
-        description: str = tanjunLocalizer.localize(locale, desc_key, **kwargs)
-
-        embed = discord.Embed(
-            title=title if "no translation found" not in title.lower() else "Error",
-            description=description if "no translation found" not in description.lower() else "An unexpected error occurred.",
-            colour=category.value,
+        return await self._build_error_embed_from_locale(
+            _get_locale(interaction),
+            category,
+            locale_key,
+            **kwargs,
         )
-        return embed
+
+    @staticmethod
+    def _prefix_command_context(ctx: commands.Context) -> dict[str, str]:
+        context: dict[str, str] = {
+            "channel_id": str(ctx.channel.id),
+            "user": str(ctx.author),
+            "user_id": str(ctx.author.id),
+        }
+        if ctx.guild:
+            context["guild"] = ctx.guild.name
+            context["guild_id"] = str(ctx.guild.id)
+        if ctx.command:
+            context["command"] = ctx.command.qualified_name
+        return context
+
+    async def _send_prefix_command_error(self, ctx: commands.Context, embed: discord.Embed) -> None:
+        try:
+            await ctx.send(embed=embed)
+        except discord.Forbidden:
+            try:
+                await ctx.author.send(embed=embed)
+            except Exception:
+                logger.exception("Failed to send prefix command error embed via DM.")
+        except discord.HTTPException as send_error:
+            if send_error.status == 400 and send_error.code == 40060:
+                return
+            logger.exception("Failed to send prefix command error embed.")
+        except Exception:
+            logger.exception("Failed to send prefix command error embed.")
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        await self._on_prefix_command_error(ctx, error)
+
+    async def _on_prefix_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        original = error.original if isinstance(error, commands.CommandInvokeError) else error
+        locale = _get_locale_from_context(ctx)
+
+        if isinstance(original, commands.CommandOnCooldown):
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.RATE_LIMIT,
+                "errors.cooldown",
+                retry_after=round(original.retry_after, 1),
+            )
+
+        elif isinstance(original, commands.CheckFailure):
+            missing_permissions = None
+            if isinstance(original, (commands.MissingPermissions, commands.BotMissingPermissions)):
+                perms = getattr(original, "missing_permissions", None)
+                if perms:
+                    missing_permissions = ", ".join(str(p).replace("_", " ").title() for p in perms)
+
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.PERMISSION,
+                "errors.missing_permissions",
+                missing_permissions=missing_permissions or "Unknown",
+            )
+
+        elif isinstance(original, discord.Forbidden):
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.PERMISSION,
+                "errors.forbidden",
+            )
+
+        elif isinstance(original, discord.HTTPException):
+            if original.status == 400 and original.code == 40060:
+                return
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.UNEXPECTED,
+                "errors.http_error",
+                status_code=original.status,
+            )
+
+        elif isinstance(original, commands.CommandNotFound):
+            return
+
+        elif isinstance(original, (commands.BadArgument, commands.ConversionError, commands.UserInputError)):
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.VALIDATION,
+                "errors.transformer_error",
+            )
+
+        else:
+            command_name = ctx.command.qualified_name if ctx.command else "unknown"
+            if sentry_dsn:
+                try:
+                    import sentry_sdk
+
+                    with sentry_sdk.push_scope() as scope:
+                        scope.set_user({"id": str(ctx.author.id), "username": str(ctx.author)})
+                        if ctx.guild:
+                            scope.set_tag("guild_id", str(ctx.guild.id))
+                            scope.set_tag("guild_name", ctx.guild.name)
+                        if ctx.command:
+                            scope.set_tag("command", ctx.command.qualified_name)
+                        scope.set_context(
+                            "command",
+                            {
+                                "channel_id": str(ctx.channel.id),
+                                "message_id": str(ctx.message.id),
+                            },
+                        )
+                        logger.exception("Unhandled prefix command error in %s: %s", command_name, original)
+                except Exception:
+                    logger.debug("Failed to set Sentry context", exc_info=True)
+                    logger.exception("Unhandled prefix command error in %s: %s", command_name, original)
+            else:
+                logger.exception("Unhandled prefix command error in %s: %s", command_name, original)
+
+            traceback.print_exception(type(original), original, original.__traceback__)
+            await report_bot_exception(
+                original,
+                source="prefix_command",
+                context=self._prefix_command_context(ctx),
+            )
+            embed = await self._build_error_embed_from_locale(
+                locale,
+                ErrorEmbedCategory.UNEXPECTED,
+                "errors.unexpected_error",
+            )
+
+        await self._send_prefix_command_error(ctx, embed)
 
     async def _on_app_command_error(
         self,
@@ -210,19 +344,6 @@ class ErrorHandlerCog(commands.Cog):
                 interaction,
                 ErrorEmbedCategory.VALIDATION,
                 "errors.transformer_error",
-            )
-
-        elif isinstance(original, commands.CommandInvokeError):
-            traceback.print_exception(type(original), original, original.__traceback__)
-            await report_bot_exception(
-                original,
-                source="app_command",
-                context=self._interaction_context(interaction),
-            )
-            embed = await self._build_error_embed(
-                interaction,
-                ErrorEmbedCategory.UNEXPECTED,
-                "errors.unexpected_error",
             )
 
         else:

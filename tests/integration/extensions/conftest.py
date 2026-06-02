@@ -46,6 +46,34 @@ def _ensure_app_command_errors() -> None:
     class TransformerError(AppCommandError):
         pass
 
+    class PrefixCommandOnCooldown(AppCommandError):
+        def __init__(self, *args, retry_after: float = 0, **kwargs) -> None:
+            super().__init__(*args)
+            self.retry_after = retry_after
+
+    class PrefixCheckFailure(AppCommandError):
+        pass
+
+    class PrefixMissingPermissions(PrefixCheckFailure):
+        def __init__(self, missing_permissions: list[str] | None = None) -> None:
+            self.missing_permissions = missing_permissions or []
+
+    class PrefixBotMissingPermissions(PrefixCheckFailure):
+        def __init__(self, missing_permissions: list[str] | None = None) -> None:
+            self.missing_permissions = missing_permissions or []
+
+    class PrefixCommandNotFound(AppCommandError):
+        pass
+
+    class PrefixBadArgument(AppCommandError):
+        pass
+
+    class PrefixConversionError(AppCommandError):
+        pass
+
+    class PrefixUserInputError(AppCommandError):
+        pass
+
     ac = mock.app_commands
     ac.AppCommandError = AppCommandError
     ac.CommandOnCooldown = CommandOnCooldown
@@ -59,7 +87,16 @@ def _ensure_app_command_errors() -> None:
     ac.AppCommandOptionType.string = "string"
     ac.autocomplete = lambda *a, **k: lambda f: f
 
-    mock.ext.commands.CommandInvokeError = CommandInvokeError
+    cmd = mock.ext.commands
+    cmd.CommandInvokeError = CommandInvokeError
+    cmd.CommandOnCooldown = PrefixCommandOnCooldown
+    cmd.CheckFailure = PrefixCheckFailure
+    cmd.MissingPermissions = PrefixMissingPermissions
+    cmd.BotMissingPermissions = PrefixBotMissingPermissions
+    cmd.CommandNotFound = PrefixCommandNotFound
+    cmd.BadArgument = PrefixBadArgument
+    cmd.ConversionError = PrefixConversionError
+    cmd.UserInputError = PrefixUserInputError
 
 
 @pytest.fixture(scope="session", autouse=True)

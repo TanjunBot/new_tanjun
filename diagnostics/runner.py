@@ -40,19 +40,17 @@ EXPECTED_COGS = frozenset(
 CONCURRENCY = 8
 SPEC_PROGRESS_INTERVAL = 10
 PROGRESS_BAR_WIDTH = 12
-
 _PHASE_PLAN: tuple[tuple[str, str], ...] = (
     ("A", "Infrastructure"),
     ("B", "Platform health"),
     ("C", "Background loops"),
     ("D", "Command tree manifest"),
-    ("G", "Spec coverage"),
-    ("F", "Extensions loaded"),
     ("E", "Slash handler behaviors"),
+    ("F", "Extensions loaded"),
+    ("I", "Prefix commands"),
+    ("G", "Spec coverage"),
     ("H", "Localization"),
-    ("I", "Admin prefix commands"),
 )
-
 
 class DiagnosticsRunner:
     def __init__(
@@ -160,11 +158,11 @@ class DiagnosticsRunner:
             self._run_phase_b_health,
             self._run_phase_c_loops,
             self._run_phase_d_tree,
-            self._run_phase_g_coverage,
-            self._run_phase_f_extensions,
             self._run_phase_e_handlers,
-            self._run_phase_h_locales,
+            self._run_phase_f_extensions,
             self._run_phase_i_prefix,
+            self._run_phase_g_coverage,
+            self._run_phase_h_locales,
         )
         for phase_index, ((phase_id, phase_title), phase_fn) in enumerate(
             zip(_PHASE_PLAN, phase_runners, strict=True), start=1
@@ -276,6 +274,14 @@ class DiagnosticsRunner:
         await self._report_phase(phase)
         await self._update_progress(phase_index, "D: Command tree manifest", f"Complete — {phase.failed} failed")
 
+    async def _run_phase_i_prefix(self, phase_index: int) -> None:
+        phase = PhaseResult("I", "Prefix commands")
+        await self._thread_send("## Phase I: Prefix commands")
+        phase.outcomes.extend(await run_prefix_command_checks(self.bot))
+        self.summary.phases.append(phase)
+        await self._report_phase(phase, compact_passed=True)
+        await self._update_progress(phase_index, "I: Prefix commands", f"Complete — {phase.failed} failed")
+
     async def _run_phase_g_coverage(self, phase_index: int) -> None:
         phase = PhaseResult("G", "Spec coverage")
         await self._thread_send("## Phase G: Spec coverage vs manifest")
@@ -343,16 +349,6 @@ class DiagnosticsRunner:
         self.summary.phases.append(phase)
         await self._report_phase(phase, compact_passed=True)
         await self._update_progress(phase_index, "H: Localization", f"Complete — {phase.failed} failed")
-
-    async def _run_phase_i_prefix(self, phase_index: int) -> None:
-        phase = PhaseResult("I", "Admin prefix commands")
-        await self._thread_send("## Phase I: Administration prefix commands")
-
-        phase.outcomes.extend(await run_prefix_command_checks(self.bot))
-
-        self.summary.phases.append(phase)
-        await self._report_phase(phase, compact_passed=True)
-        await self._update_progress(phase_index, "I: Admin prefix commands", f"Complete — {phase.failed} failed")
 
     async def _finalize(self) -> None:
         s = self.summary

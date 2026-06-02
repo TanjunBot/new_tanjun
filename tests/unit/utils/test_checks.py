@@ -153,7 +153,7 @@ class TestCheckBotHierarchy:
         target = make_target_member(top_role_position=5)
         info = make_command_info(guild=guild)
         result = check_bot_hierarchy(info, target)
-        assert result == ("targetTooHighBot", ErrorEmbedCategory.PERMISSION, False)
+        assert result == ("targetTooHigh", ErrorEmbedCategory.PERMISSION, False)
 
     def test_bot_hierarchy_ok(self):
         guild = make_guild(me_top_role_position=50)
@@ -228,7 +228,7 @@ class TestManagedRolesAndEqualHierarchy:
         target = make_target_member(top_role_position=7)
         info = make_command_info(guild=guild)
         result = check_bot_hierarchy(info, target)
-        assert result == ("targetTooHighBot", ErrorEmbedCategory.PERMISSION, False)
+        assert result == ("targetTooHigh", ErrorEmbedCategory.PERMISSION, False)
 
     def test_managed_role_position_still_blocks_executor(self):
         executor = make_member(top_role_position=3)
@@ -302,7 +302,7 @@ class TestSendCheckFailure:
     @pytest.mark.asyncio
     async def test_localize_keys_and_error_embed_path(self):
         info = make_command_info(locale="de-DE")
-        result = ("targetTooHighBot", ErrorEmbedCategory.PERMISSION, False)
+        result = ("targetTooHigh", ErrorEmbedCategory.PERMISSION, False)
         localized_keys: list[str] = []
 
         def _capture(_locale: str, key: str) -> str:
@@ -317,13 +317,13 @@ class TestSendCheckFailure:
             await send_check_failure(info, "ban", result)
 
         assert localized_keys == [
-            "commands.admin.ban.targetTooHighBot.title",
-            "commands.admin.ban.targetTooHighBot.description",
+            "commands.admin.ban.targetTooHigh.title",
+            "commands.admin.ban.targetTooHigh.description",
         ]
         mock_embed.assert_called_once_with(
             ErrorEmbedCategory.PERMISSION,
-            "commands.admin.ban.targetTooHighBot.title",
-            "commands.admin.ban.targetTooHighBot.description",
+            "commands.admin.ban.targetTooHigh.title",
+            "commands.admin.ban.targetTooHigh.description",
         )
         info.reply.assert_awaited_once_with(embed=embed)
 

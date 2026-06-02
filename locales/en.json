@@ -24384,7 +24384,7 @@
     "max_length": 100
   },
   {
-    "identifier": "games_memory_description",
+    "identifier": "games.memory.description",
     "source_string": "play_a_memory_matching_game",
     "translation": "play_a_memory_matching_game",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Play a memory matching game\".",
@@ -24392,7 +24392,7 @@
     "max_length": 32
   },
   {
-    "identifier": "games_memory_name",
+    "identifier": "games.memory.name",
     "source_string": "memory",
     "translation": "memory",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"memory\".",
@@ -24400,7 +24400,7 @@
     "max_length": 32
   },
   {
-    "identifier": "games_memory_params_user_description",
+    "identifier": "games.memory.params.user.description",
     "source_string": "the_user_to_play_against",
     "translation": "the_user_to_play_against",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The user to play against\".",
@@ -27800,6 +27800,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs.guildChannelUpdate.permissionOverwriteRemoved",
+    "source_string": "Permission overwrite removed: ${target}",
+    "translation": "Permission overwrite removed: ${target}",
+    "context": "Logging feature copy: guild Channel Update.permission Overwrite Removed.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
     "identifier": "logs.guildChannelUpdate.permissionOverwriteRemovedAllow",
     "source_string": "✅ Allowed Removed: ${permissions}",
     "translation": "✅ Allowed Removed: ${permissions}",
@@ -27868,6 +27876,46 @@
     "source_string": "Type changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
     "translation": "Type changed: \n<:empty:1312126155897442416>Before: ${before}\n<:empty:1312126155897442416>After: ${after}",
     "context": "Logging feature copy: guild Channel Update.type.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.category",
+    "source_string": "Category",
+    "translation": "Category",
+    "context": "Logging feature copy: guild Channel Update.types.category.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.forum",
+    "source_string": "Forum channel",
+    "translation": "Forum channel",
+    "context": "Logging feature copy: guild Channel Update.types.forum.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.stage",
+    "source_string": "Stage channel",
+    "translation": "Stage channel",
+    "context": "Logging feature copy: guild Channel Update.types.stage.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.text",
+    "source_string": "Text channel",
+    "translation": "Text channel",
+    "context": "Logging feature copy: guild Channel Update.types.text.",
+    "labels": "logs",
+    "max_length": null
+  },
+  {
+    "identifier": "logs.guildChannelUpdate.types.voice",
+    "source_string": "Voice channel",
+    "translation": "Voice channel",
+    "context": "Logging feature copy: guild Channel Update.types.voice.",
     "labels": "logs",
     "max_length": null
   },
@@ -30544,7 +30592,7 @@
     "max_length": null
   },
   {
-    "identifier": "logs_blacklistcat_add_description",
+    "identifier": "logs.blacklistcat.add.description",
     "source_string": "blacklist_a_category_from_logs",
     "translation": "blacklist_a_category_from_logs",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist a category from logs\".",
@@ -30552,7 +30600,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_add_name",
+    "identifier": "logs.blacklistcat.add.name",
     "source_string": "add-category",
     "translation": "add-category",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"add-category\".",
@@ -30560,7 +30608,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_add_params_channel_description",
+    "identifier": "logs.blacklistcat.add.params.channel.description",
     "source_string": "the_category_to_blacklist",
     "translation": "the_category_to_blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The category to blacklist\".",
@@ -30568,7 +30616,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_description",
+    "identifier": "logs.blacklistcat.description",
     "source_string": "manage_the_category_blacklist_fo",
     "translation": "manage_the_category_blacklist_fo",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the category blacklist for logging\".",
@@ -30576,7 +30624,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_name",
+    "identifier": "logs.blacklistcat.name",
     "source_string": "category-blacklist",
     "translation": "category-blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"category-blacklist\".",
@@ -30584,7 +30632,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_remove_description",
+    "identifier": "logs.blacklistcat.remove.description",
     "source_string": "remove_a_category_from_the_log_b",
     "translation": "remove_a_category_from_the_log_b",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Remove a category from the log blacklist\".",
@@ -30592,7 +30640,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_remove_name",
+    "identifier": "logs.blacklistcat.remove.name",
     "source_string": "remove-category",
     "translation": "remove-category",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"remove-category\".",
@@ -30600,7 +30648,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_remove_params_channel_description",
+    "identifier": "logs.blacklistcat.remove.params.channel.description",
     "source_string": "the_category_to_remove_from_blac",
     "translation": "the_category_to_remove_from_blac",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The category to remove from blacklist\".",
@@ -30608,7 +30656,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_show_description",
+    "identifier": "logs.blacklistcat.show.description",
     "source_string": "show_blacklisted_categories",
     "translation": "show_blacklisted_categories",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Show blacklisted categories\".",
@@ -30616,7 +30664,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistcat_show_name",
+    "identifier": "logs.blacklistcat.show.name",
     "source_string": "list-category",
     "translation": "list-category",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"list-category\".",
@@ -30624,7 +30672,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_add_description",
+    "identifier": "logs.blacklistv.add.description",
     "source_string": "blacklist_a_voice_channel_from_l",
     "translation": "blacklist_a_voice_channel_from_l",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Blacklist a voice channel from logs\".",
@@ -30632,7 +30680,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_add_name",
+    "identifier": "logs.blacklistv.add.name",
     "source_string": "add-voice",
     "translation": "add-voice",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"add-voice\".",
@@ -30640,7 +30688,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_add_params_channel_description",
+    "identifier": "logs.blacklistv.add.params.channel.description",
     "source_string": "the_voice_channel_to_blacklist",
     "translation": "the_voice_channel_to_blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The voice channel to blacklist\".",
@@ -30648,7 +30696,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_description",
+    "identifier": "logs.blacklistv.description",
     "source_string": "manage_the_voice_channel_blackli",
     "translation": "manage_the_voice_channel_blackli",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Manage the voice channel blacklist for logging\".",
@@ -30656,7 +30704,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_name",
+    "identifier": "logs.blacklistv.name",
     "source_string": "voice-blacklist",
     "translation": "voice-blacklist",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"voice-blacklist\".",
@@ -30664,7 +30712,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_remove_description",
+    "identifier": "logs.blacklistv.remove.description",
     "source_string": "remove_a_voice_channel_from_the_",
     "translation": "remove_a_voice_channel_from_the_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Remove a voice channel from the log blacklist\".",
@@ -30672,7 +30720,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_remove_name",
+    "identifier": "logs.blacklistv.remove.name",
     "source_string": "remove-voice",
     "translation": "remove-voice",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"remove-voice\".",
@@ -30680,7 +30728,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_remove_params_channel_description",
+    "identifier": "logs.blacklistv.remove.params.channel.description",
     "source_string": "the_voice_channel_to_remove_from",
     "translation": "the_voice_channel_to_remove_from",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"The voice channel to remove from blacklist\".",
@@ -30688,7 +30736,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_show_description",
+    "identifier": "logs.blacklistv.show.description",
     "source_string": "show_blacklisted_voice_channels",
     "translation": "show_blacklisted_voice_channels",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Show blacklisted voice channels\".",
@@ -30696,7 +30744,7 @@
     "max_length": 32
   },
   {
-    "identifier": "logs_blacklistv_show_name",
+    "identifier": "logs.blacklistv.show.name",
     "source_string": "list-voice",
     "translation": "list-voice",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"list-voice\".",
@@ -33104,7 +33152,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_booster_description",
+    "identifier": "setup.booster.description",
     "source_string": "interactive_wizard_for_booster_p",
     "translation": "interactive_wizard_for_booster_p",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard for booster perks configuration\".",
@@ -33112,7 +33160,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_booster_name",
+    "identifier": "setup.booster.name",
     "source_string": "booster",
     "translation": "booster",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"booster\".",
@@ -33120,7 +33168,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_description",
+    "identifier": "setup.description",
     "source_string": "interactive_setup_wizards",
     "translation": "interactive_setup_wizards",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive setup wizards\".",
@@ -33128,7 +33176,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_giveaway_description",
+    "identifier": "setup.giveaway.description",
     "source_string": "interactive_wizard_to_create_a_g",
     "translation": "interactive_wizard_to_create_a_g",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to create a giveaway\".",
@@ -33136,7 +33184,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_giveaway_name",
+    "identifier": "setup.giveaway.name",
     "source_string": "giveaway",
     "translation": "giveaway",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"giveaway\".",
@@ -33144,7 +33192,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_level_description",
+    "identifier": "setup.level.description",
     "source_string": "interactive_wizard_to_configure_",
     "translation": "interactive_wizard_to_configure_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to configure the leveling system\".",
@@ -33152,7 +33200,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_level_name",
+    "identifier": "setup.level.name",
     "source_string": "level",
     "translation": "level",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"level\".",
@@ -33160,7 +33208,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_logs_description",
+    "identifier": "setup.logs.description",
     "source_string": "interactive_wizard_to_configure_",
     "translation": "interactive_wizard_to_configure_",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"Interactive wizard to configure logging\".",
@@ -33168,7 +33216,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_logs_name",
+    "identifier": "setup.logs.name",
     "source_string": "logs",
     "translation": "logs",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"logs\".",
@@ -33176,7 +33224,7 @@
     "max_length": 32
   },
   {
-    "identifier": "setup_name",
+    "identifier": "setup.name",
     "source_string": "setup",
     "translation": "setup",
     "context": "Discord slash command category or command name shown in the command browser (identifier is the legacy English label). English source: \"setup\".",
@@ -34910,5 +34958,197 @@
     "context": "Help text for the `anonymous` option on `/utility report`. Used in `extensions/utility.py`.",
     "labels": "command_option_description",
     "max_length": 100
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleCreate",
+    "source_string": "Create AutoMod rule",
+    "translation": "Create AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Create). English: \"Create AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleUpdate",
+    "source_string": "Update AutoMod rule",
+    "translation": "Update AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Update). English: \"Update AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodRuleDelete",
+    "source_string": "Delete AutoMod rule",
+    "translation": "Delete AutoMod rule",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Rule Delete). English: \"Delete AutoMod rule\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.automodAction",
+    "source_string": "AutoMod action",
+    "translation": "AutoMod action",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (automod Action). English: \"AutoMod action\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelDelete",
+    "source_string": "Delete channel",
+    "translation": "Delete channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Delete). English: \"Delete channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelCreate",
+    "source_string": "Create channel",
+    "translation": "Create channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Create). English: \"Create channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guild_channelUpdate",
+    "source_string": "Update channel",
+    "translation": "Update channel",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Channel Update). English: \"Update channel\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildUpdate",
+    "source_string": "Update server",
+    "translation": "Update server",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Update). English: \"Update server\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.inviteCreate",
+    "source_string": "Create invitation",
+    "translation": "Create invitation",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (invite Create). English: \"Create invitation\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.inviteDelete",
+    "source_string": "Delete invitation",
+    "translation": "Delete invitation",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (invite Delete). English: \"Delete invitation\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberJoin",
+    "source_string": "Add member",
+    "translation": "Add member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Join). English: \"Add member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberLeave",
+    "source_string": "Remove member",
+    "translation": "Remove member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Leave). English: \"Remove member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberUpdate",
+    "source_string": "Update member",
+    "translation": "Update member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Update). English: \"Update member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.userUpdate",
+    "source_string": "Update user",
+    "translation": "Update user",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (user Update). English: \"Update user\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberBan",
+    "source_string": "Block member",
+    "translation": "Block member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Ban). English: \"Block member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.memberUnban",
+    "source_string": "Unlock member",
+    "translation": "Unlock member",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (member Unban). English: \"Unlock member\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.presenceUpdate",
+    "source_string": "Update status",
+    "translation": "Update status",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (presence Update). English: \"Update status\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.messageEdit",
+    "source_string": "Edit message",
+    "translation": "Edit message",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (message Edit). English: \"Edit message\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.messageDelete",
+    "source_string": "Delete message",
+    "translation": "Delete message",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (message Delete). English: \"Delete message\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.reactionAdd",
+    "source_string": "Add reaction",
+    "translation": "Add reaction",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (reaction Add). English: \"Add reaction\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.reactionRemove",
+    "source_string": "Remove reaction",
+    "translation": "Remove reaction",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (reaction Remove). English: \"Remove reaction\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleCreate",
+    "source_string": "Create role",
+    "translation": "Create role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Create). English: \"Create role\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleDelete",
+    "source_string": "Delete role",
+    "translation": "Delete role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Delete). English: \"Delete role\".",
+    "labels": "commands",
+    "max_length": null
+  },
+  {
+    "identifier": "commands.logs.configureLogs.configuration_embed.guildRoleUpdate",
+    "source_string": "Update role",
+    "translation": "Update role",
+    "context": "User-visible message for `/logs configureLogs` (configuration embed) (guild Role Update). English: \"Update role\".",
+    "labels": "commands",
+    "max_length": null
   }
 ]

@@ -7,9 +7,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import discord
 import pytest
 from discord import app_commands
+from discord.ext import commands
 
 from extensions.error_handler import ErrorHandlerCog
-from tests.helpers.discord import make_guild, make_interaction, make_member
+from tests.helpers.discord import make_guild, make_interaction, make_member, make_text_channel
 from tests.integration.extensions.conftest import load_extension_bot
 from utility import ErrorEmbedCategory
 
@@ -113,7 +114,7 @@ async def test_on_app_command_error_matrix(
         return key
 
     with (
-        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=_capture),
+        patch("localizer.tanjunLocalizer.localize", side_effect=_capture),
         patch("extensions.error_handler.sentry_dsn", ""),
     ):
         await cog._on_app_command_error(ix, error)
@@ -144,7 +145,7 @@ async def test_unknown_error_reports_to_sentry_when_configured() -> None:
     with (
         patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
         patch("sentry_sdk.push_scope", return_value=push_scope),
-        patch("extensions.error_handler.tanjunLocalizer.localize", side_effect=lambda _l, k, **kw: k),
+        patch("localizer.tanjunLocalizer.localize", side_effect=lambda _l, k, **kw: k),
     ):
         await cog._on_app_command_error(ix, RuntimeError("boom"))
 
@@ -169,3 +170,137 @@ async def test_matrix_sends_via_followup_when_response_done(
         await cog._on_app_command_error(ix, error_factory())
     ix.followup.send.assert_awaited_once()
     ix.response.send_message.assert_not_called()
+
+
+def _prefix_context() -> MagicMock:
+    guild = make_guild()
+    guild.preferred_locale = "en-US"
+    channel = make_text_channel(guild=guild)
+    author = make_member()
+    ctx = MagicMock()
+    ctx.author = author
+    ctx.guild = guild
+    ctx.channel = channel
+    ctx.command = MagicMock()
+    ctx.command.qualified_name = "test_bot"
+    ctx.message = MagicMock()
+    ctx.message.id = 999
+    ctx.send = AsyncMock()
+    return ctx
+
+
+@pytest.mark.parametrize(
+    ("error_factory", "locale_key", "category"),
+    [
+        pytest.param(
+            lambda: commands.CommandOnCooldown(retry_after=8.3),
+            "errors.cooldown",
+            ErrorEmbedCategory.RATE_LIMIT,
+            id="cooldown",
+        ),
+        pytest.param(
+            lambda: commands.MissingPermissions(["manage_messages"]),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="missing_permissions",
+        ),
+        pytest.param(
+            lambda: commands.BotMissingPermissions(["send_messages"]),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="bot_missing_permissions",
+        ),
+        pytest.param(
+            lambda: commands.CheckFailure("generic check failed"),
+            "errors.missing_permissions",
+            ErrorEmbedCategory.PERMISSION,
+            id="check_failure",
+        ),
+        pytest.param(
+            lambda: discord.Forbidden(MagicMock(), "forbidden"),
+            "errors.forbidden",
+            ErrorEmbedCategory.PERMISSION,
+            id="forbidden",
+        ),
+        pytest.param(
+            lambda: commands.CommandInvokeError(discord.Forbidden(MagicMock(), "forbidden")),
+            "errors.forbidden",
+            ErrorEmbedCategory.PERMISSION,
+            id="invoke_forbidden",
+        ),
+        pytest.param(
+            lambda: _http_exception(503),
+            "errors.http_error",
+            ErrorEmbedCategory.UNEXPECTED,
+            id="http_exception",
+        ),
+        pytest.param(
+            lambda: commands.BadArgument("bad input"),
+            "errors.transformer_error",
+            ErrorEmbedCategory.VALIDATION,
+            id="bad_argument",
+        ),
+        pytest.param(
+            lambda: RuntimeError("unexpected failure"),
+            "errors.unexpected_error",
+            ErrorEmbedCategory.UNEXPECTED,
+            id="unknown",
+        ),
+    ],
+)
+async def test_on_prefix_command_error_matrix(
+    error_factory: Callable[[], Exception],
+    locale_key: str,
+    category: ErrorEmbedCategory,
+) -> None:
+    cog = await _cog()
+    ctx = _prefix_context()
+    error = error_factory()
+    localized_keys: list[str] = []
+
+    def _capture(_locale: str, key: str, **kwargs: Any) -> str:
+        localized_keys.append(key)
+        return key
+
+    with (
+        patch("localizer.tanjunLocalizer.localize", side_effect=_capture),
+        patch("extensions.error_handler.sentry_dsn", ""),
+    ):
+        await cog._on_prefix_command_error(ctx, error)
+
+    assert f"{locale_key}.title" in localized_keys
+    assert f"{locale_key}.description" in localized_keys
+    ctx.send.assert_awaited_once()
+    sent_embed = ctx.send.await_args.kwargs["embed"]
+    assert sent_embed.colour == category.value
+
+
+async def test_prefix_command_not_found_sends_no_embed() -> None:
+    cog = await _cog()
+    ctx = _prefix_context()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_prefix_command_error(ctx, commands.CommandNotFound("missing"))
+    ctx.send.assert_not_called()
+
+
+def _http_exception_40060() -> discord.HTTPException:
+    exc = discord.HTTPException(MagicMock(), "already acknowledged")
+    exc.status = 400
+    exc.code = 40060
+    return exc
+
+
+async def test_slash_http_40060_original_silent() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_app_command_error(ix, _http_exception_40060())
+    ix.response.send_message.assert_not_called()
+
+
+async def test_slash_ephemeral_on_send() -> None:
+    cog = await _cog()
+    ix = _interaction()
+    with patch("extensions.error_handler.sentry_dsn", ""):
+        await cog._on_app_command_error(ix, app_commands.CheckFailure("x"))
+    assert ix.response.send_message.await_args.kwargs.get("ephemeral") is True

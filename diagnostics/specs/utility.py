@@ -6,6 +6,7 @@ from diagnostics.specs._helpers import (
     default_channel_kwargs,
     default_member_kwargs,
     default_role_kwargs,
+    register_defer_and_mock,
     register_kwargs,
     register_method_commands,
 )
@@ -13,6 +14,9 @@ from diagnostics.specs.overrides import SPEC_CUSTOM_ASSERTIONS, SPEC_PATCH_EXCLU
 
 
 def register() -> None:
+    register_kwargs("utility.UtilityCog.help_slash", lambda: {})
+    register_defer_and_mock("utility.UtilityCog.help_slash", "helpCommand")
+
     register_kwargs("utility.MessageTrackingCommands.messagetrackingoptout", lambda: {})
     register_kwargs("utility.MessageTrackingCommands.messagetrackingoptin", lambda: {})
     register_method_commands(

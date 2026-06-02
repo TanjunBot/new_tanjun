@@ -31,6 +31,25 @@ def _message(*, guild: object, content: str) -> SimpleNamespace:
     )
 
 
+def _install_message_edit_l10n_stub() -> MagicMock:
+    name_mock = MagicMock(side_effect=lambda locale, **_: f"name:{locale}")
+    logs.l10n = SimpleNamespace(  # type: ignore[method-assign]
+        logs=SimpleNamespace(
+            messageEdit=SimpleNamespace(
+                name=name_mock,
+                truncatedNotice=lambda locale: f"truncated:{locale}",
+                diff=lambda locale, **_: f"diff:{locale}",
+                tooLongNotice=lambda locale, **_: f"long:{locale}",
+                title=lambda locale: f"title:{locale}",
+                url_not_available_locale=lambda locale: f"na:{locale}",
+                addedAttachments=lambda locale, **_: f"add:{locale}",
+                removedAttachments=lambda locale, **_: f"remove:{locale}",
+            )
+        )
+    )
+    return name_mock
+
+
 @pytest.mark.asyncio
 async def test_on_message_edit_uses_guild_preferred_locale() -> None:
     cog = logs.LogsCog(bot=MagicMock())
@@ -43,11 +62,11 @@ async def test_on_message_edit_uses_guild_preferred_locale() -> None:
     logs.get_log_blacklist = AsyncMock(return_value=[])  # type: ignore[method-assign]
     logs._is_channel_or_category_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
     logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
-    logs.tanjunLocalizer.localize = MagicMock(return_value="localized")  # type: ignore[method-assign]
+    name_mock = _install_message_edit_l10n_stub()
 
     await cog.on_message_edit(before, after)
 
-    first_call = logs.tanjunLocalizer.localize.call_args_list[0]
+    first_call = name_mock.call_args_list[0]
     assert first_call.args[0] == "de-DE"
 
 
@@ -63,11 +82,11 @@ async def test_on_message_edit_falls_back_to_en_us_without_guild_locale() -> Non
     logs.get_log_blacklist = AsyncMock(return_value=[])  # type: ignore[method-assign]
     logs._is_channel_or_category_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
     logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
-    logs.tanjunLocalizer.localize = MagicMock(return_value="localized")  # type: ignore[method-assign]
+    name_mock = _install_message_edit_l10n_stub()
 
     await cog.on_message_edit(before, after)
 
-    first_call = logs.tanjunLocalizer.localize.call_args_list[0]
+    first_call = name_mock.call_args_list[0]
     assert first_call.args[0] == "en_US"
 
 
@@ -82,17 +101,26 @@ class _GuildStub:
 @pytest.mark.asyncio
 async def test_on_guild_update_uses_after_guild_and_preferred_locale() -> None:
     cog = logs.LogsCog(bot=MagicMock())
-    before = _GuildStub(id=11, preferred_locale="en-US", name="old", emojis=[], features=[])
+    before = _GuildStub(id=11, preferred_locale="de-DE", name="old", emojis=[], features=[])
     after = _GuildStub(id=11, preferred_locale="de-DE", name="new", emojis=[], features=[])
 
     logs.get_log_enable = AsyncMock(return_value=SimpleNamespace(guild_update=True))  # type: ignore[method-assign]
     logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
-    logs.tanjunLocalizer.localize = MagicMock(return_value="localized")  # type: ignore[method-assign]
+    none_mock = MagicMock(side_effect=lambda locale: f"none:{locale}")
+    logs.l10n = SimpleNamespace(  # type: ignore[method-assign]
+        logs=SimpleNamespace(
+            guildUpdate=SimpleNamespace(
+                none=none_mock,
+                name=lambda locale, **_: f"name:{locale}",
+                title=lambda locale: f"title:{locale}",
+            )
+        )
+    )
 
     await cog.on_guild_update(before, after)
 
     logs.get_log_enable.assert_awaited_once_with(11)
-    first_call = logs.tanjunLocalizer.localize.call_args_list[0]
+    first_call = none_mock.call_args_list[0]
     assert first_call.args[0] == "de-DE"
 
 
