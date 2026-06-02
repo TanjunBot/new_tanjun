@@ -559,6 +559,7 @@ async def test_tables_are_created_via_create_tables(integration_db_pool):
     async with pool.acquire() as conn, conn.cursor() as cursor:
         await cursor.execute("SHOW TABLES")
         tables = {row[0] for row in await cursor.fetchall()}
+        await conn.rollback()
 
     # Core expected tables
     expected = {
@@ -628,6 +629,7 @@ async def test_channel_blacklist_round_trip(integration_db_pool):
             (TEST_GUILD, TEST_CHANNEL),
         )
         row = await cursor.fetchone()
+        await conn.rollback()
     assert row is not None, "Channel should appear in blacklist"
     assert row[0] == TEST_CHANNEL
     assert row[1] == "Integration test channel blacklist"
@@ -646,6 +648,7 @@ async def test_role_blacklist_round_trip(integration_db_pool):
             (TEST_GUILD, TEST_ROLE),
         )
         row = await cursor.fetchone()
+        await conn.rollback()
     assert row is not None, "Role should appear in blacklist"
     assert row[0] == TEST_ROLE
     assert row[1] == "Integration test role blacklist"
