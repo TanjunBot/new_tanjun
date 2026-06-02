@@ -634,13 +634,17 @@ class AdministrationCog(commands.Cog):
             return
         await ctx.channel.send(embed=embed_or_wrap(l10n.commands.admin.database_sync.importing(self._locale(ctx), schema=config.database_schema), title='Database Sync'))
         db_recreate_cmd = f'DROP DATABASE IF EXISTS `{config.database_schema}`; CREATE DATABASE `{config.database_schema}`;'
+        import_defaults_file = _mysql_defaults_file(config.database_user, config.database_password, config.database_ip, config.database_port)
         try:
-            subprocess.run(['mysql', f'--defaults-extra-file={defaults_file}', '-e', db_recreate_cmd], check=True)
+            subprocess.run(['mysql', f'--defaults-extra-file={import_defaults_file}', '-e', db_recreate_cmd], check=True)
             with open(filtered_sql_file) as f:
-                subprocess.run(['mysql', f'--defaults-extra-file={defaults_file}', config.database_schema], stdin=f, check=True)
+                subprocess.run(['mysql', f'--defaults-extra-file={import_defaults_file}', config.database_schema], stdin=f, check=True)
             await ctx.channel.send(embed=success_embed(l10n.commands.admin.database_sync.success(self._locale(ctx)), title='Database Sync'))
         except subprocess.CalledProcessError as e:
             await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.import_error(self._locale(ctx), error=e), title='Database Sync'))
+        finally:
+            with contextlib.suppress(OSError):
+                os.unlink(import_defaults_file)
         for tmp_file in ['temp_import.sql', 'filtered_import.sql']:
             if os.path.exists(tmp_file):
                 os.remove(tmp_file)
