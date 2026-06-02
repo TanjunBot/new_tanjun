@@ -552,15 +552,6 @@ class AdministrationCog(commands.Cog):
             except Exception:
                 return None
 
-        async def _edit_status(msg: discord.Message | None, **kwargs: object) -> bool:
-            if msg is None:
-                await _thread_send(
-                    embed=error_embed('Database sync could not update status in thread.', title='Database Sync'),
-                )
-                return False
-            await msg.edit(**kwargs)
-            return True
-
         attachment_url = None
         if ctx.message.attachments:
             attachment_url = ctx.message.attachments[0].url
@@ -575,27 +566,15 @@ class AdministrationCog(commands.Cog):
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp:
                 if resp.status != 200:
-                    if not await _edit_status(
-                        status_msg,
-                        embed=error_embed(l10n.commands.admin.database_sync.download_failed(self._locale(ctx), status=resp.status), title='Database Sync'),
-                    ):
-                        return
+                    await status_msg.edit(embed=error_embed(l10n.commands.admin.database_sync.download_failed(self._locale(ctx), status=resp.status), title='Database Sync'))
                     return
                 content = await resp.read()
             with open('temp_import.sql', 'wb') as f:
                 f.write(content)
         except Exception as e:
-            if not await _edit_status(
-                status_msg,
-                embed=error_embed(l10n.commands.admin.database_sync.download_error(self._locale(ctx), error=e), title='Database Sync'),
-            ):
-                return
+            await status_msg.edit(embed=error_embed(l10n.commands.admin.database_sync.download_error(self._locale(ctx), error=e), title='Database Sync'))
             return
-        if not await _edit_status(
-            status_msg,
-            embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'),
-        ):
-            return
+        await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'))
         with open('temp_import.sql', encoding='utf-8', errors='ignore') as f:
             sql_content = f.read()
         detected_schemas = extract_schemas_from_sql(sql_content)

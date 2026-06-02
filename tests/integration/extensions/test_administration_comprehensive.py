@@ -921,6 +921,17 @@ class TestDatabaseSync:
         await cog.database_sync(ctx)
         thread.send.assert_awaited_once()
 
+    async def test_thread_send_exception_does_not_raise(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        attachment = MagicMock()
+        attachment.url = 'http://example.com/dump.sql'
+        ctx.message.attachments = [attachment]
+        thread = MagicMock()
+        thread.send = AsyncMock(side_effect=RuntimeError('discord send failed'))
+        ctx.channel.create_thread = AsyncMock(return_value=thread)
+        await cog.database_sync(ctx)
+        thread.send.assert_awaited_once()
+
     async def test_with_url(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
