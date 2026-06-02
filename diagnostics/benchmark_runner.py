@@ -46,8 +46,20 @@ class BenchmarkRunner:
     async def _report_phase(self, phase: BenchmarkPhase) -> None:
         header = f'**Phase {phase.phase_id}: {phase.title}**'
         await self._thread_send(header)
-        lines = [r.summary() for r in phase.results]
+        lines = [self._friendly_result_line(r) for r in phase.results]
         await self._thread_send_lines(lines)
+
+    def _friendly_result_line(self, result: BenchmarkResult) -> str:
+        if result.error:
+            return f"- {result.display_name}: Grade F (not available). {result.plain_explanation} Error: {result.error}"
+        line = (
+            f"- {result.display_name}: Grade {result.grade} ({result.plain_quality}). "
+            f"Typical speed: {result.median_ms}ms, worst normal case: {result.p95_ms}ms. "
+            f"{result.plain_explanation}"
+        )
+        if result.detail:
+            return f"{line} Details: {result.detail}"
+        return line
 
     async def run_all(self) -> BenchmarkSummary:
         wall_start = time.perf_counter()
@@ -124,10 +136,33 @@ class BenchmarkRunner:
     async def _finalize(self) -> None:
         s = self.summary
         phase_lines = [f'- Phase {p.phase_id} ({p.title}): {len(p.results)} benchmarks' for p in s.phases]
-        lines = ['## Summary', *phase_lines, f'**Benchmarks:** {s.bench_count}', f'**Errors:** {s.error_count}', f'**Total wall time:** {s.total_wall_ms}ms']
+        best = None
+        if s.ok_results:
+            best = max(s.ok_results, key=lambda r: r.grade_score)
+        worst = None
+        if s.ok_results:
+            worst = min(s.ok_results, key=lambda r: r.grade_score)
+        lines = [
+            '## Benchmark Overview',
+            f'**Overall grade:** {s.overall_grade} ({s.overall_score}/100)',
+            f'**Benchmarks:** {s.bench_count}',
+            f'**Errors:** {s.error_count}',
+            f'**Total wall time:** {s.total_wall_ms}ms',
+            *phase_lines,
+        ]
+        if best is not None:
+            lines.append(f'**Best area:** {best.display_name} (Grade {best.grade})')
+        if worst is not None:
+            lines.append(f'**Needs most attention:** {worst.display_name} (Grade {worst.grade})')
         await self._thread_send('\n'.join(lines))
         from utility import success_embed, warning_embed
-        summary_body = '\n'.join([f'Benchmarks run: {s.bench_count}', f'Errors: {s.error_count}', f'Wall time: {s.total_wall_ms}ms', 'See thread for per-phase timings.'])
+        summary_body = '\n'.join([
+            f'Overall grade: {s.overall_grade} ({s.overall_score}/100)',
+            f'Benchmarks run: {s.bench_count}',
+            f'Errors: {s.error_count}',
+            f'Wall time: {s.total_wall_ms}ms',
+            'See thread for plain-language benchmark details.',
+        ])
         if s.error_count:
             embed = warning_embed(summary_body, title='Bot Benchmarks')
         else:

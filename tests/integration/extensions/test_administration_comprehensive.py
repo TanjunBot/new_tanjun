@@ -138,34 +138,256 @@ class TestTestBot:
         ctx = make_context(bot)
         sent = MagicMock()
         sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
         with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
             await cog.test_bot(ctx)
+        ctx.send.assert_awaited_once()
         sent.edit.assert_awaited()
+        sent.create_thread.assert_not_awaited()
 
     async def test_diagnostics_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
+        ctx.message.id = 987654321
         sent = MagicMock()
-        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
         with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', autospec=True) as mock_runner_cls:
             mock_runner = mock_runner_cls.return_value
             mock_runner.run_all = AsyncMock(side_effect=RuntimeError('diagnostics fail'))
             await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-987654321')
+        mock_runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='en')
         sent.edit.assert_awaited()
+        thread.send.assert_awaited_once_with('Diagnostics aborted: diagnostics fail')
 
     async def test_diagnostics_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
+        ctx.message.id = 222
+        ctx.guild.preferred_locale = 'de'
         sent = MagicMock()
-        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
         mock_runner = MagicMock()
         mock_runner.run_all = AsyncMock()
-        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=mock_runner):
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=mock_runner) as runner_cls:
             await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-222')
+        runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='de')
         mock_runner.run_all.assert_awaited_once()
+        thread.send.assert_not_awaited()
+        sent.edit.assert_not_awaited()
+
+    async def test_diagnostics_thread_creation_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 111
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(side_effect=RuntimeError('thread fail'))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', autospec=True) as runner_cls:
+            await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-111')
+        sent.edit.assert_awaited_once()
+        runner_cls.assert_not_called()
+
+    async def test_diagnostics_unavailable_uses_en_fallback_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='fr')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        first_embed = ctx.send.await_args.kwargs['embed']
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert first_embed.title == 'Bot Diagnostics'
+        assert edited_embed.title == 'Bot Diagnostics'
+        sent.create_thread.assert_not_awaited()
+
+    async def test_diagnostics_without_guild_uses_default_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.guild = None
+        ctx.message.id = 4321
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner) as runner_cls:
+            await cog.test_bot(ctx)
+        runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='en')
+        runner.run_all.assert_awaited_once()
+
+    async def test_diagnostics_error_without_thread_does_not_send_abort(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(side_effect=RuntimeError('create thread failed'))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True):
+            await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+
+    async def test_diagnostics_error_embed_contains_test_name(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('boom'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert edited_embed.title == 'Bot Diagnostics'
+        assert 'Diagnostics' in edited_embed.description
+        assert 'boom' in edited_embed.description
+
+    async def test_diagnostics_thread_name_is_trimmed_to_100_chars(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = int('9' * 120)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        created_name = sent.create_thread.await_args.kwargs['name']
+        assert len(created_name) == 100
+        assert created_name.startswith('bot-diagnostics-')
+
+    async def test_diagnostics_start_embed_title_is_constant(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        start_embed = ctx.send.await_args.kwargs['embed']
+        assert start_embed.title == 'Bot Diagnostics'
+
+    async def test_diagnostics_start_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        start_embed = ctx.send.await_args.kwargs['embed']
+        assert start_embed.description == locale.commands.admin.administration.test_bot.starting('de')
+
+    async def test_diagnostics_unavailable_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        unavailable_embed = sent.edit.await_args.kwargs['embed']
+        assert unavailable_embed.description == locale.commands.admin.administration.test_bot.tests_unavailable('de')
+
+    async def test_diagnostics_error_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('kaputt'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert edited_embed.description == locale.commands.admin.administration.test_bot.error('de', test_name='Diagnostics', error=RuntimeError('kaputt'))
+
+    async def test_diagnostics_send_failure_bubbles_up(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.send = AsyncMock(side_effect=RuntimeError('send failed'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            with pytest.raises(RuntimeError, match='send failed'):
+                await cog.test_bot(ctx)
+
+    async def test_diagnostics_runner_constructor_failure_edits_and_notifies_thread(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', side_effect=RuntimeError('ctor fail')):
+            await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+        thread.send.assert_awaited_once_with('Diagnostics aborted: ctor fail')
+
+    async def test_diagnostics_abort_notification_failure_bubbles_up(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock(side_effect=RuntimeError('thread notify failed')))
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('runner fail'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            with pytest.raises(RuntimeError, match='thread notify failed'):
+                await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+
+    async def test_diagnostics_success_call_order_send_then_thread_then_runner(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        call_order: list[str] = []
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+
+        async def _create_thread(*args: Any, **kwargs: Any) -> MagicMock:
+            call_order.append('create_thread')
+            return thread
+
+        sent.create_thread = AsyncMock(side_effect=_create_thread)
+        sent.edit = AsyncMock()
+
+        async def _send(*args: Any, **kwargs: Any) -> MagicMock:
+            call_order.append('send')
+            return sent
+
+        ctx.send = AsyncMock(side_effect=_send)
+        runner = MagicMock()
+
+        async def _run_all() -> None:
+            call_order.append('run_all')
+
+        runner.run_all = AsyncMock(side_effect=_run_all)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        assert call_order == ['send', 'create_thread', 'run_all']
+
+    async def test_diagnostics_thread_name_exact_for_short_message_id(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 17
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        assert sent.create_thread.await_args.kwargs['name'] == 'bot-diagnostics-17'
 
 @pytest.mark.asyncio
 class TestBenchmarkBot:
