@@ -42,6 +42,43 @@ def _mysql_defaults_file(user: str, password: str, host: str, port: int) -> str:
         f.write(content)
     return path
 
+def _extract_schemas_from_sql(sql_content: str) -> set[str]:
+    schemas: set[str] = set()
+    for line in sql_content.splitlines():
+        use_match = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        create_match = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        qualified_match = re.search('`([^`]+)`\\.`[^`]+`', line)
+        if create_match:
+            schemas.add(create_match.group(1))
+        elif use_match:
+            schemas.add(use_match.group(1))
+        elif qualified_match:
+            schemas.add(qualified_match.group(1))
+    return schemas
+
+
+def _filter_sql_dump(sql_content: str, selected_schema: str, target_schema: str) -> str:
+    current_schema = None
+    selected_lower = selected_schema.lower()
+    output_lines: list[str] = []
+    for line in sql_content.splitlines(keepends=True):
+        use_m = re.search('^\\s*USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        create_m = re.search('^\\s*CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
+        if create_m:
+            current_schema = create_m.group(1)
+        elif use_m:
+            current_schema = use_m.group(1)
+        if current_schema is not None and current_schema.lower() != selected_lower:
+            continue
+        mod_line = re.sub('DEFINER\\s*=\\s*`[^`]+`@`[^`]+`\\s*', '', line, flags=re.IGNORECASE)
+        mod_line = re.sub('SQL\\s+SECURITY\\s+DEFINER\\s*', '', mod_line, flags=re.IGNORECASE)
+        mod_line = re.sub(f'(CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
+        mod_line = re.sub(f'(USE\\s+)`?{re.escape(selected_schema)}`?', f'\\g<1>`{target_schema}`', mod_line, flags=re.IGNORECASE)
+        mod_line = re.sub(f'`{re.escape(selected_schema)}`\\.', f'`{target_schema}`.', mod_line, flags=re.IGNORECASE)
+        output_lines.append(mod_line)
+    return ''.join(output_lines)
+
+
 class AdministrationCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot) -> None:
@@ -537,15 +574,9 @@ class AdministrationCog(commands.Cog):
             await status_msg.edit(embed=error_embed(l10n.commands.admin.database_sync.download_error(self._locale(ctx), error=e), title='Database Sync'))
             return
         await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.database_sync.analyzing(self._locale(ctx)), title='Database Sync'))
-        schemas: set[str] = set()
         with open('temp_import.sql', encoding='utf-8', errors='ignore') as f:
-            for line in f:
-                use_match = re.search('^USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
-                create_match = re.search('CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
-                if create_match:
-                    schemas.add(create_match.group(1))
-                elif use_match:
-                    schemas.add(use_match.group(1))
+            sql_content = f.read()
+        schemas = _extract_schemas_from_sql(sql_content)
         if not schemas:
             schemas.add(l10n.commands.admin.database_sync.no_schema_found(self._locale(ctx)))
         schema_list = '\n'.join([f'- `{s}`' for s in schemas])
@@ -583,20 +614,14 @@ class AdministrationCog(commands.Cog):
             with contextlib.suppress(OSError):
                 os.unlink(defaults_file)
         filtered_sql_file = 'filtered_import.sql'
-        current_schema = None
         try:
-            with open('temp_import.sql', encoding='utf-8', errors='ignore') as f_in, open(filtered_sql_file, 'w', encoding='utf-8') as f_out:
-                for line in f_in:
-                    use_m = re.search('^USE\\s+`?([^\\s`;]+)`?', line, re.IGNORECASE)
-                    create_m = re.search('CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?`?([^\\s`;]+)`?', line, re.IGNORECASE)
-                    if create_m:
-                        current_schema = create_m.group(1)
-                    elif use_m:
-                        current_schema = use_m.group(1)
-                    if current_schema is None or current_schema.lower() == selected_schema.lower():
-                        mod_line = re.sub(f'(CREATE DATABASE\\s+(?:/\\*.*?\\*/\\s+)?(?:IF NOT EXISTS\\s+)?)`?{re.escape(selected_schema)}`?', f'\\g<1>`{config.database_schema}`', line, flags=re.IGNORECASE)
-                        mod_line = re.sub(f'(USE\\s+)`?{re.escape(selected_schema)}`?', f'\\g<1>`{config.database_schema}`', mod_line, flags=re.IGNORECASE)
-                        f_out.write(mod_line)
+            filtered_content = _filter_sql_dump(
+                sql_content,
+                selected_schema=selected_schema,
+                target_schema=config.database_schema,
+            )
+            with open(filtered_sql_file, 'w', encoding='utf-8') as f_out:
+                f_out.write(filtered_content)
         except Exception as e:
             await ctx.channel.send(embed=error_embed(l10n.commands.admin.database_sync.filter_error(self._locale(ctx), error=e), title='Database Sync'))
             return
