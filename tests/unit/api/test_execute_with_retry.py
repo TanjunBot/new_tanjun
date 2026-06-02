@@ -10,7 +10,7 @@ import tests.mock_config as mock_config
 
 mock_config.patch_config_module()
 
-from api import _MAX_DB_RETRIES, _execute_with_retry, set_bot  # noqa: E402
+from api import _MAX_DB_RETRIES, _execute_with_retry, db_manager, set_bot  # noqa: E402
 from tests.helpers.db import make_mock_pool  # noqa: E402
 
 pytestmark = pytest.mark.unit
@@ -117,3 +117,48 @@ class TestExecuteWithRetry:
         assert result == 42
         mock_record.assert_called_once()
         assert mock_record.call_args.kwargs.get("error") is False
+
+    @pytest.mark.asyncio
+    async def test_execute_action_commits_write_transaction(self):
+        cursor = MagicMock()
+        cursor.rowcount = 3
+        conn = MagicMock()
+        conn.commit = AsyncMock()
+        db_manager._pool = MagicMock()
+
+        async def run_callback(*args, **kwargs):
+            callback = args[1]
+            return await callback(cursor, conn)
+
+        with patch("api._execute_with_retry", new=AsyncMock(side_effect=run_callback)):
+            result = await db_manager.execute_action("UPDATE level SET xp = xp + 1")
+
+        assert result == 3
+        conn.commit.assert_awaited_once()
+        db_manager._pool = None
+
+    @pytest.mark.asyncio
+    async def test_execute_batch_commits_write_transaction(self):
+        cursor = MagicMock()
+        cursor.executemany = AsyncMock()
+        conn = MagicMock()
+        conn.commit = AsyncMock()
+        db_manager._pool = MagicMock()
+
+        async def run_callback(*args, **kwargs):
+            callback = args[1]
+            await callback(cursor, conn)
+            cursor.executemany.assert_awaited_once_with(
+                "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s)",
+                [("1", "2", 10)],
+            )
+            return None
+
+        with patch("api._execute_with_retry", new=AsyncMock(side_effect=run_callback)):
+            await db_manager.execute_batch(
+                "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s)",
+                [("1", "2", 10)],
+            )
+
+        conn.commit.assert_awaited_once()
+        db_manager._pool = None

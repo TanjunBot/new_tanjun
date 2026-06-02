@@ -126,6 +126,7 @@ class DatabaseManager:
             return None
 
         async def _callback(cursor: Any, conn: Any) -> int:
+            await conn.commit()
             return cursor.rowcount
 
         return await _execute_with_retry("execute_action", _callback, query, params, is_write=True)
@@ -141,6 +142,7 @@ class DatabaseManager:
 
         async def _callback(cursor: Any, conn: Any) -> None:
             await cursor.executemany(query, params_list)
+            await conn.commit()
             return None
 
         await _execute_with_retry("execute_batch", _callback, query, is_write=True)
