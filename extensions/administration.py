@@ -586,8 +586,8 @@ class AdministrationCog(commands.Cog):
             type=discord.ChannelType.public_thread,
         )
 
-        async def _thread_send(content: str | None = None, embed: discord.Embed | None = None, file: discord.File | None = None) -> None:
-            await thread.send(content=content, embed=embed, file=file)
+        async def _thread_send(content: str | None = None, embed: discord.Embed | None = None, file: discord.File | None = None) -> discord.Message:
+            return await thread.send(content=content, embed=embed, file=file)
 
         attachment_url = None
         if ctx.message.attachments:
