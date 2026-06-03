@@ -512,7 +512,8 @@ DEFAULT CHARSET=utf8mb4""",
   `name` VARCHAR(128),
   `description` VARCHAR(1024),
   `summaryChannelId` VARCHAR(20),
-  PRIMARY KEY (`guild_id`, `id`),
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `uk_guild_id` (`guild_id`, `id`),
   INDEX `idx_guild` (`guild_id`)
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4""",
@@ -522,7 +523,8 @@ DEFAULT CHARSET=utf8mb4""",
   `trigger` VARCHAR(128),
   `response` VARCHAR(1024),
   `case_sensitive` TINYINT(1) DEFAULT 0,
-  PRIMARY KEY (`guild_id`, `id`),
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `uk_guild_id` (`guild_id`, `id`),
   INDEX `idx_guild` (`guild_id`)
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4""",

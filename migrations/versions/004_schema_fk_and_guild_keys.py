@@ -1,4 +1,4 @@
-"""Legacy repairs: composite FK parents and guild-scoped welcome/leave keys."""
+"""Legacy repairs: guild-scoped FK parents and welcome/leave keys."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ from collections.abc import Sequence
 
 from alembic import op
 from sqlalchemy import text
+from sqlalchemy.engine import Connection
 
 revision: str = "004_schema_fk_and_guild_keys"
 down_revision: str | None = "003_giveaway_legacy_column"
@@ -34,7 +35,7 @@ def _execute_idempotent(sql: str) -> None:
         raise
 
 
-def _primary_key_columns(conn, table: str) -> list[str]:
+def _primary_key_columns(conn: Connection, table: str) -> list[str]:
     rows = conn.execute(
         text(
             "SELECT column_name FROM information_schema.statistics "
@@ -44,6 +45,18 @@ def _primary_key_columns(conn, table: str) -> list[str]:
         {"table": table},
     ).fetchall()
     return [row[0] for row in rows]
+
+
+def _has_unique_guild_id(conn: Connection, table: str) -> bool:
+    row = conn.execute(
+        text(
+            "SELECT COUNT(*) FROM information_schema.statistics "
+            "WHERE table_schema = DATABASE() AND table_name = :table AND index_name = 'uk_guild_id' "
+            "AND non_unique = 0"
+        ),
+        {"table": table},
+    ).fetchone()
+    return bool(row and row[0])
 
 
 def _dedupe_guild_config_table(table: str) -> None:
@@ -71,7 +84,7 @@ def _dedupe_guild_config_table(table: str) -> None:
     _execute_idempotent(f"ALTER TABLE `{table}` ADD PRIMARY KEY (`guild_id`)")
 
 
-def _drop_foreign_keys_to(conn, child_table: str, parent_table: str) -> None:
+def _drop_foreign_keys_to(conn: Connection, child_table: str, parent_table: str) -> None:
     rows = conn.execute(
         text(
             "SELECT DISTINCT constraint_name FROM information_schema.key_column_usage "
@@ -84,7 +97,7 @@ def _drop_foreign_keys_to(conn, child_table: str, parent_table: str) -> None:
         _execute_idempotent(f"ALTER TABLE `{child_table}` DROP FOREIGN KEY `{constraint_name}`")
 
 
-def _repair_composite_parent(table: str, child_table: str, fk_columns: tuple[str, str]) -> None:
+def _repair_guild_scoped_parent(table: str, child_table: str, fk_columns: tuple[str, str]) -> None:
     conn = op.get_bind()
     exists = conn.execute(
         text(
@@ -97,7 +110,7 @@ def _repair_composite_parent(table: str, child_table: str, fk_columns: tuple[str
         return
 
     pk_cols = _primary_key_columns(conn, table)
-    if pk_cols == ["guild_id", "id"]:
+    if pk_cols == ["id"] and _has_unique_guild_id(conn, table):
         return
 
     child_exists = conn.execute(
@@ -111,8 +124,16 @@ def _repair_composite_parent(table: str, child_table: str, fk_columns: tuple[str
         _drop_foreign_keys_to(conn, child_table, table)
 
     _execute_idempotent(f"ALTER TABLE `{table}` MODIFY COLUMN `guild_id` VARCHAR(20) NOT NULL")
-    _execute_idempotent(f"ALTER TABLE `{table}` DROP PRIMARY KEY")
-    _execute_idempotent(f"ALTER TABLE `{table}` ADD PRIMARY KEY (`guild_id`, `id`)")
+    if pk_cols == ["guild_id", "id"]:
+        _execute_idempotent(f"ALTER TABLE `{table}` DROP PRIMARY KEY")
+        _execute_idempotent(f"ALTER TABLE `{table}` ADD PRIMARY KEY (`id`)")
+    elif pk_cols != ["id"]:
+        _execute_idempotent(f"ALTER TABLE `{table}` DROP PRIMARY KEY")
+        _execute_idempotent(f"ALTER TABLE `{table}` ADD PRIMARY KEY (`id`)")
+
+    _execute_idempotent(
+        f"ALTER TABLE `{table}` ADD UNIQUE KEY `uk_guild_id` (`guild_id`, `id`)"
+    )
 
     if child_exists and child_exists[0]:
         _execute_idempotent(
@@ -125,8 +146,8 @@ def _repair_composite_parent(table: str, child_table: str, fk_columns: tuple[str
 def upgrade() -> None:
     _dedupe_guild_config_table("welcome_channel")
     _dedupe_guild_config_table("leave_channel")
-    _repair_composite_parent("triggerMessages", "triggerMessagesChannel", ("guild_id", "triggerId"))
-    _repair_composite_parent("ticketMessages", "tickets", ("guild_id", "ticketMessageId"))
+    _repair_guild_scoped_parent("triggerMessages", "triggerMessagesChannel", ("guild_id", "triggerId"))
+    _repair_guild_scoped_parent("ticketMessages", "tickets", ("guild_id", "ticketMessageId"))
 
 
 def downgrade() -> None:

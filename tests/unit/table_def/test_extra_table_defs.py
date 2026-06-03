@@ -40,10 +40,11 @@ def test_converted_tables_produce_valid_sql() -> None:
         assert _CREATE_TABLE_RE.search(sql), f"invalid DDL for {name}"
 
 
-def test_trigger_and_ticket_messages_use_composite_primary_keys() -> None:
+def test_trigger_and_ticket_messages_use_id_pk_and_guild_unique() -> None:
     for name in ("triggerMessages", "ticketMessages"):
         sql = get_table_definitions()[name]
-        assert "PRIMARY KEY (`guild_id`, `id`)" in sql
+        assert "PRIMARY KEY (`id`)" in sql
+        assert "UNIQUE INDEX `uk_guild_id` (`guild_id`, `id`)" in sql
 
 
 def test_welcome_and_leave_channels_use_guild_primary_key() -> None:

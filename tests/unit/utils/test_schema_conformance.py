@@ -12,10 +12,14 @@ mock_config.patch_config_module()
 
 from utils.schema_conformance import (  # noqa: E402
     ColumnSpec,
+    _compare_table_specs,
+    _normalize_mysql_type,
     assert_schema_conformance,
     fetch_existing_columns,
+    fetch_existing_columns_sync,
     fetch_existing_column_specs_sync,
     find_schema_drift,
+    load_schema_drift_errors,
     schema_has_drift,
 )
 
@@ -40,6 +44,23 @@ def test_find_schema_drift_reports_missing_columns() -> None:
     assert any("mediaChannel" in err and "guild_id" in err for err in errors)
 
 
+def test_find_schema_drift_reports_nullability_mismatch() -> None:
+    from utils.schema_conformance import expected_column_specs_by_table
+
+    table = "warnings"
+    expected = expected_column_specs_by_table()[table]
+    wrong = {name: ColumnSpec(spec.sql_type, not spec.nullable) for name, spec in expected.items()}
+    errors = find_schema_drift({table: wrong})
+    assert any("nullability mismatch" in err for err in errors)
+
+
+def test_compare_table_specs_skips_when_actual_column_missing_in_map() -> None:
+    expected = {"id": ColumnSpec("int", False), "guild_id": ColumnSpec("varchar(20)", True)}
+    actual = {"id": ColumnSpec("int", False)}
+    errors = _compare_table_specs("warnings", expected, actual)
+    assert any("missing columns" in err for err in errors)
+
+
 def test_find_schema_drift_reports_type_mismatch() -> None:
     from utils.schema_conformance import expected_column_specs_by_table
 
@@ -57,7 +78,22 @@ def test_find_schema_drift_empty_when_schema_complete() -> None:
     assert find_schema_drift(existing) == []
 
 
+def test_normalize_mysql_type_handles_bare_decimal_and_enum() -> None:
+    assert _normalize_mysql_type("DECIMAL") == "decimal"
+    assert _normalize_mysql_type("ENUM('a')") == "enum"
+
+
 def test_fetch_existing_columns_sync_maps_rows() -> None:
+    connection = MagicMock()
+    connection.execute.return_value.fetchall.return_value = [
+        ("warnings", "id"),
+        ("warnings", "guild_id"),
+    ]
+    result = fetch_existing_columns_sync(connection)
+    assert result == {"warnings": {"id", "guild_id"}}
+
+
+def test_fetch_existing_column_specs_sync_maps_rows() -> None:
     connection = MagicMock()
     connection.execute.return_value.fetchall.return_value = [
         ("giveaway", "giveaway_id", "int unsigned", "NO"),
@@ -107,6 +143,45 @@ async def test_fetch_existing_columns_reads_information_schema() -> None:
     result = await fetch_existing_columns(pool, schema_name="tanjun_test")
 
     assert result == {"warnings": {"id"}}
+
+
+@pytest.mark.asyncio
+async def test_fetch_existing_columns_resolves_database_from_pool() -> None:
+    pool = _pool_with_schema_rows([("warnings", "id")])
+
+    result = await fetch_existing_columns(pool)
+
+    assert result == {"warnings": {"id"}}
+
+
+@pytest.mark.asyncio
+async def test_fetch_existing_columns_raises_when_database_unresolved() -> None:
+    pool = _pool_with_schema_rows([], db_name="")
+
+    with pytest.raises(RuntimeError, match="Could not resolve database"):
+        await fetch_existing_columns(pool)
+
+
+def test_compare_table_specs_continues_when_actual_column_is_none() -> None:
+    errors = _compare_table_specs(
+        "warnings",
+        {"id": ColumnSpec("int", False)},
+        {"id": None},  # type: ignore[arg-type]
+    )
+    assert errors == []
+
+
+def test_load_schema_drift_errors_uses_sync_engine() -> None:
+    connection = MagicMock()
+    connection.execute.return_value.fetchall.return_value = []
+    engine = MagicMock()
+    engine.connect.return_value.__enter__.return_value = connection
+    with patch("sqlalchemy.create_engine", return_value=engine), patch(
+        "utils.db_migration.get_database_url",
+        return_value="mysql+pymysql://u:p@localhost/db",
+    ):
+        errors = load_schema_drift_errors()
+    assert errors
 
 
 @pytest.mark.asyncio

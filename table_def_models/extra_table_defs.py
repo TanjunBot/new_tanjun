@@ -214,15 +214,17 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
     )
     registry["triggerMessages"] = TableDef(
         name="triggerMessages",
-        primary_key=["guild_id", "id"],
         columns=[
-            col("id", "INT", ai=True),
+            col("id", "INT", pk=True, ai=True),
             col("guild_id", "VARCHAR(20)", nullable=False),
             col("trigger", "VARCHAR(128)"),
             col("response", "VARCHAR(1024)"),
             col("case_sensitive", "TINYINT(1)", default="0"),
         ],
-        indices=[idx("idx_guild", "guild_id")],
+        indices=[
+            idx("uk_guild_id", "guild_id", "id", unique=True),
+            idx("idx_guild", "guild_id"),
+        ],
     )
     registry["triggerMessagesChannel"] = TableDef(
         name="triggerMessagesChannel",
@@ -236,9 +238,8 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
     )
     registry["ticketMessages"] = TableDef(
         name="ticketMessages",
-        primary_key=["guild_id", "id"],
         columns=[
-            col("id", "INT", ai=True),
+            col("id", "INT", pk=True, ai=True),
             col("guild_id", "VARCHAR(20)", nullable=False),
             col("channel_id", "VARCHAR(20)"),
             col("introduction", "VARCHAR(1024)"),
@@ -247,7 +248,10 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
             col("description", "VARCHAR(1024)"),
             col("summaryChannelId", "VARCHAR(20)"),
         ],
-        indices=[idx("idx_guild", "guild_id")],
+        indices=[
+            idx("uk_guild_id", "guild_id", "id", unique=True),
+            idx("idx_guild", "guild_id"),
+        ],
     )
     registry["tickets"] = TableDef(
         name="tickets",
