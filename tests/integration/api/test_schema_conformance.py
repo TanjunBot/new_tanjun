@@ -183,6 +183,39 @@ async def test_legacy_trigger_messages_guild_id_column_upgrades(integration_db_p
     assert row == ("999",)
 
 
+async def test_legacy_camelcase_columns_renamed(integration_db_pool) -> None:
+    pool = integration_db_pool
+    legacy_sql = (_LEGACY_DIR / "legacy_camelcase_columns.sql").read_text(encoding="utf-8")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("DROP TABLE IF EXISTS `autopublish`")
+        await cursor.execute("DROP TABLE IF EXISTS `afkMessages`")
+        for statement in legacy_sql.split(";"):
+            stmt = statement.strip()
+            if stmt:
+                await cursor.execute(stmt)
+        await conn.commit()
+
+    _rerun_migrations_from("004_schema_fk_and_guild_keys")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'afkMessages' "
+            "AND column_name IN ('user_id', 'channel_id', 'userId', 'channelId')"
+        )
+        afk_cols = {row[0] for row in await cursor.fetchall()}
+        await cursor.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'autopublish' "
+            "AND column_name IN ('channel_id', 'channelId')"
+        )
+        auto_cols = {row[0] for row in await cursor.fetchall()}
+
+    assert afk_cols == {"user_id", "channel_id", "messageId"}
+    assert auto_cols == {"channel_id"}
+
+
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
     from utils.schema_conformance import fetch_existing_columns
 
