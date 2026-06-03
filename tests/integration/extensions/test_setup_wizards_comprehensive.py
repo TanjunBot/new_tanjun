@@ -264,11 +264,14 @@ class TestBoosterSetup:
         modal.children = [MagicMock(value="777777777")]
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="111")
         with (
             patch.object(sw_mod, "BoosterService", return_value=svc),
             patch.object(sw_mod.discord, "VoiceChannel", MockVoiceChannel),
         ):
             await modal.on_submit(ix)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster channel configured" in (embed.description or "")
 
     async def test_booster_role_modal_paths(self, sw) -> None:
         guild = make_guild()
@@ -285,8 +288,11 @@ class TestBoosterSetup:
         guild.get_role = MagicMock(return_value=role)
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="555")
         with patch.object(sw_mod, "BoosterService", return_value=svc):
             await modal.on_submit(ix)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster role configured" in (embed.description or "")
 
 
 class TestSetupWizardCommands:
