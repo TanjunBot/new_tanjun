@@ -17,9 +17,9 @@ _LEGACY_DIR = Path(__file__).resolve().parents[2] / "fixtures" / "schema_legacy"
 @pytest.fixture(autouse=True)
 def _restore_schema_head_after_test() -> None:
     yield
-    from alembic import command
+    from utils.db_migration import ensure_database_schema
 
-    command.upgrade(_migration_config(), "head")
+    ensure_database_schema()
 
 
 def _migration_config():
@@ -245,7 +245,11 @@ async def test_giveaway_nullable_id_repaired_at_head(integration_db_pool) -> Non
                 await cursor.execute(stmt)
         await conn.commit()
 
-    _rerun_migrations_from("004_schema_fk_and_guild_keys")
+    cfg = _migration_config()
+    from alembic import command
+
+    command.stamp(cfg, "004_schema_fk_and_guild_keys")
+    command.upgrade(cfg, "006_giveaway_id_not_null")
 
     async def _verify() -> None:
         async with pool.acquire() as conn, conn.cursor() as cursor:
@@ -280,7 +284,11 @@ async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
         await cursor.execute(legacy_sql)
         await conn.commit()
 
-    _rerun_migrations_from("001_initial_schema")
+    cfg = _migration_config()
+    from alembic import command
+
+    command.stamp(cfg, "001_initial_schema")
+    command.upgrade(cfg, "002_legacy_schema_patches")
     columns = await fetch_existing_columns(pool)
     report_cols = columns.get("reports", set())
     assert "status" in report_cols
