@@ -124,6 +124,9 @@ class TriggerMessageService:
         Double-checks case sensitivity via Python logic.
         Returns None if no match is found.
         """
+        from utils.schema_ensure import ensure_table_schema
+
+        await ensure_table_schema("triggerMessages")
         # First try exact match
         exact_query = """
             SELECT t.id, t.guild_id, t.`trigger`, t.response, t.case_sensitive
