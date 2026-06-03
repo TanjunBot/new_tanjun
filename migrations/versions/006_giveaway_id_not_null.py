@@ -66,7 +66,7 @@ def _column_nullable(conn: Connection, table: str, column: str) -> bool | None:
     ).fetchone()
     if not row:
         return None
-    return row[0] == "YES"
+    return bool(row[0] == "YES")
 
 
 def _primary_key_columns(conn: Connection, table: str) -> list[str]:
