@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
+from table_def_models.table_def import ColumnDef, TableDef
 from utils.schema_metadata import expected_columns_by_table
 
 
@@ -13,6 +14,16 @@ from utils.schema_metadata import expected_columns_by_table
 class ColumnSpec:
     sql_type: str
     nullable: bool
+
+
+def _effective_nullable(tdef: TableDef, col: ColumnDef) -> bool:
+    if not col.nullable:
+        return False
+    if col.auto_increment or col.primary_key:
+        return False
+    if col.name in tdef._get_pk_col_names():
+        return False
+    return True
 
 
 def expected_column_specs_by_table() -> dict[str, dict[str, ColumnSpec]]:
@@ -23,11 +34,17 @@ def expected_column_specs_by_table() -> dict[str, dict[str, ColumnSpec]]:
         specs[name] = {
             col.name: ColumnSpec(
                 sql_type=_normalize_mysql_type(col.sql_type),
-                nullable=col.nullable,
+                nullable=_effective_nullable(tdef, col),
             )
             for col in tdef.columns
         }
     return specs
+
+
+def _column_types_match(expected: str, actual: str) -> bool:
+    if expected == actual:
+        return True
+    return expected == "json" and actual == "longtext"
 
 
 def _normalize_mysql_type(column_type: str) -> str:
@@ -135,7 +152,7 @@ def _compare_table_specs(
         if act is None:
             continue
         exp_type = _normalize_mysql_type(exp.sql_type)
-        if act.sql_type != exp_type:
+        if not _column_types_match(exp_type, act.sql_type):
             errors.append(
                 f"table `{table_name}` column `{col_name}` type mismatch: "
                 f"expected {exp_type}, got {act.sql_type}"

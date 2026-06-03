@@ -49,9 +49,17 @@ def test_find_schema_drift_reports_nullability_mismatch() -> None:
 
     table = "warnings"
     expected = expected_column_specs_by_table()[table]
-    wrong = {name: ColumnSpec(spec.sql_type, not spec.nullable) for name, spec in expected.items()}
+    wrong = dict(expected)
+    wrong["reason"] = ColumnSpec(expected["reason"].sql_type, not expected["reason"].nullable)
     errors = find_schema_drift({table: wrong})
     assert any("nullability mismatch" in err for err in errors)
+
+
+def test_column_types_match_json_and_longtext() -> None:
+    from utils.schema_conformance import _column_types_match
+
+    assert _column_types_match("json", "longtext")
+    assert not _column_types_match("json", "varchar(20)")
 
 
 def test_compare_table_specs_skips_when_actual_column_missing_in_map() -> None:
