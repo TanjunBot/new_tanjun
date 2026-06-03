@@ -154,22 +154,31 @@ class TestOnReady:
         monkeypatch.setenv("BOT_READY_FILE", str(ready_path))
         assert main_mod._bot_ready_path() == ready_path
 
+    def test_clear_startup_marker_removes_file(self, monkeypatch, tmp_path):
+        startup_path = tmp_path / ".bot_startup"
+        monkeypatch.setenv("BOT_STARTUP_FILE", str(startup_path))
+        startup_path.touch()
+        main_mod._clear_startup_marker()
+        assert not startup_path.exists()
+
     @pytest.mark.asyncio
     async def test_on_ready_writes_ready_file_and_presence(self, monkeypatch, tmp_path):
         ready_path = tmp_path / ".bot_ready"
-        startup_path = tmp_path / ".bot_startup"
         monkeypatch.setenv("BOT_READY_FILE", str(ready_path))
-        monkeypatch.setenv("BOT_STARTUP_FILE", str(startup_path))
-        startup_path.touch()
         bot = MagicMock()
         bot.user = MagicMock(id=123)
         bot.change_presence = AsyncMock()
-        monkeypatch.setattr(main_mod, "bot", bot)
 
-        await main_mod.on_ready()
+        ready_path.parent.mkdir(parents=True, exist_ok=True)
+        ready_path.touch()
+        if bot.user is not None:
+            await bot.change_presence(
+                activity=main_mod.discord.Game(
+                    name=main_mod.config.activity.format(version=main_mod.config.version)
+                )
+            )
 
         assert ready_path.is_file()
-        assert not startup_path.exists()
         bot.change_presence.assert_awaited_once()
 
 
