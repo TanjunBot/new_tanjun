@@ -66,7 +66,7 @@ def _column_nullable(conn: Connection, table: str, column: str) -> bool | None:
     ).fetchone()
     if not row:
         return None
-    return row[0] == "YES"
+    return bool(row[0] == "YES")
 
 
 def _primary_key_columns(conn: Connection, table: str) -> list[str]:
@@ -125,20 +125,24 @@ def upgrade() -> None:
         return
 
     if _has_column(conn, "giveaway", "giveawayId"):
+        pk_cols = _primary_key_columns(conn, "giveaway")
+        if "giveawayId" in pk_cols:
+            _strip_auto_increment(conn, "giveaway", "giveawayId")
+            _execute_idempotent("ALTER TABLE `giveaway` DROP PRIMARY KEY")
         conn.execute(
             text(
                 "UPDATE `giveaway` SET `giveaway_id` = `giveawayId` "
                 "WHERE `giveaway_id` IS NULL AND `giveawayId` IS NOT NULL"
             )
         )
+        _strip_auto_increment(conn, "giveaway", "giveawayId")
         _execute_idempotent("ALTER TABLE `giveaway` DROP COLUMN `giveawayId`")
 
     for legacy in ("id", "giveawayId"):
         if legacy != "giveaway_id" and _has_column(conn, "giveaway", legacy):
             pk_cols = _primary_key_columns(conn, "giveaway")
-            if pk_cols == [legacy]:
-                _execute_idempotent("ALTER TABLE `giveaway` DROP PRIMARY KEY")
-            elif legacy in pk_cols:
+            if legacy in pk_cols:
+                _strip_auto_increment(conn, "giveaway", legacy)
                 _execute_idempotent("ALTER TABLE `giveaway` DROP PRIMARY KEY")
             conn.execute(
                 text(f"UPDATE `giveaway` SET `giveaway_id` = `{legacy}` WHERE `giveaway_id` IS NULL")
@@ -155,6 +159,8 @@ def upgrade() -> None:
     needs_pk = pk_cols != ["giveaway_id"]
     needs_not_null = _column_nullable(conn, "giveaway", "giveaway_id") is not False
     if needs_pk:
+        for column in pk_cols:
+            _strip_auto_increment(conn, "giveaway", column)
         _execute_idempotent("ALTER TABLE `giveaway` DROP PRIMARY KEY")
     if needs_pk or needs_not_null:
         _execute_idempotent(

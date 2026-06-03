@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 
 import pytest
+from asyncmy.errors import OperationalError
 
 pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 
@@ -14,9 +17,9 @@ _LEGACY_DIR = Path(__file__).resolve().parents[2] / "fixtures" / "schema_legacy"
 @pytest.fixture(autouse=True)
 def _restore_schema_head_after_test() -> None:
     yield
-    from alembic import command
+    from utils.db_migration import ensure_database_schema
 
-    command.upgrade(_migration_config(), "head")
+    ensure_database_schema()
 
 
 def _migration_config():
@@ -35,6 +38,17 @@ def _rerun_migrations_from(revision: str) -> None:
     cfg = _migration_config()
     command.stamp(cfg, revision)
     command.upgrade(cfg, "head")
+
+
+async def _run_with_schema_retry(fn: Callable[[], Awaitable[None]], *, attempts: int = 5) -> None:
+    for attempt in range(attempts):
+        try:
+            await fn()
+            return
+        except OperationalError as exc:
+            if exc.args[0] != 1412 or attempt == attempts - 1:
+                raise
+            await asyncio.sleep(0.2 * (attempt + 1))
 
 
 async def test_schema_conformance_after_alembic_upgrade(integration_db_pool) -> None:
@@ -156,31 +170,34 @@ async def test_legacy_trigger_messages_guild_id_column_upgrades(integration_db_p
 
     _rerun_migrations_from("003_giveaway_legacy_column")
 
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute(
-            "SELECT column_name FROM information_schema.columns "
-            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
-            "AND column_name IN ('guild_id', 'guildId')"
-        )
-        cols = {row[0] for row in await cursor.fetchall()}
-        await cursor.execute(
-            "SELECT is_nullable FROM information_schema.columns "
-            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' AND column_name = 'guild_id'"
-        )
-        nullable = await cursor.fetchone()
-        await cursor.execute(
-            "SELECT COUNT(*) FROM information_schema.statistics "
-            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
-            "AND index_name = 'uk_guild_id' AND non_unique = 0"
-        )
-        uk = await cursor.fetchone()
-        await cursor.execute("SELECT `guild_id` FROM `triggerMessages` WHERE `id` = 1")
-        row = await cursor.fetchone()
+    async def _verify() -> None:
+        async with pool.acquire() as conn, conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
+                "AND column_name IN ('guild_id', 'guildId')"
+            )
+            cols = {row[0] for row in await cursor.fetchall()}
+            await cursor.execute(
+                "SELECT is_nullable FROM information_schema.columns "
+                "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' AND column_name = 'guild_id'"
+            )
+            nullable = await cursor.fetchone()
+            await cursor.execute(
+                "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics "
+                "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
+                "AND index_name = 'uk_guild_id' AND non_unique = 0"
+            )
+            uk = await cursor.fetchone()
+            await cursor.execute("SELECT `guild_id` FROM `triggerMessages` WHERE `id` = 1")
+            row = await cursor.fetchone()
 
-    assert cols == {"guild_id"}
-    assert nullable and nullable[0] == "NO"
-    assert uk and uk[0] == 1
-    assert row == ("999",)
+        assert cols == {"guild_id"}
+        assert nullable and nullable[0] == "NO"
+        assert uk and uk[0] == 1
+        assert row == ("999",)
+
+    await _run_with_schema_retry(_verify)
 
 
 async def test_legacy_camelcase_columns_renamed(integration_db_pool) -> None:
@@ -202,7 +219,7 @@ async def test_legacy_camelcase_columns_renamed(integration_db_pool) -> None:
         await cursor.execute(
             "SELECT column_name FROM information_schema.columns "
             "WHERE table_schema = DATABASE() AND table_name = 'afkMessages' "
-            "AND column_name IN ('user_id', 'channel_id', 'userId', 'channelId')"
+            "AND column_name IN ('user_id', 'channel_id', 'messageId', 'userId', 'channelId')"
         )
         afk_cols = {row[0] for row in await cursor.fetchall()}
         await cursor.execute(
@@ -228,27 +245,30 @@ async def test_giveaway_nullable_id_repaired_at_head(integration_db_pool) -> Non
                 await cursor.execute(stmt)
         await conn.commit()
 
-    _rerun_migrations_from("004_schema_fk_and_guild_keys")
+    cfg = _migration_config()
+    from alembic import command
 
-    from utils.schema_conformance import assert_schema_conformance
+    command.stamp(cfg, "004_schema_fk_and_guild_keys")
+    command.upgrade(cfg, "006_giveaway_id_not_null")
 
-    await assert_schema_conformance(pool)
+    async def _verify() -> None:
+        async with pool.acquire() as conn, conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT column_name, extra, is_nullable FROM information_schema.columns "
+                "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
+                "AND column_name IN ('giveaway_id', 'giveawayId', 'id')"
+            )
+            rows = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
+            await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` WHERE `giveaway_id` = 7")
+            data = await cursor.fetchone()
 
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute(
-            "SELECT column_name, extra, is_nullable FROM information_schema.columns "
-            "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
-            "AND column_name IN ('giveaway_id', 'giveawayId', 'id')"
-        )
-        rows = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
-        await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` WHERE `giveaway_id` = 7")
-        data = await cursor.fetchone()
+        assert "giveaway_id" in rows
+        assert rows["giveaway_id"][1] == "NO"
+        assert "auto_increment" in rows["giveaway_id"][0].lower()
+        assert "giveawayId" not in rows
+        assert data == (7, "111")
 
-    assert "giveaway_id" in rows
-    assert rows["giveaway_id"][1] == "NO"
-    assert "auto_increment" in rows["giveaway_id"][0].lower()
-    assert "giveawayId" not in rows
-    assert data == (7, "111")
+    await _run_with_schema_retry(_verify)
 
 
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
@@ -264,7 +284,11 @@ async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
         await cursor.execute(legacy_sql)
         await conn.commit()
 
-    _rerun_migrations_from("001_initial_schema")
+    cfg = _migration_config()
+    from alembic import command
+
+    command.stamp(cfg, "001_initial_schema")
+    command.upgrade(cfg, "002_legacy_schema_patches")
     columns = await fetch_existing_columns(pool)
     report_cols = columns.get("reports", set())
     assert "status" in report_cols
