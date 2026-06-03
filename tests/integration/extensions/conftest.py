@@ -115,6 +115,3 @@ async def load_extension_bot(extension: str, *, fire_ready: bool = True) -> Magi
     if fire_ready:
         await fire_cog_on_ready(bot)
     return bot
-
-
-pytest_plugins = ["tests.helpers.wizard_flow"]

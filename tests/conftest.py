@@ -8,6 +8,8 @@ import pytest_asyncio
 
 import tests.mock_config as mock_config
 
+pytest_plugins = ["tests.helpers.wizard_flow"]
+
 # Apply mock config before any test imports
 mock_config.patch_config_module()
 
