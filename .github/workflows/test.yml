@@ -52,9 +52,13 @@ jobs:
           TANJUN_TEST_DB_PASSWORD: test_password
           TANJUN_TEST_DB_NAME: tanjun_test
         run: |
+          alembic upgrade head
           pytest tests/integration/api/test_db_read_cache_live.py \
             tests/integration/api/test_db_read_cache.py \
-            tests/integration/api/test_api_integration.py -v --timeout=120
+            tests/integration/api/test_api_integration.py \
+            tests/integration/api/test_schema_conformance.py -v --timeout=120
+      - name: Check schema migration on schema changes
+        run: python scripts/check_schema_revision.py origin/main
       - name: Stop test database
         if: always()
         run: docker compose -f docker-compose.test.yml down -v

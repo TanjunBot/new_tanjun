@@ -32,6 +32,8 @@ This guide covers deploying Tanjun in a production environment.
    docker compose up -d
    ```
 
+   On container start, the entrypoint waits for the database, synchronizes schema via Alembic (`upgrade head` when needed, or `stamp head` when the database already matches the code but was never tracked), then starts `main.py`. You do not need to run migrations manually for normal Docker deploys.
+
 4. Verify the bot is running:
 
    ```bash

@@ -1110,350 +1110,16 @@ def get_table_defs() -> dict[str, "TableDef"]:
         primary_key=["guild_id", "channel_id"],
     )
 
+    from table_def_models.extra_table_defs import register_extra_table_defs
+
+    register_extra_table_defs(_t)
+
     return _t
 
 
 def get_table_definitions() -> dict[str, str]:
-    """Return the table DDL definitions used by create_tables.
-
-    Exported for testing purposes to avoid DDL duplication.
-    Now uses Pydantic TableDef models for a growing subset of tables;
-    remaining tables still use raw SQL strings.
-    """
-    tables: dict[str, str] = {}
-
-    # Convert model-backed tables
-    for name, tdef in get_table_defs().items():
-        tables[name] = tdef.to_sql()
-
-    # ── Tables still using raw SQL (not yet converted to models) ────────
-    tables["giveaway"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway` (
-        `giveaway_id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `guild_id` VARCHAR(20) NOT NULL,
-        `title` VARCHAR(128) NOT NULL,
-        `description` VARCHAR(1024),
-        `winners` TINYINT(4) DEFAULT 1,
-        `withButton` TINYINT(1) DEFAULT 1,
-        `customName` VARCHAR(32),
-        `sponsor` VARCHAR(20),
-        `price` VARCHAR(64),
-        `message` VARCHAR(128),
-        `endtime` DATETIME NOT NULL,
-        `starttime` DATETIME,
-        `started` TINYINT(1) DEFAULT 0,
-        `ended` TINYINT(1) DEFAULT 0,
-        `newMessageRequirement` SMALLINT UNSIGNED,
-        `dayRequirement` SMALLINT UNSIGNED,
-        `voiceRequirement` SMALLINT UNSIGNED,
-        `sendFailed` TINYINT(1) DEFAULT 0,
-        `channel_id` VARCHAR(20),
-        `messageId` VARCHAR(20) DEFAULT "pending",
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveaway_channelRequirement"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway_channelRequirement` (
-        `giveaway_id` INT UNSIGNED,
-        `channel_id` VARCHAR(20),
-        `amount` SMALLINT UNSIGNED,
-        PRIMARY KEY(`giveaway_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayVoiceTime"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayVoiceTime` (
-        `giveaway_id` INT UNSIGNED,
-        `user_id` VARCHAR(20),
-        `voiceMinutes` MEDIUMINT UNSIGNED DEFAULT 0,
-        PRIMARY KEY(`giveaway_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayNewMessage"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayNewMessage` (
-        `giveaway_id` INT UNSIGNED,
-        `user_id` VARCHAR(20),
-        `messages` MEDIUMINT UNSIGNED,
-        PRIMARY KEY(`giveaway_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveaway_channelMessages"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway_channelMessages` (
-        `giveaway_id` INT UNSIGNED,
-        `channel_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        `amount` MEDIUMINT UNSIGNED DEFAULT 0,
-        PRIMARY KEY(`giveaway_id`, `channel_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["aiSituations"] = """
-    CREATE TABLE IF NOT EXISTS `aiSituations` (
-        `user_id` VARCHAR(20) PRIMARY KEY,
-        `situation` VARCHAR(4000) DEFAULT NULL,
-        `name` VARCHAR(15) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `temperature` DECIMAL(3, 2) DEFAULT 1,
-        `top_p` DECIMAL(3, 2) DEFAULT 1,
-        `frequency_penalty` DECIMAL(3, 2) DEFAULT 0,
-        `presence_penalty` DECIMAL(3, 2) DEFAULT 0,
-        `unlocked` TINYINT(1) DEFAULT 0
-    ) ENGINE=InnoDB;
-    """
-    tables["claimedBoosterChannel"] = """
-    CREATE TABLE IF NOT EXISTS `claimedBoosterChannel` (
-        `user_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        PRIMARY KEY(`user_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["claimedBoosterRole"] = """
-    CREATE TABLE IF NOT EXISTS `claimedBoosterRole` (
-        `user_id` VARCHAR(20),
-        `role_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        PRIMARY KEY(`user_id`, `role_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["log_enables"] = """
-    CREATE TABLE IF NOT EXISTS `log_enables` (
-        `guild_id` VARCHAR(20),
-        `automodRuleCreate` TINYINT(1) DEFAULT 1,
-        `automodRuleUpdate` TINYINT(1) DEFAULT 1,
-        `automodRuleDelete` TINYINT(1) DEFAULT 1,
-        `automodAction` TINYINT(1) DEFAULT 0,
-        `guild_channelDelete` TINYINT(1) DEFAULT 1,
-        `guild_channelCreate` TINYINT(1) DEFAULT 1,
-        `guild_channelUpdate` TINYINT(1) DEFAULT 1,
-        `guildUpdate` TINYINT(1) DEFAULT 1,
-        `inviteCreate` TINYINT(1) DEFAULT 1,
-        `inviteDelete` TINYINT(1) DEFAULT 0,
-        `memberJoin` TINYINT(1) DEFAULT 1,
-        `memberLeave` TINYINT(1) DEFAULT 1,
-        `memberUpdate` TINYINT(1) DEFAULT 1,
-        `userUpdate` TINYINT(1) DEFAULT 1,
-        `memberBan` TINYINT(1) DEFAULT 1,
-        `memberUnban` TINYINT(1) DEFAULT 1,
-        `presenceUpdate` TINYINT(1) DEFAULT 1,
-        `messageEdit` TINYINT(1) DEFAULT 1,
-        `messageDelete` TINYINT(1) DEFAULT 1,
-        `reactionAdd` TINYINT(1) DEFAULT 0,
-        `reactionRemove` TINYINT(1) DEFAULT 0,
-        `guildRoleCreate` TINYINT(1) DEFAULT 1,
-        `guildRoleDelete` TINYINT(1) DEFAULT 1,
-        `guildRoleUpdate` TINYINT(1) DEFAULT 1,
-        PRIMARY KEY(`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["scheduledMessages"] = """
-    CREATE TABLE IF NOT EXISTS `scheduledMessages` (
-        `messageId` BIGINT PRIMARY KEY AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `user_id` VARCHAR(20) NOT NULL,
-        `content` VARCHAR(1024) NOT NULL,
-        `send_time` DATETIME NOT NULL,
-        `repeatInterval` MEDIUMINT UNSIGNED,
-        `repeatAmount` MEDIUMINT UNSIGNED,
-        `attachments` TEXT,
-        `discord_message_id` VARCHAR(20) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX `idx_sendtime` (send_time),
-        INDEX `idx_user` (user_id),
-        INDEX `idx_guild` (guild_id),
-        INDEX `idx_discord_message` (discord_message_id)
-    ) ENGINE=InnoDB;
-    """
-    tables["reports"] = """
-    CREATE TABLE IF NOT EXISTS `reports` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        `reporterId` VARCHAR(20),
-        `reason` VARCHAR(1024),
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `status` VARCHAR(20) DEFAULT 'pending',
-        `status_updated_at` TIMESTAMP DEFAULT NULL,
-        `status_updated_by` VARCHAR(20) DEFAULT NULL,
-        `status_note` VARCHAR(1024) DEFAULT NULL,
-        `anonymous` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`id`),
-        INDEX `idx_status` (`status`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["report_evidence"] = """
-    CREATE TABLE IF NOT EXISTS `report_evidence` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `report_id` INT,
-        `url` VARCHAR(2048),
-        `filename` VARCHAR(255) DEFAULT NULL,
-        `uploaded_by` VARCHAR(20) DEFAULT NULL,
-        `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY(`id`),
-        INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`report_id`)
-            REFERENCES `reports`(`id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["report_mod_actions"] = """
-    CREATE TABLE IF NOT EXISTS `report_mod_actions` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `report_id` INT,
-        `action_type` VARCHAR(20),
-        `target_id` VARCHAR(20),
-        `performed_by` VARCHAR(20),
-        `details` VARCHAR(1024) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY(`id`),
-        INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`report_id`)
-            REFERENCES `reports`(`id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["report_anonymity"] = """
-    CREATE TABLE IF NOT EXISTS `report_anonymity` (
-        `guild_id` VARCHAR(20),
-        `enabled` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["report_notification_optout"] = """
-    CREATE TABLE IF NOT EXISTS `report_notification_optout` (
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["triggerMessages"] = """
-    CREATE TABLE IF NOT EXISTS `triggerMessages` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `trigger` VARCHAR(128),
-        `response` VARCHAR(1024),
-        `case_sensitive` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["triggerMessagesChannel"] = """
-    CREATE TABLE IF NOT EXISTS `triggerMessagesChannel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `triggerId` INT,
-        PRIMARY KEY(`guild_id`, `channel_id`, `triggerId`),
-        FOREIGN KEY (`guild_id`, `triggerId`)
-            REFERENCES `triggerMessages`(`guild_id`, `id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["ticketMessages"] = """
-    CREATE TABLE IF NOT EXISTS `ticketMessages` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `introduction` VARCHAR(1024),
-        `pingRole` VARCHAR(20),
-        `name` VARCHAR(128),
-        `description` VARCHAR(1024),
-        `summaryChannelId` VARCHAR(20),
-        PRIMARY KEY(`id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["tickets"] = """
-    CREATE TABLE IF NOT EXISTS `tickets` (
-        `guild_id` VARCHAR(20),
-        `openerId` VARCHAR(20),
-        `openedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `closed` TINYINT(1) DEFAULT 0,
-        `closedAt` TIMESTAMP DEFAULT NULL,
-        `closedBy` VARCHAR(20) DEFAULT NULL,
-        `channel_id` VARCHAR(20),
-        `ticketMessageId` INT,
-        PRIMARY KEY(`guild_id`, `channel_id`, `ticketMessageId`),
-        FOREIGN KEY (`guild_id`, `ticketMessageId`)
-            REFERENCES `ticketMessages`(`guild_id`, `id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["wordle_stats"] = """
-    CREATE TABLE IF NOT EXISTS `wordle_stats` (
-        `user_id` VARCHAR(20) NOT NULL,
-        `guild_id` VARCHAR(20) NOT NULL,
-        `games_played` INT UNSIGNED DEFAULT 0,
-        `games_won` INT UNSIGNED DEFAULT 0,
-        `current_streak` INT UNSIGNED DEFAULT 0,
-        `max_streak` INT UNSIGNED DEFAULT 0,
-        `guess_distribution` VARCHAR(64) DEFAULT '0,0,0,0,0,0',
-        `hard_mode_games_played` INT UNSIGNED DEFAULT 0,
-        `hard_mode_games_won` INT UNSIGNED DEFAULT 0,
-        PRIMARY KEY (`user_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["welcome_channel"] = """
-    CREATE TABLE IF NOT EXISTS `welcome_channel` (
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `message` VARCHAR(1024) DEFAULT NULL,
-        `imageBackground` VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY(`channel_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["leave_channel"] = """
-    CREATE TABLE IF NOT EXISTS `leave_channel` (
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `message` VARCHAR(1024) DEFAULT NULL,
-        `imageBackground` VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY(`channel_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["dynamicslowmode"] = """
-    CREATE TABLE IF NOT EXISTS `dynamicslowmode` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `messages` INT,
-        `per` INT,
-        `resetafter` INT,
-        `cashedSlowmode` INT,
-        PRIMARY KEY(`channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["dynamicslowmode_messages"] = """
-    CREATE TABLE IF NOT EXISTS `dynamicslowmode_messages` (
-        `id` INT AUTO_INCREMENT,
-        `channel_id` VARCHAR(20),
-        `messageId` VARCHAR(20),
-        `send_time` DATETIME,
-        PRIMARY KEY(`id`),
-        INDEX `idx_channel` (`channel_id`),
-        INDEX `idx_message` (`messageId`),
-        INDEX `idx_sendtime` (`send_time`),
-        FOREIGN KEY (`channel_id`)
-            REFERENCES `dynamicslowmode`(`channel_id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["twitchOnlineNotification"] = """
-    CREATE TABLE IF NOT EXISTS `twitchOnlineNotification` (
-        `id` INT AUTO_INCREMENT,
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `twitchUuid` VARCHAR(64),
-        `twitchName` VARCHAR(128),
-        `notification_message` VARCHAR(1024) DEFAULT NULL,
-        PRIMARY KEY(`id`),
-        INDEX `idx_channel` (`channel_id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-
-    return tables
+    """Return the table DDL definitions used by create_tables and Alembic."""
+    return {name: tdef.to_sql() for name, tdef in get_table_defs().items()}
 
 
 async def create_tables(bot=None) -> None:
@@ -1510,13 +1176,44 @@ async def create_tables(bot=None) -> None:
         created.update(batch)
 
     # Create tables in dependency order, one at a time to avoid DDL lock contention.
-    for batch in batches:
-        for table_name in sorted(batch):
-            await execute_action(tables[table_name], bot=bot)
+    from utils.db_migration import ensure_database_schema
 
-    from utils.schema_ensure import run_startup_migrations
+    try:
+        ensure_database_schema()
+    except Exception as exc:
+        print(f"Alembic migration failed, falling back to CREATE TABLE loop: {exc}")
+        for batch in batches:
+            for table_name in sorted(batch):
+                if table_name not in existing:
+                    await execute_action(tables[table_name], bot=bot)
+        return
 
-    await run_startup_migrations(bot=bot)
+    conn = None
+    broken_connection = False
+    existing_after: set[str] = set()
+    try:
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute("SHOW TABLES"), timeout=_QUERY_TIMEOUT)
+            existing_after = {row[0] for row in await cursor.fetchall()}
+    except TimeoutError:
+        broken_connection = True
+        print("Error re-checking tables after migration: timed out")
+        return
+    except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
+        print(f"Error re-checking tables after migration: {e}")
+        return
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
+
+    missing_after = sorted(name for name in tables if name not in existing_after)
+    if missing_after:
+        raise RuntimeError(
+            "Alembic reported head but tables are still missing: " + ", ".join(missing_after)
+        )
 
 
 # ── Warning functions (delegated to WarningRepository) ───────────────────────────
@@ -2157,9 +1854,6 @@ async def add_giveaway(
     role_requirement: list[str],
     voice_requirement: int | None,
 ) -> int | None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("giveaway")
     from services.giveaway_service import GiveawayCreateParams, giveaway_service
 
     params = GiveawayCreateParams(
@@ -2191,9 +1885,6 @@ async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
 
 
 async def get_giveaway(giveaway_id: int) -> GiveawayModel | None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("giveaway")
     from services.giveaway_service import giveaway_service
 
     return await giveaway_service.get(giveaway_id)
@@ -2809,7 +2500,7 @@ async def _ensure_log_enables_table() -> None:
     async with _log_enables_table_lock:
         if _log_enables_table_ensured:
             return
-        result = await execute_action(get_table_definitions()["log_enables"])
+        result = await execute_action(get_table_defs()["log_enables"].to_sql())
         if result is None:
             return
         _log_enables_table_ensured = True
@@ -3298,9 +2989,6 @@ async def remove_join_to_create_channel(guild_id: str) -> None:
 
 
 async def get_media_channel(channel_id: str) -> bool:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("mediaChannel")
     query = "SELECT 1 FROM mediaChannel WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -3308,18 +2996,12 @@ async def get_media_channel(channel_id: str) -> bool:
 
 
 async def add_media_channel(guild_id: str, channel_id: str) -> None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("mediaChannel")
     query = "INSERT INTO mediaChannel (guild_id, channel_id) VALUES (%s, %s)"
     params = (guild_id, channel_id)
     await execute_action(query, params)
 
 
 async def remove_media_channel(guild_id: str, channel_id: str) -> None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("mediaChannel")
     query = "DELETE FROM mediaChannel WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     await execute_action(query, params)
@@ -3333,7 +3015,12 @@ async def get_welcome_channel(guild_id: str) -> WelcomeChannelModel | None:
 
 
 async def set_welcome_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 
@@ -3352,7 +3039,12 @@ async def get_leave_channel(guild_id: str) -> LeaveChannelModel | None:
 
 
 async def set_leave_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 
@@ -3364,9 +3056,6 @@ async def remove_leave_channel(guild_id: str) -> None:
 
 
 async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeModel]:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("dynamicslowmode")
     query = "SELECT guild_id, channel_id, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE guild_id = %s"
     params = (guild_id,)
     rows: list[DynamicSlowmodeModel] = []
@@ -3376,9 +3065,6 @@ async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeMod
 
 
 async def add_dynamicslowmode(guild_id: str, channel_id: str, messages: int, per: int, resetafter: int) -> None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("dynamicslowmode")
     query = "INSERT INTO dynamicslowmode (guild_id, channel_id, messages, per, resetafter) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, messages, per, resetafter)
     await execute_action(query, params)
@@ -3391,9 +3077,6 @@ async def remove_dynamicslowmode(guild_id: str, channel_id: str) -> None:
 
 
 async def get_dynamicslowmode(channel_id: str) -> DynamicSlowmodeModel | None:
-    from utils.schema_ensure import ensure_table_schema
-
-    await ensure_table_schema("dynamicslowmode")
     query = "SELECT guild_id, channel_id, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)

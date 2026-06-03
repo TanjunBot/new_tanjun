@@ -23,11 +23,17 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the entire application
 COPY --chown=appuser:appuser . /usr/local/app/
 
+RUN chmod +x /usr/local/app/scripts/docker_entrypoint.py
+
 USER appuser
+
+ENV PYTHONPATH=/usr/local/app
+ENV TANJUN_APP_ROOT=/usr/local/app
 
 # Health check for container orchestration (Discord ready can take 2+ minutes on cold start)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
   CMD ["python", "/usr/local/app/healthcheck.py"]
 
 EXPOSE 8001
-CMD ["python", "main.py"]
+ENTRYPOINT ["python", "/usr/local/app/scripts/docker_entrypoint.py"]
+CMD []

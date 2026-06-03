@@ -104,13 +104,11 @@ class TableDef(BaseModel):
 
         pk_names = self._get_pk_col_names()
 
-        if len(pk_names) > 1:
-            # Composite primary key – strip inline PK markers and add separate PK line
+        if pk_names:
             col_lines = []
             for c in self.columns:
                 sql = c.to_sql()
                 if c.name in pk_names:
-                    # Remove "PRIMARY KEY" from inline
                     sql = sql.replace(" PRIMARY KEY", "")
                 col_lines.append(sql)
             pk_str = ", ".join(f"`{n}`" for n in pk_names)

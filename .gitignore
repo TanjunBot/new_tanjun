@@ -181,6 +181,7 @@ temp_*.sql
 # Database dumps
 *.sql
 !docs/**/*.sql
+!tests/fixtures/schema_legacy/*.sql
 
 # IDE / editor
 .idea/
