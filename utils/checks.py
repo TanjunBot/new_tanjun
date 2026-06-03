@@ -53,14 +53,16 @@ def check_user_permission(command_info: CommandInfo, permission: Literal['ban_me
     """
     if not _user_is_member_in_guild(command_info):
         return ('missingPermission', ErrorEmbedCategory.PERMISSION, True)
+    user = command_info.user
+    assert isinstance(user, discord.Member)
     has_perm: bool
     if use_guild_permissions:
-        has_perm = getattr(command_info.user.guild_permissions, permission, False)
+        has_perm = getattr(user.guild_permissions, permission, False)
     else:
         target_channel = channel if channel is not None else command_info.channel
-        if not hasattr(target_channel, 'permissions_for'):
+        if target_channel is None or not hasattr(target_channel, 'permissions_for'):
             return ('missingPermission', ErrorEmbedCategory.PERMISSION, True)
-        has_perm = getattr(target_channel.permissions_for(command_info.user), permission, False)
+        has_perm = getattr(target_channel.permissions_for(user), permission, False)
     if not has_perm:
         return ('missingPermission', ErrorEmbedCategory.PERMISSION, True)
     return None
@@ -166,5 +168,7 @@ async def send_check_failure(command_info: CommandInfo, feature: str, result: _C
         embed = categorized_warning_embed(title, description)
     else:
         embed = categorized_error_embed(category, title, description)
-    await command_info.reply(embed=embed)
+    reply = command_info.reply
+    if reply is not None:
+        await reply(embed=embed)
     return True
