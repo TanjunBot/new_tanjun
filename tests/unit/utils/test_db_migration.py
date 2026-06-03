@@ -22,7 +22,7 @@ from utils.db_migration import (  # noqa: E402
 pytestmark = pytest.mark.unit
 
 ROOT = Path(__file__).resolve().parents[3]
-HEAD = "005_legacy_camelcase_columns"
+HEAD = "006_giveaway_id_not_null"
 
 
 def _engine_context(connection: MagicMock) -> MagicMock:
