@@ -2157,6 +2157,9 @@ async def add_giveaway(
     role_requirement: list[str],
     voice_requirement: int | None,
 ) -> int | None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("giveaway")
     from services.giveaway_service import GiveawayCreateParams, giveaway_service
 
     params = GiveawayCreateParams(
@@ -2188,6 +2191,9 @@ async def set_giveaway_message_id(giveaway_id: int, message_id: int) -> None:
 
 
 async def get_giveaway(giveaway_id: int) -> GiveawayModel | None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("giveaway")
     from services.giveaway_service import giveaway_service
 
     return await giveaway_service.get(giveaway_id)
