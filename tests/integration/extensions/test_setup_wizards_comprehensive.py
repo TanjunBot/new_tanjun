@@ -142,6 +142,11 @@ class TestLogChannelSelectView:
         await view.on_channel_select(ix, MagicMock(values=[selected]))
         wizard_api_mocks["set_log"].assert_awaited_once()
         ix.response.edit_message.assert_awaited_once()
+        kwargs = ix.response.edit_message.await_args.kwargs
+        assert isinstance(kwargs["view"], sw.LogEventConfigView)
+        desc = kwargs["embed"].description or ""
+        assert "Page 1/" in desc, "transition must show paginated log events, not a static placeholder"
+        assert sw.LOG_OPTIONS[0] in desc
 
     async def test_channel_select_no_permission(self, sw, wizard_api_mocks) -> None:
         guild = make_guild()
@@ -181,9 +186,13 @@ class TestLogEventConfigView:
         ix = _admin_interaction(guild=guild)
         button = MagicMock()
         await view.enable_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.disable_page(ix, button)
         view._current_page = 1
         await view.prev_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.next_page(ix, button)
         await view.finish(ix, button)
 

@@ -57,6 +57,7 @@ jobs:
       - run: ruff format .
       - run: python scripts/lint_tests.py
       - run: python scripts/lint_channel_select.py
+      - run: python scripts/lint_view_initial_embed.py
 
   type-check:
     name: Type Check (Mypy)

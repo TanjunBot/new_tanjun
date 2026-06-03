@@ -112,3 +112,21 @@ def assert_matrix_outcome(info: Any, case: str, profile: Any, mocks: dict[str, A
         assert_command_responded(info)
         return
     raise AssertionError(f"unknown matrix case: {case}")
+
+
+def assert_initial_reply_embed(info: Any, *, title_contains: str | None = None) -> Any:
+    from tests.helpers.view_state import assert_embed_title_contains, embed_from_reply
+
+    embed = embed_from_reply(info)
+    if title_contains is not None:
+        assert_embed_title_contains(embed, title_contains)
+    return embed
+
+
+def assert_initial_edit_embed(interaction: Any, *, page: int | None = None, total: int | None = None) -> Any:
+    from tests.helpers.view_state import assert_embed_page, embed_from_edit
+
+    embed = embed_from_edit(interaction)
+    if page is not None and total is not None:
+        assert_embed_page(embed, page, total)
+    return embed
