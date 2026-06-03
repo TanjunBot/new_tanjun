@@ -70,9 +70,10 @@ class LogChannelSelectView(View):
             await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         await api_set_log_channel(str(self.guild.id), str(channel.id))
-        embed = utility.tanjunEmbed(title='✅ Log Channel Set', description=f"Log channel has been set to {channel_mention(selected, channel)}.\n\nNow let's configure which events to log.")
         event_view = LogEventConfigView(self.locale, self.guild)
-        await interaction.response.edit_message(embed=_discord_embed(embed), view=event_view)
+        prefix = f"Log channel set to {channel_mention(selected, channel)}."
+        config_embed = await event_view.render_for_message(prefix=prefix)
+        await interaction.response.edit_message(embed=config_embed, view=event_view)
 
 class LogEventConfigView(View):
     """Step 2: Configure which log events to track."""
@@ -104,6 +105,12 @@ class LogEventConfigView(View):
             lines.append(f'{icon} {key}')
         total_pages = (len(LOG_OPTIONS) + self._items_per_page - 1) // self._items_per_page
         return utility.tanjunEmbed(title='Log Event Configuration', description='\n'.join(lines) + f'\n\nPage {self._current_page + 1}/{total_pages}')
+
+    async def render_for_message(self, *, prefix: str | None = None) -> discord.Embed:
+        embed = _discord_embed(await self._render_embed())
+        if prefix:
+            embed.description = f'{prefix}\n\n{embed.description or ""}'
+        return embed
 
     @discord.ui.button(label='✅ Enable page', style=discord.ButtonStyle.success)
     async def enable_page(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
