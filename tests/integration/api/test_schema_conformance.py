@@ -216,6 +216,41 @@ async def test_legacy_camelcase_columns_renamed(integration_db_pool) -> None:
     assert auto_cols == {"channel_id"}
 
 
+async def test_giveaway_nullable_id_repaired_at_head(integration_db_pool) -> None:
+    pool = integration_db_pool
+    legacy_sql = (_LEGACY_DIR / "giveaway_nullable_id_with_legacy_pk.sql").read_text(encoding="utf-8")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("DROP TABLE IF EXISTS `giveaway`")
+        for statement in legacy_sql.split(";"):
+            stmt = statement.strip()
+            if stmt:
+                await cursor.execute(stmt)
+        await conn.commit()
+
+    _rerun_migrations_from("004_schema_fk_and_guild_keys")
+
+    from utils.schema_conformance import assert_schema_conformance
+
+    await assert_schema_conformance(pool)
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT column_name, extra, is_nullable FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
+            "AND column_name IN ('giveaway_id', 'giveawayId', 'id')"
+        )
+        rows = {row[0]: (row[1], row[2]) for row in await cursor.fetchall()}
+        await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` WHERE `giveaway_id` = 7")
+        data = await cursor.fetchone()
+
+    assert "giveaway_id" in rows
+    assert rows["giveaway_id"][1] == "NO"
+    assert "auto_increment" in rows["giveaway_id"][0].lower()
+    assert "giveawayId" not in rows
+    assert data == (7, "111")
+
+
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
     from utils.schema_conformance import fetch_existing_columns
 
