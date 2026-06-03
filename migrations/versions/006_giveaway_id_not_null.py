@@ -134,6 +134,7 @@ def upgrade() -> None:
                 "WHERE `giveaway_id` IS NULL AND `giveawayId` IS NOT NULL"
             )
         )
+        _strip_auto_increment(conn, "giveaway", "giveawayId")
         _execute_idempotent("ALTER TABLE `giveaway` DROP COLUMN `giveawayId`")
 
     for legacy in ("id", "giveawayId"):

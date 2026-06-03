@@ -184,7 +184,7 @@ async def test_legacy_trigger_messages_guild_id_column_upgrades(integration_db_p
             )
             nullable = await cursor.fetchone()
             await cursor.execute(
-                "SELECT COUNT(*) FROM information_schema.statistics "
+                "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics "
                 "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
                 "AND index_name = 'uk_guild_id' AND non_unique = 0"
             )
