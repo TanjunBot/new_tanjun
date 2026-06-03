@@ -47,6 +47,17 @@ def _primary_key_columns(conn: Connection, table: str) -> list[str]:
     return [row[0] for row in rows]
 
 
+def _has_column(conn: Connection, table: str, column: str) -> bool:
+    row = conn.execute(
+        text(
+            "SELECT COUNT(*) FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = :table AND column_name = :column"
+        ),
+        {"table": table, "column": column},
+    ).fetchone()
+    return bool(row and row[0])
+
+
 def _has_unique_guild_id(conn: Connection, table: str) -> bool:
     row = conn.execute(
         text(
@@ -82,6 +93,40 @@ def _dedupe_guild_config_table(table: str) -> None:
 
     _execute_idempotent(f"ALTER TABLE `{table}` DROP PRIMARY KEY")
     _execute_idempotent(f"ALTER TABLE `{table}` ADD PRIMARY KEY (`guild_id`)")
+
+
+def _normalize_guild_id_column(conn: Connection, table: str) -> None:
+    if _has_column(conn, table, "guild_id"):
+        return
+    if _has_column(conn, table, "guildId"):
+        _execute_idempotent(
+            f"ALTER TABLE `{table}` CHANGE COLUMN `guildId` `guild_id` VARCHAR(20) DEFAULT NULL"
+        )
+
+
+def _ensure_guild_id_column(
+    conn: Connection, table: str, child_table: str | None, child_fk_column: str | None
+) -> None:
+    _normalize_guild_id_column(conn, table)
+    if not _has_column(conn, table, "guild_id"):
+        _execute_idempotent(f"ALTER TABLE `{table}` ADD COLUMN `guild_id` VARCHAR(20) DEFAULT NULL")
+
+    if child_table and child_fk_column:
+        _normalize_guild_id_column(conn, child_table)
+        conn.execute(
+            text(
+                f"UPDATE `{table}` parent "
+                f"INNER JOIN ("
+                f"  SELECT `{child_fk_column}` AS parent_id, MIN(`guild_id`) AS guild_id "
+                f"  FROM `{child_table}` WHERE `guild_id` IS NOT NULL "
+                f"  GROUP BY `{child_fk_column}`"
+                f") child ON parent.`id` = child.parent_id "
+                f"SET parent.`guild_id` = child.guild_id "
+                f"WHERE parent.`guild_id` IS NULL"
+            )
+        )
+
+    conn.execute(text(f"DELETE FROM `{table}` WHERE `guild_id` IS NULL"))
 
 
 def _drop_foreign_keys_to(conn: Connection, child_table: str, parent_table: str) -> None:
@@ -122,6 +167,9 @@ def _repair_guild_scoped_parent(table: str, child_table: str, fk_columns: tuple[
     ).fetchone()
     if child_exists and child_exists[0]:
         _drop_foreign_keys_to(conn, child_table, table)
+
+    child_fk_column = fk_columns[1] if child_exists and child_exists[0] else None
+    _ensure_guild_id_column(conn, table, child_table if child_exists and child_exists[0] else None, child_fk_column)
 
     _execute_idempotent(f"ALTER TABLE `{table}` MODIFY COLUMN `guild_id` VARCHAR(20) NOT NULL")
     if pk_cols == ["guild_id", "id"]:

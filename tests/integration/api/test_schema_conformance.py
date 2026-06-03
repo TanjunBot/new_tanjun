@@ -134,6 +134,55 @@ async def test_legacy_giveaway_with_id_auto_pk_upgrades_to_current(integration_d
     assert list(data) == [(1, "111"), (2, "222")]
 
 
+async def test_legacy_trigger_messages_guild_id_column_upgrades(integration_db_pool) -> None:
+    pool = integration_db_pool
+    legacy_sql = (_LEGACY_DIR / "trigger_messages_guild_id.sql").read_text(encoding="utf-8")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("DROP TABLE IF EXISTS `triggerMessagesChannel`")
+        await cursor.execute("DROP TABLE IF EXISTS `triggerMessages`")
+        for statement in legacy_sql.split(";"):
+            stmt = statement.strip()
+            if stmt:
+                await cursor.execute(stmt)
+        await cursor.execute(
+            "INSERT INTO `triggerMessages` (`guildId`, `trigger`, `response`) VALUES ('999', 'hi', 'bye')"
+        )
+        await cursor.execute(
+            "INSERT INTO `triggerMessagesChannel` (`guild_id`, `channel_id`, `triggerId`) "
+            "VALUES ('999', '111', 1)"
+        )
+        await conn.commit()
+
+    _rerun_migrations_from("003_giveaway_legacy_column")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT column_name FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
+            "AND column_name IN ('guild_id', 'guildId')"
+        )
+        cols = {row[0] for row in await cursor.fetchall()}
+        await cursor.execute(
+            "SELECT is_nullable FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' AND column_name = 'guild_id'"
+        )
+        nullable = await cursor.fetchone()
+        await cursor.execute(
+            "SELECT COUNT(*) FROM information_schema.statistics "
+            "WHERE table_schema = DATABASE() AND table_name = 'triggerMessages' "
+            "AND index_name = 'uk_guild_id' AND non_unique = 0"
+        )
+        uk = await cursor.fetchone()
+        await cursor.execute("SELECT `guild_id` FROM `triggerMessages` WHERE `id` = 1")
+        row = await cursor.fetchone()
+
+    assert cols == {"guild_id"}
+    assert nullable and nullable[0] == "NO"
+    assert uk and uk[0] == 1
+    assert row == ("999",)
+
+
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
     from utils.schema_conformance import fetch_existing_columns
 
