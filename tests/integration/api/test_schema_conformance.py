@@ -131,7 +131,7 @@ async def test_legacy_giveaway_with_id_auto_pk_upgrades_to_current(integration_d
     assert "giveaway_id" in rows
     assert "auto_increment" in rows["giveaway_id"].lower()
     assert "id" not in rows
-    assert data == [(1, "111"), (2, "222")]
+    assert list(data) == [(1, "111"), (2, "222")]
 
 
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
