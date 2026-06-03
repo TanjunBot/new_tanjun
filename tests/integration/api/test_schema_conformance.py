@@ -116,15 +116,17 @@ async def test_legacy_giveaway_with_id_auto_pk_upgrades_to_current(integration_d
 
     _rerun_migrations_from("001_initial_schema")
 
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute(
-            "SELECT column_name, extra FROM information_schema.columns "
-            "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
-            "AND column_name IN ('giveaway_id', 'id')"
-        )
-        rows = {row[0]: row[1] for row in await cursor.fetchall()}
-        await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` ORDER BY `giveaway_id`")
-        data = await cursor.fetchall()
+    async with pool.acquire() as conn:
+        await conn.ping(reconnect=True)
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT column_name, extra FROM information_schema.columns "
+                "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
+                "AND column_name IN ('giveaway_id', 'id')"
+            )
+            rows = {row[0]: row[1] for row in await cursor.fetchall()}
+            await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` ORDER BY `giveaway_id`")
+            data = await cursor.fetchall()
 
     assert "giveaway_id" in rows
     assert "auto_increment" in rows["giveaway_id"].lower()
