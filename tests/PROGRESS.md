@@ -15,8 +15,15 @@
 | 10 Live e2e | done | 2+ | — | tests/e2e_live/, skips without token |
 | 11 Gap fill | done | +1450 | **~93% total**, **0 files** &lt;85% | batch 19: giveaway gaps, calculator, plot_function, listscheduled |
 | 12 PR | in progress | — | — | branch `test/comprehensive-testing-expansion` |
+| 20 UI/command depth | done | +~90 | logs wizard | view_state helpers, setup/logs UI deep, domain *_ui_deep.py |
 
-**Collected tests:** 4598 (local)
+**Collected tests:** run `pytest --collect-only -q` after batch 20
+
+**Batch 20 conventions (first-page / pagination):**
+1. Assert initial `reply` / `edit_message` embed content (not only `view is not None`).
+2. Assert page index 0 markers (`Page 1/N`, `➤`, or field list).
+3. Exercise prev/next at boundaries and API call args for the active page.
+4. Helpers: `tests/helpers/view_state.py`, `tests/helpers/wizard_flow.py`.
 
 **Resume coverage measurement:**
 ```bash
@@ -30,4 +37,4 @@ coverage report --fail-under=85
 python scripts/check_coverage_per_file.py --min 85
 ```
 
-Last updated: batch 19 — **per-file gate PASS** (274 files ≥85%); 4598 tests collected
+Last updated: batch 20 — UI regression suite for logs setup wizard, configure_logs, blacklist lists, wizards, paginated commands
