@@ -164,6 +164,7 @@ class TestOnReady:
         bot = MagicMock()
         bot.user = MagicMock(id=123)
         bot.change_presence = AsyncMock()
+        monkeypatch.setattr(main_mod, "bot", bot)
 
         await main_mod.on_ready()
 
