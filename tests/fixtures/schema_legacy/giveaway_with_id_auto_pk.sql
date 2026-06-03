@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS `giveaway` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `guild_id` VARCHAR(20) NOT NULL,
+    `title` VARCHAR(128) NOT NULL,
+    `endtime` DATETIME NOT NULL,
+    `ended` TINYINT(1) DEFAULT 0,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;

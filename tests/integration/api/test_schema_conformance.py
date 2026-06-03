@@ -100,6 +100,38 @@ async def test_legacy_giveaway_schema_upgrades_to_current(integration_db_pool) -
     assert row and row[0] == 1
 
 
+async def test_legacy_giveaway_with_id_auto_pk_upgrades_to_current(integration_db_pool) -> None:
+    pool = integration_db_pool
+    legacy_sql = (_LEGACY_DIR / "giveaway_with_id_auto_pk.sql").read_text(encoding="utf-8")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute("DROP TABLE IF EXISTS `giveaway`")
+        await cursor.execute(legacy_sql)
+        await cursor.execute(
+            "INSERT INTO `giveaway` (`guild_id`, `title`, `endtime`) VALUES "
+            "('111', 'legacy', '2030-01-01 00:00:00'), "
+            "('222', 'legacy2', '2031-01-01 00:00:00')"
+        )
+        await conn.commit()
+
+    _rerun_migrations_from("001_initial_schema")
+
+    async with pool.acquire() as conn, conn.cursor() as cursor:
+        await cursor.execute(
+            "SELECT column_name, extra FROM information_schema.columns "
+            "WHERE table_schema = DATABASE() AND table_name = 'giveaway' "
+            "AND column_name IN ('giveaway_id', 'id')"
+        )
+        rows = {row[0]: row[1] for row in await cursor.fetchall()}
+        await cursor.execute("SELECT `giveaway_id`, `guild_id` FROM `giveaway` ORDER BY `giveaway_id`")
+        data = await cursor.fetchall()
+
+    assert "giveaway_id" in rows
+    assert "auto_increment" in rows["giveaway_id"].lower()
+    assert "id" not in rows
+    assert data == [(1, "111"), (2, "222")]
+
+
 async def test_legacy_reports_gets_status_columns(integration_db_pool) -> None:
     from utils.schema_conformance import fetch_existing_columns
 
