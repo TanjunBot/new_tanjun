@@ -3292,6 +3292,9 @@ async def remove_join_to_create_channel(guild_id: str) -> None:
 
 
 async def get_media_channel(channel_id: str) -> bool:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("mediaChannel")
     query = "SELECT 1 FROM mediaChannel WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
@@ -3299,12 +3302,18 @@ async def get_media_channel(channel_id: str) -> bool:
 
 
 async def add_media_channel(guild_id: str, channel_id: str) -> None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("mediaChannel")
     query = "INSERT INTO mediaChannel (guild_id, channel_id) VALUES (%s, %s)"
     params = (guild_id, channel_id)
     await execute_action(query, params)
 
 
 async def remove_media_channel(guild_id: str, channel_id: str) -> None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("mediaChannel")
     query = "DELETE FROM mediaChannel WHERE guild_id = %s AND channel_id = %s"
     params = (guild_id, channel_id)
     await execute_action(query, params)
