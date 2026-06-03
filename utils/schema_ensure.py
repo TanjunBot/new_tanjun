@@ -173,6 +173,3 @@ async def migrate_reports_status_columns(bot: Any = None) -> None:
             await run_alter_migration(sql, table_name="reports", bot=bot)
 
 
-async def run_startup_migrations(bot: Any = None) -> None:
-    """Deprecated: schema changes are applied via Alembic (utils.db_migration)."""
-    del bot

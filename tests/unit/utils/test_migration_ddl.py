@@ -33,12 +33,18 @@ def test_ordered_table_names_orders_parents_before_children() -> None:
 
 
 def test_run_create_all_tables_executes_ddl_in_order() -> None:
+    import migrations.snapshot_001 as snapshot
+
     connection = MagicMock()
+    order = ["reports", "report_evidence"]
     ddl = {
         "reports": "CREATE TABLE `reports` (id INT)",
         "report_evidence": "CREATE TABLE `report_evidence` (id INT)",
     }
-    with patch("api.get_table_definitions", return_value=ddl):
+    with (
+        patch.object(snapshot, "CREATE_ORDER", order),
+        patch.object(snapshot, "TABLE_DDL", ddl),
+    ):
         run_create_all_tables(connection)
     assert connection.execute.call_count == 2
     first_sql = str(connection.execute.call_args_list[0][0][0])

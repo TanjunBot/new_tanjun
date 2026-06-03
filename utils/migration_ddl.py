@@ -31,16 +31,16 @@ def _dependency_batches(table_names: set[str]) -> list[set[str]]:
 
 
 def ordered_table_names(table_names: set[str] | None = None) -> list[str]:
-    from api import get_table_definitions
+    from migrations.snapshot_001 import CREATE_ORDER
 
-    names = set(table_names) if table_names is not None else set(get_table_definitions())
-    batches = _dependency_batches(names)
+    if table_names is None:
+        return list(CREATE_ORDER)
+    batches = _dependency_batches(table_names)
     return [name for batch in batches for name in sorted(batch)]
 
 
 def run_create_all_tables(connection: Connection) -> None:
-    from api import get_table_definitions
+    from migrations.snapshot_001 import CREATE_ORDER, TABLE_DDL
 
-    tables = get_table_definitions()
-    for table_name in ordered_table_names(set(tables)):
-        connection.execute(text(tables[table_name]))
+    for table_name in CREATE_ORDER:
+        connection.execute(text(TABLE_DDL[table_name]))

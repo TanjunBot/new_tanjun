@@ -11,6 +11,14 @@ pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
 _LEGACY_DIR = Path(__file__).resolve().parents[2] / "fixtures" / "schema_legacy"
 
 
+@pytest.fixture(autouse=True)
+def _restore_schema_head_after_test() -> None:
+    yield
+    from alembic import command
+
+    command.upgrade(_migration_config(), "head")
+
+
 def _migration_config():
     from alembic.config import Config
 

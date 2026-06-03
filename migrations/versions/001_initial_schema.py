@@ -1,4 +1,4 @@
-"""Initial schema: all Tanjun tables from canonical DDL."""
+"""Initial schema: frozen DDL snapshot (see migrations/snapshot_001.py)."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    from utils.migration_ddl import ordered_table_names
+    from migrations.snapshot_001 import CREATE_ORDER
 
-    for table_name in reversed(ordered_table_names()):
+    for table_name in reversed(CREATE_ORDER):
         op.execute(f"DROP TABLE IF EXISTS `{table_name}`")

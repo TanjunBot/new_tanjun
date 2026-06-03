@@ -38,3 +38,15 @@ def test_converted_tables_produce_valid_sql() -> None:
     ):
         sql = get_table_definitions()[name]
         assert _CREATE_TABLE_RE.search(sql), f"invalid DDL for {name}"
+
+
+def test_trigger_and_ticket_messages_use_composite_primary_keys() -> None:
+    for name in ("triggerMessages", "ticketMessages"):
+        sql = get_table_definitions()[name]
+        assert "PRIMARY KEY (`guild_id`, `id`)" in sql
+
+
+def test_welcome_and_leave_channels_use_guild_primary_key() -> None:
+    for name in ("welcome_channel", "leave_channel"):
+        sql = get_table_definitions()[name]
+        assert "PRIMARY KEY (`guild_id`)" in sql

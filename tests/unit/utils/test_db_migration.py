@@ -22,7 +22,7 @@ from utils.db_migration import (  # noqa: E402
 pytestmark = pytest.mark.unit
 
 ROOT = Path(__file__).resolve().parents[3]
-HEAD = "003_giveaway_legacy_column"
+HEAD = "004_schema_fk_and_guild_keys"
 
 
 def _engine_context(connection: MagicMock) -> MagicMock:

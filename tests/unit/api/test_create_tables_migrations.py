@@ -214,12 +214,7 @@ class TestMigrateReportsStatusColumns:
         migrate.assert_not_awaited()
 
 
-class TestRunStartupMigrations:
-    @pytest.mark.asyncio
-    async def test_does_not_raise_on_missing_table(self) -> None:
-        with patch.object(schema_ensure, "run_alter_migration", new=AsyncMock(return_value=False)):
-            await schema_ensure.run_startup_migrations()
-
+class TestCreateTablesAlembic:
     @pytest.mark.asyncio
     async def test_create_tables_invokes_alembic_upgrade(self) -> None:
         import api

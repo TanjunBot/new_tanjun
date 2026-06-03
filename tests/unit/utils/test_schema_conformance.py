@@ -11,9 +11,10 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 from utils.schema_conformance import (  # noqa: E402
+    ColumnSpec,
     assert_schema_conformance,
     fetch_existing_columns,
-    fetch_existing_columns_sync,
+    fetch_existing_column_specs_sync,
     find_schema_drift,
     schema_has_drift,
 )
@@ -22,7 +23,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_find_schema_drift_reports_missing_table() -> None:
-    existing = {"warnings": {"id", "guild_id", "user_id"}}
+    existing = {"warnings": {"id": ColumnSpec("int", True)}}
     errors = find_schema_drift(existing)
     assert any("table `level` is missing" in err for err in errors)
 
@@ -31,29 +32,41 @@ def test_find_schema_drift_reports_missing_columns() -> None:
     from api import get_table_defs
 
     table = "mediaChannel"
-    columns = {c.name for c in get_table_defs()[table].columns}
-    columns.remove("guild_id")
-    errors = find_schema_drift({table: columns})
+    specs = {
+        col.name: ColumnSpec(col.sql_type.lower(), col.nullable) for col in get_table_defs()[table].columns
+    }
+    specs.pop("guild_id")
+    errors = find_schema_drift({table: specs})
     assert any("mediaChannel" in err and "guild_id" in err for err in errors)
 
 
-def test_find_schema_drift_empty_when_schema_complete() -> None:
-    from api import get_table_defs
+def test_find_schema_drift_reports_type_mismatch() -> None:
+    from utils.schema_conformance import expected_column_specs_by_table
 
-    existing = {name: {c.name for c in tdef.columns} for name, tdef in get_table_defs().items()}
+    table = "warnings"
+    expected = expected_column_specs_by_table()[table]
+    wrong = {name: ColumnSpec("varchar(99)", spec.nullable) for name, spec in expected.items()}
+    errors = find_schema_drift({table: wrong})
+    assert any("type mismatch" in err for err in errors)
+
+
+def test_find_schema_drift_empty_when_schema_complete() -> None:
+    from utils.schema_conformance import expected_column_specs_by_table
+
+    existing = expected_column_specs_by_table()
     assert find_schema_drift(existing) == []
 
 
 def test_fetch_existing_columns_sync_maps_rows() -> None:
     connection = MagicMock()
     connection.execute.return_value.fetchall.return_value = [
-        ("giveaway", "giveaway_id"),
-        ("giveaway", "guild_id"),
-        ("warnings", "id"),
+        ("giveaway", "giveaway_id", "int unsigned", "NO"),
+        ("giveaway", "guild_id", "varchar(20)", "YES"),
+        ("warnings", "id", "int", "NO"),
     ]
-    result = fetch_existing_columns_sync(connection)
-    assert result["giveaway"] == {"giveaway_id", "guild_id"}
-    assert result["warnings"] == {"id"}
+    result = fetch_existing_column_specs_sync(connection)
+    assert result["giveaway"]["giveaway_id"].sql_type == "int"
+    assert result["warnings"]["id"].nullable is False
 
 
 def test_schema_has_drift_delegates_to_find_schema_drift() -> None:
@@ -98,7 +111,9 @@ async def test_fetch_existing_columns_reads_information_schema() -> None:
 
 @pytest.mark.asyncio
 async def test_assert_schema_conformance_raises_on_drift() -> None:
-    pool = MagicMock()
-    with patch("utils.schema_conformance.fetch_existing_columns", AsyncMock(return_value={})):
+    with patch(
+        "utils.schema_conformance.load_schema_drift_errors",
+        return_value=["table `warnings` is missing"],
+    ):
         with pytest.raises(AssertionError, match="Schema conformance failed"):
-            await assert_schema_conformance(pool)
+            await assert_schema_conformance(MagicMock())

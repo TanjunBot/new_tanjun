@@ -201,6 +201,7 @@ When you change the database schema:
 
 1. Update the `TableDef` in `get_table_defs()` (or [`table_def_models/extra_table_defs.py`](table_def_models/extra_table_defs.py)).
 2. Add a new revision: `alembic revision -m "short description"` and implement `upgrade()` / `downgrade()`.
+   Do not edit `migrations/snapshot_001.py` or `001_initial_schema` for new tables; regenerate the snapshot only when intentionally rebasing the initial revision.
 3. If the change repairs legacy production databases, add or update a fixture under [`tests/fixtures/schema_legacy/`](tests/fixtures/schema_legacy/) and cover it in [`tests/integration/api/test_schema_conformance.py`](tests/integration/api/test_schema_conformance.py).
 4. Run migrations and conformance tests locally:
 

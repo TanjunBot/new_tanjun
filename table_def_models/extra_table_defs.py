@@ -214,9 +214,10 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
     )
     registry["triggerMessages"] = TableDef(
         name="triggerMessages",
+        primary_key=["guild_id", "id"],
         columns=[
-            col("id", "INT", pk=True, ai=True),
-            col("guild_id", "VARCHAR(20)"),
+            col("id", "INT", ai=True),
+            col("guild_id", "VARCHAR(20)", nullable=False),
             col("trigger", "VARCHAR(128)"),
             col("response", "VARCHAR(1024)"),
             col("case_sensitive", "TINYINT(1)", default="0"),
@@ -235,9 +236,10 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
     )
     registry["ticketMessages"] = TableDef(
         name="ticketMessages",
+        primary_key=["guild_id", "id"],
         columns=[
-            col("id", "INT", pk=True, ai=True),
-            col("guild_id", "VARCHAR(20)"),
+            col("id", "INT", ai=True),
+            col("guild_id", "VARCHAR(20)", nullable=False),
             col("channel_id", "VARCHAR(20)"),
             col("introduction", "VARCHAR(1024)"),
             col("pingRole", "VARCHAR(20)"),
@@ -279,20 +281,20 @@ def register_extra_table_defs(registry: dict[str, TableDef]) -> None:
     )
     registry["welcome_channel"] = TableDef(
         name="welcome_channel",
-        primary_key=["channel_id", "guild_id"],
+        primary_key=["guild_id"],
         columns=[
-            col("channel_id", "VARCHAR(20)", nullable=False),
-            col("guild_id", "VARCHAR(20)"),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)"),
             col("message", "VARCHAR(1024)", default="NULL"),
             col("imageBackground", "VARCHAR(255)", default="NULL"),
         ],
     )
     registry["leave_channel"] = TableDef(
         name="leave_channel",
-        primary_key=["channel_id", "guild_id"],
+        primary_key=["guild_id"],
         columns=[
-            col("channel_id", "VARCHAR(20)", nullable=False),
-            col("guild_id", "VARCHAR(20)"),
+            col("guild_id", "VARCHAR(20)", nullable=False),
+            col("channel_id", "VARCHAR(20)"),
             col("message", "VARCHAR(1024)", default="NULL"),
             col("imageBackground", "VARCHAR(255)", default="NULL"),
         ],

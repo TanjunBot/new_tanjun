@@ -3015,7 +3015,12 @@ async def get_welcome_channel(guild_id: str) -> WelcomeChannelModel | None:
 
 
 async def set_welcome_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 
@@ -3034,7 +3039,12 @@ async def get_leave_channel(guild_id: str) -> LeaveChannelModel | None:
 
 
 async def set_leave_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 
