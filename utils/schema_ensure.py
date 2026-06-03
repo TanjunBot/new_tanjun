@@ -174,37 +174,5 @@ async def migrate_reports_status_columns(bot: Any = None) -> None:
 
 
 async def run_startup_migrations(bot: Any = None) -> None:
-    await run_alter_migration(
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `attachments` TEXT DEFAULT NULL
-         AFTER `repeatAmount`""",
-        table_name="scheduledMessages",
-        bot=bot,
-    )
-    await run_alter_migration(
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
-         AFTER `attachments`,
-         ADD INDEX `idx_discord_message` (`discord_message_id`)""",
-        table_name="scheduledMessages",
-        bot=bot,
-    )
-    await migrate_reports_status_columns(bot)
-    await run_alter_migration(
-        """ALTER TABLE `level`
-         ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
-        table_name="level",
-        bot=bot,
-    )
-    await run_alter_migration(
-        """ALTER TABLE `warnings`
-         ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
-        table_name="warnings",
-        bot=bot,
-    )
-    await run_alter_migration(
-        """ALTER TABLE `giveaway`
-         ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
-        table_name="giveaway",
-        bot=bot,
-    )
+    """Deprecated: schema changes are applied via Alembic (utils.db_migration)."""
+    del bot

@@ -387,20 +387,19 @@ class TestCreateTables:
 
     async def test_creates_missing_tables(self, pool_setup):
         _, _, cursor = pool_setup
-        cursor.fetchall.return_value = []
-        with patch("api.execute_action", new=AsyncMock()) as action:
+        all_tables = [(name,) for name in get_table_definitions()]
+        cursor.fetchall.side_effect = [[], all_tables]
+        with patch("utils.db_migration.ensure_database_schema") as ensure:
             await create_tables()
-        assert action.await_count >= 1
+        ensure.assert_called_once()
 
     async def test_skips_existing_tables(self, pool_setup):
         _, _, cursor = pool_setup
         existing = [(name,) for name in get_table_definitions()]
         cursor.fetchall.return_value = existing
-        with patch("api.execute_action", new=AsyncMock()) as action:
+        with patch("utils.db_migration.ensure_database_schema") as ensure:
             await create_tables()
-        for call in action.call_args_list:
-            sql = call[0][0]
-            assert "CREATE TABLE" not in sql.upper()
+        ensure.assert_called_once()
 
     async def test_discovery_error_returns_early(self, pool_setup):
         _, _, cursor = pool_setup
@@ -409,26 +408,23 @@ class TestCreateTables:
             await create_tables()
         action.assert_not_awaited()
 
-    async def test_migration_duplicate_column_suppressed(self, pool_setup):
+    async def test_migration_failure_falls_back_to_create(self, pool_setup):
         _, _, cursor = pool_setup
-        cursor.fetchall.return_value = [(name,) for name in get_table_definitions()]
-
-        async def _action(query, params=None, bot=None):
-            if "ALTER TABLE" in query:
-                raise Exception("Duplicate column name 'attachments'")
-
-        with patch("api.execute_action", side_effect=_action):
+        cursor.fetchall.return_value = []
+        with (
+            patch("utils.db_migration.ensure_database_schema", side_effect=RuntimeError("migration failed")),
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await create_tables()
+        assert action.await_count >= 1
 
-    async def test_migration_unexpected_error_raises(self, pool_setup):
+    async def test_raises_when_tables_still_missing_after_alembic(self, pool_setup):
         _, _, cursor = pool_setup
-        cursor.fetchall.return_value = [(name,) for name in get_table_definitions()]
-
-        async def _action(query, params=None, bot=None):
-            if "ALTER TABLE" in query:
-                raise Exception("syntax error")
-
-        with patch("api.execute_action", side_effect=_action), pytest.raises(Exception, match="syntax error"):
+        cursor.fetchall.side_effect = [[], []]
+        with (
+            patch("utils.db_migration.ensure_database_schema"),
+            pytest.raises(RuntimeError, match="tables are still missing"),
+        ):
             await create_tables()
 
 

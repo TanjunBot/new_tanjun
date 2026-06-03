@@ -221,24 +221,32 @@ class TestRunStartupMigrations:
             await schema_ensure.run_startup_migrations()
 
     @pytest.mark.asyncio
-    async def test_create_tables_invokes_startup_migrations(self) -> None:
+    async def test_create_tables_invokes_alembic_upgrade(self) -> None:
         import api
 
-        pool = AsyncMock()
-        conn = AsyncMock()
-        cursor = AsyncMock()
-        cursor.fetchall = AsyncMock(return_value=[("level",), ("warnings",)])
-        cursor_cm = AsyncMock()
+        from api import get_table_definitions
+
+        all_tables = [(name,) for name in get_table_definitions()]
+        pool = MagicMock()
+        conn = MagicMock()
+        cursor = MagicMock()
+        cursor.execute = AsyncMock()
+        cursor.fetchall = AsyncMock(side_effect=[[("level",)], all_tables])
+        cursor_cm = MagicMock()
         cursor_cm.__aenter__ = AsyncMock(return_value=cursor)
         cursor_cm.__aexit__ = AsyncMock(return_value=None)
         conn.cursor = MagicMock(return_value=cursor_cm)
-        pool.acquire = AsyncMock(return_value=conn)
+        acquire_cm = MagicMock()
+        acquire_cm.__aenter__ = AsyncMock(return_value=conn)
+        acquire_cm.__aexit__ = AsyncMock(return_value=None)
+        pool.acquire = MagicMock(return_value=acquire_cm)
 
         with (
             patch("api._get_pool", return_value=pool),
+            patch("api.asyncio.wait_for", new=AsyncMock(return_value=conn)),
             patch("api.execute_action", new=AsyncMock(return_value=True)),
-            patch("utils.schema_ensure.run_startup_migrations", new=AsyncMock()) as migrations,
+            patch("utils.db_migration.ensure_database_schema") as migrations,
         ):
             await api.create_tables()
 
-        migrations.assert_awaited_once()
+        migrations.assert_called_once()

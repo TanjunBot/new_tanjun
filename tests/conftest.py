@@ -313,6 +313,12 @@ async def integration_db_pool():
     password = os.environ.get("TANJUN_TEST_DB_PASSWORD", "test_password")
     db = os.environ.get("TANJUN_TEST_DB_NAME", "tanjun_test")
 
+    os.environ.setdefault("TANJUN_TEST_DB_HOST", host)
+    os.environ.setdefault("TANJUN_TEST_DB_PORT", str(port))
+    os.environ.setdefault("TANJUN_TEST_DB_USER", user)
+    os.environ.setdefault("TANJUN_TEST_DB_PASSWORD", password)
+    os.environ.setdefault("TANJUN_TEST_DB_NAME", db)
+
     try:
         pool = await asyncmy.create_pool(
             host=host,
@@ -335,10 +341,9 @@ async def integration_db_pool():
     original_bot = api._bot
     set_bot(_fake_bot)
 
-    # Create all tables
-    from api import create_tables
+    from utils.db_migration import ensure_database_schema
 
-    await create_tables(_fake_bot)
+    ensure_database_schema()
 
     yield pool
 
