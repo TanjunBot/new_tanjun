@@ -542,8 +542,15 @@ class AdministrationCog(commands.Cog):
             type=discord.ChannelType.public_thread,
         )
 
-        async def _thread_send(content: str | None = None, embed: discord.Embed | None = None, file: discord.File | None = None) -> discord.Message:
-            return await thread.send(content=content, embed=embed, file=file)
+        async def _thread_send(
+            content: str | None = None,
+            embed: discord.Embed | None = None,
+            file: discord.File | None = None,
+        ) -> discord.Message | None:
+            try:
+                return await thread.send(content=content, embed=embed, file=file)
+            except Exception:
+                return None
 
         attachment_url = None
         if ctx.message.attachments:
@@ -554,6 +561,8 @@ class AdministrationCog(commands.Cog):
             await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.no_attachment(self._locale(ctx)), title='Database Sync'))
             return
         status_msg = await _thread_send(embed=embed_or_wrap(l10n.commands.admin.database_sync.downloading(self._locale(ctx)), title='Database Sync'))
+        if status_msg is None:
+            return
         try:
             async with aiohttp.ClientSession() as session, session.get(attachment_url, timeout=ClientTimeout(total=300)) as resp:
                 if resp.status != 200:

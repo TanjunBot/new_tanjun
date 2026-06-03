@@ -832,10 +832,18 @@ class TestBroadcastCommands:
         bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg(expected, ctx.author, ctx.channel)])
         await cog.sendUpdateTextToAllAdmins(ctx)
 
-def _database_sync_thread_ctx(ctx: MagicMock, *, status: MagicMock | None = None) -> MagicMock:
-    thread_status = status or MagicMock(edit=AsyncMock())
+def _database_sync_thread_ctx(
+    ctx: MagicMock,
+    *,
+    status: MagicMock | None = None,
+    first_send_returns_none: bool = False,
+) -> MagicMock:
+    thread_status = status if status is not None else MagicMock(edit=AsyncMock())
     thread = MagicMock()
-    thread.send = AsyncMock(return_value=thread_status)
+    if first_send_returns_none:
+        thread.send = AsyncMock(return_value=None)
+    else:
+        thread.send = AsyncMock(return_value=thread_status)
     ctx.channel.create_thread = AsyncMock(return_value=thread)
     return thread
 
@@ -901,6 +909,26 @@ class TestDatabaseSync:
     async def test_no_attachment(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         thread = _database_sync_thread_ctx(ctx)
+        await cog.database_sync(ctx)
+        thread.send.assert_awaited_once()
+
+    async def test_initial_thread_send_none_does_not_raise(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        attachment = MagicMock()
+        attachment.url = 'http://example.com/dump.sql'
+        ctx.message.attachments = [attachment]
+        thread = _database_sync_thread_ctx(ctx, first_send_returns_none=True)
+        await cog.database_sync(ctx)
+        thread.send.assert_awaited_once()
+
+    async def test_thread_send_exception_does_not_raise(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        attachment = MagicMock()
+        attachment.url = 'http://example.com/dump.sql'
+        ctx.message.attachments = [attachment]
+        thread = MagicMock()
+        thread.send = AsyncMock(side_effect=RuntimeError('discord send failed'))
+        ctx.channel.create_thread = AsyncMock(return_value=thread)
         await cog.database_sync(ctx)
         thread.send.assert_awaited_once()
 
