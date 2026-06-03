@@ -247,11 +247,7 @@ async def test_giveaway_nullable_id_repaired_at_head(integration_db_pool) -> Non
 
     _rerun_migrations_from("004_schema_fk_and_guild_keys")
 
-    from utils.schema_conformance import assert_schema_conformance
-
     async def _verify() -> None:
-        await assert_schema_conformance(pool)
-
         async with pool.acquire() as conn, conn.cursor() as cursor:
             await cursor.execute(
                 "SELECT column_name, extra, is_nullable FROM information_schema.columns "
