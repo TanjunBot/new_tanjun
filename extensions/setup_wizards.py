@@ -5,7 +5,9 @@ Provides guided, step-by-step configuration using modals and buttons.
 from locale_keys import locale as l10n
 from typing import Any, cast
 import discord
+from models import LogEnableModel
 from utils.discord_channels import bot_can_send_messages, channel_mention, resolve_guild_channel
+from utils.embeds import TanjunEmbed
 from discord import app_commands
 from discord.ext import commands
 from discord.ui import Modal, TextInput, View
@@ -23,6 +25,13 @@ from api import set_xp_scaling as api_set_xp_scaling
 from services.booster_service import BoosterService, BoosterType
 _WIZARD_SESSION_TIMEOUT = 600
 
+
+def _discord_embed(embed: TanjunEmbed | discord.Embed) -> discord.Embed:
+    if isinstance(embed, discord.Embed):
+        return embed
+    return embed.to_discord_embed()
+
+
 def _require_admin(interaction: discord.Interaction) -> bool:
     """Check if the user has administrator permissions."""
     return interaction.guild is not None and isinstance(interaction.user, discord.Member) and isinstance(interaction.channel, discord.abc.GuildChannel) and interaction.channel.permissions_for(interaction.user).administrator
@@ -30,7 +39,7 @@ def _require_admin(interaction: discord.Interaction) -> bool:
 async def _not_admin_reply(interaction: discord.Interaction) -> None:
     """Send a permission-denied embed."""
     embed = utility.tanjunEmbed(title=l10n.commands.admin.embed.missingPermission.title('en_US'), description=l10n.commands.admin.embed.missingPermission.description('en_US'))
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+    await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
 
 def _loc_or_en(interaction: discord.Interaction) -> str:
     return str(interaction.locale) if interaction.locale else 'en_US'
@@ -58,13 +67,13 @@ class LogChannelSelectView(View):
         self_member = self.guild.get_member(interaction.client.user.id)
         if self_member is None or channel is None or not bot_can_send_messages(channel, self_member):
             embed = utility.tanjunEmbed(title='Missing Permission', description="I don't have permission to send messages in that channel.")
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         await api_set_log_channel(str(self.guild.id), str(channel.id))
         event_view = LogEventConfigView(self.locale, self.guild)
         prefix = f"Log channel set to {channel_mention(selected, channel)}."
-        embed = await event_view.render_for_message(prefix=prefix)
-        await interaction.response.edit_message(embed=embed, view=event_view)
+        config_embed = await event_view.render_for_message(prefix=prefix)
+        await interaction.response.edit_message(embed=config_embed, view=event_view)
 
 class LogEventConfigView(View):
     """Step 2: Configure which log events to track."""
@@ -73,7 +82,7 @@ class LogEventConfigView(View):
         super().__init__(timeout=_WIZARD_SESSION_TIMEOUT)
         self.locale = locale
         self.guild = guild
-        self._log_enabled = None
+        self._log_enabled: LogEnableModel | None = None
         self._current_page = 0
         self._items_per_page = 7
 
@@ -85,7 +94,7 @@ class LogEventConfigView(View):
         start = self._current_page * self._items_per_page
         return LOG_OPTIONS[start:start + self._items_per_page]
 
-    async def _render_embed(self) -> discord.Embed:
+    async def _render_embed(self) -> TanjunEmbed:
         await self._load()
         assert self._log_enabled is not None
         lines: list[str] = []
@@ -98,7 +107,7 @@ class LogEventConfigView(View):
         return utility.tanjunEmbed(title='Log Event Configuration', description='\n'.join(lines) + f'\n\nPage {self._current_page + 1}/{total_pages}')
 
     async def render_for_message(self, *, prefix: str | None = None) -> discord.Embed:
-        embed = await self._render_embed()
+        embed = _discord_embed(await self._render_embed())
         if prefix:
             embed.description = f'{prefix}\n\n{embed.description or ""}'
         return embed
@@ -116,7 +125,7 @@ class LogEventConfigView(View):
                 await api_set_log_enable(str(self.guild.id), **{key: True})
                 self._log_enabled.set_option(idx, True)
         embed = await self._render_embed()
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
     @discord.ui.button(label='❌ Disable page', style=discord.ButtonStyle.danger)
     async def disable_page(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -131,7 +140,7 @@ class LogEventConfigView(View):
                 await api_set_log_enable(str(self.guild.id), **{key: False})
                 self._log_enabled.set_option(idx, False)
         embed = await self._render_embed()
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
     @discord.ui.button(label='◀', style=discord.ButtonStyle.secondary)
     async def prev_page(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -141,7 +150,7 @@ class LogEventConfigView(View):
         if self._current_page > 0:
             self._current_page -= 1
         embed = await self._render_embed()
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
     @discord.ui.button(label='▶', style=discord.ButtonStyle.secondary)
     async def next_page(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -152,7 +161,7 @@ class LogEventConfigView(View):
         if self._current_page < total_pages - 1:
             self._current_page += 1
         embed = await self._render_embed()
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
     @discord.ui.button(label='✅ Finish Log Setup', style=discord.ButtonStyle.green, row=2)
     async def finish(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -162,7 +171,7 @@ class LogEventConfigView(View):
         embed = utility.tanjunEmbed(title='✅ Log Setup Complete', description='Logging has been configured successfully! Events will be tracked in the selected channel.')
         for item in self.children:
             item.disabled = True
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
         self.stop()
 
 class LevelSetupView(View):
@@ -201,7 +210,7 @@ class LevelSetupView(View):
         await api_set_xp_scaling(str(self.guild.id), scaling)
         embed = utility.tanjunEmbed(title='XP Scaling Set', description=f"XP difficulty set to **{scaling}**. Now let's configure cooldowns.")
         view = LevelCooldownView(self.locale, self.guild, self)
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=view)
 
 class LevelCooldownView(View):
     """Step 2: Configure cooldowns."""
@@ -232,7 +241,7 @@ class LevelCooldownView(View):
         await api_set_voice_cooldown(str(self.guild.id), voice_cd)
         embed = utility.tanjunEmbed(title='Cooldowns Configured', description=f"Text XP cooldown: **{text_cd}s**\nVoice XP cooldown: **{voice_cd}s**\n\nNow let's set a level-up announcement channel (optional).")
         view = LevelChannelView(self.locale, self.guild, self.setup_view)
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=view)
 
 class LevelChannelView(View):
     """Step 3 (optional): Set level-up announcement channel."""
@@ -255,12 +264,12 @@ class LevelChannelView(View):
             self_member = self.guild.get_member(interaction.client.user.id)
             if self_member is None or channel is None:
                 embed = utility.tanjunEmbed(title='Error', description='Could not verify bot permissions.')
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
                 return
             perms = channel.permissions_for(self_member)
             if not (perms.view_channel and perms.send_messages):
                 embed = utility.tanjunEmbed(title='Missing Permission', description="I don't have permission to send messages in that channel. Please select a different channel.")
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
                 return
             await api_set_levelup_channel(str(self.guild.id), str(channel.id))
             msg = f'Level-up announcements will be sent to {channel_mention(selected, channel)}.'
@@ -270,7 +279,7 @@ class LevelChannelView(View):
         embed = utility.tanjunEmbed(title='Channel Set', description=msg + '\n\nLevel system setup is complete! 🎉')
         for item in self.children:
             item.disabled = True
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
         self.stop()
 
     @discord.ui.button(label='⏭ Skip', style=discord.ButtonStyle.secondary)
@@ -282,7 +291,7 @@ class LevelChannelView(View):
         embed = utility.tanjunEmbed(title='✅ Level Setup Complete', description='The leveling system is now active! Members earn XP by chatting.\n\nTip: Use `/level add-level-role` to reward roles at specific levels.')
         for item in self.children:
             item.disabled = True
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
         self.stop()
 
 class BoosterSetupView(View):
@@ -294,7 +303,7 @@ class BoosterSetupView(View):
         self.guild = guild
         self._steps_done: set[str] = set()
 
-    async def _refresh(self, interaction: discord.Interaction) -> None:
+    async def _update_booster_ui(self, interaction: discord.Interaction) -> None:
         desc_parts: list[str] = []
         booster_service = BoosterService()
         channel_id = await booster_service.get(BoosterType.CHANNEL, str(self.guild.id))
@@ -312,7 +321,7 @@ class BoosterSetupView(View):
             embed.add_field(name='Current Channel', value=f'<#{channel_id}>', inline=True)
         if role_id:
             embed.add_field(name='Current Role', value=f'<@&{role_id}>', inline=True)
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
     @discord.ui.button(label='🎤 Set Booster Channel', style=discord.ButtonStyle.primary)
     async def set_channel(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -336,7 +345,7 @@ class BoosterSetupView(View):
         embed = utility.tanjunEmbed(title='✅ Booster Setup Complete', description='Boosters can now claim their perks!')
         for item in self.children:
             item.disabled = True
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
         self.stop()
 
 class BoosterChannelModal(Modal):
@@ -356,21 +365,21 @@ class BoosterChannelModal(Modal):
             channel_id = int(str(self.children[0].value))
         except ValueError:
             embed = utility.tanjunEmbed(title='Invalid ID', description='Please provide a valid channel ID.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         channel = self.guild.get_channel(channel_id)
         if channel is None:
             embed = utility.tanjunEmbed(title='Channel Not Found', description='Could not find that channel in this server.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         if not isinstance(channel, discord.VoiceChannel):
             embed = utility.tanjunEmbed(title='Invalid Channel Type', description='Please provide a voice channel ID. The channel you selected is not a voice channel.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         booster_service = BoosterService()
         await booster_service.add(BoosterType.CHANNEL, str(self.guild.id), str(channel_id))
         self.parent._steps_done.add('channel')
-        await self.parent._refresh(interaction)
+        await self.parent._update_booster_ui(interaction)
 
 class BoosterRoleModal(Modal):
 
@@ -389,17 +398,17 @@ class BoosterRoleModal(Modal):
             role_id = int(str(self.children[0].value))
         except ValueError:
             embed = utility.tanjunEmbed(title='Invalid ID', description='Please provide a valid role ID.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         role = self.guild.get_role(role_id)
         if role is None:
             embed = utility.tanjunEmbed(title='Role Not Found', description='Could not find that role in this server.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         booster_service = BoosterService()
         await booster_service.add(BoosterType.ROLE, str(self.guild.id), str(role_id))
         self.parent._steps_done.add('role')
-        await self.parent._refresh(interaction)
+        await self.parent._update_booster_ui(interaction)
 
 class SetupWizardsCog(commands.Cog):
     """Cog that provides /setup commands for guided configuration."""
@@ -429,11 +438,11 @@ class SetupWizardCommands(discord.app_commands.Group):
         existing = await api_get_log_channel(str(interaction.guild.id))
         if existing:
             embed = utility.tanjunEmbed(title='Logging Already Configured', description=f'A log channel is already set (<#{existing}>). Use `/logs set-log-channel` to change it.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         embed = utility.tanjunEmbed(title='📋 Log Setup Wizard', description="Welcome! Let's get logging configured.\n\n**Step 1:** Select a text channel where log messages will be sent.")
         view = LogChannelSelectView(_loc_or_en(interaction), interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=_discord_embed(embed), view=view)
 
     @app_commands.command(name=l10n.setup.level.name.discord_key, description=l10n.setup.level.description.discord_key)
     async def level(self, interaction: discord.Interaction) -> None:
@@ -445,11 +454,11 @@ class SetupWizardCommands(discord.app_commands.Group):
         active = bool(await api_get_level_system_status(str(interaction.guild.id)))
         if active:
             embed = utility.tanjunEmbed(title='Level System Already Active', description='The level system is already enabled. Use `/level` commands to adjust settings.')
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         embed = utility.tanjunEmbed(title='📊 Level Setup Wizard', description="Let's set up the leveling system!\n\n**Step 1:** Choose how quickly XP requirements increase.\n• **Easy** — fast leveling\n• **Medium** — balanced\n• **Hard** — slower\n• **Very Hard** — challenging\n• **Extreme** — grindy")
         view = LevelSetupView(_loc_or_en(interaction), interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=_discord_embed(embed), view=view)
         await view.wait()
         if view.completed:
             await api_set_level_system_status(str(interaction.guild.id), True)
@@ -464,9 +473,13 @@ class SetupWizardCommands(discord.app_commands.Group):
         from commands.giveaway.start import start_giveaway
         from utility import CommandInfo
         cmd_info = CommandInfo(user=interaction.user, channel=cast(discord.abc.GuildChannel, interaction.channel), guild=interaction.guild, command=None, locale=_loc_or_en(interaction), message=interaction.message, permissions=interaction.permissions, reply=interaction.followup.send, client=interaction.client)
-        await start_giveaway(command_info=cmd_info, title='New Giveaway', target_channel=cast(discord.TextChannel, interaction.channel))
+        await start_giveaway(  # type: ignore[no-untyped-call]
+            command_info=cmd_info,
+            title='New Giveaway',
+            target_channel=cast(discord.TextChannel, interaction.channel),
+        )
         embed = utility.tanjunEmbed(title='🎉 Giveaway Wizard Opened', description='The giveaway builder has opened. Use the buttons above to configure your giveaway!')
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=_discord_embed(embed))
 
     @app_commands.command(name=l10n.setup.booster.name.discord_key, description=l10n.setup.booster.description.discord_key)
     async def booster(self, interaction: discord.Interaction) -> None:
@@ -477,7 +490,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         assert interaction.guild is not None
         embed = utility.tanjunEmbed(title='🎵 Booster Setup Wizard', description='Configure perks for server boosters.\n\n• **Booster Channel** — boosters get a private voice channel\n• **Booster Role** — assign a role that grants booster perks')
         view = BoosterSetupView(_loc_or_en(interaction), interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=_discord_embed(embed), view=view)
 
 async def setup(bot: commands.Bot) -> None:
     """Register the SetupWizards cog."""

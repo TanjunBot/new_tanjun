@@ -253,7 +253,7 @@ class TestBoosterSetup:
         svc = MagicMock()
         svc.get = AsyncMock(return_value="111")
         with patch.object(sw_mod, "BoosterService", return_value=svc):
-            await view._refresh(ix)
+            await view._update_booster_ui(ix)
             await view.finish(ix, MagicMock())
             await view.set_channel(ix, MagicMock())
             await view.set_role(ix, MagicMock())
