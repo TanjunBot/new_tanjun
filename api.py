@@ -3358,6 +3358,9 @@ async def remove_leave_channel(guild_id: str) -> None:
 
 
 async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeModel]:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("dynamicslowmode")
     query = "SELECT guild_id, channel_id, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE guild_id = %s"
     params = (guild_id,)
     rows: list[DynamicSlowmodeModel] = []
@@ -3367,6 +3370,9 @@ async def get_dynamicslowmode_channels(guild_id: str) -> list[DynamicSlowmodeMod
 
 
 async def add_dynamicslowmode(guild_id: str, channel_id: str, messages: int, per: int, resetafter: int) -> None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("dynamicslowmode")
     query = "INSERT INTO dynamicslowmode (guild_id, channel_id, messages, per, resetafter) VALUES (%s, %s, %s, %s, %s)"
     params = (guild_id, channel_id, messages, per, resetafter)
     await execute_action(query, params)
@@ -3379,6 +3385,9 @@ async def remove_dynamicslowmode(guild_id: str, channel_id: str) -> None:
 
 
 async def get_dynamicslowmode(channel_id: str) -> DynamicSlowmodeModel | None:
+    from utils.schema_ensure import ensure_table_schema
+
+    await ensure_table_schema("dynamicslowmode")
     query = "SELECT guild_id, channel_id, messages, per, resetafter, cashedSlowmode FROM dynamicslowmode WHERE channel_id = %s"
     params = (channel_id,)
     result = await execute_query(query, params)
