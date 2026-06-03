@@ -219,7 +219,7 @@ async def test_legacy_camelcase_columns_renamed(integration_db_pool) -> None:
         await cursor.execute(
             "SELECT column_name FROM information_schema.columns "
             "WHERE table_schema = DATABASE() AND table_name = 'afkMessages' "
-            "AND column_name IN ('user_id', 'channel_id', 'userId', 'channelId')"
+            "AND column_name IN ('user_id', 'channel_id', 'messageId', 'userId', 'channelId')"
         )
         afk_cols = {row[0] for row in await cursor.fetchall()}
         await cursor.execute(
