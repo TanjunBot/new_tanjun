@@ -79,6 +79,8 @@ class Settings(BaseSettings, cli_parse_args=False):
     sentry_traces_sample_rate: float = Field(default=0.0, alias="SENTRY_TRACES_SAMPLE_RATE")
     sentry_environment: str = Field(default="", alias="SENTRY_ENVIRONMENT")
 
+    sync_commands_on_startup: bool = Field(default=True, alias="SYNC_COMMANDS_ON_STARTUP")
+
     # ── Metrics ───────────────────────────────────────────────────────────────
     metrics_port: int = Field(default=8001, alias="METRICS_PORT")
 
@@ -155,6 +157,7 @@ sentry_dsn: str = settings.sentry_dsn
 sentry_traces_sample_rate: float = settings.sentry_traces_sample_rate
 sentry_environment: str = settings.sentry_environment
 metrics_port: int = settings.metrics_port
+sync_commands_on_startup: bool = settings.sync_commands_on_startup
 UPTIME_KUMA_PUSH_TOKEN: str = settings.uptime_kuma_push_token.get_secret_value()
 UPTIME_KUMA_STATUS_URL: str = settings.uptime_kuma_status_url.rstrip("/")
 

@@ -32,6 +32,7 @@ except ImportError:
     DIAGNOSTICS_AVAILABLE = False
     BenchmarkRunner = None
 from utility import addFeedback, embed_or_wrap, error_embed, missingLocalization, success_embed, tanjunEmbed, warning_embed
+from utils.command_tree_sync import format_sync_http_error, sync_application_commands
 from utils.database_dump_sql import (
     extract_schemas_from_sql,
     filter_sql_dump,
@@ -133,7 +134,7 @@ class AdministrationCog(commands.Cog):
         spinner_frames = ('⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏')
         tick = 0
         status_msg = await ctx.send(embed=embed_or_wrap(l10n.commands.admin.sync.in_progress(locale, command_count=command_count, elapsed=0, spinner=spinner_frames[0]), title='Command Sync'))
-        sync_task = asyncio.create_task(ctx.bot.tree.sync())
+        sync_task = asyncio.create_task(sync_application_commands(ctx.bot))
         try:
             while not sync_task.done():
                 await asyncio.sleep(2)
@@ -142,9 +143,15 @@ class AdministrationCog(commands.Cog):
                 tick += 1
                 elapsed = int(time.monotonic() - started)
                 await status_msg.edit(embed=embed_or_wrap(l10n.commands.admin.sync.in_progress(locale, command_count=command_count, elapsed=elapsed, spinner=spinner_frames[tick % len(spinner_frames)]), title='Command Sync'))
-            fmt = await sync_task
+            result = await sync_task
             duration = round(time.monotonic() - started, 1)
-            await status_msg.edit(embed=success_embed(l10n.commands.admin.sync.completed(locale, count=len(fmt), duration=duration), title='Command Sync'))
+            await status_msg.edit(embed=success_embed(l10n.commands.admin.sync.completed(locale, count=result.synced_count, duration=duration), title='Command Sync'))
+        except discord.HTTPException as e:
+            if not sync_task.done():
+                sync_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await sync_task
+            await status_msg.edit(embed=error_embed(l10n.commands.admin.sync.failed(locale, error=format_sync_http_error(e)), title='Command Sync'))
         except Exception as e:
             if not sync_task.done():
                 sync_task.cancel()

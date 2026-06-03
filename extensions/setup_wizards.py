@@ -453,7 +453,7 @@ class SetupWizardCommands(discord.app_commands.Group):
         assert interaction.guild is not None
         active = bool(await api_get_level_system_status(str(interaction.guild.id)))
         if active:
-            embed = utility.tanjunEmbed(title='Level System Already Active', description='The level system is already enabled. Use `/level` commands to adjust settings.')
+            embed = utility.tanjunEmbed(title='Level System Already Active', description='The level system is already enabled. Use `/level`, `/settings`, `/boosts`, and `/blacklist` commands to adjust settings. Set a custom rank card background with `/level set_background`.')
             await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
             return
         embed = utility.tanjunEmbed(title='📊 Level Setup Wizard', description="Let's set up the leveling system!\n\n**Step 1:** Choose how quickly XP requirements increase.\n• **Easy** — fast leveling\n• **Medium** — balanced\n• **Hard** — slower\n• **Very Hard** — challenging\n• **Extreme** — grindy")

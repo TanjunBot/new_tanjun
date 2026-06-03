@@ -255,6 +255,16 @@ class DiagnosticsRunner:
         except Exception as exc:
             phase.outcomes.append(CheckOutcome("tree.manifest", False, str(exc)))
         else:
+            from utils.command_tree_audit import find_oversized_root_commands
+
+            for entry in find_oversized_root_commands(self.bot):
+                phase.outcomes.append(
+                    CheckOutcome(
+                        f"tree.payload.{entry.command_name}",
+                        False,
+                        f"Root command payload {entry.payload_bytes} bytes exceeds safe limit",
+                    )
+                )
             if missing:
                 for path in sorted(missing):
                     phase.outcomes.append(CheckOutcome(f"tree.missing.{path}", False, "Not registered"))
