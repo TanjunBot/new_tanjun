@@ -187,6 +187,17 @@ def _database_connect_hint() -> str:
 
 async def _init_database_pool() -> asyncmy.Pool | None:
     """Initialize and return the database connection pool."""
+    from utils.db_migration import log_database_connection_debug
+
+    log_database_connection_debug(
+        context="main.py asyncmy pool init",
+        extra={
+            "connect_timeout_sec": database_connect_timeout_sec,
+            "max_retries": database_connect_max_retries,
+            "retry_delay_sec": database_connect_retry_delay_sec,
+        },
+    )
+
     max_retries = database_connect_max_retries
     delay = database_connect_retry_delay_sec
     last_error: BaseException | None = None

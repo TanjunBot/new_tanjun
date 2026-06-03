@@ -29,7 +29,16 @@ def _mark_startup_in_progress() -> None:
 def _wait_for_database() -> None:
     from sqlalchemy import create_engine, text
 
-    from utils.db_migration import get_database_url
+    from utils.db_migration import get_database_url, log_database_connection_debug
+
+    log_database_connection_debug(
+        context="docker entrypoint database wait",
+        log=logger,
+        extra={
+            "wait_attempts": _DB_WAIT_ATTEMPTS,
+            "wait_delay_sec": _DB_WAIT_DELAY_SEC,
+        },
+    )
 
     url = get_database_url()
     engine = create_engine(url, pool_pre_ping=True)
@@ -49,6 +58,12 @@ def _wait_for_database() -> None:
                 _DB_WAIT_ATTEMPTS,
                 exc,
             )
+            if attempt == _DB_WAIT_ATTEMPTS:
+                log_database_connection_debug(
+                    context="docker entrypoint database wait (final failure)",
+                    log=logger,
+                    extra={"last_error": str(exc)},
+                )
             time.sleep(_DB_WAIT_DELAY_SEC)
 
     raise RuntimeError("Database not reachable before startup timeout") from last_error

@@ -13,9 +13,14 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 from utils.db_migration import (  # noqa: E402
+    DANGEROUSLY_DEBUG_PRINT_DATABASE_ENV,
     _revision_state,
+    dangerously_debug_print_database_enabled,
     ensure_database_schema,
+    format_database_connection_debug,
     get_database_url,
+    log_database_connection_debug,
+    resolve_database_connection_params,
     run_alembic_upgrade_head,
 )
 
@@ -198,6 +203,72 @@ def test_get_database_url_falls_back_to_settings() -> None:
         url = get_database_url()
     assert "127.0.0.1:3306/tanjun" in url
     assert "@127.0.0.1" in url
+
+
+def test_resolve_database_connection_params_from_test_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TANJUN_TEST_DB_HOST", "db.example")
+    monkeypatch.setenv("TANJUN_TEST_DB_PORT", "3308")
+    monkeypatch.setenv("TANJUN_TEST_DB_USER", "u")
+    monkeypatch.setenv("TANJUN_TEST_DB_PASSWORD", "secret")
+    monkeypatch.setenv("TANJUN_TEST_DB_NAME", "mydb")
+
+    params = resolve_database_connection_params()
+
+    assert params.host == "db.example"
+    assert params.port == 3308
+    assert params.user == "u"
+    assert params.password == "secret"
+    assert params.database == "mydb"
+    assert params.sources["host"] == "TANJUN_TEST_DB_HOST"
+
+
+def test_dangerously_debug_print_database_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv(DANGEROUSLY_DEBUG_PRINT_DATABASE_ENV, raising=False)
+    assert not dangerously_debug_print_database_enabled()
+
+    monkeypatch.setenv(DANGEROUSLY_DEBUG_PRINT_DATABASE_ENV, "true")
+    assert dangerously_debug_print_database_enabled()
+
+
+def test_log_database_connection_debug_prints_when_enabled(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setenv("TANJUN_TEST_DB_HOST", "debug-host")
+    monkeypatch.setenv("TANJUN_TEST_DB_PORT", "3306")
+    monkeypatch.setenv("TANJUN_TEST_DB_USER", "u")
+    monkeypatch.setenv("TANJUN_TEST_DB_PASSWORD", "p")
+    monkeypatch.setenv("TANJUN_TEST_DB_NAME", "db")
+    monkeypatch.setenv(DANGEROUSLY_DEBUG_PRINT_DATABASE_ENV, "1")
+
+    log_database_connection_debug(context="unit test")
+
+    captured = capsys.readouterr()
+    assert "debug-host" in captured.err
+    assert "TANJUN_TEST_DB_HOST" in captured.err
+    assert "password=SET (length=1)" in captured.err
+    assert "***" in captured.err
+
+
+def test_format_database_connection_debug_masks_password() -> None:
+    from utils.db_migration import DatabaseConnectionParams
+
+    params = DatabaseConnectionParams(
+        host="h",
+        port=3306,
+        user="u",
+        password="secret",
+        database="d",
+        sources={
+            "host": "database_ip",
+            "port": "database_port",
+            "user": "database_user",
+            "password": "database_password",
+            "database": "database_schema",
+        },
+    )
+    text = format_database_connection_debug(params, context="ctx")
+    assert "secret" not in text
+    assert "***" in text
 
 
 def test_get_database_url_raises_without_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
