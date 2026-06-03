@@ -49,7 +49,10 @@ async def test_ensure_columns_adds_missing_column() -> None:
         patch("api.execute_action", new=AsyncMock()) as action,
     ):
         await ensure_columns_from_table_def(table_def)
-    assert "ADD COLUMN" in action.await_args.args[0]
+    sql = action.await_args.args[0]
+    assert "ADD COLUMN" in sql
+    assert "`mediaChannel`" in sql
+    assert "`guild_id`" in sql
 
 
 def test_is_benign_migration_error() -> None:

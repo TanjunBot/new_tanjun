@@ -389,17 +389,25 @@ class TestCreateTables:
         _, _, cursor = pool_setup
         all_tables = [(name,) for name in get_table_definitions()]
         cursor.fetchall.side_effect = [[], all_tables]
-        with patch("utils.db_migration.ensure_database_schema") as ensure:
+        with (
+            patch("utils.db_migration.ensure_database_schema") as ensure,
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await create_tables()
         ensure.assert_called_once()
+        action.assert_not_awaited()
 
     async def test_skips_existing_tables(self, pool_setup):
         _, _, cursor = pool_setup
         existing = [(name,) for name in get_table_definitions()]
         cursor.fetchall.return_value = existing
-        with patch("utils.db_migration.ensure_database_schema") as ensure:
+        with (
+            patch("utils.db_migration.ensure_database_schema") as ensure,
+            patch("api.execute_action", new=AsyncMock()) as action,
+        ):
             await create_tables()
         ensure.assert_called_once()
+        action.assert_not_awaited()
 
     async def test_discovery_error_returns_early(self, pool_setup):
         _, _, cursor = pool_setup

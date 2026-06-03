@@ -111,8 +111,8 @@ def ensure_database_schema() -> None:
 
     if current == head and drift:
         raise RuntimeError(
-            "Schema drift detected at Alembic head (%s). Add a repair migration instead of auto-repair:\n"
-            % len(drift)
+            f"Schema drift detected at Alembic head ({head}, {len(drift)} issue(s)). "
+            "Add a repair migration instead of auto-repair:\n"
             + "\n".join(drift)
         )
 
