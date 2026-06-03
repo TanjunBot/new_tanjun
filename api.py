@@ -239,6 +239,21 @@ def _release_pool_connection(pool, conn, *, broken: bool = False) -> None:
     pool.release(conn)
 
 
+def _is_stale_pool_connection_error(exc: BaseException) -> bool:
+    msg = str(exc).lower()
+    return "at_eof" in msg or (isinstance(exc, AttributeError) and "_reader" in msg)
+
+
+async def _purge_stale_pool_connections(pool) -> None:
+    clear = getattr(pool, "clear", None)
+    if clear is None:
+        return
+    try:
+        await clear()
+    except Exception:
+        pass
+
+
 async def _execute_with_retry(
     operation: str,
     callback,
@@ -293,10 +308,15 @@ async def _execute_with_retry(
             err_str = str(e).lower()
             if is_write and ("duplicate column" in err_str or "duplicate key name" in err_str):
                 raise
+            stale_pool = _is_stale_pool_connection_error(e)
             retryable = "deadlock" in err_str or "abort" in err_str or "restart transaction" in err_str or "record has changed" in err_str
             if not is_write:
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
+            if stale_pool:
+                retryable = True
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                if stale_pool:
+                    await _purge_stale_pool_connections(pool)
                 if is_write and conn is not None:
                     try:
                         await conn.rollback()
@@ -305,7 +325,7 @@ async def _execute_with_retry(
                 print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
                 last_exception = e
-                if "connection" in err_str or "timeout" in err_str:
+                if stale_pool or "connection" in err_str or "timeout" in err_str:
                     broken_connection = True
                 continue
             if is_write and conn is not None:

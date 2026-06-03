@@ -72,6 +72,22 @@ class TestExecuteWithRetry:
         callback.assert_not_awaited()
 
     @pytest.mark.asyncio
+    async def test_stale_pool_acquire_retries_after_clear(self):
+        pool, conn, cursor = make_mock_pool()
+        pool.release = MagicMock()
+        pool.clear = AsyncMock()
+        stale = AttributeError("'NoneType' object has no attribute 'at_eof'")
+        pool.acquire = AsyncMock(side_effect=[stale, conn])
+
+        with patch("asyncio.sleep", new_callable=AsyncMock):
+            result, callback = await _run_retry(pool, cursor)
+
+        assert result == "ok"
+        pool.clear.assert_awaited_once()
+        assert pool.acquire.await_count == 2
+        callback.assert_awaited_once()
+
+    @pytest.mark.asyncio
     async def test_broken_connection_retry(self):
         pool, conn, cursor = make_mock_pool()
         pool.release = MagicMock()
