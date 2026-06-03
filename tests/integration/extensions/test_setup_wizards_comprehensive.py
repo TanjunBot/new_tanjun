@@ -142,6 +142,11 @@ class TestLogChannelSelectView:
         await view.on_channel_select(ix, MagicMock(values=[selected]))
         wizard_api_mocks["set_log"].assert_awaited_once()
         ix.response.edit_message.assert_awaited_once()
+        kwargs = ix.response.edit_message.await_args.kwargs
+        assert isinstance(kwargs["view"], sw.LogEventConfigView)
+        desc = kwargs["embed"].description or ""
+        assert "Page 1/" in desc, "transition must show paginated log events, not a static placeholder"
+        assert sw.LOG_OPTIONS[0] in desc
 
     async def test_channel_select_no_permission(self, sw, wizard_api_mocks) -> None:
         guild = make_guild()
@@ -181,9 +186,13 @@ class TestLogEventConfigView:
         ix = _admin_interaction(guild=guild)
         button = MagicMock()
         await view.enable_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.disable_page(ix, button)
         view._current_page = 1
         await view.prev_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.next_page(ix, button)
         await view.finish(ix, button)
 
@@ -264,11 +273,14 @@ class TestBoosterSetup:
         modal.children = [MagicMock(value="777777777")]
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="111")
         with (
             patch.object(sw_mod, "BoosterService", return_value=svc),
             patch.object(sw_mod.discord, "VoiceChannel", MockVoiceChannel),
         ):
             await modal.on_submit(ix)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster channel configured" in (embed.description or "")
 
     async def test_booster_role_modal_paths(self, sw) -> None:
         guild = make_guild()
@@ -285,8 +297,11 @@ class TestBoosterSetup:
         guild.get_role = MagicMock(return_value=role)
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="555")
         with patch.object(sw_mod, "BoosterService", return_value=svc):
             await modal.on_submit(ix)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster role configured" in (embed.description or "")
 
 
 class TestSetupWizardCommands:
