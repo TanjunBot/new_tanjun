@@ -125,6 +125,9 @@ def upgrade() -> None:
         return
 
     if _has_column(conn, "giveaway", "giveawayId"):
+        pk_cols = _primary_key_columns(conn, "giveaway")
+        if "giveawayId" in pk_cols:
+            _execute_idempotent("ALTER TABLE `giveaway` DROP PRIMARY KEY")
         conn.execute(
             text(
                 "UPDATE `giveaway` SET `giveaway_id` = `giveawayId` "
