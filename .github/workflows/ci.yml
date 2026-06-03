@@ -37,6 +37,7 @@ jobs:
           pip install -e ".[dev]"
           pip install pytest pytest-asyncio
       - run: python scripts/check_diagnostics_manifest.py
+      - run: python scripts/audit_command_tree_payloads.py
       - run: python scripts/generate_locale_api.py --check
       - run: python scripts/check_locales.py
       - run: pytest tests/test_locale_completeness.py -q

@@ -72,10 +72,28 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
 async def fire_cog_on_ready(bot: MagicMock) -> None:
     if hasattr(bot._pool_ready, "set") and not bot._pool_ready.is_set():
         bot._pool_ready.set()
+    running_loop = asyncio.get_running_loop()
+    if getattr(bot, "loop", None) is None:
+        bot.loop = running_loop
     for cog in bot.cogs.values():
         on_ready = getattr(cog, "on_ready", None)
         if on_ready is not None:
             await on_ready()
+
+
+def make_bot_with_real_tree() -> Any:
+    import discord
+    from discord.ext import commands
+
+    from utils.app_command_tree import make_add_command_idempotent
+
+    intents = discord.Intents.none()
+    bot = commands.Bot(command_prefix="!", intents=intents, application_id=999999999)
+    make_add_command_idempotent(bot.tree)
+    bot._pool = MagicMock()
+    bot._pool_ready = asyncio.Event()
+    bot._pool_ready.set()
+    return bot
 
 
 async def load_all_extensions(bot: MagicMock) -> list[str]:

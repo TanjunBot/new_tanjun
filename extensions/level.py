@@ -268,10 +268,10 @@ class levelCog(commands.Cog):
         level_config_cmds = LevelConfigCommands(name=locale.level.config.name.discord_key, description=locale.level.config.description.discord_key)
         level_boost_cmds = LevelBoostCommands(name=locale.level.boosts.name.discord_key, description=locale.level.boosts.description.discord_key)
         blacklist = BlacklistCommands(name=locale.level.blacklist.name.discord_key, description=locale.level.blacklist.description.discord_key)
-        level_cmds.add_command(level_config_cmds)
-        level_cmds.add_command(level_boost_cmds)
-        level_cmds.add_command(blacklist)
         self.bot.tree.add_command(level_cmds)
+        self.bot.tree.add_command(level_config_cmds)
+        self.bot.tree.add_command(level_boost_cmds)
+        self.bot.tree.add_command(blacklist)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(levelCog(bot))

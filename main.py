@@ -39,6 +39,12 @@ from config import (
     sentry_dsn,
     sentry_environment,
     sentry_traces_sample_rate,
+    sync_commands_on_startup,
+)
+from utils.command_tree_sync import (
+    format_sync_http_error,
+    is_primary_sync_shard,
+    sync_application_commands_safe,
 )
 
 
@@ -142,6 +148,9 @@ intents.presences = False
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
 make_add_command_idempotent(bot.tree)
 
+_startup_sync_lock = asyncio.Lock()
+_startup_sync_done = False
+
 
 def _bot_ready_path() -> Path:
     return Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
@@ -155,6 +164,25 @@ def _clear_startup_marker() -> None:
     _startup_marker_path().unlink(missing_ok=True)
 
 
+async def _run_startup_command_sync() -> None:
+    global _startup_sync_done
+    if not sync_commands_on_startup or not is_primary_sync_shard(bot):
+        return
+    async with _startup_sync_lock:
+        if _startup_sync_done:
+            return
+        await asyncio.sleep(1)
+        try:
+            await sync_application_commands_safe(bot)
+        except discord.HTTPException as exc:
+            logger.error("Startup command sync failed: %s", format_sync_http_error(exc))
+            return
+        except Exception:
+            logger.exception("Startup command sync failed")
+            return
+        _startup_sync_done = True
+
+
 @bot.event
 async def on_ready() -> None:
     _clear_startup_marker()
@@ -165,6 +193,8 @@ async def on_ready() -> None:
     if user is not None:
         print(f"Logged in as {user} (ID: {user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
+    if sync_commands_on_startup and is_primary_sync_shard(bot):
+        bot.loop.create_task(_run_startup_command_sync())
 
 
 async def _load_all_extensions(bot: commands.AutoShardedBot) -> None:
@@ -187,6 +217,17 @@ def _database_connect_hint() -> str:
 
 async def _init_database_pool() -> asyncmy.Pool | None:
     """Initialize and return the database connection pool."""
+    from utils.db_migration import log_database_connection_debug
+
+    log_database_connection_debug(
+        context="main.py asyncmy pool init",
+        extra={
+            "connect_timeout_sec": database_connect_timeout_sec,
+            "max_retries": database_connect_max_retries,
+            "retry_delay_sec": database_connect_retry_delay_sec,
+        },
+    )
+
     max_retries = database_connect_max_retries
     delay = database_connect_retry_delay_sec
     last_error: BaseException | None = None
