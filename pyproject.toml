@@ -304,7 +304,6 @@ module = [
     "extensions.*",
     "loops.*",
     "minigames.*",
-    "utils.checks",
     "services.image_service",
     "services.twitch_service",
     "services.wordle_service",
@@ -312,3 +311,11 @@ module = [
     "main",
 ]
 ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    "extensions.setup_wizards",
+    "utils.discord_channels",
+    "utils.checks",
+]
+ignore_errors = false

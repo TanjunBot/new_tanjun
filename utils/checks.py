@@ -16,7 +16,9 @@ from __future__ import annotations
 from locale_keys import locale
 from typing import Literal
 import discord
+from discord import app_commands
 from utility import CommandInfo
+from utils.discord_channels import resolve_guild_channel_sync
 from utils.embeds import ErrorEmbedCategory, categorized_error_embed, categorized_warning_embed
 _CheckResult = tuple[str, ErrorEmbedCategory, bool] | None
 
@@ -63,7 +65,7 @@ def check_user_permission(command_info: CommandInfo, permission: Literal['ban_me
         return ('missingPermission', ErrorEmbedCategory.PERMISSION, True)
     return None
 
-def check_bot_permission(command_info: CommandInfo, permission: Literal['ban_members', 'kick_members', 'moderate_members', 'manage_messages', 'manage_roles', 'manage_channels'], *, channel: discord.TextChannel | None=None) -> _CheckResult:
+def check_bot_permission(command_info: CommandInfo, permission: Literal['ban_members', 'kick_members', 'moderate_members', 'manage_messages', 'manage_roles', 'manage_channels'], *, channel: app_commands.AppCommandChannel | discord.abc.GuildChannel | None=None) -> _CheckResult:
     """Verify the bot has the required permission.
 
     Parameters
@@ -85,7 +87,10 @@ def check_bot_permission(command_info: CommandInfo, permission: Literal['ban_mem
     if guild is None:
         raise ValueError('Guild is missing in command_info')
     if channel is not None:
-        has_perm = getattr(channel.permissions_for(guild.me), permission, False)
+        resolved = resolve_guild_channel_sync(guild, channel)
+        if resolved is None or not hasattr(resolved, 'permissions_for'):
+            return ('missingPermissionBot', ErrorEmbedCategory.PERMISSION, True)
+        has_perm = getattr(resolved.permissions_for(guild.me), permission, False)
     else:
         has_perm = getattr(guild.me.guild_permissions, permission, False)
     if not has_perm:

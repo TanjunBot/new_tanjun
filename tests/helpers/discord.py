@@ -265,6 +265,27 @@ def make_text_channel(channel_id: int=444444444, guild: MagicMock | None=None) -
     channel.create_thread = AsyncMock(return_value=thread)
     return channel
 
+def make_app_command_channel(
+    channel_id: int=444444444,
+    guild: MagicMock | None=None,
+    *,
+    resolved: MockTextChannel | MagicMock | None=None,
+    fetch_raises: type[BaseException] | None=None,
+) -> MagicMock:
+    guild = guild or make_guild()
+    selected = MagicMock(spec=['id', 'name', 'mention', 'guild_id', 'permissions', 'resolve', 'fetch'])
+    selected.id = channel_id
+    selected.name = 'test-channel'
+    selected.mention = f'<#{channel_id}>'
+    selected.guild_id = guild.id
+    selected.permissions = make_permissions(send_messages=True, view_channel=True)
+    selected.resolve = MagicMock(return_value=resolved)
+    if fetch_raises is not None:
+        selected.fetch = AsyncMock(side_effect=fetch_raises())
+    else:
+        selected.fetch = AsyncMock(return_value=resolved)
+    return selected
+
 def make_command_info(user: MagicMock | None=None, guild: MagicMock | None=None, channel: MagicMock | None=None, locale: str='en-US', reply: AsyncMock | None=None, client: MagicMock | None=None, **kwargs: Any) -> CommandInfo:
     from utility import CommandInfo
     user = user or make_member()
