@@ -154,6 +154,13 @@ class TestOnReady:
         monkeypatch.setenv("BOT_READY_FILE", str(ready_path))
         assert main_mod._bot_ready_path() == ready_path
 
+    def test_clear_startup_marker_removes_file(self, monkeypatch, tmp_path):
+        startup_path = tmp_path / ".bot_startup"
+        monkeypatch.setenv("BOT_STARTUP_FILE", str(startup_path))
+        startup_path.touch()
+        main_mod._clear_startup_marker()
+        assert not startup_path.exists()
+
     @pytest.mark.asyncio
     async def test_on_ready_writes_ready_file_and_presence(self, monkeypatch, tmp_path):
         ready_path = tmp_path / ".bot_ready"
