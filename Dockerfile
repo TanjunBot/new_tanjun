@@ -30,8 +30,8 @@ USER appuser
 ENV PYTHONPATH=/usr/local/app
 ENV TANJUN_APP_ROOT=/usr/local/app
 
-# Health check for container orchestration (Discord ready can take 2+ minutes on cold start)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
+# Health check: .bot_startup during migrations/boot, .bot_ready when Discord is up
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=10 \
   CMD ["python", "/usr/local/app/healthcheck.py"]
 
 EXPOSE 8001

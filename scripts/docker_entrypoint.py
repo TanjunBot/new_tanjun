@@ -7,12 +7,23 @@ import logging
 import os
 import sys
 import time
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 _DB_WAIT_ATTEMPTS = int(os.environ.get("TANJUN_DB_WAIT_ATTEMPTS", "60"))
 _DB_WAIT_DELAY_SEC = float(os.environ.get("TANJUN_DB_WAIT_DELAY_SEC", "2"))
+
+
+def _startup_marker_path() -> Path:
+    return Path(os.environ.get("BOT_STARTUP_FILE", "/usr/local/app/.bot_startup"))
+
+
+def _mark_startup_in_progress() -> None:
+    path = _startup_marker_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
 
 
 def _wait_for_database() -> None:
@@ -45,6 +56,7 @@ def _wait_for_database() -> None:
 
 def main() -> None:
     os.chdir(os.environ.get("TANJUN_APP_ROOT", "/usr/local/app"))
+    _mark_startup_in_progress()
 
     logger.info("Checking database connectivity")
     _wait_for_database()

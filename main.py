@@ -147,8 +147,13 @@ def _bot_ready_path() -> Path:
     return Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
 
 
+def _startup_marker_path() -> Path:
+    return Path(os.environ.get("BOT_STARTUP_FILE", "/usr/local/app/.bot_startup"))
+
+
 @bot.event
 async def on_ready() -> None:
+    _startup_marker_path().unlink(missing_ok=True)
     ready_path = _bot_ready_path()
     ready_path.parent.mkdir(parents=True, exist_ok=True)
     ready_path.touch()

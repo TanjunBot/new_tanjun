@@ -16,13 +16,17 @@ import healthcheck as hc
 def ready_file(monkeypatch):
     tmp = Path(tempfile.mkdtemp()) / "bot_ready"
     monkeypatch.setattr(hc, "READY_FILE", tmp)
+    monkeypatch.setattr(hc, "STARTUP_FILE", tmp.parent / "bot_startup")
     if tmp.exists():
         tmp.unlink()
+    startup = tmp.parent / "bot_startup"
+    startup.unlink(missing_ok=True)
     yield tmp
     if tmp.is_dir():
         tmp.rmdir()
     else:
         tmp.unlink(missing_ok=True)
+    startup.unlink(missing_ok=True)
 
 
 class TestCheckHealth:
@@ -36,6 +40,10 @@ class TestCheckHealth:
     def test_succeeds_when_metrics_health_ok(self, ready_file, monkeypatch):
         with patch.object(hc, "check_metrics_health", return_value=True):
             assert hc.check_health() is True
+
+    def test_succeeds_when_startup_marker_exists(self, ready_file):
+        hc.STARTUP_FILE.touch()
+        assert hc.check_health() is True
 
     def test_directory_named_bot_ready_is_not_ready(self, ready_file, monkeypatch):
         ready_file.mkdir()

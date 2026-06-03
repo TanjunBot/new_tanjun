@@ -68,10 +68,19 @@ def test_main_runs_wait_migrate_and_exec(entrypoint) -> None:
         patch("utils.db_migration.ensure_database_schema") as ensure,
         patch.object(entrypoint.os, "chdir"),
         patch.object(entrypoint.os, "execvp") as execvp,
+        patch.object(entrypoint, "_mark_startup_in_progress") as mark_startup,
     ):
         entrypoint.main()
 
+    mark_startup.assert_called_once()
     wait_db.assert_called_once()
     ensure.assert_called_once()
     execvp.assert_called_once()
     assert execvp.call_args[0][1][1] == "main.py"
+
+
+def test_mark_startup_in_progress_creates_marker(entrypoint, tmp_path, monkeypatch) -> None:
+    marker = tmp_path / "startup"
+    monkeypatch.setenv("BOT_STARTUP_FILE", str(marker))
+    entrypoint._mark_startup_in_progress()
+    assert marker.is_file()
