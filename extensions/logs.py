@@ -359,7 +359,7 @@ class LogsCog(commands.Cog):
         entry = await _find_audit_log_entry(rule.guild, discord.AuditLogAction.automod_rule_delete, lambda e: e.target.id == rule.id)
         updater = entry.user.mention if entry else None
         if updater:
-            description_parts.append(l10n.logs.automodRuleDelete.deleted_by(locale, updater=updater))
+            description_parts.append(l10n.logs.automodRuleDelete.deleted_by(locale, deleter=updater))
         description_parts.append(l10n.logs.automodRuleCreate.enabled(locale, enabled='✅' if rule.enabled else '❌'))
         description_parts.append(l10n.logs.automodRuleCreate.name(locale, name=rule.name))
         description_parts.append(l10n.logs.automodRuleCreate.trigger(locale))
@@ -420,7 +420,7 @@ class LogsCog(commands.Cog):
             description_parts.append(l10n.logs.automodRuleCreate.block_member_interaction(locale, duration=str(l10n.logs.automodRuleCreate.resolve('timeout_duration.' + str(execution.action.duration))(locale))))
         description_parts.append(l10n.logs.automodAction.message(locale, message=execution.action.content[0:1000] + '...' if len(execution.action.content) > 1000 else execution.action.content))
         description = '\n'.join(description_parts)
-        embed = discord.Embed(color=EmbedColor.WARNING, title=l10n.logs.automodRuleDelete.title(locale), description=description)
+        embed = discord.Embed(color=EmbedColor.WARNING, title=l10n.logs.automodAction.title(locale), description=description)
         await log_event_producer(str(execution.guild.id), embed)
 
     @commands.Cog.listener()
@@ -436,7 +436,7 @@ class LogsCog(commands.Cog):
         deleter = entry.user.mention if entry else None
         if deleter:
             description_parts.append(l10n.logs.guildChannelDelete.deleted_by(locale, deleter=deleter))
-        description_parts.append(l10n.logs.guildChannelDelete.name(locale, channel=channel.name))
+        description_parts.append(l10n.logs.guildChannelDelete.name(locale, name=channel.name))
         description_parts.append(l10n.logs.guildChannelDelete.type(locale, type=str(l10n.logs.guildChannelDelete.types.resolve(str(channel.type))(locale))))
         description_parts.append(l10n.logs.guildChannelDelete.created_at(locale, created_at=utility.date_time_to_timestamp(channel.created_at)))
         if channel.category:
@@ -818,7 +818,7 @@ class LogsCog(commands.Cog):
         description_parts.append(l10n.logs.memberRemove.name(locale, left=member.mention))
         description_parts.append(l10n.logs.memberRemove.roles(locale, roles=', '.join((role.mention for role in member.roles))))
         description = '\n'.join(description_parts)
-        embed = discord.Embed(color=EmbedColor.ERROR, title=l10n.logs.memberJoin.title(locale), description=description)
+        embed = discord.Embed(color=EmbedColor.ERROR, title=l10n.logs.memberRemove.title(locale), description=description)
         await log_event_producer(str(member.guild.id), embed)
 
     @commands.Cog.listener()
@@ -1144,9 +1144,9 @@ class LogsCog(commands.Cog):
         if role.display_icon:
             if isinstance(role.display_icon, discord.Asset):
                 url_locale = l10n.logs.userUpdate.guildAvatarLocales.url(locale)
-                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, displayIcon=f'[{url_locale}]({role.display_icon.url})'))
+                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, display_icon=f'[{url_locale}]({role.display_icon.url})'))
             else:
-                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, displayIcon=role.display_icon))
+                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, display_icon=role.display_icon))
         if role.hoist:
             description_parts.append(l10n.logs.guildRoleCreate.hoist(locale))
         if role.managed:
@@ -1179,9 +1179,9 @@ class LogsCog(commands.Cog):
         if role.display_icon:
             if isinstance(role.display_icon, discord.Asset):
                 url_locale = l10n.logs.userUpdate.guildAvatarLocales.url(locale)
-                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, displayIcon=f'[{url_locale}]({role.display_icon.url})'))
+                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, display_icon=f'[{url_locale}]({role.display_icon.url})'))
             else:
-                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, displayIcon=role.display_icon))
+                description_parts.append(l10n.logs.guildRoleCreate.displayIcon(locale, display_icon=role.display_icon))
         if role.hoist:
             description_parts.append(l10n.logs.guildRoleCreate.hoist(locale))
         if role.managed:
