@@ -9,12 +9,14 @@ import extensions.setup_wizards as sw_mod
 from models import LogEnableModel
 from tests.helpers.discord import (
     MockVoiceChannel,
+    make_app_command_channel,
     make_guild,
     make_interaction,
     make_member,
     make_permissions,
     make_text_channel,
 )
+import discord
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -65,6 +67,19 @@ def _admin_interaction(*, guild: MagicMock | None = None) -> MagicMock:
     )
     guild.get_member = MagicMock(return_value=user)
     return ix
+
+
+def _resolved_app_command_channel(
+    guild: MagicMock,
+    *,
+    send_messages: bool = True,
+    view_channel: bool = True,
+) -> MagicMock:
+    resolved = make_text_channel(guild=guild)
+    resolved.permissions_for = MagicMock(
+        return_value=make_permissions(send_messages=send_messages, view_channel=view_channel)
+    )
+    return make_app_command_channel(guild=guild, resolved=resolved)
 
 
 def _non_admin_interaction() -> MagicMock:
@@ -123,9 +138,8 @@ class TestLogChannelSelectView:
         guild.get_member = MagicMock(return_value=make_member())
         view = sw.LogChannelSelectView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=True))
-        await view.on_channel_select(ix, MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
         wizard_api_mocks["set_log"].assert_awaited_once()
         ix.response.edit_message.assert_awaited_once()
 
@@ -134,10 +148,19 @@ class TestLogChannelSelectView:
         guild.get_member = MagicMock(return_value=make_member())
         view = sw.LogChannelSelectView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=False))
-        await view.on_channel_select(ix, MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild, send_messages=False)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
         ix.response.send_message.assert_awaited_once()
+
+    async def test_channel_select_unresolvable(self, sw, wizard_api_mocks) -> None:
+        guild = make_guild()
+        guild.get_member = MagicMock(return_value=make_member())
+        view = sw.LogChannelSelectView("en-US", guild)
+        ix = _admin_interaction(guild=guild)
+        selected = make_app_command_channel(guild=guild, resolved=None, fetch_raises=discord.NotFound)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
+        ix.response.send_message.assert_awaited_once()
+        wizard_api_mocks["set_log"].assert_not_awaited()
 
     async def test_channel_select_not_admin(self, sw, wizard_api_mocks) -> None:
         view = sw.LogChannelSelectView("en-US", make_guild())
@@ -191,9 +214,8 @@ class TestLevelSetupFlow:
         guild.get_member = MagicMock(return_value=make_member())
         parent = sw.LevelSetupView("en-US", guild)
         view = sw.LevelChannelView("en-US", guild, parent)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(view_channel=True, send_messages=True))
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild)
+        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[selected]))
         assert parent.completed is True
         parent2 = sw.LevelSetupView("en-US", guild)
         view2 = sw.LevelChannelView("en-US", guild, parent2)
@@ -205,11 +227,13 @@ class TestLevelSetupFlow:
         parent = sw.LevelSetupView("en-US", guild)
         view = sw.LevelChannelView("en-US", guild, parent)
         guild.get_member = MagicMock(return_value=None)
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[make_text_channel(guild=guild)]))
+        await view.on_channel_select(
+            _admin_interaction(guild=guild),
+            MagicMock(values=[_resolved_app_command_channel(guild)]),
+        )
         guild.get_member = MagicMock(return_value=make_member())
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(view_channel=False, send_messages=False))
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild, send_messages=False, view_channel=False)
+        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[selected]))
 
 
 class TestBoosterSetup:

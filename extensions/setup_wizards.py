@@ -5,6 +5,7 @@ Provides guided, step-by-step configuration using modals and buttons.
 from locale_keys import locale as l10n
 from typing import Any, cast
 import discord
+from utils.discord_channels import bot_can_send_messages, channel_mention, resolve_guild_channel
 from discord import app_commands
 from discord.ext import commands
 from discord.ui import Modal, TextInput, View
@@ -51,15 +52,16 @@ class LogChannelSelectView(View):
             return
         if not select.values:
             return
-        channel = cast(discord.TextChannel, select.values[0])
+        selected = select.values[0]
+        channel = await resolve_guild_channel(self.guild, selected)
         assert interaction.client is not None and interaction.client.user is not None
         self_member = self.guild.get_member(interaction.client.user.id)
-        if self_member is None or not channel.permissions_for(self_member).send_messages:
+        if self_member is None or channel is None or not bot_can_send_messages(channel, self_member):
             embed = utility.tanjunEmbed(title='Missing Permission', description="I don't have permission to send messages in that channel.")
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         await api_set_log_channel(str(self.guild.id), str(channel.id))
-        embed = utility.tanjunEmbed(title='✅ Log Channel Set', description=f"Log channel has been set to {channel.mention}.\n\nNow let's configure which events to log.")
+        embed = utility.tanjunEmbed(title='✅ Log Channel Set', description=f"Log channel has been set to {channel_mention(selected, channel)}.\n\nNow let's configure which events to log.")
         event_view = LogEventConfigView(self.locale, self.guild)
         await interaction.response.edit_message(embed=embed, view=event_view)
 
@@ -240,10 +242,11 @@ class LevelChannelView(View):
             await _not_admin_reply(interaction)
             return
         if select.values:
-            channel = cast(discord.TextChannel, select.values[0])
+            selected = select.values[0]
+            channel = await resolve_guild_channel(self.guild, selected)
             assert interaction.client is not None and interaction.client.user is not None
             self_member = self.guild.get_member(interaction.client.user.id)
-            if self_member is None:
+            if self_member is None or channel is None:
                 embed = utility.tanjunEmbed(title='Error', description='Could not verify bot permissions.')
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
@@ -253,7 +256,7 @@ class LevelChannelView(View):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
             await api_set_levelup_channel(str(self.guild.id), str(channel.id))
-            msg = f'Level-up announcements will be sent to {channel.mention}.'
+            msg = f'Level-up announcements will be sent to {channel_mention(selected, channel)}.'
         else:
             msg = 'No level-up channel set.'
         self.setup_view.completed = True

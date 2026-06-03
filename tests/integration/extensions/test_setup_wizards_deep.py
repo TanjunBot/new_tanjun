@@ -67,14 +67,14 @@ async def test_log_channel_select_view_callbacks():
         if callable(attr) and hasattr(attr, "__discord_ui_model_type__"):
             continue
         if name.startswith("on_") or (callable(attr) and inspect.iscoroutinefunction(attr)):
+            interaction = MagicMock()
+            interaction.response = MagicMock()
+            interaction.response.defer = AsyncMock()
+            interaction.followup = MagicMock()
+            interaction.followup.send = AsyncMock()
             try:
-                interaction = MagicMock()
-                interaction.response = MagicMock()
-                interaction.response.defer = AsyncMock()
-                interaction.followup = MagicMock()
-                interaction.followup.send = AsyncMock()
                 await attr(interaction)
-            except (TypeError, AttributeError):
+            except TypeError:
                 pass
 
 
