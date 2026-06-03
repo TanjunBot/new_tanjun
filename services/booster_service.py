@@ -167,10 +167,16 @@ class BoosterService:
         claimed_type: ClaimedBoosterType,
     ) -> list:
         """Get all claimed booster entities as model instances."""
-        return await _claimed_all_cache.get_or_fetch(
-            claimed_type.name,
-            lambda: self._fetch_all_claims_from_db(claimed_type),
-        )
+
+        async def fetch() -> list:
+            rows = await self._fetch_all_claims_from_db(claimed_type)
+            return rows if rows is not None else []
+
+        result = await _claimed_all_cache.get_or_fetch(claimed_type.name, fetch)
+        if result is not None:
+            return result
+        _claimed_all_cache.invalidate(claimed_type.name)
+        return await fetch()
 
 
 # ------------------------------------------------------------------ #

@@ -11,6 +11,7 @@ from services.booster_service import (
     BoosterService,
     BoosterType,
     ClaimedBoosterType,
+    _claimed_all_cache,
     clear_booster_read_cache,
 )
 from tests.helpers.concurrency import stress_concurrent
@@ -139,6 +140,15 @@ class TestBoosterService:
             mock_q.return_value = []
             claims = await service.get_all_claims(ClaimedBoosterType.ROLE)
             assert claims == []
+
+    @pytest.mark.asyncio
+    async def test_get_all_claims_recovers_from_cached_none(self, service: BoosterService):
+        with patch("services.booster_service.safe_execute_query", new_callable=AsyncMock) as mock_q:
+            mock_q.return_value = [(USER_ID, CHANNEL_ID, GUILD_ID)]
+            _claimed_all_cache.set(ClaimedBoosterType.CHANNEL.name, None)
+            claims = await service.get_all_claims(ClaimedBoosterType.CHANNEL)
+            assert len(claims) == 1
+            mock_q.assert_awaited_once()
 
 
 class TestBoosterServiceDbErrors:
