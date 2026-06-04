@@ -39,6 +39,8 @@ class TestLevelSetupWizardFlow:
         await view.normal(ix, MagicMock())
         desc = edit_description(ix)
         assert "60" in desc
+        assert "**Step 3 (optional):**" in desc
+        assert "Skip" in desc and "leveled up" in desc
         kwargs = ix.response.edit_message.await_args.kwargs
         assert isinstance(kwargs.get("view"), sw.LevelChannelView)
 
@@ -63,6 +65,7 @@ class TestLevelSetupWizardFlow:
         ix = admin_interaction()
         await view.skip(ix, MagicMock())
         assert parent.completed is True
+        assert "leveled up" in edit_description(ix)
 
     async def test_scaling_not_admin(self, setup_wizards_module, wizard_api_mocks) -> None:
         sw = setup_wizards_module
