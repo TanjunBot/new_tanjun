@@ -876,7 +876,7 @@ class LogsCog(commands.Cog):
                 description_parts.append(l10n.logs.memberUpdate.timeout(locale, timeout=utility.date_time_to_timestamp(after.timed_out_until)))
             else:
                 description_parts.append(l10n.logs.memberUpdate.timeoutRemoved(locale))
-        if len(description_parts) >= 2:
+        if len(description_parts) == 1:
             return
         description = '\n'.join(description_parts)
         embed = discord.Embed(color=EmbedColor.WARNING, title=l10n.logs.memberUpdate.title(locale), description=description)
