@@ -208,7 +208,7 @@ class LevelSetupView(View):
             await _not_admin_reply(interaction)
             return
         await api_set_xp_scaling(str(self.guild.id), scaling)
-        embed = utility.tanjunEmbed(title='XP Scaling Set', description=f"XP difficulty set to **{scaling}**. Now let's configure cooldowns.")
+        embed = utility.tanjunEmbed(title='XP Scaling Set', description=f"XP difficulty set to **{scaling}**.\n\n**Step 2:** Choose how often members can earn XP again.\n• **Fast** — 30s text, 60s voice\n• **Normal** — 60s text, 120s voice\n• **Slow** — 120s text, 300s voice")
         view = LevelCooldownView(self.locale, self.guild, self)
         await interaction.response.edit_message(embed=_discord_embed(embed), view=view)
 
@@ -239,7 +239,7 @@ class LevelCooldownView(View):
             return
         await api_set_text_cooldown(str(self.guild.id), text_cd)
         await api_set_voice_cooldown(str(self.guild.id), voice_cd)
-        embed = utility.tanjunEmbed(title='Cooldowns Configured', description=f"Text XP cooldown: **{text_cd}s**\nVoice XP cooldown: **{voice_cd}s**\n\nNow let's set a level-up announcement channel (optional).")
+        embed = utility.tanjunEmbed(title='Cooldowns Configured', description=f"Text XP cooldown: **{text_cd}s**\nVoice XP cooldown: **{voice_cd}s**\n\n**Step 3 (optional):** Choose where level-up messages are sent.\n• **Select a channel** — all announcements go to that channel\n• **Skip** — announcements are sent in the channel where each member leveled up")
         view = LevelChannelView(self.locale, self.guild, self.setup_view)
         await interaction.response.edit_message(embed=_discord_embed(embed), view=view)
 
@@ -252,7 +252,7 @@ class LevelChannelView(View):
         self.guild = guild
         self.setup_view = setup_view
 
-    @discord.ui.select(cls=discord.ui.ChannelSelect, placeholder='Select a channel for level-up announcements...', channel_types=[discord.ChannelType.text])
+    @discord.ui.select(cls=discord.ui.ChannelSelect, placeholder='Optional: pick a fixed level-up channel...', channel_types=[discord.ChannelType.text])
     async def on_channel_select(self, interaction: discord.Interaction, select: discord.ui.ChannelSelect[Any]) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
@@ -274,7 +274,7 @@ class LevelChannelView(View):
             await api_set_levelup_channel(str(self.guild.id), str(channel.id))
             msg = f'Level-up announcements will be sent to {channel_mention(selected, channel)}.'
         else:
-            msg = 'No level-up channel set.'
+            msg = 'No fixed channel set. Level-up messages will be sent in the channel where each member leveled up.'
         self.setup_view.completed = True
         embed = utility.tanjunEmbed(title='Channel Set', description=msg + '\n\nLevel system setup is complete! 🎉')
         for item in self.children:
@@ -288,7 +288,7 @@ class LevelChannelView(View):
             await _not_admin_reply(interaction)
             return
         self.setup_view.completed = True
-        embed = utility.tanjunEmbed(title='✅ Level Setup Complete', description='The leveling system is now active! Members earn XP by chatting.\n\nTip: Use `/level add-level-role` to reward roles at specific levels.')
+        embed = utility.tanjunEmbed(title='✅ Level Setup Complete', description='The leveling system is now active! Members earn XP by chatting.\n\nLevel-up messages will be sent in the channel where each member leveled up. You can set a fixed channel later with `/level setlevelupchannel`.\n\nTip: Use `/level add-level-role` to reward roles at specific levels.')
         for item in self.children:
             item.disabled = True
         await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
