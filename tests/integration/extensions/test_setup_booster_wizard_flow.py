@@ -23,13 +23,13 @@ class TestBoosterSetupWizardFlow:
             await view._update_booster_ui(ix)
         embed = embed_from_edit(ix)
         desc = embed.description or ""
-        assert "Booster channel" in desc or "channel" in desc.lower()
-        assert "Booster role" in desc or "role" in desc.lower()
+        assert "booster category" in desc.lower() or "category" in desc.lower()
+        assert "booster role" in desc.lower() or "role" in desc.lower()
 
     async def test_booster_finish_disables_buttons(self, setup_wizards_module) -> None:
         sw = setup_wizards_module
         view = sw.BoosterSetupView("en-US", MagicMock())
-        view.children = [MagicMock(disabled=False) for _ in range(4)]
+        view.children = [MagicMock(disabled=False) for _ in range(3)]
         ix = admin_interaction()
         await view.finish(ix, MagicMock())
         assert all(item.disabled for item in view.children)
