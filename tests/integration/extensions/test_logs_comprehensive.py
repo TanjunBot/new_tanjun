@@ -826,7 +826,7 @@ async def test_message_delete_audit_match(log_api_mocks, logs_cog):
     await cog.on_message_delete(message)
 
 
-async def test_member_update_only_name_emits(log_api_mocks, logs_cog):
+async def test_member_update_skips_when_nothing_changed(log_api_mocks, logs_cog):
     cog = await logs_cog()
     guild = make_guild()
     before = make_member()
@@ -839,6 +839,27 @@ async def test_member_update_only_name_emits(log_api_mocks, logs_cog):
     before.pending = after.pending = False
     before.timed_out_until = after.timed_out_until = None
     await cog.on_member_update(before, after)
+    log_api_mocks.assert_not_called()
+
+
+async def test_member_update_display_name_emits(log_api_mocks, logs_cog):
+    cog = await logs_cog()
+    guild = make_guild()
+    before = make_member()
+    after = make_member()
+    before.guild = after.guild = guild
+    before.display_name = "OldNick"
+    after.display_name = "NewNick"
+    before.display_avatar = after.display_avatar
+    before.banner = after.banner
+    before.roles = after.roles = []
+    before.pending = after.pending = False
+    before.timed_out_until = after.timed_out_until = None
+    await cog.on_member_update(before, after)
+    log_api_mocks.assert_called_once()
+    embed = log_api_mocks.call_args[0][1]
+    assert "OldNick" in embed.description
+    assert "NewNick" in embed.description
 
 
 async def test_user_update_skips_blacklisted_role(log_api_mocks, logs_cog):
