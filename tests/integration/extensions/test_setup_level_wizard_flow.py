@@ -22,8 +22,12 @@ class TestLevelSetupWizardFlow:
         view = sw.LevelSetupView("en-US", MagicMock())
         ix = admin_interaction()
         await view.easy(ix, MagicMock())
-        embed = embed_from_edit(ix)
-        assert "XP difficulty" in (embed.description or "") or "cooldown" in edit_description(ix).lower()
+        desc = edit_description(ix)
+        assert "XP difficulty" in desc
+        assert "**Step 2:**" in desc
+        assert "**Fast**" in desc and "30s text" in desc
+        assert "**Normal**" in desc and "120s voice" in desc
+        assert "**Slow**" in desc and "300s voice" in desc
         kwargs = ix.response.edit_message.await_args.kwargs
         assert isinstance(kwargs.get("view"), sw.LevelCooldownView)
 

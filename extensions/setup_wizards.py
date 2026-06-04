@@ -208,7 +208,7 @@ class LevelSetupView(View):
             await _not_admin_reply(interaction)
             return
         await api_set_xp_scaling(str(self.guild.id), scaling)
-        embed = utility.tanjunEmbed(title='XP Scaling Set', description=f"XP difficulty set to **{scaling}**. Now let's configure cooldowns.")
+        embed = utility.tanjunEmbed(title='XP Scaling Set', description=f"XP difficulty set to **{scaling}**.\n\n**Step 2:** Choose how often members can earn XP again.\n• **Fast** — 30s text, 60s voice\n• **Normal** — 60s text, 120s voice\n• **Slow** — 120s text, 300s voice")
         view = LevelCooldownView(self.locale, self.guild, self)
         await interaction.response.edit_message(embed=_discord_embed(embed), view=view)
 
