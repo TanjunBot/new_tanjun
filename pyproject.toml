@@ -97,7 +97,7 @@ dev = [
     "MarkupSafe==3.0.3",
     "matplotlib-inline==0.2.2",
     "mistune==3.2.1",
-    "nbclient==0.10.4",
+    "nbclient==0.11.0",
     "nbconvert==7.17.1",
     "nbformat==5.10.4",
     "packaging==26.2",
