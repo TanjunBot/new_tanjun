@@ -31,11 +31,11 @@ def audit_root_command_payloads(
     hard_limit: int = DISCORD_COMMAND_PAYLOAD_LIMIT,
 ) -> list[CommandPayloadAudit]:
     tree = bot.tree
-    if tree is None:
-        return []
 
     results: list[CommandPayloadAudit] = []
     for command in tree.get_commands():
+        if not isinstance(command, discord.app_commands.Command):
+            continue
         payload_bytes = _command_payload_bytes(command, tree)
         results.append(
             CommandPayloadAudit(
