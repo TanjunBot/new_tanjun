@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from contextlib import ExitStack, contextmanager
 from typing import Any, Iterator
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -142,7 +143,7 @@ def matrix_patches(case: MatrixCase) -> Iterator[dict[str, Any]]:
             stack.enter_context(patch("matplotlib.pyplot.close"))
 
         if group == "games_name":
-            stack.enter_context(patch("commands.games.hangman_words.words.words", return_value=["test"]))
+            stack.enter_context(patch("commands.games.hangman.words", return_value=["test"]))
             stack.enter_context(patch("commands.games.wordle_words.words.allowed_words", return_value=["tests"]))
             stack.enter_context(patch("commands.games.wordle_words.words.possible_words", return_value=["tests"]))
             mock_aki = MagicMock()
@@ -160,15 +161,44 @@ def matrix_patches(case: MatrixCase) -> Iterator[dict[str, Any]]:
             )
 
         if group == "giveaway_name":
+            now = datetime.datetime.now()
             giveaway = MagicMock()
             giveaway.guild_id = str(make_guild().id)
             giveaway.ended = False
             giveaway.started = True
+            giveaway.end_time = now + datetime.timedelta(days=1)
+            giveaway.start_time = now
+            giveaway.channel_id = "123456789012345678"
+            giveaway.title = "Test Giveaway"
+            giveaway.description = "Test description"
+            giveaway.winners = 1
+            giveaway.with_button = True
+            giveaway.custom_name = None
+            giveaway.sponsor = None
+            giveaway.price = None
+            giveaway.message = None
+            giveaway.new_message_requirement = None
+            giveaway.day_requirement = None
+            giveaway.voice_requirement = None
             stack.enter_context(
                 patch(
                     "services.giveaway_service.giveaway_service.get",
                     new_callable=AsyncMock,
                     return_value=giveaway,
+                )
+            )
+            stack.enter_context(
+                patch(
+                    "services.giveaway_service.giveaway_service.get_role_requirements",
+                    new_callable=AsyncMock,
+                    return_value=[],
+                )
+            )
+            stack.enter_context(
+                patch(
+                    "services.giveaway_service.giveaway_service.get_channel_requirements",
+                    new_callable=AsyncMock,
+                    return_value={},
                 )
             )
             stack.enter_context(

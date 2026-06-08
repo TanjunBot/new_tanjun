@@ -243,14 +243,14 @@ def resolve_command_callable(tree_path: str) -> Callable[..., Any] | None:
 
     by_path, by_spec = _load_static_handlers()
     handler: Callable[..., Any] | None = None
-    registered = by_path.get(tree_path)
-    if registered:
-        handler = _load_callable(registered)
+    manual = _MANUAL_HANDLERS.get(tree_path)
+    if manual:
+        handler = _load_callable(manual)
 
     if handler is None:
-        manual = _MANUAL_HANDLERS.get(tree_path)
-        if manual:
-            handler = _load_callable(manual)
+        registered = by_path.get(tree_path)
+        if registered:
+            handler = _load_callable(registered)
 
     if handler is None:
         from diagnostics.specs.overrides import SPEC_COMMAND_HANDLERS

@@ -135,6 +135,9 @@ def build_kwargs_for_handler(handler: Any) -> dict[str, Any]:
     for name, param in sig.parameters.items():
         if name in ("self", "interaction", "ctx", "command_info", "info"):
             continue
+        if name == "language" and param.annotation in (str, "str"):
+            if param.default is not inspect.Parameter.empty:
+                continue
         if name in _PARAM_DEFAULTS:
             factory = _PARAM_DEFAULTS[name]
             kwargs[name] = factory() if callable(factory) else factory

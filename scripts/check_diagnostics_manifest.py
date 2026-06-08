@@ -16,14 +16,7 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 from diagnostics.tree import MANIFEST_PATH, compare_tree_to_manifest
-from tests.helpers.extension_loader import fire_cog_on_ready, load_all_extensions, make_bot_for_extensions
-
-
-async def _build_bot():
-    bot = make_bot_for_extensions()
-    await load_all_extensions(bot)
-    await fire_cog_on_ready(bot)
-    return bot
+from tests.helpers.extension_loader import build_extension_bot, teardown_extension_bot
 
 
 def _print_set_diff(label: str, missing: set[str], extra: set[str]) -> None:
@@ -37,13 +30,16 @@ def _print_set_diff(label: str, missing: set[str], extra: set[str]) -> None:
             print(f"  + {item}", file=sys.stderr)
 
 
-def main() -> int:
+async def _check_manifest() -> int:
     if not MANIFEST_PATH.is_file():
         print(f"Missing {MANIFEST_PATH}; run scripts/generate_diagnostics_manifest.py", file=sys.stderr)
         return 1
 
-    bot = asyncio.run(_build_bot())
-    missing, extra, missing_sub, extra_sub = compare_tree_to_manifest(bot)
+    bot = await build_extension_bot()
+    try:
+        missing, extra, missing_sub, extra_sub = compare_tree_to_manifest(bot)
+    finally:
+        await teardown_extension_bot(bot)
 
     if missing or extra or missing_sub or extra_sub:
         _print_set_diff("paths in tree", missing, extra)
@@ -52,6 +48,10 @@ def main() -> int:
 
     print("diagnostics manifest OK")
     return 0
+
+
+def main() -> int:
+    return asyncio.run(_check_manifest())
 
 
 if __name__ == "__main__":

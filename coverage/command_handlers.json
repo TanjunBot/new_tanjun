@@ -163,7 +163,7 @@
     "setup_name setup_booster_name": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
     "setup_name setup_giveaway_name": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
     "setup_name setup_level_name": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
-    "setup_name setup_logs_name": "api.get_log_channel",
+    "setup_name setup_logs_name": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
     "utility_help_name": "commands.utility.help.help",
     "utility_scheduledmessage_name utility_listscheduled_name": "commands.utility.listscheduled.list_scheduled_messages",
     "utility_scheduledmessage_name utility_removescheduled_name": "commands.utility.removescheduled.remove_scheduled_message",
@@ -189,7 +189,7 @@
     "utilitycmd_name utility_bs_name utility_bs_link_name": "commands.utility.brawlstars.link.link",
     "utilitycmd_name utility_bs_name utility_bs_playerinfo_name": "commands.utility.brawlstars.playerinfo.player_info",
     "utilitycmd_name utility_bs_name utility_bs_unlink_name": "commands.utility.brawlstars.unlink.unlink",
-    "utilitycmd_name utility_feedback_name": "commands.utility.feedback.feedback",
+    "utilitycmd_name utility_feedback_name": "tests.helpers.command_matrix.manual_handlers.feedback_command",
     "utilitycmd_name utility_messagetracking_name utility_messageoptin_name": "commands.utility.messagetrackingoptin.optIn",
     "utilitycmd_name utility_messagetracking_name utility_messageoptout_name": "commands.utility.messagetrackingoptout.optOut",
     "utilitycmd_name utility_report_name": "commands.utility.report.report",
@@ -360,7 +360,7 @@
     "setup_wizards.SetupWizardCommands.booster": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
     "setup_wizards.SetupWizardCommands.giveaway": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
     "setup_wizards.SetupWizardCommands.level": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
-    "setup_wizards.SetupWizardCommands.logs": "api.get_log_channel",
+    "setup_wizards.SetupWizardCommands.logs": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
     "utility.AutoPublishCommands.autopublish": "commands.utility.autopublish.autopublish",
     "utility.AutoPublishCommands.autopublish_remove": "commands.utility.autopublish.autopublish_remove",
     "utility.BoosterChannelCommands.claimboosterchannel": "commands.utility.claim_booster_channel.claimBoosterChannel",
@@ -390,7 +390,7 @@
     "utility.UtilityCommands.avatar": "commands.utility.avatar.avatar",
     "utility.UtilityCommands.avatardecoration": "commands.utility.avatar_decoration.avatarDecoration",
     "utility.UtilityCommands.banner": "commands.utility.banner.banner",
-    "utility.UtilityCommands.feedback": "commands.utility.feedback.feedback",
+    "utility.UtilityCommands.feedback": "tests.helpers.command_matrix.manual_handlers.feedback_command",
     "utility.UtilityCommands.report": "commands.utility.report.report"
   },
   "path_meta": {
@@ -1538,7 +1538,7 @@
     "setup_name setup_logs_name": {
       "extension": "extensions.setup_wizards",
       "group_cls": "extensions.setup_wizards.SetupWizardCommands",
-      "handler": "api.get_log_channel",
+      "handler": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
       "method": "logs",
       "patch_target": "extensions.setup_wizards.api_get_log_channel"
     },
@@ -1720,7 +1720,7 @@
     "utilitycmd_name utility_feedback_name": {
       "extension": "extensions.utility",
       "group_cls": "extensions.utility.UtilityCommands",
-      "handler": "commands.utility.feedback.feedback",
+      "handler": "tests.helpers.command_matrix.manual_handlers.feedback_command",
       "method": "feedback",
       "patch_target": "extensions.utility.feedbackCommand"
     },

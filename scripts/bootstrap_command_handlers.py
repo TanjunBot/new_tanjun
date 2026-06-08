@@ -43,15 +43,15 @@ def main() -> None:
     for spec in all_specs():
         if not spec.tree_path or spec.skip_reason:
             continue
-        handler = _resolve_from_extension_spec(spec)
-        if handler is None:
-            handler = _resolve_from_commands_leaf(spec.tree_path)
-        if handler is None:
-            manual = MANUAL_HANDLERS.get(spec.tree_path)
-            if manual:
-                from tests.helpers.command_matrix.resolver import _load_callable
+        manual = MANUAL_HANDLERS.get(spec.tree_path)
+        if manual:
+            from tests.helpers.command_matrix.resolver import _load_callable
 
-                handler = _load_callable(manual)
+            handler = _load_callable(manual)
+        else:
+            handler = _resolve_from_extension_spec(spec)
+            if handler is None:
+                handler = _resolve_from_commands_leaf(spec.tree_path)
         if handler is None:
             missing.append(spec.tree_path)
             continue

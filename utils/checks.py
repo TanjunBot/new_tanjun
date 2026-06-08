@@ -24,7 +24,7 @@ _CheckResult = tuple[str, ErrorEmbedCategory, bool] | None
 
 def _user_is_member_in_guild(command_info: CommandInfo) -> bool:
     """Return ``True`` if the user is a ``discord.Member`` in a guild context."""
-    return isinstance(command_info.user, discord.Member)
+    return isinstance(command_info.user, discord.Member) and command_info.guild is not None
 
 def check_user_permission(command_info: CommandInfo, permission: Literal['ban_members', 'kick_members', 'moderate_members', 'manage_messages', 'manage_roles', 'manage_channels'], *, use_guild_permissions: bool=False, channel: discord.abc.GuildChannel | None=None) -> _CheckResult:
     """Verify the command executor has the required permission.
@@ -87,7 +87,7 @@ def check_bot_permission(command_info: CommandInfo, permission: Literal['ban_mem
     """
     guild = command_info.guild
     if guild is None:
-        raise ValueError('Guild is missing in command_info')
+        return ('missingPermissionBot', ErrorEmbedCategory.PERMISSION, True)
     if channel is not None:
         resolved = resolve_guild_channel_sync(guild, channel)
         if resolved is None or not hasattr(resolved, 'permissions_for'):
@@ -115,7 +115,7 @@ def check_bot_hierarchy(command_info: CommandInfo, target: discord.Member) -> _C
     """Verify the bot's top role is higher than the target's."""
     guild = command_info.guild
     if guild is None:
-        raise ValueError('Guild is missing in command_info')
+        return ('missingPermissionBot', ErrorEmbedCategory.PERMISSION, True)
     if guild.me.top_role <= target.top_role:
         return ('targetTooHigh', ErrorEmbedCategory.PERMISSION, False)
     return None

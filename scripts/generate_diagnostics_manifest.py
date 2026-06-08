@@ -16,22 +16,23 @@ import tests.mock_config as mock_config
 
 mock_config.patch_config_module()
 
-from diagnostics.tree import MANIFEST_PATH, collect_tree_paths, iter_tree_paths
-from tests.helpers.extension_loader import fire_cog_on_ready, load_all_extensions, make_bot_for_extensions
+from diagnostics.tree import MANIFEST_PATH, collect_tree_paths
+from tests.helpers.extension_loader import build_extension_bot, teardown_extension_bot
 
 
 async def _build_manifest() -> dict[str, object]:
-    bot = make_bot_for_extensions()
-    await load_all_extensions(bot)
-    await fire_cog_on_ready(bot)
-    roots = sorted({getattr(cmd, "name", str(cmd)) for cmd in bot.tree.get_commands()})
-    paths = sorted(collect_tree_paths(bot))
-    minigame_subgroups: list[str] = []
-    for cmd in bot.tree.get_commands():
-        if getattr(cmd, "name", None) == "minigame_name":
-            minigame_subgroups = sorted(getattr(c, "name", str(c)) for c in getattr(cmd, "commands", []))
-            break
-    return {"roots": roots, "paths": paths, "minigame_subgroups": minigame_subgroups}
+    bot = await build_extension_bot()
+    try:
+        roots = sorted({getattr(cmd, "name", str(cmd)) for cmd in bot.tree.get_commands()})
+        paths = sorted(collect_tree_paths(bot))
+        minigame_subgroups: list[str] = []
+        for cmd in bot.tree.get_commands():
+            if getattr(cmd, "name", None) == "minigame_name":
+                minigame_subgroups = sorted(getattr(c, "name", str(c)) for c in getattr(cmd, "commands", []))
+                break
+        return {"roots": roots, "paths": paths, "minigame_subgroups": minigame_subgroups}
+    finally:
+        await teardown_extension_bot(bot)
 
 
 def main() -> int:
