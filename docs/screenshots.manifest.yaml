@@ -1,0 +1,10 @@
+# Map slash commands to stable image paths for user-facing docs.
+# Run: python scripts/generate_doc_screenshots.py generate
+
+default_wait_ms: 6000
+
+shots:
+  - id: help-overview
+    slash_command: "/help"
+    output: docs/assets/screenshots/help-overview.png
+    description: Main help command response

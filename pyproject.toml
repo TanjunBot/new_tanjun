@@ -132,6 +132,11 @@ dev = [
     "hypothesis>=6.100",
     "mypy>=1.11",
     "ruff==0.15.15",
+    "PyYAML>=6.0",
+]
+docs-screenshots = [
+    "playwright>=1.49",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]
@@ -161,6 +166,7 @@ markers = [
     "integration: integration tests (may require database)",
     "e2e: end-to-end tests (bot harness)",
     "live_discord: live Discord API tests (requires secrets)",
+    "live_e2e: live Discord browser + guild lifecycle E2E",
     "slow: slow tests",
 ]
 
@@ -205,6 +211,8 @@ ignore = ["UP047"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "UP007", "N802"]
+"tests/helpers/live_discord/**" = ["ANN", "SIM112"]
+"scripts/generate_doc_screenshots.py" = ["E402"]
 "commands/**" = ["ANN", "N802", "N803", "N812", "F821", "E501"]
 "extensions/**" = ["ANN", "N802", "F821", "C901", "E501"]
 "minigames/**" = ["N802", "F821", "ANN"]

@@ -1,0 +1,53 @@
+name: e2e-live-nightly
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  e2e-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        domain:
+          - admin
+          - utility
+          - math
+          - channel
+          - level
+          - logs
+          - games
+          - giveaway
+          - image
+          - ai
+          - minigames
+          - setup
+          - fun
+    env:
+      TANJUN_E2E_DOMAIN_FILTER: ${{ matrix.domain }}
+      TANJUN_E2E_COMMAND_INTERVAL_MS: "350"
+      TANJUN_E2E_MANAGE_BOT: "1"
+      TANJUN_E2E_USE_TEST_DB: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e ".[dev,docs-screenshots]"
+      - name: Install Playwright
+        run: playwright install chromium
+      - name: Start test database
+        run: docker compose -f docker-compose.test.yml up -d
+      - name: Run live E2E shard
+        env:
+          TANJUN_TEST_BOT_TOKEN: ${{ secrets.TANJUN_TEST_BOT_TOKEN }}
+          TANJUN_E2E_GUILD_ID: ${{ secrets.TANJUN_E2E_GUILD_ID }}
+          TANJUN_E2E_CHANNEL_ID: ${{ secrets.TANJUN_E2E_CHANNEL_ID }}
+          TANJUN_E2E_BOOTSTRAP_MODE: api_only
+        run: |
+          pytest tests/e2e_live/${{ matrix.domain }} tests/e2e_live/test_commands_smoke_live.py \
+            -m live_discord -v --tb=short

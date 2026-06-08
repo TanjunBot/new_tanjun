@@ -72,7 +72,6 @@ class ProfileKind(Enum):
     BRAWLSTARS = "brawlstars"
     FEEDBACK_MODAL = "feedback_modal"
     PERMISSION_HELPER = "permission_helper"
-    VIEW_PAGINATED = "view_paginated"
     GENERIC = "generic"
 
 
@@ -112,9 +111,6 @@ class CommandProfile:
         elif func_name == "feedback" or "FeedbackModal" in source:
             kind = ProfileKind.FEEDBACK_MODAL
             needs_ctx = True
-        elif "discord.ui.View" in source or "ui.View" in source:
-            if "edit_message" in source or "regenerate_embed" in source or "update_embed" in source:
-                kind = ProfileKind.VIEW_PAGINATED
         return cls(kind, mod_path, func_name, call_expr, silent_no_guild, needs_ctx)
 
 

@@ -256,6 +256,43 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "slow: slow tests")
 
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> None:
+    outcome = yield
+    report = outcome.get_result()
+    if report.when != "call" or not report.passed:
+        return
+    if not hasattr(item, "callspec"):
+        return
+    params = item.callspec.params
+    from tests.helpers.command_coverage.collectors.pytest_registry import register_coverage_cell
+    from tests.helpers.command_coverage.models import AssertionDepth, CoverageCell, LayerKind
+
+    if "case" in params:
+        case = params["case"]
+        register_coverage_cell(
+            CoverageCell(
+                tree_path=case.tree_path,
+                layer=case.layer,
+                dimensions=dict(case.dimensions),
+                assertion_depth=AssertionDepth.OUTPUT,
+                source="pytest:passed",
+            )
+        )
+    elif "spec" in params:
+        spec = params["spec"]
+        if getattr(spec, "tree_path", None):
+            register_coverage_cell(
+                CoverageCell(
+                    tree_path=spec.tree_path,
+                    layer=LayerKind.BEHAVIOR_SPEC,
+                    dimensions={},
+                    assertion_depth=AssertionDepth.OUTCOME,
+                    source="pytest:passed",
+                )
+            )
+
+
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     for item in items:
         path = str(item.fspath)
