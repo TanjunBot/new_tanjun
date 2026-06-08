@@ -34,14 +34,7 @@ async def run_unit_matrix_case(case: MatrixCase) -> None:
     if case.dimension("locale"):
         info.locale = case.dimension("locale")
     with matrix_patches(case):
-        try:
-            await invoke_handler_for_case(case, info)
-        except (AssertionError, AttributeError, ValueError) as exc:
-            if case.dimension("permission") == "no_guild":
-                pytest.skip("guild-required command under no_guild profile")
-            if "guild" in str(exc).lower():
-                pytest.skip("guild-required command under no_guild profile")
-            raise
+        await invoke_handler_for_case(case, info)
     interaction = getattr(info, "_matrix_interaction", None)
     has_response = bool(info.reply.await_args_list or info.reply.call_args_list)
     if interaction is not None:

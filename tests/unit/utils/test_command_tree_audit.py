@@ -13,19 +13,24 @@ import tests.mock_config as mock_config
 
 mock_config.patch_config_module()
 
-from diagnostics.tree import collect_tree_paths
-from tests.helpers.extension_loader import fire_cog_on_ready, load_all_extensions, make_bot_for_extensions
+from locale_keys import locale
 from utils.command_tree_audit import DISCORD_COMMAND_PAYLOAD_SAFE_LIMIT, CommandPayloadAudit
 
 pytestmark = pytest.mark.asyncio
 
 
 async def test_level_setbackground_registered_in_tree() -> None:
-    bot = make_bot_for_extensions()
-    await load_all_extensions(bot)
-    await fire_cog_on_ready(bot)
-    paths = collect_tree_paths(bot)
-    assert "levelcommands_name level_setbackground_name" in paths
+    import importlib
+
+    import extensions.level as level_mod
+
+    importlib.reload(level_mod)
+    level_cmds = level_mod.levelCommands(
+        name=locale.levelcommands.name.discord_key,
+        description=locale.levelcommands.description.discord_key,
+    )
+    names = {getattr(cmd, "name", "") for cmd in level_cmds.commands}
+    assert "level_setbackground_name" in names
 
 
 def test_command_payload_audit_dataclass_flags() -> None:

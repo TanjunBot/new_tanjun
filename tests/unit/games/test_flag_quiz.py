@@ -2,27 +2,13 @@
 
 from __future__ import annotations
 
-import difflib
-import random
 from unittest.mock import patch
 
 import pytest
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
-
-def get_similarity(guess: str, answer: str) -> float:
-    return difflib.SequenceMatcher(None, guess.lower(), answer.lower()).ratio() * 100
-
-
-def get_hint(word: str) -> str:
-    chars = list(word.lower())
-    blanks = ["_"] * len(chars)
-    num_reveals = max(1, len(chars) // 3)
-    reveal_positions = random.sample(range(len(chars)), num_reveals)
-    for pos in reveal_positions:
-        blanks[pos] = chars[pos]
-    return "".join(blanks)
+from commands.games.flag_quiz import get_hint, get_similarity
 
 
 @pytest.mark.unit
@@ -37,7 +23,7 @@ class TestFlagQuizLogic:
         assert get_similarity("germany", "GERMANY") == 100.0
 
     def test_hint_reveals_some_characters(self):
-        with patch("random.sample", side_effect=lambda population, k: population[:k]):
+        with patch("commands.games.flag_quiz.random.sample", side_effect=lambda population, k: population[:k]):
             hint = get_hint("Germany")
             assert "_" in hint
             assert "g" in hint.lower()
@@ -66,6 +52,6 @@ class TestFlagQuizHypothesis:
     @given(word=st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=3, max_size=12))
     @settings(max_examples=30)
     def test_hint_same_length_as_word(self, word: str):
-        with patch("random.sample", side_effect=lambda population, count: population[:count]):
+        with patch("commands.games.flag_quiz.random.sample", side_effect=lambda population, count: population[:count]):
             hint = get_hint(word)
             assert len(hint) == len(word)

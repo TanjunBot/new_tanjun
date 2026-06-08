@@ -70,6 +70,7 @@ class _FakeAppGroup:
             if callable(member) and hasattr(member, "__discord_app_command_name__"):
                 cmd = MagicMock()
                 cmd.name = member.__discord_app_command_name__
+                cmd.callback = member
                 self.commands.append(cmd)
 
     def add_command(self, command) -> None:
@@ -254,6 +255,21 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "e2e: end-to-end tests")
     config.addinivalue_line("markers", "live_discord: live Discord tests")
     config.addinivalue_line("markers", "slow: slow tests")
+
+
+@pytest.fixture(autouse=True)
+def _restore_discord_app_command_mocks() -> None:
+    _ensure_discord_types()
+    import discord
+
+    discord.app_commands.Group = _FakeAppGroup
+    discord.app_commands.command = _app_command
+    discord.app_commands.autocomplete = lambda *a, **k: lambda f: f
+    discord.app_commands.describe = lambda **kw: lambda f: f
+    discord.app_commands.choices = lambda *a, **kw: lambda f: f
+    discord.app_commands.locale_str = lambda s: s
+    discord.app_commands.Range = _FakeAppCommandRange
+    discord.app_commands.Choice = lambda **kw: type("Choice", (), kw)
 
 
 @pytest.hookimpl(hookwrapper=True)

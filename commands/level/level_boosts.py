@@ -4,7 +4,10 @@ from api import add_channel_boost, add_role_boost, add_user_boost, get_all_boost
 from utility import CommandInfo, tanjunEmbed
 
 async def calculate_user_channel_boost_command(command_info: CommandInfo, user: discord.Member, channel: discord.TextChannel) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     user_boost = await get_user_boost(str(command_info.guild.id), str(user.id))
     role_boosts = await get_user_roles_boosts(str(command_info.guild.id), [str(role.id) for role in user.roles])
     channel_boost = await get_channel_boost(str(command_info.guild.id), str(channel.id))
@@ -33,43 +36,64 @@ async def calculate_user_channel_boost_command(command_info: CommandInfo, user: 
     await command_info.reply(embed=embed)
 
 async def add_role_boost_command(command_info: CommandInfo, role: discord.Role, boost: float, additive: bool) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await add_role_boost(str(command_info.guild.id), str(role.id), boost, additive)
     embed = tanjunEmbed(title=locale.commands.level.boosts.add_role.success.title(str(command_info.locale)), description=locale.commands.level.boosts.add_role.success.description(command_info.locale, role=role.mention, boost=boost, type=locale.commands.level.boosts.additive(str(command_info.locale)) if additive else locale.commands.level.boosts.multiplicative(str(command_info.locale))))
     await command_info.reply(embed=embed)
 
 async def add_channel_boost_command(command_info: CommandInfo, channel: discord.TextChannel, boost: float, additive: bool) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await add_channel_boost(str(command_info.guild.id), str(channel.id), boost, additive)
     embed = tanjunEmbed(title=locale.commands.level.boosts.add_channel.success.title(str(command_info.locale)), description=locale.commands.level.boosts.add_channel.success.description(command_info.locale, channel=channel.mention, boost=boost, type=locale.commands.level.boosts.additive(str(command_info.locale)) if additive else locale.commands.level.boosts.multiplicative(str(command_info.locale))))
     await command_info.reply(embed=embed)
 
 async def add_user_boost_command(command_info: CommandInfo, user: discord.Member, boost: float, additive: bool) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await add_user_boost(str(command_info.guild.id), str(user.id), boost, additive)
     embed = tanjunEmbed(title=locale.commands.level.boosts.add_user.success.title(str(command_info.locale)), description=locale.commands.level.boosts.add_user.success.description(command_info.locale, user=user.mention, boost=boost, type=locale.commands.level.boosts.additive(str(command_info.locale)) if additive else locale.commands.level.boosts.multiplicative(str(command_info.locale))))
     await command_info.reply(embed=embed)
 
 async def remove_role_boost_command(command_info: CommandInfo, role: discord.Role) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await remove_role_boost(str(command_info.guild.id), str(role.id))
     embed = tanjunEmbed(title=locale.commands.level.boosts.remove_role.success.title(str(command_info.locale)), description=locale.commands.level.boosts.remove_role.success.description(command_info.locale, role=role.mention))
     await command_info.reply(embed=embed)
 
 async def remove_channel_boost_command(command_info: CommandInfo, channel: discord.TextChannel) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await remove_channel_boost(str(command_info.guild.id), str(channel.id))
     embed = tanjunEmbed(title=locale.commands.level.boosts.remove_channel.success.title(str(command_info.locale)), description=locale.commands.level.boosts.remove_channel.success.description(command_info.locale, channel=channel.mention))
     await command_info.reply(embed=embed)
 
 async def remove_user_boost_command(command_info: CommandInfo, user: discord.Member) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     await remove_user_boost(str(command_info.guild.id), str(user.id))
     embed = tanjunEmbed(title=locale.commands.level.boosts.remove_user.success.title(str(command_info.locale)), description=locale.commands.level.boosts.remove_user.success.description(command_info.locale, user=user.mention))
     await command_info.reply(embed=embed)
 
 async def show_boosts_command(command_info: CommandInfo) -> None:
-    assert command_info.guild is not None
+    if command_info.guild is None:
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     boosts = await get_all_boosts(str(command_info.guild.id))
     embed = tanjunEmbed(title=locale.commands.level.boosts.show.title(str(command_info.locale)), description=locale.commands.level.boosts.show.description(str(command_info.locale)))
     if boosts['roles']:
