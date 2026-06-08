@@ -55,7 +55,7 @@ async def change_xp_scaling_command(command_info: command_info, scaling: str, cu
 
 async def show_xp_scalings(command_info: command_info, start_level: int=1, end_level: int=5):
     if command_info.guild is None:
-        embed = tanjunEmbed(title=locale.errors.guildOnly.title(command_info.locale), description=locale.errors.guildOnly.description(command_info.locale))
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
         await command_info.reply(embed=embed)
         return
     if start_level > end_level:

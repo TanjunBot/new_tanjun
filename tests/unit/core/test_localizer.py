@@ -63,9 +63,6 @@ class _TranslationContextLocation:
 _orig_discord = __import__("sys").modules.get("discord")
 if _orig_discord is not None:
     _orig_discord.Locale = _LocaleBase
-    _orig_discord.app_commands = (
-        MagicMock() if isinstance(_orig_discord.app_commands, MagicMock) else _orig_discord.app_commands
-    )
     _orig_discord.app_commands.Translator = _TranslatorBase
     _orig_discord.app_commands.TranslationContextLocation = _TranslationContextLocation
 

@@ -5,6 +5,10 @@ import utility
 from utils.checks import check_bot_permission, check_user_permission, send_check_failure
 
 async def purge(command_info: utility.CommandInfo, amount: int, channel: discord.TextChannel | None=None, setting: str='all') -> None:
+    if command_info.guild is None:
+        embed = utility.tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     if channel is None:
         assert command_info.channel is not None
         channel = cast(discord.TextChannel, command_info.channel)

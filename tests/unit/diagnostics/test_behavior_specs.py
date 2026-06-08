@@ -9,9 +9,26 @@ import diagnostics.registry as registry_mod
 pytestmark = pytest.mark.asyncio
 
 
+def _can_discover_specs() -> bool:
+    from discord import app_commands
+
+    return isinstance(app_commands.Group, type)
+
+
+def _reload_slash_extensions() -> None:
+    import importlib
+
+    from diagnostics.discovery import SLASH_EXTENSIONS
+
+    for ext in SLASH_EXTENSIONS:
+        importlib.reload(importlib.import_module(ext))
+
+
 async def test_all_specs_returns_list() -> None:
     from diagnostics.registry import all_specs
 
+    assert _can_discover_specs()
+    _reload_slash_extensions()
     registry_mod.clear_spec_cache()
     specs = all_specs()
     assert isinstance(specs, list)
@@ -73,9 +90,15 @@ async def test_run_spec_handles_unknown_spec() -> None:
 async def test_all_behavior_specs_pass() -> None:
     from diagnostics.registry import all_specs, run_spec
 
+    assert _can_discover_specs()
+    _reload_slash_extensions()
     registry_mod.clear_spec_cache()
+    specs = all_specs()
+    assert specs
+    sample = specs[: min(20, len(specs))]
+    assert not any(s.method_name == "unknown" for s in sample)
     failures: list[str] = []
-    for spec in all_specs():
+    for spec in specs:
         outcome = await run_spec(spec, MagicMock())
         if not outcome.passed and not outcome.skipped:
             failures.append(f"{spec.id}: {outcome.message}")
