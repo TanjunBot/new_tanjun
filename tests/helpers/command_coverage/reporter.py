@@ -34,7 +34,11 @@ def format_text_report(report: CoverageReport, *, verbose: bool = False) -> str:
     lines.append("")
 
     for group in report.groups:
-        lines.append(f"Command coverage — {group.root_group} ({len(group.tree_paths)} commands)")
+        command_count = len(group.tree_paths)
+        command_label = "command" if command_count == 1 else "commands"
+        lines.append(
+            f"Command coverage — {group.root_group} ({command_count} {command_label})"
+        )
         lines.append("─" * 72)
         lines.append(f"{'Layer':<18} {'Expected':>8} {'Covered':>8} {'%':>6}  Missing (sample)")
         for layer in group.layers:
@@ -51,7 +55,16 @@ def format_text_report(report: CoverageReport, *, verbose: bool = False) -> str:
             )
         lines.append("")
 
+    total_expected = sum(layer.expected for group in report.groups for layer in group.layers)
+    total_covered = sum(layer.covered for group in report.groups for layer in group.layers)
+    total_percent = 100.0 * total_covered / total_expected if total_expected else 100.0
+    lines.append(
+        f"Summary: {len(report.groups)} groups, "
+        f"{total_covered}/{total_expected} cells ({total_percent:.0f}%)"
+    )
+
     if verbose:
+        lines.append("")
         lines.append("Missing cells (full):")
         for group in report.groups:
             for layer in group.layers:

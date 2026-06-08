@@ -4,15 +4,24 @@ import subprocess
 import sys
 from pathlib import Path
 
-from tests.helpers.command_coverage.collectors.fun import collect_fun_cells
+from tests.helpers.command_coverage.collectors.matrix import collect_matrix_declared_cells
+from tests.helpers.command_coverage.inventory import root_group_for_path
 from tests.helpers.command_coverage.models import LayerKind
 from tests.helpers.command_coverage.report import build_coverage_report
 
 ROOT = Path(__file__).resolve().parents[4]
 
 
+def _funcmd_matrix_cells():
+    return [
+        cell
+        for cell in collect_matrix_declared_cells()
+        if root_group_for_path(cell.tree_path) == "funcmd_name"
+    ]
+
+
 def test_fun_group_unit_logic_fully_covered() -> None:
-    actual = collect_fun_cells()
+    actual = _funcmd_matrix_cells()
     report = build_coverage_report(actual=actual, filter_group="funcmd_name")
     unit = next(layer for layer in report.groups[0].layers if layer.layer == LayerKind.UNIT_LOGIC)
     assert unit.expected == 360
