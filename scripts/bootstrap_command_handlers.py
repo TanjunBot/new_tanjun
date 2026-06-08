@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from diagnostics.registry import all_specs
 from tests.helpers.command_matrix.resolver import (
-    _awaited_call_name,
+    _awaited_command_call_name,
     _import_alias_map,
     _resolve_from_commands_leaf,
     _resolve_from_extension_spec,
@@ -27,6 +27,11 @@ MANUAL_HANDLERS: dict[str, str] = {
     "utilitycmd_name utility_boosterchannel_name utility_boosterchannelinfo_name": "tests.helpers.command_matrix.manual_handlers.booster_channel_info",
     "utilitycmd_name utility_boosterrole_name utility_boosterroleinfo_name": "tests.helpers.command_matrix.manual_handlers.booster_role_info",
     "utilitycmd_name utility_feedback_name": "tests.helpers.command_matrix.manual_handlers.feedback_command",
+}
+
+PATCH_TARGET_OVERRIDES: dict[str, str] = {
+    "ai_name ai_askcustom_name": "services.ai_service.AiService.get_situation",
+    "setup_name setup_giveaway_name": "commands.giveaway.start.start_giveaway",
 }
 
 
@@ -59,10 +64,19 @@ def main() -> None:
             method = getattr(group, spec.method_name, None)
             if method is not None:
                 callback = getattr(method, "callback", method)
-                alias = _awaited_call_name(callback)
+                alias = _awaited_command_call_name(callback, spec.extension)
                 if alias:
-                    base = alias.split(".", 1)[0]
-                    patch_target = f"{spec.extension}.{base}"
+                    imports = _import_alias_map(spec.extension)
+                    if "." in alias:
+                        base, method_name = alias.split(".", 1)
+                        imported = imports.get(base)
+                        if imported:
+                            patch_target = f"{imported}.{method_name}"
+                    else:
+                        patch_target = f"{spec.extension}.{alias}"
+        override = PATCH_TARGET_OVERRIDES.get(spec.tree_path)
+        if override:
+            patch_target = override
         path_meta[spec.tree_path] = {
             "extension": spec.extension,
             "group_cls": f"{spec.group_cls.__module__}.{spec.group_cls.__name__}",

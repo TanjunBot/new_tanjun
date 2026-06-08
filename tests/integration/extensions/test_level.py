@@ -20,6 +20,13 @@ pytestmark = pytest.mark.asyncio
 EXTENSION = "extensions.level"
 COG_NAME = "levelCog"
 
+ROOT_COMMAND_NAMES = [
+    "levelcommands_name",
+    "level_config_name",
+    "level_boosts_name",
+    "level_blacklist_name",
+]
+
 
 async def test_module_exposes_setup():
     module = importlib.import_module(EXTENSION)
@@ -52,19 +59,19 @@ async def test_on_ready_adds_command_to_tree():
     await load_extension(bot, EXTENSION)
     assert get_tree_commands(bot) == []
     await fire_cog_on_ready(bot)
-    assert len(get_tree_commands(bot)) == 1
+    assert len(get_tree_commands(bot)) == 4
 
 
-async def test_root_command_name_is_levelcommands_name():
+async def test_root_command_names_registered():
     bot = await load_extension_bot(EXTENSION)
-    assert get_tree_command_names(bot) == ["levelcommands_name"]
+    assert get_tree_command_names(bot) == ROOT_COMMAND_NAMES
 
 
-async def test_root_group_has_6_entries():
+async def test_root_group_has_3_entries():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "levelcommands_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 6
+    assert len(get_subcommand_names(root)) == 3
 
 
 async def test_subcommand_level_rank_name_registered():
@@ -88,22 +95,16 @@ async def test_subcommand_level_leaderboard_name_registered():
     assert "level_leaderboard_name" in get_subcommand_names(root)
 
 
-async def test_subcommand_level_config_name_registered():
+async def test_root_level_config_group_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "levelcommands_name")
-    assert root is not None
-    assert "level_config_name" in get_subcommand_names(root)
+    assert find_tree_group(bot, "level_config_name") is not None
 
 
-async def test_subcommand_level_boosts_name_registered():
+async def test_root_level_boosts_group_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "levelcommands_name")
-    assert root is not None
-    assert "level_boosts_name" in get_subcommand_names(root)
+    assert find_tree_group(bot, "level_boosts_name") is not None
 
 
-async def test_subcommand_level_blacklist_name_registered():
+async def test_root_level_blacklist_group_registered():
     bot = await load_extension_bot(EXTENSION)
-    root = find_tree_group(bot, "levelcommands_name")
-    assert root is not None
-    assert "level_blacklist_name" in get_subcommand_names(root)
+    assert find_tree_group(bot, "level_blacklist_name") is not None

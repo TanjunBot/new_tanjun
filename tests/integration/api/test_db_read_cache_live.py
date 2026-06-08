@@ -29,10 +29,6 @@ from tests.helpers.factories import CHANNEL_ID, GUILD_ID
 pytestmark = [
     pytest.mark.asyncio(loop_scope="session"),
     pytest.mark.integration,
-    pytest.mark.skipif(
-        os.environ.get("TANJUN_INTEGRATION", "false").lower() not in ("1", "true", "yes"),
-        reason="Set TANJUN_INTEGRATION=true to run live DB cache tests",
-    ),
 ]
 
 LIVE_GUILD = "88888888888888881"

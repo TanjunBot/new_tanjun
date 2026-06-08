@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from diagnostics.mocks import make_attachment, make_member
+from diagnostics.mocks import make_attachment, make_choice, make_member
 from tests.helpers.command_matrix.models import MatrixCase
 from tests.helpers.fun_matrix import MESSAGE_VARIANTS
 
@@ -62,17 +62,17 @@ def kwargs_for_matrix_case(case: MatrixCase) -> dict[str, Any]:
     locale = case.dimension("locale")
     if locale:
         kwargs["locale"] = locale
-        kwargs["language"] = locale.split("-", 1)[0]
+        kwargs["language"] = make_choice(locale.split("-", 1)[0])
     attachment = case.dimension("attachment")
     if attachment == "present":
         kwargs["image"] = make_attachment()
         kwargs["attachment"] = kwargs["image"]
     theme = case.dimension("theme")
     if theme:
-        kwargs["theme"] = GAME_THEME_VALUES.get(theme, theme)
+        kwargs["theme"] = make_choice(GAME_THEME_VALUES.get(theme, theme))
     size = case.dimension("size")
     if size:
-        kwargs["size"] = GAME_SIZE_VALUES.get(size, size)
+        kwargs["size"] = make_choice(GAME_SIZE_VALUES.get(size, size))
     return kwargs
 
 

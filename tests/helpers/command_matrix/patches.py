@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from diagnostics.patches import api_patches, ui_patches
 from tests.helpers.command_matrix.models import MatrixCase
+from tests.helpers.discord import make_guild
 
 
 def _needs_db(case: MatrixCase) -> bool:
@@ -154,6 +155,25 @@ def matrix_patches(case: MatrixCase) -> Iterator[dict[str, Any]]:
             stack.enter_context(
                 patch(
                     "services.counting_repository.CountingRepository.set_progress",
+                    new_callable=AsyncMock,
+                )
+            )
+
+        if group == "giveaway_name":
+            giveaway = MagicMock()
+            giveaway.guild_id = str(make_guild().id)
+            giveaway.ended = False
+            giveaway.started = True
+            stack.enter_context(
+                patch(
+                    "services.giveaway_service.giveaway_service.get",
+                    new_callable=AsyncMock,
+                    return_value=giveaway,
+                )
+            )
+            stack.enter_context(
+                patch(
+                    "services.giveaway_service.giveaway_service.delete",
                     new_callable=AsyncMock,
                 )
             )

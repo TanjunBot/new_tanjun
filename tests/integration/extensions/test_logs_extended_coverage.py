@@ -159,4 +159,4 @@ async def test_member_update_display_name_change(log_mocks) -> None:
     before.pending = after.pending = False
     before.timed_out_until = after.timed_out_until = None
     await cog.on_member_update(before, after)
-    log_mocks.assert_not_awaited()
+    log_mocks.assert_awaited_once()

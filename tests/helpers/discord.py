@@ -192,6 +192,7 @@ def _ensure_discord_types() -> None:
     discord.ui.View = MockView
     discord.ui.Modal = MockModal
     discord.ui.button = _ui_button
+    discord.ui.Select = _ui_item(type('Select', (), {}))
     discord.ui.TextInput = _ui_item(type('TextInput', (), {}))
     discord.ui.RoleSelect = _ui_item(type('RoleSelect', (), {}))
     discord.ui.UserSelect = _ui_item(type('UserSelect', (), {}))

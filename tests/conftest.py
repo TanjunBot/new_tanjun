@@ -176,10 +176,38 @@ class _FakeUIButton:
         return cls
 
 
+class _FakeView:
+    def __init__(self, *args, **kwargs) -> None:
+        self.timeout = kwargs.get("timeout")
+        self.children: list = []
+        self.message = None
+
+    def add_item(self, item) -> None:
+        self.children.append(item)
+
+    async def wait(self) -> bool:
+        return True
+
+    def stop(self) -> None:
+        pass
+
+
+class _FakeSelect:
+    def __init__(self, *args, **kwargs) -> None:
+        self.options = kwargs.get("options", [])
+        self.values: list = []
+        self.placeholder = kwargs.get("placeholder", "")
+        self.disabled = False
+
+    @classmethod
+    def __class_getitem__(cls, item):
+        return cls
+
+
 _discord_mock.ui.Modal = type("Modal", (), {"__init__": lambda self, *a, **k: None})
-_discord_mock.ui.Select = type("Select", (), {"__init__": lambda self, *a, **k: None})
+_discord_mock.ui.Select = _FakeSelect
 _discord_mock.ui.TextInput = type("TextInput", (), {"__init__": lambda self, *a, **k: None})
-_discord_mock.ui.View = type("View", (), {"__init__": lambda self, *a, **k: None})
+_discord_mock.ui.View = _FakeView
 _discord_mock.ui.Button = _FakeUIButton
 _discord_mock.TextStyle = MagicMock()
 _discord_mock.TextStyle.paragraph = "paragraph"
@@ -358,6 +386,16 @@ async def integration_db_pool():
     os.environ.setdefault("TANJUN_TEST_DB_PASSWORD", password)
     os.environ.setdefault("TANJUN_TEST_DB_NAME", db)
 
+    from alembic import command
+    from utils.db_migration import _alembic_config
+    from utils.schema_conformance import load_schema_drift_errors
+
+    cfg = _alembic_config()
+    command.upgrade(cfg, "head")
+    if load_schema_drift_errors():
+        command.downgrade(cfg, "base")
+        command.upgrade(cfg, "head")
+
     try:
         pool = await asyncmy.create_pool(
             host=host,
@@ -369,7 +407,7 @@ async def integration_db_pool():
             maxsize=16,
         )
     except Exception as exc:
-        pytest.skip(f"Test database not available: {exc}")
+        pytest.fail(f"Test database not available: {exc}")
 
     # Set the global pool so api._get_pool() resolves
     import api
@@ -379,10 +417,6 @@ async def integration_db_pool():
     _fake_bot._pool = pool
     original_bot = api._bot
     set_bot(_fake_bot)
-
-    from utils.db_migration import ensure_database_schema
-
-    ensure_database_schema()
 
     yield pool
 

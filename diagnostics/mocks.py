@@ -102,9 +102,9 @@ def make_interaction(
     locale: str = "en-US",
 ) -> MagicMock:
     interaction = MagicMock()
-    interaction.user = user or make_member()
-    interaction.guild = guild or make_guild()
-    interaction.channel = channel or make_text_channel(guild=interaction.guild)
+    interaction.user = user
+    interaction.guild = guild
+    interaction.channel = channel
     interaction.locale = locale
     interaction.command = MagicMock()
     interaction.message = None

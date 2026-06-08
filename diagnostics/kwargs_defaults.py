@@ -19,7 +19,7 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "channel": lambda: make_text_channel(),
     "category": lambda: make_text_channel(),
     "role": lambda: _make_role(),
-    "language": "en",
+    "language": lambda: make_choice("en"),
     "theme": lambda: make_choice("characters"),
     "size": lambda: make_choice("7,6"),
     "locale": lambda: make_choice("en"),
