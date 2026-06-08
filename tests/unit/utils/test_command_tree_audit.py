@@ -14,16 +14,19 @@ import tests.mock_config as mock_config
 mock_config.patch_config_module()
 
 from diagnostics.tree import collect_tree_paths
-from tests.helpers.extension_loader import fire_cog_on_ready, load_all_extensions, make_bot_for_extensions
+from tests.helpers.extension_loader import load_extension, make_bot_for_extensions
 from utils.command_tree_audit import DISCORD_COMMAND_PAYLOAD_SAFE_LIMIT, CommandPayloadAudit
 
-pytestmark = pytest.mark.asyncio
+LEVEL_EXTENSION = "extensions.level"
 
 
+@pytest.mark.asyncio
 async def test_level_setbackground_registered_in_tree() -> None:
     bot = make_bot_for_extensions()
-    await load_all_extensions(bot)
-    await fire_cog_on_ready(bot)
+    await load_extension(bot, LEVEL_EXTENSION)
+    level_cog = bot.cogs.get("levelCog")
+    assert level_cog is not None
+    await level_cog.on_ready()
     paths = collect_tree_paths(bot)
     assert "levelcommands_name level_setbackground_name" in paths
 

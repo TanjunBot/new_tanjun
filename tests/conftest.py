@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures for Tanjun bot tests."""
 
 import sys
+import types
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -51,10 +52,6 @@ _discord_mock.ext.commands.hybrid_command = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.is_owner = lambda f: f
 _discord_mock.ext.commands.cooldown = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.Command = type("Command", (), {})
-_discord_mock.app_commands = MagicMock()
-_discord_mock.app_commands.Command = type("AppCommand", (), {})
-
-
 class _FakeAppGroup:
     def __init__(self, *args, **kwargs) -> None:
         if args and "name" not in kwargs:
@@ -70,6 +67,7 @@ class _FakeAppGroup:
             if callable(member) and hasattr(member, "__discord_app_command_name__"):
                 cmd = MagicMock()
                 cmd.name = member.__discord_app_command_name__
+                cmd.callback = getattr(self, attr_name)
                 self.commands.append(cmd)
 
     def add_command(self, command) -> None:
@@ -87,22 +85,30 @@ def _app_command(*args, **kwargs):
     return decorator
 
 
-_discord_mock.app_commands.Group = _FakeAppGroup
-_discord_mock.app_commands.command = _app_command
-_discord_mock.app_commands.autocomplete = lambda *a, **k: lambda f: f
-_discord_mock.app_commands.locale_str = lambda s: s
-_discord_mock.app_commands.describe = lambda **kw: lambda f: f
-_discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f
-
-
 class _FakeAppCommandRange:
     @classmethod
     def __class_getitem__(cls, item: object) -> type:
         return cls
 
 
-_discord_mock.app_commands.Range = _FakeAppCommandRange
-_discord_mock.app_commands.Choice = lambda **kw: type("Choice", (), kw)
+class _FakeAppCommandsModule:
+    Group = _FakeAppGroup
+    Command = type("AppCommand", (), {})
+    AppCommandChannel = type("AppCommandChannel", (), {})
+    AppCommandThread = type("AppCommandThread", (), {})
+    command = staticmethod(_app_command)
+    autocomplete = staticmethod(lambda *a, **k: lambda f: f)
+    locale_str = staticmethod(lambda s: s)
+    describe = staticmethod(lambda **kw: lambda f: f)
+    choices = staticmethod(lambda *a, **kw: lambda f: f)
+    Range = _FakeAppCommandRange
+    Choice = staticmethod(lambda **kw: type("Choice", (), kw))
+
+    def __getattr__(self, name: str) -> MagicMock:
+        return MagicMock()
+
+
+_discord_mock.app_commands = _FakeAppCommandsModule()
 _discord_mock.Interaction = MagicMock()
 
 

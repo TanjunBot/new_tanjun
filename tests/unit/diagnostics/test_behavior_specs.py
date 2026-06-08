@@ -9,23 +9,11 @@ import diagnostics.registry as registry_mod
 pytestmark = pytest.mark.asyncio
 
 
-def _can_discover_specs() -> bool:
-    from discord import app_commands
-
-    return isinstance(app_commands.Group, type)
-
-
 async def test_all_specs_returns_list() -> None:
     from diagnostics.registry import all_specs
 
-    if not _can_discover_specs():
-        pytest.skip("discord.app_commands.Group is not a real class in this test environment")
-
     registry_mod.clear_spec_cache()
-    try:
-        specs = all_specs()
-    except Exception as exc:
-        pytest.skip(f"spec discovery unavailable: {exc}")
+    specs = all_specs()
     assert isinstance(specs, list)
     assert len(specs) > 40
 
@@ -82,27 +70,8 @@ async def test_run_spec_handles_unknown_spec() -> None:
     assert not outcome.passed
 
 
-def _discovery_reliable() -> bool:
-    from diagnostics.registry import all_specs
-
-    if not _can_discover_specs():
-        return False
-    registry_mod.clear_spec_cache()
-    try:
-        specs = all_specs()
-    except Exception:
-        return False
-    if not specs:
-        return False
-    sample = specs[: min(20, len(specs))]
-    return not any(s.method_name == "unknown" for s in sample)
-
-
 async def test_all_behavior_specs_pass() -> None:
     from diagnostics.registry import all_specs, run_spec
-
-    if not _discovery_reliable():
-        pytest.skip("slash spec discovery unreliable in this test environment")
 
     registry_mod.clear_spec_cache()
     failures: list[str] = []

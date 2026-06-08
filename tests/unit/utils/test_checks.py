@@ -76,7 +76,7 @@ class TestCheckUserPermission:
 
 
 class TestCheckBotPermission:
-    def test_missing_guild_raises(self):
+    def test_missing_guild_returns_bot_permission_failure(self):
         from utility import CommandInfo
 
         info = CommandInfo(
@@ -89,8 +89,8 @@ class TestCheckBotPermission:
             message=None,
             permissions=MagicMock(),
         )
-        with pytest.raises(ValueError, match="Guild is missing"):
-            check_bot_permission(info, "ban_members")
+        result = check_bot_permission(info, "ban_members")
+        assert result == ("missingPermissionBot", ErrorEmbedCategory.PERMISSION, True)
 
     def test_missing_guild_permission(self):
         guild = make_guild(me_permissions=make_permissions(ban_members=False))
@@ -132,7 +132,7 @@ class TestCheckExecutorHierarchy:
 
 
 class TestCheckBotHierarchy:
-    def test_missing_guild_raises(self):
+    def test_missing_guild_returns_bot_permission_failure(self):
         from utility import CommandInfo
 
         info = CommandInfo(
@@ -145,8 +145,8 @@ class TestCheckBotHierarchy:
             message=None,
             permissions=MagicMock(),
         )
-        with pytest.raises(ValueError, match="Guild is missing"):
-            check_bot_hierarchy(info, make_target_member())
+        result = check_bot_hierarchy(info, make_target_member())
+        assert result == ("missingPermissionBot", ErrorEmbedCategory.PERMISSION, True)
 
     def test_bot_too_low(self):
         guild = make_guild(me_top_role_position=2)
