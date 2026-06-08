@@ -175,7 +175,7 @@ class BoosterService:
         result = await _claimed_all_cache.get_or_fetch(claimed_type.name, fetch)
         if result is not None:
             return result
-        _claimed_all_cache.invalidate(claimed_type.name)
+        _claimed_all_cache.invalidate(claimed_type.name)  # type: ignore[unreachable]
         return await fetch()
 
 
