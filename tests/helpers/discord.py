@@ -22,7 +22,7 @@ class MockTextChannel(MockGuild):
 
 class MockRole:
 
-    def __init__(self, position: int=0, role_id: int=555555555, name: str='TestRole') -> None:
+    def __init__(self, position: int=0, role_id: int=555555555555555555, name: str='TestRole') -> None:
         self.position = position
         self.id = role_id
         self.name = name
@@ -201,7 +201,7 @@ def _ensure_discord_types() -> None:
     discord.Thread = type('Thread', (), {})
 _ensure_discord_types()
 
-def make_member(user_id: int=111111111, name: str='TestUser', top_role_position: int=1, guild_permissions: MagicMock | None=None) -> MockMember:
+def make_member(user_id: int=111111111111111111, name: str='TestUser', top_role_position: int=1, guild_permissions: MagicMock | None=None) -> MockMember:
     member = MockMember()
     member.id = user_id
     member.name = name
@@ -227,7 +227,7 @@ def make_member(user_id: int=111111111, name: str='TestUser', top_role_position:
     member.create_dm = AsyncMock(return_value=MagicMock())
     return member
 
-def make_guild(guild_id: int=123456789, me_permissions: MagicMock | None=None, me_top_role_position: int=100) -> MockGuild:
+def make_guild(guild_id: int=123456789012345678, me_permissions: MagicMock | None=None, me_top_role_position: int=100) -> MockGuild:
     guild = MockGuild()
     guild.id = guild_id
     guild.name = 'Test Guild'
@@ -235,6 +235,7 @@ def make_guild(guild_id: int=123456789, me_permissions: MagicMock | None=None, m
     guild.edit = AsyncMock()
     guild.fetch_member = AsyncMock(side_effect=lambda _uid: make_member())
     guild.create_custom_emoji = AsyncMock(return_value=MagicMock())
+    guild.create_role = AsyncMock(return_value=MockRole(position=1))
     guild.unban = AsyncMock()
     me = MockMember()
     me.guild_permissions = me_permissions or MagicMock()
@@ -247,7 +248,7 @@ def make_guild(guild_id: int=123456789, me_permissions: MagicMock | None=None, m
     guild.default_role.id = 111
     return guild
 
-def make_text_channel(channel_id: int=444444444, guild: MagicMock | None=None) -> MockTextChannel:
+def make_text_channel(channel_id: int=444444444444444444, guild: MagicMock | None=None) -> MockTextChannel:
     channel = MockTextChannel()
     channel.id = channel_id
     channel.name = 'test-channel'
@@ -266,7 +267,7 @@ def make_text_channel(channel_id: int=444444444, guild: MagicMock | None=None) -
     return channel
 
 def make_app_command_channel(
-    channel_id: int=444444444,
+    channel_id: int=444444444444444444,
     guild: MagicMock | None=None,
     *,
     resolved: MockTextChannel | MagicMock | None=None,
@@ -309,6 +310,7 @@ def make_interaction(user: MagicMock | None=None, guild: MagicMock | None=None, 
     interaction.response = MagicMock()
     interaction.response.defer = AsyncMock()
     interaction.response.send_message = AsyncMock()
+    interaction.response.send_modal = MagicMock()
     interaction.followup = MagicMock()
     interaction.followup.send = AsyncMock()
     interaction.edit_original_response = AsyncMock()

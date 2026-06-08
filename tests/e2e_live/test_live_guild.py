@@ -11,14 +11,15 @@ pytestmark = [pytest.mark.live_discord, pytest.mark.asyncio]
     not os.environ.get("TANJUN_TEST_BOT_TOKEN"),
     reason="Live token required",
 )
-async def test_fetch_application_info(live_bot_token: str):
+async def test_fetch_application_info() -> None:
     import aiohttp
 
+    token = os.environ["TANJUN_TEST_BOT_TOKEN"]
     async with (
         aiohttp.ClientSession() as session,
         session.get(
             "https://discord.com/api/v10/oauth2/applications/@me",
-            headers={"Authorization": f"Bot {live_bot_token}"},
+            headers={"Authorization": f"Bot {token}"},
         ) as resp,
     ):
         assert resp.status in (200, 401, 403)

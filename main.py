@@ -366,6 +366,17 @@ async def main() -> None:
     # Step 4: Load translator (depends on extensions being loaded for tree).
     await loadTranslator(bot)
 
+    e2e_minimal_startup = os.getenv("TANJUN_E2E_MINIMAL_STARTUP", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    if e2e_minimal_startup:
+        logger.info("TANJUN_E2E_MINIMAL_STARTUP: skipping health checks for live E2E")
+        await bot.start(config.token)  # type: ignore[arg-type]
+        return
+
     # Step 5: Run startup health checks.
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenRouterHealthCheck())

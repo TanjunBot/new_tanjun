@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+coverage/command-matrix.json
 
 # Translations
 *.mo
@@ -121,6 +122,15 @@ celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
+
+# Discord doc screenshot session (Playwright storage state)
+.discord-doc-auth.json
+.discord-e2e-chrome-profile/
+.tanjun-e2e-bot-ready
+.tanjun-e2e-bot.log
+
+# Live E2E debug captures
+tests/e2e_live/_debug_screenshots/
 
 # Environments
 .env
