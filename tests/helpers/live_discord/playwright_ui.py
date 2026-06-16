@@ -237,9 +237,7 @@ def _oauth_page_ready(page: Page) -> bool:
         return False
     if any(marker in body for marker in _APP_DETECTED_MARKERS):
         return False
-    return bool(
-        re.search(r"wants to access|Authorize|Authorisieren|Keep Scrolling", body, re.I)
-    )
+    return bool(re.search(r"wants to access|Authorize|Authorisieren|Keep Scrolling", body, re.I))
 
 
 def _dismiss_slash_overlays(page: Page) -> None:
@@ -274,9 +272,7 @@ def wait_for_message_input(
             last_error = exc
             page.wait_for_timeout(500)
     if last_error is not None:
-        raise RuntimeError(
-            "Discord message input not found; update MESSAGE_INPUT_SELECTORS"
-        ) from last_error
+        raise RuntimeError("Discord message input not found; update MESSAGE_INPUT_SELECTORS") from last_error
     raise RuntimeError("Discord message input not found; update MESSAGE_INPUT_SELECTORS")
 
 
@@ -361,10 +357,8 @@ def _scroll_oauth_until_authorize(page: Page, *, timeout_ms: int) -> Locator:
 
         authorize = _oauth_authorize_button(page)
         if authorize.count() > 0:
-            try:
+            with contextlib.suppress(Exception):
                 authorize.first.wait_for(state="visible", timeout=2_000)
-            except Exception:
-                pass
             if authorize.first.is_enabled():
                 return authorize.first
 
@@ -460,9 +454,7 @@ def _wait_for_oauth_content(page: Page, *, timeout_ms: int) -> None:
             if len(page.locator("body").inner_text(timeout=1_000).strip()) > 20:
                 return
         page.wait_for_timeout(300)
-    raise RuntimeError(
-        f"OAuth page did not load content within {timeout_ms / 1000:.0f}s."
-    )
+    raise RuntimeError(f"OAuth page did not load content within {timeout_ms / 1000:.0f}s.")
 
 
 def _authorize_bot_via_fresh_oauth_context(
@@ -586,11 +578,7 @@ def authorize_bot_to_guild(
 
 def _click_first_matching(page: Page, *, role: str | None, patterns: tuple[str, ...]) -> bool:
     for pattern in patterns:
-        loc = (
-            page.get_by_role(role, name=re.compile(pattern, re.I))
-            if role
-            else page.get_by_text(re.compile(pattern, re.I))
-        )
+        loc = page.get_by_role(role, name=re.compile(pattern, re.I)) if role else page.get_by_text(re.compile(pattern, re.I))
         if loc.count() > 0:
             loc.first.click(timeout=30_000)
             page.wait_for_timeout(400)
@@ -952,16 +940,11 @@ def wait_for_fun_slash_commands(
     while time.monotonic() < deadline:
         for query in queries:
             _type_slash_command_query(page, textbox, query)
-            if _slash_autocomplete_visible(page, group_labels) or _slash_autocomplete_visible(
-                page, sub_labels
-            ):
+            if _slash_autocomplete_visible(page, group_labels) or _slash_autocomplete_visible(page, sub_labels):
                 page.keyboard.press("Escape")
                 page.wait_for_timeout(200)
                 return
-            last_error = (
-                f"no autocomplete for /{query} ({group_labels!r}) "
-                f"(url={page.url[:80]})"
-            )
+            last_error = f"no autocomplete for /{query} ({group_labels!r}) (url={page.url[:80]})"
             page.keyboard.press("Escape")
             page.wait_for_timeout(800)
         page.wait_for_timeout(700)

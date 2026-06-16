@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -20,6 +21,7 @@ class _LoopProxy:
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self._loop, name)
+
 
 EXTENSION_NAMES = [
     "extensions.admin",
@@ -123,11 +125,9 @@ async def teardown_extension_bot(bot: MagicMock) -> None:
             cancel = getattr(loop_obj, "cancel", None)
             if not callable(is_running) or not callable(cancel):
                 continue
-            try:
+            with contextlib.suppress(Exception):
                 if is_running():
                     cancel()
-            except Exception:
-                pass
     if loop_proxy is not None and loop_proxy._tasks:
         await asyncio.gather(*loop_proxy._tasks, return_exceptions=True)
     set_bot(None)
