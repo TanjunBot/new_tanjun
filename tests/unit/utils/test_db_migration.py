@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
+import types
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -14,6 +16,11 @@ mock_config.patch_config_module()
 
 from utils.db_migration import (  # noqa: E402
     DANGEROUSLY_DEBUG_PRINT_DATABASE_ENV,
+    _DATABASE_ENV_KEYS,
+    _HOST_ENV_KEYS,
+    _PASSWORD_ENV_KEYS,
+    _PORT_ENV_KEYS,
+    _USER_ENV_KEYS,
     _revision_state,
     dangerously_debug_print_database_enabled,
     ensure_database_schema,
@@ -197,7 +204,7 @@ def test_get_database_url_falls_back_to_settings() -> None:
     settings.database_password.get_secret_value.return_value = ""
     settings.database_schema = "tanjun"
     with (
-        patch("utils.db_migration._first_env", return_value=None),
+        patch("utils.db_migration._first_env_with_source", return_value=(None, None)),
         patch("config.settings", settings),
     ):
         url = get_database_url()
@@ -272,18 +279,20 @@ def test_format_database_connection_debug_masks_password() -> None:
 
 
 def test_get_database_url_raises_without_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
-    import builtins
-
-    real_import = builtins.__import__
-
-    def block_config_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name == "config":
-            raise ImportError("no config")
-        return real_import(name, globals, locals, fromlist, level)
-
-    monkeypatch.setattr("utils.db_migration._first_env", lambda *args, **kwargs: kwargs.get("default"))
-    with (
-        patch.object(builtins, "__import__", side_effect=block_config_import),
-        pytest.raises(RuntimeError, match="Database credentials missing"),
+    for key in (
+        *_HOST_ENV_KEYS,
+        *_PORT_ENV_KEYS,
+        *_USER_ENV_KEYS,
+        *_PASSWORD_ENV_KEYS,
+        *_DATABASE_ENV_KEYS,
     ):
+        monkeypatch.delenv(key, raising=False)
+
+    def mock_first_env_with_source(*keys: str, default: str | None = None):
+        return default, None
+
+    monkeypatch.setattr("utils.db_migration._first_env_with_source", mock_first_env_with_source)
+    monkeypatch.setitem(sys.modules, "config", types.ModuleType("config"))
+
+    with pytest.raises(RuntimeError, match="Database credentials missing"):
         get_database_url()

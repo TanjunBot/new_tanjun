@@ -19,7 +19,7 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "channel": lambda: make_text_channel(),
     "category": lambda: make_text_channel(),
     "role": lambda: _make_role(),
-    "language": "en",
+    "language": lambda: make_choice("en"),
     "theme": lambda: make_choice("characters"),
     "size": lambda: make_choice("7,6"),
     "locale": lambda: make_choice("en"),
@@ -135,6 +135,9 @@ def build_kwargs_for_handler(handler: Any) -> dict[str, Any]:
     for name, param in sig.parameters.items():
         if name in ("self", "interaction", "ctx", "command_info", "info"):
             continue
+        if name == "language" and param.annotation in (str, "str"):
+            if param.default is not inspect.Parameter.empty:
+                continue
         if name in _PARAM_DEFAULTS:
             factory = _PARAM_DEFAULTS[name]
             kwargs[name] = factory() if callable(factory) else factory

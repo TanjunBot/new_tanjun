@@ -464,10 +464,10 @@ async def test_removerole_view_role_select_missing_guild(admin_command_info):
     with pytest.raises(AssertionError):
         await view.interaction_check(interaction)
 
-async def test_removerole_missing_guild_raises(admin_command_info):
+async def test_removerole_missing_guild(admin_command_info):
     admin_command_info.guild = None
-    with pytest.raises(ValueError):
-        await removerole(admin_command_info, user=make_target_member(), role=make_role())
+    await removerole(admin_command_info, user=make_target_member(), role=make_role())
+    admin_command_info.reply.assert_awaited_once()
 
 async def test_removerole_view_role_select(admin_command_info):
     await removerole(admin_command_info)

@@ -3,12 +3,12 @@ import discord
 import utility
 
 async def change_nickname(command_info: utility.CommandInfo, member: discord.Member, nickname: str | None=None) -> None:
-    if isinstance(command_info.user, discord.Member) and isinstance(command_info.channel, discord.abc.GuildChannel) and (not command_info.channel.permissions_for(command_info.user).manage_nicknames):
-        embed = utility.tanjunEmbed(title=locale.commands.admin.nickname.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.nickname.missingPermission.description(command_info.locale))
-        await command_info.reply(embed=embed)
-        return
     if command_info.guild is None:
         embed = utility.tanjunEmbed(title=locale.errors.guildOnly.title(str(command_info.locale)), description=locale.errors.guildOnly.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
+    if isinstance(command_info.user, discord.Member) and isinstance(command_info.channel, discord.abc.GuildChannel) and (not command_info.channel.permissions_for(command_info.user).manage_nicknames):
+        embed = utility.tanjunEmbed(title=locale.commands.admin.nickname.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.nickname.missingPermission.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
     if not command_info.guild.me.guild_permissions.manage_nicknames:

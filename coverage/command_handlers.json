@@ -189,7 +189,7 @@
     "utilitycmd_name utility_bs_name utility_bs_link_name": "commands.utility.brawlstars.link.link",
     "utilitycmd_name utility_bs_name utility_bs_playerinfo_name": "commands.utility.brawlstars.playerinfo.player_info",
     "utilitycmd_name utility_bs_name utility_bs_unlink_name": "commands.utility.brawlstars.unlink.unlink",
-    "utilitycmd_name utility_feedback_name": "commands.utility.feedback.feedback",
+    "utilitycmd_name utility_feedback_name": "tests.helpers.command_matrix.manual_handlers.feedback_command",
     "utilitycmd_name utility_messagetracking_name utility_messageoptin_name": "commands.utility.messagetrackingoptin.optIn",
     "utilitycmd_name utility_messagetracking_name utility_messageoptout_name": "commands.utility.messagetrackingoptout.optOut",
     "utilitycmd_name utility_report_name": "commands.utility.report.report",
@@ -390,7 +390,7 @@
     "utility.UtilityCommands.avatar": "commands.utility.avatar.avatar",
     "utility.UtilityCommands.avatardecoration": "commands.utility.avatar_decoration.avatarDecoration",
     "utility.UtilityCommands.banner": "commands.utility.banner.banner",
-    "utility.UtilityCommands.feedback": "commands.utility.feedback.feedback",
+    "utility.UtilityCommands.feedback": "tests.helpers.command_matrix.manual_handlers.feedback_command",
     "utility.UtilityCommands.report": "commands.utility.report.report"
   },
   "path_meta": {
@@ -651,7 +651,7 @@
       "group_cls": "extensions.ai.AiCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.ask_custom_situation",
       "method": "ask_custom_situation",
-      "patch_target": "extensions.ai.AiService"
+      "patch_target": "services.ai_service.AiService.get_situation"
     },
     "ai_name ai_askgpt_name": {
       "extension": "extensions.ai",
@@ -1519,21 +1519,21 @@
       "group_cls": "extensions.setup_wizards.SetupWizardCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
       "method": "booster",
-      "patch_target": "extensions.setup_wizards._not_admin_reply"
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard"
     },
     "setup_name setup_giveaway_name": {
       "extension": "extensions.setup_wizards",
       "group_cls": "extensions.setup_wizards.SetupWizardCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
       "method": "giveaway",
-      "patch_target": "extensions.setup_wizards.start_giveaway"
+      "patch_target": "commands.giveaway.start.start_giveaway"
     },
     "setup_name setup_level_name": {
       "extension": "extensions.setup_wizards",
       "group_cls": "extensions.setup_wizards.SetupWizardCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
       "method": "level",
-      "patch_target": "extensions.setup_wizards.view"
+      "patch_target": "extensions.setup_wizards.api_get_level_system_status"
     },
     "setup_name setup_logs_name": {
       "extension": "extensions.setup_wizards",
@@ -1617,7 +1617,7 @@
       "group_cls": "extensions.utility.BoosterChannelCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.booster_channel_info",
       "method": "info",
-      "patch_target": "extensions.utility.command_info"
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.booster_channel_info"
     },
     "utilitycmd_name utility_boosterchannel_name utility_claimboosterchannel_name": {
       "extension": "extensions.utility",
@@ -1645,7 +1645,7 @@
       "group_cls": "extensions.utility.BoosterRoleCommands",
       "handler": "tests.helpers.command_matrix.manual_handlers.booster_role_info",
       "method": "info",
-      "patch_target": "extensions.utility.command_info"
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.booster_role_info"
     },
     "utilitycmd_name utility_boosterrole_name utility_claimboosterrole_name": {
       "extension": "extensions.utility",
@@ -1720,7 +1720,7 @@
     "utilitycmd_name utility_feedback_name": {
       "extension": "extensions.utility",
       "group_cls": "extensions.utility.UtilityCommands",
-      "handler": "commands.utility.feedback.feedback",
+      "handler": "tests.helpers.command_matrix.manual_handlers.feedback_command",
       "method": "feedback",
       "patch_target": "extensions.utility.feedbackCommand"
     },

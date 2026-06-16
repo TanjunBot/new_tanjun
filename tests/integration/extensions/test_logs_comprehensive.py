@@ -670,8 +670,8 @@ async def test_on_ready_starts_consumer(log_api_mocks):
     bot = await load_extension_bot(EXTENSION, fire_ready=True)
     cog = bot.cogs["LogsCog"]
     assert bot.tree.add_command.called
-    assert bot.loop.create_task.called
-    assert cog._log_consumer_task is not None or bot.loop.create_task.called
+    assert cog._log_consumer_task is not None
+    assert not cog._log_consumer_task.done()
 
 
 async def test_entity_blacklist_early_returns(log_api_mocks, logs_cog):
@@ -889,7 +889,7 @@ async def test_on_ready_skips_consumer_if_running(log_api_mocks):
     running.done.return_value = False
     cog._log_consumer_task = running
     await cog.on_ready()
-    bot.loop.create_task.assert_not_called()
+    assert cog._log_consumer_task is running
 
 
 async def test_make_bot_sets_api_pool():

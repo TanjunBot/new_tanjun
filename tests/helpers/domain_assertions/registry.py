@@ -6,7 +6,11 @@ from tests.helpers.command_matrix.harness import _assert_profile_for_group
 from tests.helpers.command_matrix.models import MatrixCase
 from tests.helpers.domain_assertions.admin import assert_admin_embed
 from tests.helpers.domain_assertions.ai import assert_ai_embed
-from tests.helpers.domain_assertions.base import assert_default_embed, assert_no_error_markers
+from tests.helpers.domain_assertions.base import (
+    assert_default_embed,
+    assert_live_response_outcome,
+    assert_no_error_markers,
+)
 from tests.helpers.domain_assertions.channel import assert_channel_embed
 from tests.helpers.domain_assertions.fun import assert_fun_embed
 from tests.helpers.domain_assertions.games import assert_games_embed
@@ -51,6 +55,8 @@ def assert_matrix_embed(embed: Any, case: MatrixCase, *, actor_name: str = "", t
 
 
 def assert_matrix_live_response(result: dict[str, Any], case: MatrixCase, *, session: Any) -> None:
+    if assert_live_response_outcome(result, case):
+        return
     embed = result.get("embed")
     content = result.get("content") or ""
     if embed is not None:

@@ -51,14 +51,6 @@ TEST_DB_NAME = os.environ.get("TANJUN_TEST_DB_NAME", os.environ.get("TEST_DB_NAM
 
 pytestmark = [
     pytest.mark.asyncio(loop_scope="session"),
-    pytest.mark.skipif(
-        os.environ.get("TANJUN_INTEGRATION", "false").lower() not in ("1", "true", "yes"),
-        reason="Set TANJUN_INTEGRATION=true for real database integration tests",
-    ),
-    pytest.mark.skipif(
-        os.environ.get("SKIP_INTEGRATION_TESTS", "0") == "1",
-        reason="Integration tests disabled via SKIP_INTEGRATION_TESTS=1",
-    ),
 ]
 
 
@@ -99,7 +91,7 @@ CRUD_CHANNEL_OW_A = _snowflake(900_001)
 CRUD_CHANNEL_OW_B = _snowflake(900_002)
 CRUD_CHANNEL_OW_C = _snowflake(900_003)
 CRUD_ROLE_OW = _snowflake(950_001)
-CRUD_COUNTING_CHANNEL = _snowflake(910_001)
+CRUD_COUNTING_CHANNEL = _snowflake(909_501)
 CRUD_COUNTING_USER = _snowflake(920_001)
 CRUD_ROLE_10 = _snowflake(810_010)
 CRUD_ROLE_20 = _snowflake(810_020)
@@ -248,8 +240,12 @@ class TestLevelCRUD:
         user_id = CRUD_USER_C
 
         await api.execute_action(
-            "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE xp = xp + %s",
-            (user_id, guild_id, 50, 50),
+            "DELETE FROM level WHERE user_id = %s AND guild_id = %s",
+            (user_id, guild_id),
+        )
+        await api.execute_action(
+            "INSERT INTO level (user_id, guild_id, xp) VALUES (%s, %s, %s)",
+            (user_id, guild_id, 50),
         )
 
         result = await api.execute_query(
@@ -405,9 +401,10 @@ class TestChannelOverwritesCRUD:
     async def test_save_and_get_channel_overwrites(self, bot_with_integration_pool):
         """Save channel overwrites and retrieve them."""
         channel_id = CRUD_CHANNEL_OW_A
-        role_id = CRUD_CHANNEL_OW_B
+        role_id = CRUD_ROLE_OW
         overwrites = {"view": True, "send": False}
 
+        await api.clear_channel_overwrites(channel_id)
         await api.save_channel_overwrites(channel_id, role_id, overwrites)
 
         loaded = [o async for o in api.get_channel_overwrites(channel_id)]
@@ -947,13 +944,22 @@ async def test_warning_reasons(bot_with_integration_pool, reason: str):
 
 
 class TestWordleIntegration:
+    async def _clear_wordle_stats(self, user_id: str, guild_id: str) -> None:
+        await api.execute_action(
+            "DELETE FROM wordle_stats WHERE user_id = %s AND guild_id = %s",
+            (user_id, guild_id),
+        )
+
     async def test_get_wordle_stats_none_for_new_user(self, bot_with_integration_pool):
-        stats = await api.get_wordle_stats(_snowflake(913_020), WORDLE_GUILD_NEW)
+        user_id = _snowflake(913_020)
+        await self._clear_wordle_stats(user_id, WORDLE_GUILD_NEW)
+        stats = await api.get_wordle_stats(user_id, WORDLE_GUILD_NEW)
         assert stats is None
 
     async def test_upsert_wordle_win(self, bot_with_integration_pool):
         user_id = WORDLE_USER_WIN
         guild_id = WORDLE_GUILD_WIN
+        await self._clear_wordle_stats(user_id, guild_id)
         result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=3)
         assert result["games_played"] == 1
         assert result["games_won"] == 1
@@ -963,6 +969,7 @@ class TestWordleIntegration:
     async def test_upsert_wordle_loss_resets_streak(self, bot_with_integration_pool):
         user_id = WORDLE_USER_LOSS
         guild_id = WORDLE_GUILD_LOSS
+        await self._clear_wordle_stats(user_id, guild_id)
         await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=2)
         result = await api.upsert_wordle_stats(user_id, guild_id, won=False, guesses=6)
         assert result["current_streak"] == 0
@@ -972,6 +979,7 @@ class TestWordleIntegration:
     async def test_upsert_wordle_hard_mode(self, bot_with_integration_pool):
         user_id = WORDLE_USER_HARD
         guild_id = WORDLE_GUILD_HARD
+        await self._clear_wordle_stats(user_id, guild_id)
         result = await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=1, hard_mode=True)
         assert result["hard_mode_games_played"] == 1
         assert result["hard_mode_games_won"] == 1
@@ -979,6 +987,7 @@ class TestWordleIntegration:
     async def test_upsert_wordle_guess_distribution(self, bot_with_integration_pool):
         user_id = WORDLE_USER_DIST
         guild_id = WORDLE_GUILD_DIST
+        await self._clear_wordle_stats(user_id, guild_id)
         await api.upsert_wordle_stats(user_id, guild_id, won=True, guesses=4)
         stats = await api.get_wordle_stats(user_id, guild_id)
         dist = [int(x) for x in stats["guess_distribution"].split(",")]
@@ -995,6 +1004,8 @@ class TestBrawlstarsIntegration:
         assert await api.get_brawlstars_linked_account(user_id) is None
 
     async def test_link_multiple_users(self, bot_with_integration_pool):
+        await api.remove_brawlstars_linked_account(BRAWL_INT_USER_2)
+        await api.remove_brawlstars_linked_account(BRAWL_INT_USER_3)
         await api.add_brawlstars_linked_account(BRAWL_INT_USER_2, "#TAG2")
         await api.add_brawlstars_linked_account(BRAWL_INT_USER_3, "#TAG3")
         assert await api.get_brawlstars_linked_account(BRAWL_INT_USER_2) == "#TAG2"
@@ -1002,6 +1013,7 @@ class TestBrawlstarsIntegration:
 
     async def test_relink_after_remove(self, bot_with_integration_pool):
         user_id = BRAWL_INT_USER_4
+        await api.remove_brawlstars_linked_account(user_id)
         await api.add_brawlstars_linked_account(user_id, "#OLD")
         await api.remove_brawlstars_linked_account(user_id)
         await api.add_brawlstars_linked_account(user_id, "#NEW")
@@ -1117,9 +1129,13 @@ class TestTicketIntegration:
 
     async def test_open_and_get_ticket(self, bot_with_integration_pool):
         guild_id = TICKET_GUILD_3
-        channel_id = _snowflake(917_301)
-        opener_id = _snowflake(917_302)
-        ticket_channel = _snowflake(917_303)
+        channel_id = _snowflake(917_401)
+        opener_id = _snowflake(917_402)
+        ticket_channel = _snowflake(917_403)
+        await api.execute_action(
+            "DELETE FROM tickets WHERE guild_id = %s AND channel_id = %s",
+            (guild_id, channel_id),
+        )
         config_id = await api.create_ticket_message(
             guild_id, ticket_channel, "Hi", None, "Open", "desc"
         )

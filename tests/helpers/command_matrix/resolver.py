@@ -63,12 +63,76 @@ def _import_alias_map(module_path: str) -> dict[str, str]:
         return {}
     mapping: dict[str, str] = {}
     for node in tree.body:
-        if not isinstance(node, ast.ImportFrom) or not node.module or not node.module.startswith("commands."):
+        if not isinstance(node, ast.ImportFrom) or not node.module:
+            continue
+        if not (
+            node.module.startswith("commands.")
+            or node.module.startswith("services.")
+            or node.module.startswith("api")
+        ):
             continue
         for alias in node.names:
             local = alias.asname or alias.name
             mapping[local] = f"{node.module}.{alias.name}"
     return mapping
+
+
+_INFRASTRUCTURE_AWAIT_PREFIXES = frozenset(
+    {
+        "interaction",
+        "command_info",
+        "ctx",
+    }
+)
+_INFRASTRUCTURE_AWAIT_ATTRS = frozenset(
+    {
+        "defer",
+        "send_message",
+        "send_modal",
+        "edit_message",
+        "reply",
+        "delete",
+        "edit_original_response",
+    }
+)
+
+
+def _is_infrastructure_await(name: str) -> bool:
+    if "." not in name:
+        return name in _INFRASTRUCTURE_AWAIT_ATTRS
+    base, attr = name.split(".", 1)
+    if base in _INFRASTRUCTURE_AWAIT_PREFIXES:
+        return True
+    return attr in _INFRASTRUCTURE_AWAIT_ATTRS and base in _INFRASTRUCTURE_AWAIT_PREFIXES
+
+
+def _awaited_command_call_name(method: Any, extension: str) -> str | None:
+    try:
+        source = textwrap.dedent(inspect.getsource(method))
+        tree = ast.parse(source)
+    except (OSError, TypeError, SyntaxError):
+        return None
+    imports = _import_alias_map(extension)
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Await):
+            continue
+        call = node.value
+        if not isinstance(call, ast.Call):
+            continue
+        func = call.func
+        if isinstance(func, ast.Name):
+            name = func.id
+        elif isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            name = f"{func.value.id}.{func.attr}"
+        else:
+            continue
+        if _is_infrastructure_await(name):
+            continue
+        base = name.split(".", 1)[0]
+        if base not in imports:
+            continue
+        return name
+    return None
 
 
 def _awaited_call_name(method: Any) -> str | None:
@@ -81,12 +145,18 @@ def _awaited_call_name(method: Any) -> str | None:
         if not isinstance(node, ast.Await):
             continue
         call = node.value
-        if isinstance(call, ast.Call):
-            func = call.func
-            if isinstance(func, ast.Name):
-                return func.id
-            if isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
-                return f"{func.value.id}.{func.attr}"
+        if not isinstance(call, ast.Call):
+            continue
+        func = call.func
+        if isinstance(func, ast.Name):
+            name = func.id
+        elif isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            name = f"{func.value.id}.{func.attr}"
+        else:
+            continue
+        if _is_infrastructure_await(name):
+            continue
+        return name
     return None
 
 
@@ -151,15 +221,36 @@ def _resolve_from_commands_leaf(tree_path: str) -> Callable[..., Any] | None:
     return None
 
 
+_MANUAL_HANDLERS: dict[str, str] = {
+    "ai_name ai_askcustom_name": "tests.helpers.command_matrix.manual_handlers.ask_custom_situation",
+    "setup_name setup_logs_name": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
+    "setup_name setup_level_name": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
+    "setup_name setup_giveaway_name": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
+    "setup_name setup_booster_name": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
+    "utilitycmd_name utility_boosterchannel_name utility_boosterchannelinfo_name": (
+        "tests.helpers.command_matrix.manual_handlers.booster_channel_info"
+    ),
+    "utilitycmd_name utility_boosterrole_name utility_boosterroleinfo_name": (
+        "tests.helpers.command_matrix.manual_handlers.booster_role_info"
+    ),
+    "utilitycmd_name utility_feedback_name": "tests.helpers.command_matrix.manual_handlers.feedback_command",
+}
+
+
 def resolve_command_callable(tree_path: str) -> Callable[..., Any] | None:
     if tree_path in _HANDLER_CACHE:
         return _HANDLER_CACHE[tree_path]
 
     by_path, by_spec = _load_static_handlers()
     handler: Callable[..., Any] | None = None
-    registered = by_path.get(tree_path)
-    if registered:
-        handler = _load_callable(registered)
+    manual = _MANUAL_HANDLERS.get(tree_path)
+    if manual:
+        handler = _load_callable(manual)
+
+    if handler is None:
+        registered = by_path.get(tree_path)
+        if registered:
+            handler = _load_callable(registered)
 
     if handler is None:
         from diagnostics.specs.overrides import SPEC_COMMAND_HANDLERS

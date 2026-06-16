@@ -93,8 +93,8 @@ async def test_timeout_invalid_duration_type_error(admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
-async def test_timeout_missing_guild_raises(admin_command_info):
+async def test_timeout_missing_guild(admin_command_info):
     admin_command_info.guild = None
     target = make_target_member(top_role_position=1)
-    with pytest.raises(ValueError):
-        await timeout(admin_command_info, target, duration=10)
+    await timeout(admin_command_info, target, duration=10)
+    admin_command_info.reply.assert_awaited_once()

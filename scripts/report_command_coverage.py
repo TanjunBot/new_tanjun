@@ -81,6 +81,8 @@ def main(argv: list[str] | None = None) -> int:
         for violation in violations:
             print(f"  - {violation.check_id}: {violation.message}", file=sys.stderr)
         return 1
+    if not args.no_fail:
+        print("All coverage thresholds met.", file=sys.stderr)
     return 0
 
 

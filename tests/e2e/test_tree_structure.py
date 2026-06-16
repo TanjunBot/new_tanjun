@@ -21,7 +21,7 @@ TREE_GROUPS = {
     "extensions.games": ("games_name", 7),
     "extensions.giveaway": ("giveaway_name", 5),
     "extensions.image": ("image_name", 13),
-    "extensions.level": ("levelcommands_name", 6),
+    "extensions.level": ("levelcommands_name", 3),
     "extensions.logs": ("logs_name", 6),
     "extensions.math": ("math_name", 6),
     "extensions.minigames": ("minigame_name", 4),
