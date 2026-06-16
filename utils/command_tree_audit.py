@@ -19,7 +19,12 @@ class CommandPayloadAudit:
     over_hard_limit: bool
 
 
-def _command_payload_bytes(command: discord.app_commands.Command[Any, Any, Any], tree: discord.app_commands.CommandTree[Any]) -> int:
+def _command_payload_bytes(
+    command: discord.app_commands.Command[Any, Any, Any]
+    | discord.app_commands.Group
+    | discord.app_commands.ContextMenu,
+    tree: discord.app_commands.CommandTree[Any],
+) -> int:
     payload = command.to_dict(tree)
     return len(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
 

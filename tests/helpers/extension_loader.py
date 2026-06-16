@@ -92,9 +92,11 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
 
 def _wire_bot_loop(bot: MagicMock) -> None:
     running_loop = asyncio.get_running_loop()
-    if bot._loop_proxy is None:
-        bot._loop_proxy = _LoopProxy(running_loop)
-    bot.loop = bot._loop_proxy
+    loop_proxy = getattr(bot, "_loop_proxy", None)
+    if loop_proxy is None:
+        loop_proxy = _LoopProxy(running_loop)
+        bot._loop_proxy = loop_proxy
+    bot.loop = loop_proxy
 
 
 async def fire_cog_on_ready(bot: MagicMock) -> None:
