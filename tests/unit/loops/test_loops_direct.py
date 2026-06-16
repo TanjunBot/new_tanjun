@@ -73,6 +73,27 @@ async def test_ping_server_failure_status(mock_session_cls):
     await alivemonitor.ping_server(client)
 
 
+@patch("loops.alivemonitor.config.UPTIME_KUMA_STATUS_URL", "https://status.example.test")
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "test-push-token")
+@patch("loops.alivemonitor.aiohttp.ClientSession")
+async def test_ping_server_infinite_latency_uses_zero(mock_session_cls):
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = float("inf")
+    resp = AsyncMock()
+    resp.status = 200
+    resp.__aenter__ = AsyncMock(return_value=resp)
+    resp.__aexit__ = AsyncMock(return_value=None)
+    session = AsyncMock()
+    session.get = MagicMock(return_value=resp)
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    mock_session_cls.return_value = session
+    await alivemonitor.ping_server(client)
+    call_url = session.get.call_args[0][0]
+    assert "ping=0" in call_url
+
+
 @patch("loops.create_database_backup.database_password", "pw")
 @patch("loops.create_database_backup.database_user", "user")
 @patch("loops.create_database_backup.dump_database_schema", new_callable=AsyncMock)
