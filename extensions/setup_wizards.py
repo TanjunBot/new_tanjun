@@ -1,6 +1,6 @@
 """
 Interactive setup wizards for complex features.
-Provides guided, step-by-step configuration using modals and buttons.
+Provides guided, step-by-step configuration using selects and buttons.
 """
 from locale_keys import locale as l10n
 from typing import Any, cast
@@ -10,7 +10,7 @@ from utils.discord_channels import bot_can_send_messages, channel_mention, resol
 from utils.embeds import TanjunEmbed
 from discord import app_commands
 from discord.ext import commands
-from discord.ui import Modal, TextInput, View
+from discord.ui import View
 import utility
 from api import get_level_system_status as api_get_level_system_status
 from api import get_log_channel as api_get_log_channel
@@ -309,33 +309,64 @@ class BoosterSetupView(View):
         channel_id = await booster_service.get(BoosterType.CHANNEL, str(self.guild.id))
         role_id = await booster_service.get(BoosterType.ROLE, str(self.guild.id))
         if 'channel' in self._steps_done:
-            desc_parts.append('✅ Booster channel configured')
+            desc_parts.append('✅ Booster category configured')
         else:
-            desc_parts.append('⬜ Not configured yet — press **Set Booster Channel**')
+            desc_parts.append('⬜ Not configured yet — select a **booster category** below')
         if 'role' in self._steps_done:
             desc_parts.append('✅ Booster role configured')
         else:
-            desc_parts.append('⬜ Not configured yet — press **Set Booster Role**')
+            desc_parts.append('⬜ Not configured yet — select a **booster role** below')
         embed = utility.tanjunEmbed(title='Booster Setup', description='\n'.join(desc_parts))
         if channel_id:
-            embed.add_field(name='Current Channel', value=f'<#{channel_id}>', inline=True)
+            category = self.guild.get_channel(int(channel_id))
+            if category is not None and getattr(category, 'name', None):
+                embed.add_field(name='Current Category', value=category.name, inline=True)
+            else:
+                embed.add_field(name='Current Category', value=f'`{channel_id}`', inline=True)
         if role_id:
             embed.add_field(name='Current Role', value=f'<@&{role_id}>', inline=True)
         await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
 
-    @discord.ui.button(label='🎤 Set Booster Channel', style=discord.ButtonStyle.primary)
-    async def set_channel(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
+    @discord.ui.select(cls=discord.ui.ChannelSelect, placeholder='Select a category for booster voice channels...', channel_types=[discord.ChannelType.category])
+    async def on_category_select(self, interaction: discord.Interaction, select: discord.ui.ChannelSelect[Any]) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
             return
-        await interaction.response.send_modal(BoosterChannelModal(self.locale, self.guild, self))
+        if not select.values:
+            return
+        selected = select.values[0]
+        category = await resolve_guild_channel(self.guild, selected)
+        if category is None:
+            embed = utility.tanjunEmbed(title='Category Not Found', description='Could not find that category in this server.')
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
+            return
+        if getattr(category, 'type', None) != discord.ChannelType.category:
+            embed = utility.tanjunEmbed(title='Invalid Category', description='Please select a channel category.')
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
+            return
+        booster_service = BoosterService()
+        await booster_service.add(BoosterType.CHANNEL, str(self.guild.id), str(category.id))
+        self._steps_done.add('channel')
+        await self._update_booster_ui(interaction)
 
-    @discord.ui.button(label='🎭 Set Booster Role', style=discord.ButtonStyle.primary)
-    async def set_role(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
+    @discord.ui.select(cls=discord.ui.RoleSelect, placeholder='Select a role to grant booster perks...')
+    async def on_role_select(self, interaction: discord.Interaction, select: discord.ui.RoleSelect[Any]) -> None:
         if not _require_admin(interaction):
             await _not_admin_reply(interaction)
             return
-        await interaction.response.send_modal(BoosterRoleModal(self.locale, self.guild, self))
+        if not select.values:
+            return
+        role = select.values[0]
+        if not isinstance(role, discord.Role):
+            role = self.guild.get_role(role.id)
+        if role is None:
+            embed = utility.tanjunEmbed(title='Role Not Found', description='Could not find that role in this server.')
+            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
+            return
+        booster_service = BoosterService()
+        await booster_service.add(BoosterType.ROLE, str(self.guild.id), str(role.id))
+        self._steps_done.add('role')
+        await self._update_booster_ui(interaction)
 
     @discord.ui.button(label='✅ Finish Booster Setup', style=discord.ButtonStyle.green)
     async def finish(self, interaction: discord.Interaction, _button: discord.ui.Button[Any]) -> None:
@@ -347,68 +378,6 @@ class BoosterSetupView(View):
             item.disabled = True
         await interaction.response.edit_message(embed=_discord_embed(embed), view=self)
         self.stop()
-
-class BoosterChannelModal(Modal):
-
-    def __init__(self, locale: str, guild: discord.Guild, parent_view: BoosterSetupView) -> None:
-        super().__init__(title='Set Booster Channel')
-        self.locale = locale
-        self.guild = guild
-        self.parent = parent_view
-        self.add_item(TextInput(label='Voice Channel ID', placeholder='Paste the voice channel ID', required=True, max_length=20))
-
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        if not _require_admin(interaction):
-            await _not_admin_reply(interaction)
-            return
-        try:
-            channel_id = int(str(self.children[0].value))
-        except ValueError:
-            embed = utility.tanjunEmbed(title='Invalid ID', description='Please provide a valid channel ID.')
-            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
-            return
-        channel = self.guild.get_channel(channel_id)
-        if channel is None:
-            embed = utility.tanjunEmbed(title='Channel Not Found', description='Could not find that channel in this server.')
-            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
-            return
-        if not isinstance(channel, discord.VoiceChannel):
-            embed = utility.tanjunEmbed(title='Invalid Channel Type', description='Please provide a voice channel ID. The channel you selected is not a voice channel.')
-            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
-            return
-        booster_service = BoosterService()
-        await booster_service.add(BoosterType.CHANNEL, str(self.guild.id), str(channel_id))
-        self.parent._steps_done.add('channel')
-        await self.parent._update_booster_ui(interaction)
-
-class BoosterRoleModal(Modal):
-
-    def __init__(self, locale: str, guild: discord.Guild, parent_view: BoosterSetupView) -> None:
-        super().__init__(title='Set Booster Role')
-        self.locale = locale
-        self.guild = guild
-        self.parent = parent_view
-        self.add_item(TextInput(label='Role ID', placeholder='Paste the role ID', required=True, max_length=20))
-
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        if not _require_admin(interaction):
-            await _not_admin_reply(interaction)
-            return
-        try:
-            role_id = int(str(self.children[0].value))
-        except ValueError:
-            embed = utility.tanjunEmbed(title='Invalid ID', description='Please provide a valid role ID.')
-            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
-            return
-        role = self.guild.get_role(role_id)
-        if role is None:
-            embed = utility.tanjunEmbed(title='Role Not Found', description='Could not find that role in this server.')
-            await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
-            return
-        booster_service = BoosterService()
-        await booster_service.add(BoosterType.ROLE, str(self.guild.id), str(role_id))
-        self.parent._steps_done.add('role')
-        await self.parent._update_booster_ui(interaction)
 
 class SetupWizardsCog(commands.Cog):
     """Cog that provides /setup commands for guided configuration."""
@@ -488,7 +457,7 @@ class SetupWizardCommands(discord.app_commands.Group):
             await _not_admin_reply(interaction)
             return
         assert interaction.guild is not None
-        embed = utility.tanjunEmbed(title='🎵 Booster Setup Wizard', description='Configure perks for server boosters.\n\n• **Booster Channel** — boosters get a private voice channel\n• **Booster Role** — assign a role that grants booster perks')
+        embed = utility.tanjunEmbed(title='🎵 Booster Setup Wizard', description='Configure perks for server boosters.\n\n• **Booster category** — boosters create private voice channels in this category\n• **Booster role** — select a role that grants booster perks')
         view = BoosterSetupView(_loc_or_en(interaction), interaction.guild)
         await interaction.response.send_message(embed=_discord_embed(embed), view=view)
 
