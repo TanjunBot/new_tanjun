@@ -115,8 +115,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - run: |
+          docker compose -f docker-compose.test.yml up -d --wait
+        timeout-minutes: 3
+      - run: |
+          export TANJUN_INTEGRATION=true
           COVERAGE_FILE=coverage-integration.dat pytest tests/integration/ -m "not slow and not live_discord" --cov=. --cov-report=xml:coverage-integration.xml --cov-fail-under=0 -q
           pytest tests/e2e/ -m "not slow" -q
+        env:
+          TANJUN_INTEGRATION: true
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-integration
