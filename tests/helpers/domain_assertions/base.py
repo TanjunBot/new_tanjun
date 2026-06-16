@@ -11,6 +11,17 @@ _ERROR_PATTERNS = (
     re.compile(r"err:\s*no translation", re.I),
 )
 
+_PERMISSION_FAILURE_PATTERNS = (
+    re.compile(r"missing permissions?", re.I),
+    re.compile(r"bot has missing permissions?", re.I),
+    re.compile(r"permission denied", re.I),
+    re.compile(r"not allowed to use this command", re.I),
+    re.compile(r"you do not have the required permissions", re.I),
+    re.compile(r"required permissions may be missing", re.I),
+    re.compile(r"the bot does not have the required permissions", re.I),
+    re.compile(r"the bot was unable to", re.I),
+)
+
 _DENIAL_TOKENS = (
     "permission",
     "denied",
@@ -104,6 +115,29 @@ def embed_text(embed: Any) -> str:
 def assert_no_error_markers(text: str, *, case_id: str) -> None:
     for pattern in _ERROR_PATTERNS:
         assert not pattern.search(text), f"error marker in response for {case_id}: {text!r}"
+
+
+def is_permission_failure_text(text: str) -> bool:
+    return any(pattern.search(text) for pattern in _PERMISSION_FAILURE_PATTERNS)
+
+
+def live_response_text(result: dict[str, Any]) -> str:
+    embed = result.get("embed")
+    content = str(result.get("content") or "")
+    if embed is not None:
+        return embed_text(embed)
+    return content
+
+
+def assert_live_response_outcome(result: dict[str, Any], case: MatrixCase) -> bool:
+    text = live_response_text(result)
+    assert text.strip(), f"empty live response for {case.id}"
+    assert_no_error_markers(text, case_id=case.id)
+    if is_non_admin_permission(case) and is_denial_text(text):
+        return True
+    if case.dimension("permission", "admin") == "admin" and is_permission_failure_text(text):
+        raise AssertionError(f"permission failure in live response for {case.id}: {text!r}")
+    return False
 
 
 def is_denial_text(text: str) -> bool:

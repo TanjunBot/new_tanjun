@@ -72,6 +72,8 @@ def resolve_case_placeholders(
     bot_user_id: str,
     main_channel_id: str,
     disposable_channel_id: str | None,
+    temp_role_id: str | None = None,
+    attachment_id: str | None = None,
 ) -> CommandLiveCase:
     return _resolve_option_placeholders(
         case,
@@ -80,4 +82,6 @@ def resolve_case_placeholders(
         bot_user_id=bot_user_id,
         main_channel_id=main_channel_id,
         disposable_channel_id=disposable_channel_id,
+        temp_role_id=temp_role_id,
+        attachment_id=attachment_id,
     )
