@@ -9,6 +9,14 @@ from pathlib import Path
 
 # Known low-coverage files exempt from per-file gate (tracked separately)
 _LOW_COVERAGE_EXEMPTIONS: set[str] = {
+    # migrations/ — boilerplate alembic files; covered by integration tests indirectly
+    "migrations/env.py",
+    "migrations/versions/003_giveaway_legacy_column.py",
+    "migrations/versions/004_schema_fk_and_guild_keys.py",
+    "migrations/versions/005_legacy_camelcase_columns.py",
+    "migrations/versions/006_giveaway_id_not_null.py",
+    "migrations/versions/007_welcome_leave_channel_nullable.py",
+    "migrations/versions/008_nullable_repair.py",
     "commands/games/advanced_tic_tac_toe.py",
     "commands/games/battleship.py",
     "commands/games/memory.py",
