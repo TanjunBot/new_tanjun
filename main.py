@@ -21,6 +21,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import aiohttp
 import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
@@ -78,6 +79,11 @@ def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
         msg = str(exc_value).lower()
         if "10008" in msg and "unknown message" in msg:
             return None
+
+    # Transient Discord gateway handshake failures (e.g. Cloudflare 520) are
+    # retried automatically by discord.py; not actionable via Sentry.
+    if isinstance(exc_value, aiohttp.WSServerHandshakeError):
+        return None
 
     return event
 

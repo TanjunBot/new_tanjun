@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import aiohttp
 import discord
 import pytest
 
@@ -51,6 +52,17 @@ class TestShouldReportException:
             __module__ = "discord.ext.commands.errors"
 
         assert should_report_exception(CommandNotFound('Command "synnc" is not found')) is False
+
+    def test_skips_ws_server_handshake_error(self):
+        request_info = MagicMock()
+        request_info.real_url = "wss://gateway-us-east1-b.discord.gg/?v=10&encoding=json&compress=zlib-stream"
+        exc = aiohttp.WSServerHandshakeError(
+            request_info=request_info,
+            history=(),
+            status=520,
+            message="Invalid response status",
+        )
+        assert should_report_exception(exc) is False
 
 
 class TestReportBotException:
