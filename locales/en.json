@@ -30008,6 +30008,14 @@
     "max_length": 32
   },
   {
+    "identifier": "logs.permissions.bypass_slowmode",
+    "source_string": "Bypass slowmode",
+    "translation": "Bypass slowmode",
+    "context": "Logging feature copy: permissions.bypass slowmode.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
     "identifier": "logs.permissions.change_nickname",
     "source_string": "Change nickname",
     "translation": "Change nickname",

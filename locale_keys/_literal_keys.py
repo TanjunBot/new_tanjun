@@ -3751,6 +3751,7 @@ LocaleKey = Literal[
     'logs.permissions.administrator',
     'logs.permissions.attach_files',
     'logs.permissions.ban_members',
+    'logs.permissions.bypass_slowmode',
     'logs.permissions.change_nickname',
     'logs.permissions.connect',
     'logs.permissions.create_events',
