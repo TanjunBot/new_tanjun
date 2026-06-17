@@ -35150,5 +35150,13 @@
     "context": "Logging feature copy: guild Channel Update.types.voice.",
     "labels": "logs",
     "max_length": null
+  },
+  {
+    "identifier": "logs.permissions.pin_messages",
+    "source_string": "Pin messages",
+    "translation": "Pin messages",
+    "context": "Logging feature copy: permissions.pin messages.",
+    "labels": "logs",
+    "max_length": 32
   }
 ]
