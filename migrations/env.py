@@ -11,12 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-try:
-    import tests.mock_config as _mock_config
+# Only patch config when running under pytest; conftest.py already loads this
+# mock, but keeping the guard here prevents `alembic upgrade head` run from
+# the shell (e.g. in CI) from replacing the real settings with a mock.
+if "pytest" in sys.modules:
+    try:
+        import tests.mock_config as _mock_config
 
-    _mock_config.patch_config_module()
-except ImportError:
-    pass
+        _mock_config.patch_config_module()
+    except ImportError:
+        pass
 
 config = context.config
 

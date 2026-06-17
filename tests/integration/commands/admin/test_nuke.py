@@ -47,3 +47,14 @@ async def test_nuke_channel_guild_present(admin_command_info):
     assert admin_command_info.guild is not None
     channel = make_text_channel(guild=admin_command_info.guild)
     await nuke_channel(admin_command_info, channel=channel)
+
+
+async def test_nuke_channel_on_timeout_missing_message_attribute(admin_command_info):
+    """Regression test for #3282: ConfirmView.on_timeout must not raise AttributeError."""
+    channel = make_text_channel(guild=admin_command_info.guild)
+    await nuke_channel(admin_command_info, channel=channel)
+    view = admin_command_info.reply.await_args.kwargs["view"]
+    # Simulate the production state where discord.py did not set View.message.
+    if hasattr(view, "message"):
+        delattr(view, "message")
+    await view.on_timeout()
