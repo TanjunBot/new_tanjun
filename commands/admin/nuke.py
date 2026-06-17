@@ -1,9 +1,13 @@
-from locale_keys import locale
+import contextlib
 from typing import Any
+
 import discord
 from discord.ui import View
+
 import utility
+from locale_keys import locale
 from utility import EmbedColor
+
 
 async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextChannel | None=None) -> None:
 
@@ -33,8 +37,11 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
             self.stop()
 
         async def on_timeout(self) -> None:
-            if self.message:
-                await self.message.edit(view=None)
+            message = getattr(self, 'message', None)
+            if message is not None:
+                with contextlib.suppress(discord.NotFound, discord.HTTPException, discord.Forbidden):
+                    await message.edit(view=None)
+
     if isinstance(command_info.user, discord.Member) and isinstance(command_info.channel, discord.abc.GuildChannel) and (not command_info.channel.permissions_for(command_info.user).manage_channels):
         embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.nuke.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.nuke.missingPermission.description(str(command_info.locale)))
         await command_info.reply(embed=embed)
