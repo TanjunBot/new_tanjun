@@ -9,6 +9,8 @@ import logging
 import time
 import traceback
 from typing import Any
+
+import aiohttp
 import discord
 from github import Github, GithubException
 from config import GithubAuthToken, sentry_environment, version
@@ -42,6 +44,10 @@ def should_report_exception(exc: BaseException) -> bool:
     if isinstance(exc, RuntimeError) and 'task is already launched' in str(exc).lower():
         return False
     if type(exc).__name__ == 'CommandNotFound' and (type(exc).__module__ or '').startswith('discord'):
+        return False
+    if isinstance(exc, aiohttp.WSServerHandshakeError):
+        # Transient Discord gateway handshake failures (e.g. Cloudflare 520)
+        # are retried automatically by discord.py; not actionable for us.
         return False
     return True
 
