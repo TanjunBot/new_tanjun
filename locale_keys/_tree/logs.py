@@ -246,6 +246,7 @@ class LogsPermissions:
     administrator: LocalizedString
     attach_files: LocalizedString
     ban_members: LocalizedString
+    bypass_slowmode: LocalizedString
     change_nickname: LocalizedString
     connect: LocalizedString
     create_events: LocalizedString
@@ -1712,6 +1713,7 @@ def build_logs() -> Logs:
             'administrator': LocalizedString('logs.permissions.administrator'),
             'attach_files': LocalizedString('logs.permissions.attach_files'),
             'ban_members': LocalizedString('logs.permissions.ban_members'),
+            'bypass_slowmode': LocalizedString('logs.permissions.bypass_slowmode'),
             'change_nickname': LocalizedString('logs.permissions.change_nickname'),
             'connect': LocalizedString('logs.permissions.connect'),
             'create_events': LocalizedString('logs.permissions.create_events'),
@@ -1775,6 +1777,7 @@ def build_logs() -> Logs:
         administrator=LocalizedString('logs.permissions.administrator'),
         attach_files=LocalizedString('logs.permissions.attach_files'),
         ban_members=LocalizedString('logs.permissions.ban_members'),
+        bypass_slowmode=LocalizedString('logs.permissions.bypass_slowmode'),
         change_nickname=LocalizedString('logs.permissions.change_nickname'),
         connect=LocalizedString('logs.permissions.connect'),
         create_events=LocalizedString('logs.permissions.create_events'),
