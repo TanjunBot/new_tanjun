@@ -30256,6 +30256,14 @@
     "max_length": 32
   },
   {
+    "identifier": "logs.permissions.pin_messages",
+    "source_string": "Pin messages",
+    "translation": "Pin messages",
+    "context": "Logging feature copy: permissions.pin messages.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
     "identifier": "logs.permissions.read_message_history",
     "source_string": "Read message history",
     "translation": "Read message history",

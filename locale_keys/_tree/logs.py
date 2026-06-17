@@ -276,6 +276,7 @@ class LogsPermissions:
     moderate_members: LocalizedString
     move_members: LocalizedString
     mute_members: LocalizedString
+    pin_messages: LocalizedString
     priority_speaker: LocalizedString
     read_message_history: LocalizedString
     read_messages: LocalizedString
@@ -1741,6 +1742,7 @@ def build_logs() -> Logs:
             'moderate_members': LocalizedString('logs.permissions.moderate_members'),
             'move_members': LocalizedString('logs.permissions.move_members'),
             'mute_members': LocalizedString('logs.permissions.mute_members'),
+            'pin_messages': LocalizedString('logs.permissions.pin_messages'),
             'priority_speaker': LocalizedString('logs.permissions.priority_speaker'),
             'read_message_history': LocalizedString('logs.permissions.read_message_history'),
             'read_messages': LocalizedString('logs.permissions.read_messages'),
@@ -1803,6 +1805,7 @@ def build_logs() -> Logs:
         moderate_members=LocalizedString('logs.permissions.moderate_members'),
         move_members=LocalizedString('logs.permissions.move_members'),
         mute_members=LocalizedString('logs.permissions.mute_members'),
+        pin_messages=LocalizedString('logs.permissions.pin_messages'),
         priority_speaker=LocalizedString('logs.permissions.priority_speaker'),
         read_message_history=LocalizedString('logs.permissions.read_message_history'),
         read_messages=LocalizedString('logs.permissions.read_messages'),

@@ -3781,6 +3781,7 @@ LocaleKey = Literal[
     'logs.permissions.moderate_members',
     'logs.permissions.move_members',
     'logs.permissions.mute_members',
+    'logs.permissions.pin_messages',
     'logs.permissions.priority_speaker',
     'logs.permissions.read_message_history',
     'logs.permissions.read_messages',
