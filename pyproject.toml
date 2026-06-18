@@ -131,7 +131,7 @@ dev = [
     "freezegun>=1.4",
     "hypothesis>=6.100",
     "mypy>=1.11",
-    "ruff==0.15.17",
+    "ruff==0.15.18",
     "PyYAML>=6.0",
 ]
 docs-screenshots = [
