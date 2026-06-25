@@ -55,6 +55,24 @@ async def _find_audit_log_entry(guild: discord.Guild, action: discord.AuditLogAc
     except discord.Forbidden:
         pass
     return None
+
+def _overwrite_target_str(target: discord.Role | discord.Member | discord.Object) -> str:
+    """Best-effort display string for a permission-overwrite target.
+
+    Overwrite keys are normally a Role or Member (which expose ``.mention``
+    and ``.name``), but can be a bare ``discord.Object`` when the referenced
+    role/member is uncached or was deleted. ``Object`` has neither attribute,
+    so naively falling back to ``target.name`` raises ``AttributeError``
+    (issue #3266). Fall back to the snowflake id instead.
+    """
+    mention = getattr(target, 'mention', None)
+    if mention:
+        return str(mention)
+    name = getattr(target, 'name', None)
+    if name:
+        return str(name)
+    return f'ID: {getattr(target, "id", "?")}'
+
 embeds = {}
 _log_queue: asyncio.Queue[tuple[str, discord.Embed]] = asyncio.Queue(maxsize=200)
 
@@ -454,7 +472,7 @@ class LogsCog(commands.Cog):
                         allowed.append(f'`{local_perm}`')
                     elif value is False:
                         denied.append(f'`{local_perm}`')
-                target_str = target.mention if hasattr(target, 'mention') else target.name
+                target_str = _overwrite_target_str(target)
                 description_parts.append(l10n.logs.guildChannelDelete.permissionOverwriteTarget(locale, target=target_str))
                 if allowed:
                     description_parts.append(l10n.logs.guildChannelDelete.permissionOverwriteAllowed(locale, permissions=', '.join(allowed)))
@@ -495,7 +513,7 @@ class LogsCog(commands.Cog):
                         allowed.append(f'`{local_perm}`')
                     elif value is False:
                         denied.append(f'`{local_perm}`')
-                target_str = target.mention if hasattr(target, 'mention') else target.name
+                target_str = _overwrite_target_str(target)
                 description_parts.append(f'### {target_str}')
                 if allowed:
                     description_parts.append('✅ ' + ', '.join(allowed))
@@ -530,11 +548,11 @@ class LogsCog(commands.Cog):
         if before.overwrites != after.overwrites:
             for target in before.overwrites:
                 if target not in after.overwrites:
-                    target_str = target.mention if hasattr(target, 'mention') else target.name
+                    target_str = _overwrite_target_str(target)
                     description_parts.append(l10n.logs.guildChannelUpdate.permissionOverwriteRemoved(locale, target=target_str))
             for target, new_overwrite in after.overwrites.items():
                 old_overwrite = before.overwrites.get(target, None)
-                target_str = target.mention if hasattr(target, 'mention') else target.name
+                target_str = _overwrite_target_str(target)
                 if old_overwrite is None:
                     allowed = []
                     denied = []
