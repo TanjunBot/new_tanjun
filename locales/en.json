@@ -30008,6 +30008,14 @@
     "max_length": 32
   },
   {
+    "identifier": "logs.permissions.bypass_slowmode",
+    "source_string": "Bypass slowmode",
+    "translation": "Bypass slowmode",
+    "context": "Logging feature copy: permissions.bypass slowmode.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
     "identifier": "logs.permissions.change_nickname",
     "source_string": "Change nickname",
     "translation": "Change nickname",
@@ -30256,6 +30264,14 @@
     "max_length": 32
   },
   {
+    "identifier": "logs.permissions.pin_messages",
+    "source_string": "Pin messages",
+    "translation": "Pin messages",
+    "context": "Logging feature copy: permissions.pin messages.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
     "identifier": "logs.permissions.read_message_history",
     "source_string": "Read message history",
     "translation": "Read message history",
@@ -30318,6 +30334,14 @@
     "context": "Logging feature copy: permissions.send voice messages.",
     "labels": "logs",
     "max_length": null
+  },
+  {
+    "identifier": "logs.permissions.set_voice_channel_status",
+    "source_string": "Set voice channel status",
+    "translation": "Set voice channel status",
+    "context": "Logging feature copy: permissions.set voice channel status.",
+    "labels": "logs",
+    "max_length": 32
   },
   {
     "identifier": "logs.permissions.speak",

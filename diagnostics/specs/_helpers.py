@@ -58,3 +58,9 @@ def register_method_commands(ext_short: str, group_name: str, mapping: dict[str,
     for method_name, mock_name in mapping.items():
         spec_id = f"{ext_short}.{group_name}.{method_name}"
         register_defer_and_mock(spec_id, mock_name)
+
+
+def register_command_handler(spec_id: str, handler_path: str) -> None:
+    from diagnostics.specs.overrides import SPEC_COMMAND_HANDLERS
+
+    SPEC_COMMAND_HANDLERS[spec_id] = handler_path

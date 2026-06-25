@@ -4,6 +4,8 @@ import inspect
 import typing
 from typing import Any, get_args, get_origin
 
+from unittest.mock import AsyncMock, MagicMock
+
 from diagnostics.mocks import make_attachment, make_choice, make_member, make_text_channel
 
 _PARAM_DEFAULTS: dict[str, Any] = {
@@ -12,6 +14,8 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "target": lambda: make_member(),
     "opponent": lambda: make_member(),
     "player": lambda: make_member(),
+    "player1": lambda: make_member(),
+    "player2": lambda: make_member(),
     "channel": lambda: make_text_channel(),
     "category": lambda: make_text_channel(),
     "role": lambda: _make_role(),
@@ -42,6 +46,7 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "twitchname": "streamer",
     "notificationmessage": "live",
     "sendin": "1h",
+    "axis": "x",
     "type": "gaussian",
     "radius": 3,
     "width": 100,
@@ -64,7 +69,7 @@ _PARAM_DEFAULTS: dict[str, Any] = {
     "copymembers": lambda: make_choice("true"),
     "boost": 2.0,
     "additive": False,
-    "scaling": lambda: make_choice("linear"),
+    "scaling": lambda: make_choice("medium"),
     "level": 5,
     "cooldown": 60,
     "quality": lambda: make_choice("85"),
@@ -84,11 +89,20 @@ _PARAM_DEFAULTS: dict[str, Any] = {
 
 
 def _make_role() -> Any:
-    role = make_member()
-    role.id = 555555555
+    role = MagicMock()
+    role.id = 555555555555555555
     role.name = "TestRole"
-    role.mention = "<@&555555555>"
+    role.mention = "<@&555555555555555555>"
     role.position = 5
+    role.color = MagicMock()
+    role.hoist = False
+    role.mentionable = False
+    role.permissions = MagicMock()
+    role.icon = None
+    role.unicode_emoji = None
+    role.members = []
+    role.delete = AsyncMock()
+    role.edit = AsyncMock()
     return role
 
 
@@ -119,8 +133,11 @@ def build_kwargs_for_handler(handler: Any) -> dict[str, Any]:
         return {}
     kwargs: dict[str, Any] = {}
     for name, param in sig.parameters.items():
-        if name in ("self", "interaction", "ctx"):
+        if name in ("self", "interaction", "ctx", "command_info", "info"):
             continue
+        if name == "language" and param.annotation in (str, "str"):
+            if param.default is not inspect.Parameter.empty:
+                continue
         if name in _PARAM_DEFAULTS:
             factory = _PARAM_DEFAULTS[name]
             kwargs[name] = factory() if callable(factory) else factory

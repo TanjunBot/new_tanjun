@@ -6,6 +6,24 @@ import discord
 import utility
 from commands.games.country_flags.flags import random_flag
 
+
+def get_similarity(guess: str, answer: str) -> float:
+    a, b = guess.lower(), answer.lower()
+    r1 = difflib.SequenceMatcher(None, a, b).ratio()
+    r2 = difflib.SequenceMatcher(None, b, a).ratio()
+    return max(r1, r2) * 100
+
+
+def get_hint(word: str) -> str:
+    chars = list(word.lower())
+    blanks = ['_'] * len(chars)
+    num_reveals = max(1, len(chars) // 3)
+    reveal_positions = random.sample(range(len(chars)), num_reveals)
+    for pos in reveal_positions:
+        blanks[pos] = chars[pos]
+    return ''.join(blanks)
+
+
 async def flag_quiz(command_info: utility.command_info):
     locale_str = str(command_info.locale)
     flag_file = random_flag()
@@ -13,18 +31,6 @@ async def flag_quiz(command_info: utility.command_info):
     correct_country = getattr(locale.countries, country_field)(locale_str)
     guesses = []
     hints_used = 0
-
-    def get_similarity(guess: str, answer: str) -> float:
-        return difflib.SequenceMatcher(None, guess.lower(), answer.lower()).ratio() * 100
-
-    def get_hint(word: str) -> str:
-        chars = list(word.lower())
-        blanks = ['_'] * len(chars)
-        num_reveals = max(1, len(chars) // 3)
-        reveal_positions = random.sample(range(len(chars)), num_reveals)
-        for pos in reveal_positions:
-            blanks[pos] = chars[pos]
-        return ''.join(blanks)
 
     async def update_game(interaction: discord.Interaction, given_up: bool=False, wrong_guess: bool=False, hint_used: bool=False):
         file = discord.File(f'commands/games/country_flags/{flag_file}', filename='flag.png')

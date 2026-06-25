@@ -1,4 +1,5 @@
 import logging
+import math
 
 import aiohttp
 from aiohttp import ClientTimeout
@@ -20,7 +21,8 @@ def _build_push_url(latency_ms: int) -> str | None:
 async def ping_server(client: Client) -> None:
     if client is None or client.user is None:
         return
-    push_url = _build_push_url(max(0, int(client.latency * 1000)))
+    latency_ms = int(client.latency * 1000) if math.isfinite(client.latency) else 0
+    push_url = _build_push_url(max(0, latency_ms))
     if push_url is None:
         return
 

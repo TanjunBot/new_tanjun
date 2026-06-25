@@ -111,4 +111,6 @@ async def test_subcommand_logs_blacklistr_name_registered():
 
 async def test_on_ready_starts_log_consumer_task():
     bot = await load_extension_bot(EXTENSION)
-    bot.loop.create_task.assert_called()
+    cog = bot.cogs["LogsCog"]
+    assert cog._log_consumer_task is not None
+    assert not cog._log_consumer_task.done()

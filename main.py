@@ -21,6 +21,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import aiohttp
 import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
@@ -78,6 +79,11 @@ def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
         msg = str(exc_value).lower()
         if "10008" in msg and "unknown message" in msg:
             return None
+
+    # Transient Discord gateway handshake failures (e.g. Cloudflare 520) are
+    # retried automatically by discord.py; not actionable via Sentry.
+    if isinstance(exc_value, aiohttp.WSServerHandshakeError):
+        return None
 
     return event
 
@@ -365,6 +371,17 @@ async def main() -> None:
 
     # Step 4: Load translator (depends on extensions being loaded for tree).
     await loadTranslator(bot)
+
+    e2e_minimal_startup = os.getenv("TANJUN_E2E_MINIMAL_STARTUP", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    if e2e_minimal_startup:
+        logger.info("TANJUN_E2E_MINIMAL_STARTUP: skipping health checks for live E2E")
+        await bot.start(config.token)  # type: ignore[arg-type]
+        return
 
     # Step 5: Run startup health checks.
     health_manager = HealthCheckManager(bot)

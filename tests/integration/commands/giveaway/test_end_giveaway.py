@@ -7,13 +7,15 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from commands.giveaway.end_giveaway import end_giveaway as command_fn
-from tests.helpers.discord import make_command_info, make_permissions
+from tests.helpers.discord import make_command_info, make_guild, make_permissions
 from tests.integration.commands.conftest import embed_from_reply
+
+_DEFAULT_GUILD_ID = str(make_guild().id)
 
 
 def _giveaway(**kw):
     g = MagicMock()
-    g.guild_id = kw.get("guild_id", "123456789")
+    g.guild_id = kw.get("guild_id", _DEFAULT_GUILD_ID)
     g.ended = kw.get("ended", False)
     return g
 

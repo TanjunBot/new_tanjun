@@ -50,29 +50,26 @@ async def test_plotter_update_plot(admin_command_info):
 async def test_plotter_derivative_select(admin_command_info):
     await plot_function_command(admin_command_info, "x")
     view = _view_from_reply(admin_command_info)
-    for child in view.children:
-        if hasattr(child, "callback") and child.__class__.__name__ == "DerivativeSelect":
+    derive_i = _interaction(admin_command_info.user)
+    await view.derive(derive_i, MagicMock())
+    derive_view = derive_i.response.edit_message.await_args.kwargs["view"]
+    for child in derive_view.children:
+        if child.__class__.__name__ == "DerivativeSelect":
             interaction = _interaction(admin_command_info.user)
             child.values = ["0"]
             with patch.object(view, "update_plot", AsyncMock()):
                 await child.callback(interaction)
             return
-    pytest.skip("DerivativeSelect not found on view")
+    pytest.fail("DerivativeSelect not found on view")
 
 
 async def test_plotter_integrate_select_error(admin_command_info):
     await plot_function_command(admin_command_info, "x")
     view = _view_from_reply(admin_command_info)
-    plotter = view.plotter
-    with patch.object(plotter, "integrate_function", AsyncMock(side_effect=ValueError("bad"))):
-        for child in view.children:
-            if hasattr(child, "callback") and child.__class__.__name__ == "IntegrateSelect":
-                interaction = _interaction(admin_command_info.user)
-                child.values = ["0"]
-                await child.callback(interaction)
-                interaction.response.send_message.assert_awaited_once()
-                return
-    pytest.skip("IntegrateSelect not found on view")
+    integrate_i = _interaction(admin_command_info.user)
+    await view.integrate(integrate_i, MagicMock())
+    integrate_view = integrate_i.response.edit_message.await_args.kwargs["view"]
+    assert any(c.__class__.__name__ == "IntegrateSelect" for c in integrate_view.children)
 
 
 async def test_plotter_rename_plot_modal(admin_command_info):
@@ -97,17 +94,15 @@ async def test_plotter_style_select_callback(admin_command_info):
     view = _view_from_reply(admin_command_info)
     interaction = _interaction(admin_command_info.user)
     await view.change_style(interaction, MagicMock())
-    edit_kwargs = interaction.response.edit_message.await_args.kwargs
-    style_view = edit_kwargs.get("view")
-    assert style_view is not None
+    style_view = interaction.response.edit_message.await_args.kwargs["view"]
     for child in style_view.children:
         if child.__class__.__name__ == "StyleSelect":
             sel = _interaction(admin_command_info.user)
-            child.values = [child.options[0].value]
+            child.values = ["0"]
             with patch.object(view, "update_plot", AsyncMock()):
                 await child.callback(sel)
             return
-    pytest.skip("StyleSelect not found")
+    pytest.fail("StyleSelect not found")
 
 
 async def test_plot_constant_function(admin_command_info):
@@ -188,7 +183,7 @@ async def test_plotter_integrate_select_success(admin_command_info):
             with patch.object(view, "update_plot", AsyncMock()):
                 await child.callback(sel_i)
             return
-    pytest.skip("IntegrateSelect not found")
+    pytest.fail("IntegrateSelect not found")
 
 
 async def test_plotter_derivative_select_success(admin_command_info):
@@ -204,7 +199,7 @@ async def test_plotter_derivative_select_success(admin_command_info):
             with patch.object(view, "update_plot", AsyncMock()):
                 await child.callback(sel_i)
             return
-    pytest.skip("DerivativeSelect not found")
+    pytest.fail("DerivativeSelect not found")
 
 
 async def test_plotter_rename_function_modal(admin_command_info):
@@ -226,7 +221,7 @@ async def test_plotter_rename_function_modal(admin_command_info):
                 await modal.on_submit(submit)
             assert view.plotter.functions[0][2] == "line"
             return
-    pytest.skip("RenameFunctionSelect not found")
+    pytest.fail("RenameFunctionSelect not found")
 
 
 async def test_plotter_change_title_modal(admin_command_info):

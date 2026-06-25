@@ -246,6 +246,7 @@ class LogsPermissions:
     administrator: LocalizedString
     attach_files: LocalizedString
     ban_members: LocalizedString
+    bypass_slowmode: LocalizedString
     change_nickname: LocalizedString
     connect: LocalizedString
     create_events: LocalizedString
@@ -276,6 +277,7 @@ class LogsPermissions:
     moderate_members: LocalizedString
     move_members: LocalizedString
     mute_members: LocalizedString
+    pin_messages: LocalizedString
     priority_speaker: LocalizedString
     read_message_history: LocalizedString
     read_messages: LocalizedString
@@ -285,6 +287,7 @@ class LogsPermissions:
     send_polls: LocalizedString
     send_tts_messages: LocalizedString
     send_voice_messages: LocalizedString
+    set_voice_channel_status: LocalizedString
     speak: LocalizedString
     stream: LocalizedString
     use_application_commands: LocalizedString
@@ -1711,6 +1714,7 @@ def build_logs() -> Logs:
             'administrator': LocalizedString('logs.permissions.administrator'),
             'attach_files': LocalizedString('logs.permissions.attach_files'),
             'ban_members': LocalizedString('logs.permissions.ban_members'),
+            'bypass_slowmode': LocalizedString('logs.permissions.bypass_slowmode'),
             'change_nickname': LocalizedString('logs.permissions.change_nickname'),
             'connect': LocalizedString('logs.permissions.connect'),
             'create_events': LocalizedString('logs.permissions.create_events'),
@@ -1741,6 +1745,7 @@ def build_logs() -> Logs:
             'moderate_members': LocalizedString('logs.permissions.moderate_members'),
             'move_members': LocalizedString('logs.permissions.move_members'),
             'mute_members': LocalizedString('logs.permissions.mute_members'),
+            'pin_messages': LocalizedString('logs.permissions.pin_messages'),
             'priority_speaker': LocalizedString('logs.permissions.priority_speaker'),
             'read_message_history': LocalizedString('logs.permissions.read_message_history'),
             'read_messages': LocalizedString('logs.permissions.read_messages'),
@@ -1750,6 +1755,7 @@ def build_logs() -> Logs:
             'send_polls': LocalizedString('logs.permissions.send_polls'),
             'send_tts_messages': LocalizedString('logs.permissions.send_tts_messages'),
             'send_voice_messages': LocalizedString('logs.permissions.send_voice_messages'),
+            'set_voice_channel_status': LocalizedString('logs.permissions.set_voice_channel_status'),
             'speak': LocalizedString('logs.permissions.speak'),
             'stream': LocalizedString('logs.permissions.stream'),
             'use_application_commands': LocalizedString('logs.permissions.use_application_commands'),
@@ -1773,6 +1779,7 @@ def build_logs() -> Logs:
         administrator=LocalizedString('logs.permissions.administrator'),
         attach_files=LocalizedString('logs.permissions.attach_files'),
         ban_members=LocalizedString('logs.permissions.ban_members'),
+        bypass_slowmode=LocalizedString('logs.permissions.bypass_slowmode'),
         change_nickname=LocalizedString('logs.permissions.change_nickname'),
         connect=LocalizedString('logs.permissions.connect'),
         create_events=LocalizedString('logs.permissions.create_events'),
@@ -1803,6 +1810,7 @@ def build_logs() -> Logs:
         moderate_members=LocalizedString('logs.permissions.moderate_members'),
         move_members=LocalizedString('logs.permissions.move_members'),
         mute_members=LocalizedString('logs.permissions.mute_members'),
+        pin_messages=LocalizedString('logs.permissions.pin_messages'),
         priority_speaker=LocalizedString('logs.permissions.priority_speaker'),
         read_message_history=LocalizedString('logs.permissions.read_message_history'),
         read_messages=LocalizedString('logs.permissions.read_messages'),
@@ -1813,6 +1821,7 @@ def build_logs() -> Logs:
         send_polls=LocalizedString('logs.permissions.send_polls'),
         send_tts_messages=LocalizedString('logs.permissions.send_tts_messages'),
         send_voice_messages=LocalizedString('logs.permissions.send_voice_messages'),
+        set_voice_channel_status=LocalizedString('logs.permissions.set_voice_channel_status'),
         speak=LocalizedString('logs.permissions.speak'),
         stream=LocalizedString('logs.permissions.stream'),
         use_application_commands=LocalizedString('logs.permissions.use_application_commands'),

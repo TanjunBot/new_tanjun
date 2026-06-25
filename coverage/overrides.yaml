@@ -1,0 +1,1269 @@
+groups:
+  funcmd_name:
+    path_template: funcmd_name fun_{action}_name
+    dimensions:
+      action:
+      - hug
+      - kiss
+      - boop
+      - wave
+      - slap
+      - laugh
+      - tickle
+      - pat
+      - poke
+      message_kind:
+      - none
+      - empty
+      - short
+      - unicode
+      - max
+      - multiline
+      permission: &id008
+      - admin
+      - member
+      - restricted
+      - no_guild
+      - channel_deny_send
+      - channel_deny_embed
+      locale: &id001
+      - en-US
+      - de
+      - fr
+      target:
+      - self
+      - bot
+      gif:
+      - gif
+      - no-gif
+    layers:
+      unit_logic:
+      - axes:
+        - action
+        - message_kind
+        - permission
+        defaults:
+          gif: gif
+      - axes:
+        - action
+        - locale
+        defaults:
+          message_kind: short
+          permission: admin
+          gif: gif
+      - axes:
+        - action
+        defaults:
+          message_kind: none
+          permission: admin
+          gif: no-gif
+      integration:
+      - axes:
+        - action
+      behavior_spec:
+      - axes:
+        - action
+      e2e_live:
+      - axes:
+        - action
+        - message_kind
+        - target
+        overrides:
+          message_kind:
+          - none
+          - short
+          - unicode
+          - max
+      unit_extension:
+      - axes:
+        - action
+  math_name:
+    path_template: math_name math_{command}_name
+    dimensions:
+      command:
+      - calc
+      - calculator
+      - faculty
+      - num2word
+      - plotfunction
+      - randomnumber
+      permission: &id002
+      - admin
+      - restricted
+      expression:
+      - valid
+      - invalid
+    layers:
+      unit_logic:
+      - axes:
+        - command
+        - permission
+        - expression
+      integration:
+      - axes:
+        - command
+      behavior_spec:
+      - axes:
+        - command
+      e2e_live:
+      - axes:
+        - command
+        - permission
+        - expression
+        overrides:
+          permission:
+          - admin
+          - restricted
+          expression:
+          - valid
+          - invalid
+  utility_help_name:
+    tree_paths:
+    - utility_help_name
+    dimensions:
+      locale: *id001
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - locale
+        per_path: true
+      integration:
+      - axes: []
+        per_path: true
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - locale
+        per_path: true
+        overrides:
+          locale:
+          - en-US
+  utilitycmd_name:
+    tree_paths:
+    - utilitycmd_name utility_afk_name
+    - utilitycmd_name utility_autopublish_name utility_autopublish_name
+    - utilitycmd_name utility_autopublish_name utility_autopublish_remove_name
+    - utilitycmd_name utility_avatar_name
+    - utilitycmd_name utility_avatardecoration_name
+    - utilitycmd_name utility_banner_name
+    - utilitycmd_name utility_boosterchannel_name utility_boosterchannelinfo_name
+    - utilitycmd_name utility_boosterchannel_name utility_claimboosterchannel_name
+    - utilitycmd_name utility_boosterchannel_name utility_deleteboosterch_name
+    - utilitycmd_name utility_boosterchannel_name utility_setupboosterchannel_name
+    - utilitycmd_name utility_boosterrole_name utility_boosterroleinfo_name
+    - utilitycmd_name utility_boosterrole_name utility_claimboosterrole_name
+    - utilitycmd_name utility_boosterrole_name utility_deleteboosterrole_name
+    - utilitycmd_name utility_boosterrole_name utility_setupboosterrole_name
+    - utilitycmd_name utility_bs_name utility_bs_battlelog_name
+    - utilitycmd_name utility_bs_name utility_bs_brawlers_name
+    - utilitycmd_name utility_bs_name utility_bs_club_name
+    - utilitycmd_name utility_bs_name utility_bs_events_name
+    - utilitycmd_name utility_bs_name utility_bs_link_name
+    - utilitycmd_name utility_bs_name utility_bs_playerinfo_name
+    - utilitycmd_name utility_bs_name utility_bs_unlink_name
+    - utilitycmd_name utility_feedback_name
+    - utilitycmd_name utility_messagetracking_name utility_messageoptin_name
+    - utilitycmd_name utility_messagetracking_name utility_messageoptout_name
+    - utilitycmd_name utility_report_name
+    - utilitycmd_name utility_twitch_name utility_twitch_add_name
+    - utilitycmd_name utility_twitch_name utility_twitch_see_name
+    dimensions:
+      permission: *id002
+      target:
+      - self
+      - bot
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission:
+          - admin
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: &id003
+          - self
+          - bot
+          message_kind:
+          - none
+          - short
+          - unicode
+          - max
+  utility_scheduledmessage_name:
+    tree_paths:
+    - utility_scheduledmessage_name utility_listscheduled_name
+    - utility_scheduledmessage_name utility_removescheduled_name
+    - utility_scheduledmessage_name utility_schedulemessage_name
+    dimensions:
+      permission: *id002
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission:
+          - admin
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id003
+  games_name:
+    path_template: games_name games_{command}_name
+    dimensions:
+      command:
+      - advanced_ttt
+      - akinator
+      - battleship
+      - connect4
+      - flagquiz
+      - hangman
+      - memory
+      - rps
+      - ttt
+      - wordle
+      permission: *id002
+    layers:
+      unit_logic:
+      - axes:
+        - command
+        - permission
+      integration:
+      - axes:
+        - command
+      behavior_spec:
+      - axes:
+        - command
+      e2e_live:
+      - axes:
+        - command
+        - permission
+        overrides:
+          permission:
+          - admin
+          - restricted
+  ai_name:
+    tree_paths:
+    - ai_name ai_askcustom_name
+    - ai_name ai_askgpt_name
+    - ai_name ai_asktanjuwun_name
+    - ai_name ai_customsituations_name ai_createcustom_name
+    - ai_name ai_customsituations_name ai_deletecustom_name
+    - ai_name ai_tokens_name
+    dimensions:
+      permission: *id002
+      prompt_kind:
+      - short
+      - empty
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - prompt_kind
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission:
+          - admin
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - prompt_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          - restricted
+          prompt_kind:
+          - short
+          - empty
+    tree_paths_extra:
+    - ai_name ai_customsituations_name ai_createcustom_name
+    - ai_name ai_customsituations_name ai_deletecustom_name
+  image_name:
+    path_template: image_name image_{command}_name
+    dimensions:
+      command:
+      - background
+      - blur
+      - compress
+      - contour
+      - detail
+      - edgeenhance
+      - emboss
+      - findedges
+      - mirror
+      - rescale
+      - resize
+      - sharpen
+      - smooth
+      permission: *id002
+      attachment:
+      - present
+    layers:
+      unit_logic:
+      - axes:
+        - command
+        - permission
+        - attachment
+      integration:
+      - axes:
+        - command
+      behavior_spec:
+      - axes:
+        - command
+      e2e_live:
+      - axes:
+        - command
+        - attachment
+        - permission
+        overrides:
+          permission:
+          - admin
+          - restricted
+          attachment:
+          - present
+  setup_name:
+    path_template: setup_name setup_{wizard}_name
+    dimensions:
+      wizard:
+      - booster
+      - giveaway
+      - level
+      - logs
+      permission: *id002
+    layers:
+      unit_logic:
+      - axes:
+        - wizard
+        - permission
+      integration:
+      - axes:
+        - wizard
+      behavior_spec:
+      - axes:
+        - wizard
+      e2e_live:
+      - axes:
+        - wizard
+        - permission
+        overrides:
+          permission:
+          - admin
+          - restricted
+  admin_channels_name:
+    tree_paths:
+    - admin_channels_name admin_lock_name
+    - admin_channels_name admin_nuke_name
+    - admin_channels_name admin_slowmode_name
+    - admin_channels_name admin_unlock_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: &id004
+          - admin
+          - restricted
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: &id005
+          - self
+          - bot
+          message_kind: &id006
+          - none
+          - short
+          - unicode
+          - max
+  admin_emoji_name:
+    tree_paths:
+    - admin_emoji_name admin_boosterrole_name
+    - admin_emoji_name admin_copy7tv_name
+    - admin_emoji_name admin_copyemoji_name
+    - admin_emoji_name admin_createemoji_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_jointocreate_name:
+    tree_paths:
+    - admin_jointocreate_name admin_jtc_removechannel_name
+    - admin_jointocreate_name admin_jtc_setchannel_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_localegroup_name:
+    tree_paths:
+    - admin_localegroup_name admin_setlocale_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      locale:
+      - de
+      - en-US
+      - fr
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - locale
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - locale
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          locale:
+          - en-US
+          - de
+          - fr
+  admin_messaging_name:
+    tree_paths:
+    - admin_messaging_name admin_embed_name
+    - admin_messaging_name admin_say_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_moderation_name:
+    tree_paths:
+    - admin_moderation_name admin_ban_name
+    - admin_moderation_name admin_kick_name
+    - admin_moderation_name admin_nickname_name
+    - admin_moderation_name admin_removetimeout_name
+    - admin_moderation_name admin_timeout_name
+    - admin_moderation_name admin_unban_name
+    dimensions:
+      permission:
+      - admin
+      - channel_deny_embed
+      - channel_deny_send
+      - member
+      - no_guild
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: &id007
+          - admin
+          - member
+          - restricted
+          - no_guild
+          - channel_deny_send
+          - channel_deny_embed
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_purgegroup_name:
+    tree_paths:
+    - admin_purgegroup_name admin_purge_name
+    dimensions:
+      permission:
+      - admin
+      - channel_deny_embed
+      - channel_deny_send
+      - member
+      - no_guild
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id007
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_report_name:
+    tree_paths:
+    - admin_report_name admin_rps_removechannel_name
+    - admin_report_name admin_rps_setchannel_name
+    - admin_report_name admin_rps_showreports_name
+    - admin_report_name admin_rps_unblockreporter_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_role_name:
+    tree_paths:
+    - admin_role_name admin_addrole_name
+    - admin_role_name admin_removerole_name
+    dimensions:
+      permission:
+      - admin
+      - channel_deny_embed
+      - channel_deny_send
+      - member
+      - no_guild
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id007
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_rolemanage_name:
+    tree_paths:
+    - admin_rolemanage_name admin_copyrole_name
+    - admin_rolemanage_name admin_createrole_name
+    - admin_rolemanage_name admin_deleterole_name
+    - admin_rolemanage_name admin_moverole_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_setup_name:
+    tree_paths:
+    - admin_setup_name admin_createticket_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_triggermessages_name:
+    tree_paths:
+    - admin_triggermessages_name admin_tm_add_name
+    - admin_triggermessages_name admin_tm_configure_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  admin_warn_name:
+    tree_paths:
+    - admin_warn_name admin_warn_add_name
+    - admin_warn_name admin_warn_config_name
+    - admin_warn_name admin_warn_view_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  channel_name:
+    tree_paths:
+    - channel_name channel_ds_name channel_ds_add_name
+    - channel_name channel_ds_name channel_ds_get_name
+    - channel_name channel_ds_name channel_ds_remove_name
+    - channel_name channel_farewell_name channel_farewell_remove_ch_name
+    - channel_name channel_farewell_name channel_farewell_set_ch_name
+    - channel_name channel_media_name channel_media_name
+    - channel_name channel_media_name channel_mediaremove_name
+    - channel_name channel_welcome_name channel_w_name
+    - channel_name channel_welcome_name channel_w_remove_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      message_kind:
+      - empty
+      - max
+      - multiline
+      - none
+      - short
+      - unicode
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - message_kind
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - message_kind
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  giveaway_name:
+    tree_paths:
+    - giveaway_name giveaway_blacklist_name giveaway_bl_add_role_name
+    - giveaway_name giveaway_blacklist_name giveaway_bl_add_user_name
+    - giveaway_name giveaway_blacklist_name giveaway_bl_list_name
+    - giveaway_name giveaway_blacklist_name giveaway_bl_remove_role_name
+    - giveaway_name giveaway_blacklist_name giveaway_bl_remove_user_name
+    - giveaway_name giveaway_edit_name
+    - giveaway_name giveaway_end_name
+    - giveaway_name giveaway_reroll_name
+    - giveaway_name giveaway_start_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  level_blacklist_name:
+    tree_paths:
+    - level_blacklist_name level_blacklist_addc_name
+    - level_blacklist_name level_blacklist_addr_name
+    - level_blacklist_name level_blacklist_addu_name
+    - level_blacklist_name level_blacklist_removec_name
+    - level_blacklist_name level_blacklist_remover_name
+    - level_blacklist_name level_blacklist_removeu_name
+    - level_blacklist_name level_blacklist_show_name
+    dimensions:
+      permission: *id008
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  level_boosts_name:
+    tree_paths:
+    - level_boosts_name level_boosts_addchannel_name
+    - level_boosts_name level_boosts_addrole_name
+    - level_boosts_name level_boosts_adduser_name
+    - level_boosts_name level_boosts_calculate_name
+    - level_boosts_name level_boosts_removechannel_name
+    - level_boosts_name level_boosts_removerole_name
+    - level_boosts_name level_boosts_removeuser_name
+    - level_boosts_name level_boosts_show_name
+    dimensions:
+      permission: *id008
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  level_config_name:
+    tree_paths:
+    - level_config_name level_addlevelrole_name
+    - level_config_name level_changelevelupmessage_name
+    - level_config_name level_changexpscaling_name
+    - level_config_name level_disable_name
+    - level_config_name level_disablelevelupmessage_name
+    - level_config_name level_enable_name
+    - level_config_name level_enablelevelupmessage_name
+    - level_config_name level_givexp_name
+    - level_config_name level_removelevelrole_name
+    - level_config_name level_setlevelupchannel_name
+    - level_config_name level_settextcooldown_name
+    - level_config_name level_setvoicecooldown_name
+    - level_config_name level_showlevelroles_name
+    - level_config_name level_showxpscalings_name
+    - level_config_name level_takexp_name
+    dimensions:
+      permission: *id008
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  levelcommands_name:
+    tree_paths:
+    - levelcommands_name level_leaderboard_name
+    - levelcommands_name level_rank_name
+    - levelcommands_name level_setbackground_name
+    dimensions:
+      permission: *id008
+      target:
+      - bot
+      - self
+      attachment:
+      - present
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        - attachment
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        - attachment
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - attachment
+        - target
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          attachment:
+          - present
+          target: *id005
+  logs_name:
+    tree_paths:
+    - logs_name logs_blacklist_name logs_blacklistc_add_name
+    - logs_name logs_blacklist_name logs_blacklistc_remove_name
+    - logs_name logs_blacklist_name logs_blacklistc_show_name
+    - logs_name logs_blacklistcat_name logs_blacklistcat_add_name
+    - logs_name logs_blacklistcat_name logs_blacklistcat_remove_name
+    - logs_name logs_blacklistcat_name logs_blacklistcat_show_name
+    - logs_name logs_blacklistr_name logs_blacklistr_add_name
+    - logs_name logs_blacklistr_name logs_blacklistr_remove_name
+    - logs_name logs_blacklistr_name logs_blacklistr_show_name
+    - logs_name logs_blacklistu_name logs_blacklistu_add_name
+    - logs_name logs_blacklistu_name logs_blacklistu_remove_name
+    - logs_name logs_blacklistu_name logs_blacklistu_show_name
+    - logs_name logs_blacklistv_name logs_blacklistv_add_name
+    - logs_name logs_blacklistv_name logs_blacklistv_remove_name
+    - logs_name logs_blacklistv_name logs_blacklistv_show_name
+    - logs_name logs_configure_name
+    - logs_name logs_remove_name
+    - logs_name logs_set_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+      target:
+      - bot
+      - self
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        - target
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        - target
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006
+  minigame_name:
+    tree_paths:
+    - minigame_name minigames_cchcmds_name minigames_rcchallengech_name
+    - minigame_name minigames_cchcmds_name minigames_setcchallengech_name
+    - minigame_name minigames_cchcmds_name minigames_setcchallengep_name
+    - minigame_name minigames_cmodescmds_name minigames_removecmodesch_name
+    - minigame_name minigames_cmodescmds_name minigames_setcmodesch_name
+    - minigame_name minigames_cmodescmds_name minigames_setcmodesprogress_name
+    - minigame_name minigames_countingcmds_name minigames_removecountingch_name
+    - minigame_name minigames_countingcmds_name minigames_setcountingch_name
+    - minigame_name minigames_countingcmds_name minigames_setcprogress_name
+    - minigame_name minigames_wordchaincmds_name minigames_removewordchch_name
+    - minigame_name minigames_wordchaincmds_name minigames_setwordcainch_name
+    dimensions:
+      permission:
+      - admin
+      - restricted
+    per_path: true
+    layers:
+      unit_logic:
+      - axes:
+        - permission
+        per_path: true
+      integration:
+      - axes:
+        - permission
+        per_path: true
+        overrides:
+          permission: *id004
+      behavior_spec:
+      - axes: []
+        per_path: true
+      e2e_live:
+      - axes:
+        - permission
+        - target
+        - message_kind
+        per_path: true
+        overrides:
+          permission:
+          - admin
+          target: *id005
+          message_kind: *id006

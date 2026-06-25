@@ -7,15 +7,17 @@ from commands.giveaway.end_giveaway import end_giveaway
 from commands.giveaway.reroll_giveaway import reroll_giveaway
 from commands.giveaway.start import GiveawayBuilder, start_giveaway
 from commands.giveaway.utility import sendGiveaway
-from tests.helpers.discord import make_permissions, make_text_channel
+from tests.helpers.discord import make_guild, make_permissions, make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
 
 pytestmark = pytest.mark.asyncio
 
+_DEFAULT_GUILD_ID = str(make_guild().id)
+
 
 def _giveaway(**kwargs):
     g = MagicMock()
-    g.guild_id = kwargs.get("guild_id", "123456789")
+    g.guild_id = kwargs.get("guild_id", _DEFAULT_GUILD_ID)
     g.ended = kwargs.get("ended", False)
     g.started = kwargs.get("started", True)
     g.channel_id = kwargs.get("channel_id", "444444444")

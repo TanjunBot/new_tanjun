@@ -1,8 +1,27 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
+
+from api import set_bot
+from tests.helpers.db import make_mock_pool
+
+
+class _LoopProxy:
+    def __init__(self, loop: asyncio.AbstractEventLoop) -> None:
+        self._loop = loop
+        self._tasks: list[asyncio.Task[Any]] = []
+
+    def create_task(self, coro: Any, *, name: str | None = None) -> asyncio.Task[Any]:
+        task = self._loop.create_task(coro, name=name)
+        self._tasks.append(task)
+        return task
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._loop, name)
+
 
 EXTENSION_NAMES = [
     "extensions.admin",
@@ -36,11 +55,14 @@ async def load_extension(bot: MagicMock, extension: str) -> Any:
 
 
 def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
+    if pool is None:
+        pool, _, _ = make_mock_pool()
     bot = MagicMock()
-    bot._pool = pool or MagicMock()
+    bot._pool = pool
     bot._pool_ready = asyncio.Event()
     bot._pool_ready.set()
     bot._tree_commands = []
+    bot._loop_proxy: _LoopProxy | None = None
 
     def _add_command(cmd: Any) -> None:
         bot._tree_commands.append(cmd)
@@ -53,8 +75,6 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot.tree.on_error = None
     bot.load_extension = AsyncMock()
     bot.cogs = {}
-    bot.loop = MagicMock()
-    bot.loop.create_task = MagicMock(return_value=MagicMock(done=lambda: False))
 
     async def _add_cog(cog: Any) -> None:
         bot.cogs[cog.__class__.__name__] = cog
@@ -66,19 +86,60 @@ def make_bot_for_extensions(pool: MagicMock | None = None) -> MagicMock:
     bot.get_cog = lambda name: bot.cogs.get(name)
     bot.user = MagicMock()
     bot.user.id = 999999999
+    set_bot(bot)
     return bot
+
+
+def _wire_bot_loop(bot: MagicMock) -> None:
+    running_loop = asyncio.get_running_loop()
+    loop_proxy = getattr(bot, "_loop_proxy", None)
+    if loop_proxy is None:
+        loop_proxy = _LoopProxy(running_loop)
+        bot._loop_proxy = loop_proxy
+    bot.loop = loop_proxy
 
 
 async def fire_cog_on_ready(bot: MagicMock) -> None:
     if hasattr(bot._pool_ready, "set") and not bot._pool_ready.is_set():
         bot._pool_ready.set()
-    running_loop = asyncio.get_running_loop()
-    if getattr(bot, "loop", None) is None:
-        bot.loop = running_loop
+    _wire_bot_loop(bot)
     for cog in bot.cogs.values():
         on_ready = getattr(cog, "on_ready", None)
         if on_ready is not None:
             await on_ready()
+
+
+async def teardown_extension_bot(bot: MagicMock) -> None:
+    loop_proxy = getattr(bot, "_loop_proxy", None)
+    if loop_proxy is not None:
+        for task in list(loop_proxy._tasks):
+            if not task.done():
+                task.cancel()
+    for cog in bot.cogs.values():
+        log_task = getattr(cog, "_log_consumer_task", None)
+        if log_task is not None and hasattr(log_task, "done") and not log_task.done():
+            log_task.cancel()
+        for attr_name in dir(cog):
+            loop_obj = getattr(cog, attr_name, None)
+            if loop_obj is None:
+                continue
+            is_running = getattr(loop_obj, "is_running", None)
+            cancel = getattr(loop_obj, "cancel", None)
+            if not callable(is_running) or not callable(cancel):
+                continue
+            with contextlib.suppress(Exception):
+                if is_running():
+                    cancel()
+    if loop_proxy is not None and loop_proxy._tasks:
+        await asyncio.gather(*loop_proxy._tasks, return_exceptions=True)
+    set_bot(None)
+
+
+async def build_extension_bot() -> MagicMock:
+    bot = make_bot_for_extensions()
+    await load_all_extensions(bot)
+    await fire_cog_on_ready(bot)
+    return bot
 
 
 def make_bot_with_real_tree() -> Any:

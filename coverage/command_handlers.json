@@ -1,0 +1,1763 @@
+{
+  "by_path": {
+    "admin_channels_name admin_lock_name": "commands.admin.lock.lock_channel",
+    "admin_channels_name admin_nuke_name": "commands.admin.nuke.nuke_channel",
+    "admin_channels_name admin_slowmode_name": "commands.admin.slowmode.set_slowmode",
+    "admin_channels_name admin_unlock_name": "commands.admin.unlock.unlock_channel",
+    "admin_emoji_name admin_boosterrole_name": "commands.admin.boosterrole.create_booster_role",
+    "admin_emoji_name admin_copy7tv_name": "commands.admin.copy_7tv_emote.copy_7tv_emote",
+    "admin_emoji_name admin_copyemoji_name": "commands.admin.copy_emoji.copy_emoji",
+    "admin_emoji_name admin_createemoji_name": "commands.admin.createemoji.create_emoji",
+    "admin_jointocreate_name admin_jtc_removechannel_name": "commands.admin.join_to_create.removejointocreatechannel.removejointocreatechannel",
+    "admin_jointocreate_name admin_jtc_setchannel_name": "commands.admin.join_to_create.jointocreatechannel.jointocreatechannel",
+    "admin_localegroup_name admin_setlocale_name": "commands.admin.set_locale.set_locale",
+    "admin_messaging_name admin_embed_name": "commands.admin.embedcreator.create_embed",
+    "admin_messaging_name admin_say_name": "commands.admin.say.say",
+    "admin_moderation_name admin_ban_name": "commands.admin.ban.ban",
+    "admin_moderation_name admin_kick_name": "commands.admin.kick.kick",
+    "admin_moderation_name admin_nickname_name": "commands.admin.nickname.change_nickname",
+    "admin_moderation_name admin_removetimeout_name": "commands.admin.removetimeout.remove_timeout",
+    "admin_moderation_name admin_timeout_name": "commands.admin.timeout.timeout",
+    "admin_moderation_name admin_unban_name": "commands.admin.unban.unban",
+    "admin_purgegroup_name admin_purge_name": "commands.admin.purge.purge",
+    "admin_report_name admin_rps_removechannel_name": "commands.admin.reports.remove_channel.remove_channel",
+    "admin_report_name admin_rps_setchannel_name": "commands.admin.reports.set_channel.set_channel",
+    "admin_report_name admin_rps_showreports_name": "commands.admin.reports.show_reports.show_reports",
+    "admin_report_name admin_rps_unblockreporter_name": "commands.admin.reports.unblock_reporter.unblock_reporter_cmd",
+    "admin_role_name admin_addrole_name": "commands.admin.addrole.addrole",
+    "admin_role_name admin_removerole_name": "commands.admin.removerole.removerole",
+    "admin_rolemanage_name admin_copyrole_name": "commands.admin.copyrole.copyrole",
+    "admin_rolemanage_name admin_createrole_name": "commands.admin.createrole.createrole",
+    "admin_rolemanage_name admin_deleterole_name": "commands.admin.deleterole.deleterole",
+    "admin_rolemanage_name admin_moverole_name": "commands.admin.moverole.moverole",
+    "admin_setup_name admin_createticket_name": "commands.admin.ticket.create_ticket.create_ticket",
+    "admin_triggermessages_name admin_tm_add_name": "commands.admin.trigger_messages.add.add_trigger_message",
+    "admin_triggermessages_name admin_tm_configure_name": "commands.admin.trigger_messages.configure.configure_trigger_messages",
+    "admin_warn_name admin_warn_add_name": "commands.admin.warn.warn_user",
+    "admin_warn_name admin_warn_config_name": "commands.admin.warnconfig.warn_config",
+    "admin_warn_name admin_warn_view_name": "commands.admin.viewwarns.view_warnings",
+    "ai_name ai_askcustom_name": "tests.helpers.command_matrix.manual_handlers.ask_custom_situation",
+    "ai_name ai_askgpt_name": "commands.ai.ask_gpt.ask_gpt",
+    "ai_name ai_asktanjuwun_name": "commands.ai.ask_gpt.ask_gpt",
+    "ai_name ai_customsituations_name ai_createcustom_name": "commands.ai.add_custom_situation.add_custom_situation",
+    "ai_name ai_customsituations_name ai_deletecustom_name": "commands.ai.delete_custom_situation.delete_custom_situation",
+    "ai_name ai_tokens_name": "commands.ai.show_tokens.show_tokens",
+    "channel_name channel_ds_name channel_ds_add_name": "commands.channel.dynamicslowmode.addDynamicslowmode",
+    "channel_name channel_ds_name channel_ds_get_name": "commands.channel.dynamicslowmode.getDynamicslowmode_channels",
+    "channel_name channel_ds_name channel_ds_remove_name": "commands.channel.dynamicslowmode.removeDynamicslowmode",
+    "channel_name channel_farewell_name channel_farewell_remove_ch_name": "commands.channel.farewell.removeFarewellChannel",
+    "channel_name channel_farewell_name channel_farewell_set_ch_name": "commands.channel.farewell.setFarewellChannel",
+    "channel_name channel_media_name channel_media_name": "commands.channel.media.addMediaChannel",
+    "channel_name channel_media_name channel_mediaremove_name": "commands.channel.media.removeMediaChannel",
+    "channel_name channel_welcome_name channel_w_name": "commands.channel.welcome.setWelcomeChannel",
+    "channel_name channel_welcome_name channel_w_remove_name": "commands.channel.welcome.removeWelcomeChannel",
+    "funcmd_name fun_boop_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_hug_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_kiss_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_laugh_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_pat_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_poke_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_slap_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_tickle_name": "commands.fun.funcommands.fun_command",
+    "funcmd_name fun_wave_name": "commands.fun.funcommands.fun_command",
+    "games_name games_advanced_ttt_name": "commands.games.advanced_tic_tac_toe.advanced_tic_tac_toe",
+    "games_name games_akinator_name": "commands.games.akinator.akinator",
+    "games_name games_battleship_name": "commands.games.battleship.battleship",
+    "games_name games_connect4_name": "commands.games.connect4.connect4",
+    "games_name games_flagquiz_name": "commands.games.flag_quiz.flag_quiz",
+    "games_name games_hangman_name": "commands.games.hangman.hangman",
+    "games_name games_memory_name": "commands.games.memory.memory",
+    "games_name games_rps_name": "commands.games.rps.rps",
+    "games_name games_ttt_name": "commands.games.tic_tac_toe.tic_tac_toe",
+    "games_name games_wordle_name": "commands.games.wordle.wordle",
+    "giveaway_name giveaway_blacklist_name giveaway_bl_add_role_name": "commands.giveaway.add_blacklist_role.add_blacklist_role",
+    "giveaway_name giveaway_blacklist_name giveaway_bl_add_user_name": "commands.giveaway.add_blacklist_user.add_blacklist_user",
+    "giveaway_name giveaway_blacklist_name giveaway_bl_list_name": "commands.giveaway.list_blacklist.list_blacklist",
+    "giveaway_name giveaway_blacklist_name giveaway_bl_remove_role_name": "commands.giveaway.remove_blacklist_role.remove_blacklist_role",
+    "giveaway_name giveaway_blacklist_name giveaway_bl_remove_user_name": "commands.giveaway.remove_blacklist_user.remove_blacklist_user",
+    "giveaway_name giveaway_edit_name": "commands.giveaway.edit_giveaway.edit_giveaway",
+    "giveaway_name giveaway_end_name": "commands.giveaway.end_giveaway.end_giveaway",
+    "giveaway_name giveaway_reroll_name": "commands.giveaway.reroll_giveaway.reroll_giveaway",
+    "giveaway_name giveaway_start_name": "commands.giveaway.start.start_giveaway",
+    "image_name image_background_name": "commands.image.background.background",
+    "image_name image_blur_name": "commands.image._filter.apply_filter",
+    "image_name image_compress_name": "commands.image.compress.compress",
+    "image_name image_contour_name": "commands.image._filter.apply_filter",
+    "image_name image_detail_name": "commands.image._filter.apply_filter",
+    "image_name image_edgeenhance_name": "commands.image._filter.apply_filter",
+    "image_name image_emboss_name": "commands.image._filter.apply_filter",
+    "image_name image_findedges_name": "commands.image._filter.apply_filter",
+    "image_name image_mirror_name": "commands.image.mirror.mirror",
+    "image_name image_rescale_name": "commands.image.rescale.rescale",
+    "image_name image_resize_name": "commands.image.resize.resize",
+    "image_name image_sharpen_name": "commands.image._filter.apply_filter",
+    "image_name image_smooth_name": "commands.image._filter.apply_filter",
+    "level_blacklist_name level_blacklist_addc_name": "commands.level.level_blacklist.add_channel_to_blacklist_command",
+    "level_blacklist_name level_blacklist_addr_name": "commands.level.level_blacklist.add_role_to_blacklist_command",
+    "level_blacklist_name level_blacklist_addu_name": "commands.level.level_blacklist.add_user_to_blacklist_command",
+    "level_blacklist_name level_blacklist_removec_name": "commands.level.level_blacklist.remove_channel_from_blacklist_command",
+    "level_blacklist_name level_blacklist_remover_name": "commands.level.level_blacklist.remove_role_from_blacklist_command",
+    "level_blacklist_name level_blacklist_removeu_name": "commands.level.level_blacklist.remove_user_from_blacklist_command",
+    "level_blacklist_name level_blacklist_show_name": "commands.level.level_blacklist.show_blacklist_command",
+    "level_boosts_name level_boosts_addchannel_name": "commands.level.level_boosts.add_channel_boost_command",
+    "level_boosts_name level_boosts_addrole_name": "commands.level.level_boosts.add_role_boost_command",
+    "level_boosts_name level_boosts_adduser_name": "commands.level.level_boosts.add_user_boost_command",
+    "level_boosts_name level_boosts_calculate_name": "commands.level.level_boosts.calculate_user_channel_boost_command",
+    "level_boosts_name level_boosts_removechannel_name": "commands.level.level_boosts.remove_channel_boost_command",
+    "level_boosts_name level_boosts_removerole_name": "commands.level.level_boosts.remove_role_boost_command",
+    "level_boosts_name level_boosts_removeuser_name": "commands.level.level_boosts.remove_user_boost_command",
+    "level_boosts_name level_boosts_show_name": "commands.level.level_boosts.show_boosts_command",
+    "level_config_name level_addlevelrole_name": "commands.level.add_level_role.add_level_role_command",
+    "level_config_name level_changelevelupmessage_name": "commands.level.change_levelup_message.change_levelup_message",
+    "level_config_name level_changexpscaling_name": "commands.level.change_xp_scaling.change_xp_scaling_command",
+    "level_config_name level_disable_name": "commands.level.disable_level_system.disable_level_system",
+    "level_config_name level_disablelevelupmessage_name": "commands.level.disable_levelup_message.disable_levelup_message",
+    "level_config_name level_enable_name": "commands.level.enable_level_system.enable_level_system",
+    "level_config_name level_enablelevelupmessage_name": "commands.level.enable_levelup_message.enable_levelup_message",
+    "level_config_name level_givexp_name": "commands.level.give_xp.give_xp_command",
+    "level_config_name level_removelevelrole_name": "commands.level.remove_level_role.remove_level_role_command",
+    "level_config_name level_setlevelupchannel_name": "commands.level.set_levelup_channel.set_levelup_channel_command",
+    "level_config_name level_settextcooldown_name": "commands.level.level_set_xp_cooldown.set_text_cooldown_command",
+    "level_config_name level_setvoicecooldown_name": "commands.level.level_set_xp_cooldown.set_voice_cooldown_command",
+    "level_config_name level_showlevelroles_name": "commands.level.show_level_roles.show_level_roles_command",
+    "level_config_name level_showxpscalings_name": "commands.level.change_xp_scaling.show_xp_scalings",
+    "level_config_name level_takexp_name": "commands.level.take_xp.take_xp_command",
+    "levelcommands_name level_leaderboard_name": "commands.level.leaderboard.leaderboard",
+    "levelcommands_name level_rank_name": "commands.level.level_rankcard.show_rankcard_command",
+    "levelcommands_name level_setbackground_name": "commands.level.level_rankcard.set_background_command",
+    "logs_name logs_blacklist_name logs_blacklistc_add_name": "commands.logs.blacklist_channel.blacklist_channel.blacklist_channel",
+    "logs_name logs_blacklist_name logs_blacklistc_remove_name": "commands.logs.blacklist_channel.blacklist_remove_channel.blacklist_remove_channel",
+    "logs_name logs_blacklist_name logs_blacklistc_show_name": "commands.logs.blacklist_channel.blacklist_list_channel.blacklist_list_channel",
+    "logs_name logs_blacklistcat_name logs_blacklistcat_add_name": "commands.logs.blacklist_category.blacklist_category.blacklist_category",
+    "logs_name logs_blacklistcat_name logs_blacklistcat_remove_name": "commands.logs.blacklist_category.blacklist_remove_category.blacklist_remove_category",
+    "logs_name logs_blacklistcat_name logs_blacklistcat_show_name": "commands.logs.blacklist_category.blacklist_list_category.blacklist_list_category",
+    "logs_name logs_blacklistr_name logs_blacklistr_add_name": "commands.logs.blacklist_role.blacklist_role.blacklist_role",
+    "logs_name logs_blacklistr_name logs_blacklistr_remove_name": "commands.logs.blacklist_role.blacklist_remove_role.blacklist_remove_role",
+    "logs_name logs_blacklistr_name logs_blacklistr_show_name": "commands.logs.blacklist_role.blacklist_list_role.blacklist_list_role",
+    "logs_name logs_blacklistu_name logs_blacklistu_add_name": "commands.logs.blacklist_user.blacklist_user.blacklist_user",
+    "logs_name logs_blacklistu_name logs_blacklistu_remove_name": "commands.logs.blacklist_user.blacklist_remove_user.blacklist_remove_user",
+    "logs_name logs_blacklistu_name logs_blacklistu_show_name": "commands.logs.blacklist_user.blacklist_list_user.blacklist_list_user",
+    "logs_name logs_blacklistv_name logs_blacklistv_add_name": "commands.logs.blacklist_voice.blacklist_voice.blacklist_voice",
+    "logs_name logs_blacklistv_name logs_blacklistv_remove_name": "commands.logs.blacklist_voice.blacklist_remove_voice.blacklist_remove_voice",
+    "logs_name logs_blacklistv_name logs_blacklistv_show_name": "commands.logs.blacklist_voice.blacklist_list_voice.blacklist_list_voice",
+    "logs_name logs_configure_name": "commands.logs.configure_logs.configure_logs",
+    "logs_name logs_remove_name": "commands.logs.remove_log_channel.remove_log_channel",
+    "logs_name logs_set_name": "commands.logs.set_log_channel.set_log_channel",
+    "math_name math_calc_name": "commands.math.calc.calc",
+    "math_name math_calculator_name": "commands.math.calculator.calculator_command",
+    "math_name math_faculty_name": "commands.math.faculty.faculty_command",
+    "math_name math_num2word_name": "commands.math.num2word.num2word",
+    "math_name math_plotfunction_name": "commands.math.plot_function.plot_function_command",
+    "math_name math_randomnumber_name": "commands.math.randomnumber.random_number_command",
+    "minigame_name minigames_cchcmds_name minigames_rcchallengech_name": "commands.minigames.counting_challenge.removecountingchannel.removecountingchallengechannel",
+    "minigame_name minigames_cchcmds_name minigames_setcchallengech_name": "commands.minigames.counting_challenge.setcountingchannel.setCountingChannel",
+    "minigame_name minigames_cchcmds_name minigames_setcchallengep_name": "commands.minigames.counting_challenge.setcountingprogress.setCountingProgress",
+    "minigame_name minigames_cmodescmds_name minigames_removecmodesch_name": "commands.minigames.counting_modes.removecountingchannel.removecountingmodeschannel",
+    "minigame_name minigames_cmodescmds_name minigames_setcmodesch_name": "commands.minigames.counting_modes.setcountingchannel.setCountingChannel",
+    "minigame_name minigames_cmodescmds_name minigames_setcmodesprogress_name": "commands.minigames.counting_modes.setcountingprogress.setCountingProgress",
+    "minigame_name minigames_countingcmds_name minigames_removecountingch_name": "commands.minigames.counting.removecountingchannel.removeCountingChannel",
+    "minigame_name minigames_countingcmds_name minigames_setcountingch_name": "commands.minigames.counting.setcountingchannel.setCountingChannel",
+    "minigame_name minigames_countingcmds_name minigames_setcprogress_name": "commands.minigames.counting.setcountingprogress.setCountingProgress",
+    "minigame_name minigames_wordchaincmds_name minigames_removewordchch_name": "commands.minigames.wordchain.removewordchainchannel.removewordchainchannel",
+    "minigame_name minigames_wordchaincmds_name minigames_setwordcainch_name": "commands.minigames.wordchain.setwordchainchannel.setwordchainchannel",
+    "setup_name setup_booster_name": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
+    "setup_name setup_giveaway_name": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
+    "setup_name setup_level_name": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
+    "setup_name setup_logs_name": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
+    "utility_help_name": "commands.utility.help.help",
+    "utility_scheduledmessage_name utility_listscheduled_name": "commands.utility.listscheduled.list_scheduled_messages",
+    "utility_scheduledmessage_name utility_removescheduled_name": "commands.utility.removescheduled.remove_scheduled_message",
+    "utility_scheduledmessage_name utility_schedulemessage_name": "commands.utility.schedulemessage.schedule_message",
+    "utilitycmd_name utility_afk_name": "commands.utility.afk.afk",
+    "utilitycmd_name utility_autopublish_name utility_autopublish_name": "commands.utility.autopublish.autopublish",
+    "utilitycmd_name utility_autopublish_name utility_autopublish_remove_name": "commands.utility.autopublish.autopublish_remove",
+    "utilitycmd_name utility_avatar_name": "commands.utility.avatar.avatar",
+    "utilitycmd_name utility_avatardecoration_name": "commands.utility.avatar_decoration.avatarDecoration",
+    "utilitycmd_name utility_banner_name": "commands.utility.banner.banner",
+    "utilitycmd_name utility_boosterchannel_name utility_boosterchannelinfo_name": "tests.helpers.command_matrix.manual_handlers.booster_channel_info",
+    "utilitycmd_name utility_boosterchannel_name utility_claimboosterchannel_name": "commands.utility.claim_booster_channel.claimBoosterChannel",
+    "utilitycmd_name utility_boosterchannel_name utility_deleteboosterch_name": "commands.utility.delete_booster_channel.deleteBoosterChannel",
+    "utilitycmd_name utility_boosterchannel_name utility_setupboosterchannel_name": "commands.utility.setup_booster_channel.setupBoosterChannel",
+    "utilitycmd_name utility_boosterrole_name utility_boosterroleinfo_name": "tests.helpers.command_matrix.manual_handlers.booster_role_info",
+    "utilitycmd_name utility_boosterrole_name utility_claimboosterrole_name": "commands.utility.claim_booster_role.claimBoosterRole",
+    "utilitycmd_name utility_boosterrole_name utility_deleteboosterrole_name": "commands.utility.delete_booster_role.deleteBoosterRole",
+    "utilitycmd_name utility_boosterrole_name utility_setupboosterrole_name": "commands.utility.setup_booster_role.setupBoosterRole",
+    "utilitycmd_name utility_bs_name utility_bs_battlelog_name": "commands.utility.brawlstars.battlelog.battlelog",
+    "utilitycmd_name utility_bs_name utility_bs_brawlers_name": "commands.utility.brawlstars.brawlers.brawlers",
+    "utilitycmd_name utility_bs_name utility_bs_club_name": "commands.utility.brawlstars.club.club",
+    "utilitycmd_name utility_bs_name utility_bs_events_name": "commands.utility.brawlstars.events.events",
+    "utilitycmd_name utility_bs_name utility_bs_link_name": "commands.utility.brawlstars.link.link",
+    "utilitycmd_name utility_bs_name utility_bs_playerinfo_name": "commands.utility.brawlstars.playerinfo.player_info",
+    "utilitycmd_name utility_bs_name utility_bs_unlink_name": "commands.utility.brawlstars.unlink.unlink",
+    "utilitycmd_name utility_feedback_name": "tests.helpers.command_matrix.manual_handlers.feedback_command",
+    "utilitycmd_name utility_messagetracking_name utility_messageoptin_name": "commands.utility.messagetrackingoptin.optIn",
+    "utilitycmd_name utility_messagetracking_name utility_messageoptout_name": "commands.utility.messagetrackingoptout.optOut",
+    "utilitycmd_name utility_report_name": "commands.utility.report.report",
+    "utilitycmd_name utility_twitch_name utility_twitch_add_name": "commands.utility.twitch.add_twitch_live_notification.addTwitchLiveNotification",
+    "utilitycmd_name utility_twitch_name utility_twitch_see_name": "commands.utility.twitch.see_twitch_live_notifications.seeTwitchLiveNotifications"
+  },
+  "by_spec": {
+    "admin.AdminChannelCommands.lock": "commands.admin.lock.lock_channel",
+    "admin.AdminChannelCommands.nuke": "commands.admin.nuke.nuke_channel",
+    "admin.AdminChannelCommands.slowmode": "commands.admin.slowmode.set_slowmode",
+    "admin.AdminChannelCommands.unlock": "commands.admin.unlock.unlock_channel",
+    "admin.AdminEmojiCommands.claimboosterrole": "commands.admin.boosterrole.create_booster_role",
+    "admin.AdminEmojiCommands.copy_7tv": "commands.admin.copy_7tv_emote.copy_7tv_emote",
+    "admin.AdminEmojiCommands.copy_emoji": "commands.admin.copy_emoji.copy_emoji",
+    "admin.AdminEmojiCommands.createemoji": "commands.admin.createemoji.create_emoji",
+    "admin.AdminLocaleCommands.set_locale": "commands.admin.set_locale.set_locale",
+    "admin.AdminMessagingCommands.embed": "commands.admin.embedcreator.create_embed",
+    "admin.AdminMessagingCommands.say": "commands.admin.say.say",
+    "admin.AdminModerationCommands.ban": "commands.admin.ban.ban",
+    "admin.AdminModerationCommands.kick": "commands.admin.kick.kick",
+    "admin.AdminModerationCommands.nickname": "commands.admin.nickname.change_nickname",
+    "admin.AdminModerationCommands.removetimeout": "commands.admin.removetimeout.remove_timeout",
+    "admin.AdminModerationCommands.timeout": "commands.admin.timeout.timeout",
+    "admin.AdminModerationCommands.unban": "commands.admin.unban.unban",
+    "admin.AdminPurgeCommands.purge": "commands.admin.purge.purge",
+    "admin.AdminSetupCommands.create_ticket": "commands.admin.ticket.create_ticket.create_ticket",
+    "admin.JoinToCreateCommands.remove_channel": "commands.admin.join_to_create.removejointocreatechannel.removejointocreatechannel",
+    "admin.JoinToCreateCommands.set_channel": "commands.admin.join_to_create.jointocreatechannel.jointocreatechannel",
+    "admin.ReportCommands.remove_channel": "commands.admin.reports.remove_channel.remove_channel",
+    "admin.ReportCommands.set_channel": "commands.admin.reports.set_channel.set_channel",
+    "admin.ReportCommands.show_reports": "commands.admin.reports.show_reports.show_reports",
+    "admin.ReportCommands.unblock_reporter": "commands.admin.reports.unblock_reporter.unblock_reporter_cmd",
+    "admin.RoleCommands.addrole": "commands.admin.addrole.addrole",
+    "admin.RoleCommands.removerole": "commands.admin.removerole.removerole",
+    "admin.RoleManageCommands.copyrole": "commands.admin.copyrole.copyrole",
+    "admin.RoleManageCommands.createrole": "commands.admin.createrole.createrole",
+    "admin.RoleManageCommands.deleterole": "commands.admin.deleterole.deleterole",
+    "admin.RoleManageCommands.moverole": "commands.admin.moverole.moverole",
+    "admin.TriggerMessagesCommands.add": "commands.admin.trigger_messages.add.add_trigger_message",
+    "admin.TriggerMessagesCommands.configure": "commands.admin.trigger_messages.configure.configure_trigger_messages",
+    "admin.WarnCommands.add": "commands.admin.warn.warn_user",
+    "admin.WarnCommands.config": "commands.admin.warnconfig.warn_config",
+    "admin.WarnCommands.view": "commands.admin.viewwarns.view_warnings",
+    "ai.AiCommands.ask_custom_situation": "tests.helpers.command_matrix.manual_handlers.ask_custom_situation",
+    "ai.AiCommands.ask_gpt_command": "commands.ai.ask_gpt.ask_gpt",
+    "ai.AiCommands.ask_tanjuwun_command": "commands.ai.ask_gpt.ask_gpt",
+    "ai.AiCommands.tokens_command": "commands.ai.show_tokens.show_tokens",
+    "ai.CustomSituationCommands.add_custom": "commands.ai.add_custom_situation.add_custom_situation",
+    "ai.CustomSituationCommands.delete_custom": "commands.ai.delete_custom_situation.delete_custom_situation",
+    "channel.DynamicslowmodeCommands.add_dynamicslowmode": "commands.channel.dynamicslowmode.addDynamicslowmode",
+    "channel.DynamicslowmodeCommands.get_dynamicslowmode_channels": "commands.channel.dynamicslowmode.getDynamicslowmode_channels",
+    "channel.DynamicslowmodeCommands.remove_dynamicslowmode": "commands.channel.dynamicslowmode.removeDynamicslowmode",
+    "channel.FarewellCommands.remove_farewell_channel": "commands.channel.farewell.removeFarewellChannel",
+    "channel.FarewellCommands.set_farewell_channel": "commands.channel.farewell.setFarewellChannel",
+    "channel.MediaCommands.media_add_cmd": "commands.channel.media.addMediaChannel",
+    "channel.MediaCommands.media_remove_cmd": "commands.channel.media.removeMediaChannel",
+    "channel.WelcomeCommands.remove_welcome": "commands.channel.welcome.removeWelcomeChannel",
+    "channel.WelcomeCommands.welcome": "commands.channel.welcome.setWelcomeChannel",
+    "fun.FunCommands.boop": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.hug": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.kiss": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.laugh": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.pat": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.poke": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.slap": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.tickle": "commands.fun.funcommands.fun_command",
+    "fun.FunCommands.wave": "commands.fun.funcommands.fun_command",
+    "games.GameCommands.advanced_ttt_cmd": "commands.games.advanced_tic_tac_toe.advanced_tic_tac_toe",
+    "games.GameCommands.akinator_cmd": "commands.games.akinator.akinator",
+    "games.GameCommands.battleship_cmd": "commands.games.battleship.battleship",
+    "games.GameCommands.connect4_cmd": "commands.games.connect4.connect4",
+    "games.GameCommands.flag_quiz_cmd": "commands.games.flag_quiz.flag_quiz",
+    "games.GameCommands.hangman_cmd": "commands.games.hangman.hangman",
+    "games.GameCommands.memory_cmd": "commands.games.memory.memory",
+    "games.GameCommands.rps_cmd": "commands.games.rps.rps",
+    "games.GameCommands.tic_tac_toe_cmd": "commands.games.tic_tac_toe.tic_tac_toe",
+    "games.GameCommands.wordle_cmd": "commands.games.wordle.wordle",
+    "giveaway.BlacklistCommands.add_role": "commands.giveaway.add_blacklist_role.add_blacklist_role",
+    "giveaway.BlacklistCommands.add_user": "commands.giveaway.add_blacklist_user.add_blacklist_user",
+    "giveaway.BlacklistCommands.list": "commands.giveaway.list_blacklist.list_blacklist",
+    "giveaway.BlacklistCommands.remove_role": "commands.giveaway.remove_blacklist_role.remove_blacklist_role",
+    "giveaway.BlacklistCommands.remove_user": "commands.giveaway.remove_blacklist_user.remove_blacklist_user",
+    "giveaway.GiveawayCommands.edit": "commands.giveaway.edit_giveaway.edit_giveaway",
+    "giveaway.GiveawayCommands.end": "commands.giveaway.end_giveaway.end_giveaway",
+    "giveaway.GiveawayCommands.reroll": "commands.giveaway.reroll_giveaway.reroll_giveaway",
+    "giveaway.GiveawayCommands.start": "commands.giveaway.start.start_giveaway",
+    "image.ImageCommands.background": "commands.image.background.background",
+    "image.ImageCommands.blurimage": "commands.image._filter.apply_filter",
+    "image.ImageCommands.compress": "commands.image.compress.compress",
+    "image.ImageCommands.contourimage": "commands.image._filter.apply_filter",
+    "image.ImageCommands.detailimage": "commands.image._filter.apply_filter",
+    "image.ImageCommands.edgeenhance": "commands.image._filter.apply_filter",
+    "image.ImageCommands.emboss": "commands.image._filter.apply_filter",
+    "image.ImageCommands.findedges": "commands.image._filter.apply_filter",
+    "image.ImageCommands.mirror": "commands.image.mirror.mirror",
+    "image.ImageCommands.rescale": "commands.image.rescale.rescale",
+    "image.ImageCommands.resize": "commands.image.resize.resize",
+    "image.ImageCommands.sharpen": "commands.image._filter.apply_filter",
+    "image.ImageCommands.smooth": "commands.image._filter.apply_filter",
+    "level.BlacklistCommands.add_channel": "commands.level.level_blacklist.add_channel_to_blacklist_command",
+    "level.BlacklistCommands.add_role": "commands.level.level_blacklist.add_role_to_blacklist_command",
+    "level.BlacklistCommands.add_user": "commands.level.level_blacklist.add_user_to_blacklist_command",
+    "level.BlacklistCommands.remove_channel": "commands.level.level_blacklist.remove_channel_from_blacklist_command",
+    "level.BlacklistCommands.remove_role": "commands.level.level_blacklist.remove_role_from_blacklist_command",
+    "level.BlacklistCommands.remove_user": "commands.level.level_blacklist.remove_user_from_blacklist_command",
+    "level.BlacklistCommands.show": "commands.level.level_blacklist.show_blacklist_command",
+    "level.LevelBoostCommands.add_channel_boost": "commands.level.level_boosts.add_channel_boost_command",
+    "level.LevelBoostCommands.add_role_boost": "commands.level.level_boosts.add_role_boost_command",
+    "level.LevelBoostCommands.add_user_boost": "commands.level.level_boosts.add_user_boost_command",
+    "level.LevelBoostCommands.calculate_user_channel_boost": "commands.level.level_boosts.calculate_user_channel_boost_command",
+    "level.LevelBoostCommands.remove_channel_boost": "commands.level.level_boosts.remove_channel_boost_command",
+    "level.LevelBoostCommands.remove_role_boost": "commands.level.level_boosts.remove_role_boost_command",
+    "level.LevelBoostCommands.remove_user_boost": "commands.level.level_boosts.remove_user_boost_command",
+    "level.LevelBoostCommands.show_boosts": "commands.level.level_boosts.show_boosts_command",
+    "level.LevelConfigCommands.addlevelrole": "commands.level.add_level_role.add_level_role_command",
+    "level.LevelConfigCommands.changelevelupmessage": "commands.level.change_levelup_message.change_levelup_message",
+    "level.LevelConfigCommands.changexpscaling": "commands.level.change_xp_scaling.change_xp_scaling_command",
+    "level.LevelConfigCommands.disablelevelsystem": "commands.level.disable_level_system.disable_level_system",
+    "level.LevelConfigCommands.disablelevelupmessage": "commands.level.disable_levelup_message.disable_levelup_message",
+    "level.LevelConfigCommands.enablelevelsystem": "commands.level.enable_level_system.enable_level_system",
+    "level.LevelConfigCommands.enablelevelupmessage": "commands.level.enable_levelup_message.enable_levelup_message",
+    "level.LevelConfigCommands.give_xp": "commands.level.give_xp.give_xp_command",
+    "level.LevelConfigCommands.removelevelrole": "commands.level.remove_level_role.remove_level_role_command",
+    "level.LevelConfigCommands.setlevelupchannel": "commands.level.set_levelup_channel.set_levelup_channel_command",
+    "level.LevelConfigCommands.settextcooldown": "commands.level.level_set_xp_cooldown.set_text_cooldown_command",
+    "level.LevelConfigCommands.setvoicecooldown": "commands.level.level_set_xp_cooldown.set_voice_cooldown_command",
+    "level.LevelConfigCommands.showlevelroles": "commands.level.show_level_roles.show_level_roles_command",
+    "level.LevelConfigCommands.showxpscalings": "commands.level.change_xp_scaling.show_xp_scalings",
+    "level.LevelConfigCommands.take_xp": "commands.level.take_xp.take_xp_command",
+    "level.levelCommands.leaderboard": "commands.level.leaderboard.leaderboard",
+    "level.levelCommands.rankcard": "commands.level.level_rankcard.show_rankcard_command",
+    "level.levelCommands.set_background": "commands.level.level_rankcard.set_background_command",
+    "logs.CategoryBlacklistCommands.add_blacklist_category_cmd": "commands.logs.blacklist_category.blacklist_category.blacklist_category",
+    "logs.CategoryBlacklistCommands.remove_blacklist_category_cmd": "commands.logs.blacklist_category.blacklist_remove_category.blacklist_remove_category",
+    "logs.CategoryBlacklistCommands.show_blacklist_category_cmd": "commands.logs.blacklist_category.blacklist_list_category.blacklist_list_category",
+    "logs.ChannelBlacklistCommands.add_blacklist_channel_cmd": "commands.logs.blacklist_channel.blacklist_channel.blacklist_channel",
+    "logs.ChannelBlacklistCommands.remove_blacklist_channel_cmd": "commands.logs.blacklist_channel.blacklist_remove_channel.blacklist_remove_channel",
+    "logs.ChannelBlacklistCommands.show_blacklist_channel_cmd": "commands.logs.blacklist_channel.blacklist_list_channel.blacklist_list_channel",
+    "logs.LogsCommands.configure_logs_cmd": "commands.logs.configure_logs.configure_logs",
+    "logs.LogsCommands.remove_log_channel_cmd": "commands.logs.remove_log_channel.remove_log_channel",
+    "logs.LogsCommands.set_log_channel_cmd": "commands.logs.set_log_channel.set_log_channel",
+    "logs.RoleBlacklistCommands.add_blacklist_role_cmd": "commands.logs.blacklist_role.blacklist_role.blacklist_role",
+    "logs.RoleBlacklistCommands.remove_blacklist_role_cmd": "commands.logs.blacklist_role.blacklist_remove_role.blacklist_remove_role",
+    "logs.RoleBlacklistCommands.show_blacklist_role_cmd": "commands.logs.blacklist_role.blacklist_list_role.blacklist_list_role",
+    "logs.UserBlacklistCommands.add_blacklist_user_cmd": "commands.logs.blacklist_user.blacklist_user.blacklist_user",
+    "logs.UserBlacklistCommands.remove_blacklist_user_cmd": "commands.logs.blacklist_user.blacklist_remove_user.blacklist_remove_user",
+    "logs.UserBlacklistCommands.show_blacklist_user_cmd": "commands.logs.blacklist_user.blacklist_list_user.blacklist_list_user",
+    "logs.VoiceBlacklistCommands.add_blacklist_voice_cmd": "commands.logs.blacklist_voice.blacklist_voice.blacklist_voice",
+    "logs.VoiceBlacklistCommands.remove_blacklist_voice_cmd": "commands.logs.blacklist_voice.blacklist_remove_voice.blacklist_remove_voice",
+    "logs.VoiceBlacklistCommands.show_blacklist_voice_cmd": "commands.logs.blacklist_voice.blacklist_list_voice.blacklist_list_voice",
+    "math.MathCommands.calc": "commands.math.calc.calc",
+    "math.MathCommands.calculator": "commands.math.calculator.calculator_command",
+    "math.MathCommands.faculty": "commands.math.faculty.faculty_command",
+    "math.MathCommands.num2word": "commands.math.num2word.num2word",
+    "math.MathCommands.plot_function": "commands.math.plot_function.plot_function_command",
+    "math.MathCommands.random_number": "commands.math.randomnumber.random_number_command",
+    "minigames.CountingChallengeCommands.removecountingchallengechannel": "commands.minigames.counting_challenge.removecountingchannel.removecountingchallengechannel",
+    "minigames.CountingChallengeCommands.setcountingchallengechannel": "commands.minigames.counting_challenge.setcountingchannel.setCountingChannel",
+    "minigames.CountingChallengeCommands.setcountingchallengeprogress": "commands.minigames.counting_challenge.setcountingprogress.setCountingProgress",
+    "minigames.CountingCommands.removecountingchannel": "commands.minigames.counting.removecountingchannel.removeCountingChannel",
+    "minigames.CountingCommands.setcountingchannel": "commands.minigames.counting.setcountingchannel.setCountingChannel",
+    "minigames.CountingCommands.setcountingprogress": "commands.minigames.counting.setcountingprogress.setCountingProgress",
+    "minigames.CountingModesCommands.removecountingmodeschannel": "commands.minigames.counting_modes.removecountingchannel.removecountingmodeschannel",
+    "minigames.CountingModesCommands.setcountingmodeschannel": "commands.minigames.counting_modes.setcountingchannel.setCountingChannel",
+    "minigames.CountingModesCommands.setcountingmodesprogress": "commands.minigames.counting_modes.setcountingprogress.setCountingProgress",
+    "minigames.WordChainCommands.removewordchainchannel": "commands.minigames.wordchain.removewordchainchannel.removewordchainchannel",
+    "minigames.WordChainCommands.setwordchainchannel": "commands.minigames.wordchain.setwordchainchannel.setwordchainchannel",
+    "setup_wizards.SetupWizardCommands.booster": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
+    "setup_wizards.SetupWizardCommands.giveaway": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
+    "setup_wizards.SetupWizardCommands.level": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
+    "setup_wizards.SetupWizardCommands.logs": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
+    "utility.AutoPublishCommands.autopublish": "commands.utility.autopublish.autopublish",
+    "utility.AutoPublishCommands.autopublish_remove": "commands.utility.autopublish.autopublish_remove",
+    "utility.BoosterChannelCommands.claimboosterchannel": "commands.utility.claim_booster_channel.claimBoosterChannel",
+    "utility.BoosterChannelCommands.deleteboosterchannel": "commands.utility.delete_booster_channel.deleteBoosterChannel",
+    "utility.BoosterChannelCommands.info": "tests.helpers.command_matrix.manual_handlers.booster_channel_info",
+    "utility.BoosterChannelCommands.setupboosterchannel": "commands.utility.setup_booster_channel.setupBoosterChannel",
+    "utility.BoosterRoleCommands.claimboosterrole": "commands.utility.claim_booster_role.claimBoosterRole",
+    "utility.BoosterRoleCommands.deleteboosterrole": "commands.utility.delete_booster_role.deleteBoosterRole",
+    "utility.BoosterRoleCommands.info": "tests.helpers.command_matrix.manual_handlers.booster_role_info",
+    "utility.BoosterRoleCommands.setupboosterrole": "commands.utility.setup_booster_role.setupBoosterRole",
+    "utility.BrawlStarsCommands.battlelog": "commands.utility.brawlstars.battlelog.battlelog",
+    "utility.BrawlStarsCommands.brawlers": "commands.utility.brawlstars.brawlers.brawlers",
+    "utility.BrawlStarsCommands.club": "commands.utility.brawlstars.club.club",
+    "utility.BrawlStarsCommands.events": "commands.utility.brawlstars.events.events",
+    "utility.BrawlStarsCommands.link": "commands.utility.brawlstars.link.link",
+    "utility.BrawlStarsCommands.playerinfo": "commands.utility.brawlstars.playerinfo.player_info",
+    "utility.BrawlStarsCommands.unlink": "commands.utility.brawlstars.unlink.unlink",
+    "utility.MessageTrackingCommands.messagetrackingoptin": "commands.utility.messagetrackingoptin.optIn",
+    "utility.MessageTrackingCommands.messagetrackingoptout": "commands.utility.messagetrackingoptout.optOut",
+    "utility.ScheduledMessageCommands.listscheduled": "commands.utility.listscheduled.list_scheduled_messages",
+    "utility.ScheduledMessageCommands.removescheduled": "commands.utility.removescheduled.remove_scheduled_message",
+    "utility.ScheduledMessageCommands.schedulemessage": "commands.utility.schedulemessage.schedule_message",
+    "utility.TwitchCommands.add": "commands.utility.twitch.add_twitch_live_notification.addTwitchLiveNotification",
+    "utility.TwitchCommands.see": "commands.utility.twitch.see_twitch_live_notifications.seeTwitchLiveNotifications",
+    "utility.UtilityCog.help_slash": "commands.utility.help.help",
+    "utility.UtilityCommands.afk": "commands.utility.afk.afk",
+    "utility.UtilityCommands.avatar": "commands.utility.avatar.avatar",
+    "utility.UtilityCommands.avatardecoration": "commands.utility.avatar_decoration.avatarDecoration",
+    "utility.UtilityCommands.banner": "commands.utility.banner.banner",
+    "utility.UtilityCommands.feedback": "tests.helpers.command_matrix.manual_handlers.feedback_command",
+    "utility.UtilityCommands.report": "commands.utility.report.report"
+  },
+  "path_meta": {
+    "admin_channels_name admin_lock_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminChannelCommands",
+      "handler": "commands.admin.lock.lock_channel",
+      "method": "lock",
+      "patch_target": "extensions.admin.lockChannelCommand"
+    },
+    "admin_channels_name admin_nuke_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminChannelCommands",
+      "handler": "commands.admin.nuke.nuke_channel",
+      "method": "nuke",
+      "patch_target": "extensions.admin.nukeChannelCommand"
+    },
+    "admin_channels_name admin_slowmode_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminChannelCommands",
+      "handler": "commands.admin.slowmode.set_slowmode",
+      "method": "slowmode",
+      "patch_target": "extensions.admin.setSlowmodeCommand"
+    },
+    "admin_channels_name admin_unlock_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminChannelCommands",
+      "handler": "commands.admin.unlock.unlock_channel",
+      "method": "unlock",
+      "patch_target": "extensions.admin.unlockChannelCommand"
+    },
+    "admin_emoji_name admin_boosterrole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminEmojiCommands",
+      "handler": "commands.admin.boosterrole.create_booster_role",
+      "method": "claimboosterrole",
+      "patch_target": "extensions.admin.CreateBoosterRoleCommand"
+    },
+    "admin_emoji_name admin_copy7tv_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminEmojiCommands",
+      "handler": "commands.admin.copy_7tv_emote.copy_7tv_emote",
+      "method": "copy_7tv",
+      "patch_target": "extensions.admin.copy7tvEmoteCommand"
+    },
+    "admin_emoji_name admin_copyemoji_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminEmojiCommands",
+      "handler": "commands.admin.copy_emoji.copy_emoji",
+      "method": "copy_emoji",
+      "patch_target": "extensions.admin.copyEmojiCommand"
+    },
+    "admin_emoji_name admin_createemoji_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminEmojiCommands",
+      "handler": "commands.admin.createemoji.create_emoji",
+      "method": "createemoji",
+      "patch_target": "extensions.admin.createEmojiCommand"
+    },
+    "admin_jointocreate_name admin_jtc_removechannel_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.JoinToCreateCommands",
+      "handler": "commands.admin.join_to_create.removejointocreatechannel.removejointocreatechannel",
+      "method": "remove_channel",
+      "patch_target": "extensions.admin.removeJoinToCreateChannelCommand"
+    },
+    "admin_jointocreate_name admin_jtc_setchannel_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.JoinToCreateCommands",
+      "handler": "commands.admin.join_to_create.jointocreatechannel.jointocreatechannel",
+      "method": "set_channel",
+      "patch_target": "extensions.admin.jointoCreateChannelCommand"
+    },
+    "admin_localegroup_name admin_setlocale_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminLocaleCommands",
+      "handler": "commands.admin.set_locale.set_locale",
+      "method": "set_locale",
+      "patch_target": "extensions.admin.setLocaleCommand"
+    },
+    "admin_messaging_name admin_embed_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminMessagingCommands",
+      "handler": "commands.admin.embedcreator.create_embed",
+      "method": "embed",
+      "patch_target": "extensions.admin.createEmbedCommand"
+    },
+    "admin_messaging_name admin_say_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminMessagingCommands",
+      "handler": "commands.admin.say.say",
+      "method": "say",
+      "patch_target": "extensions.admin.sayCommand"
+    },
+    "admin_moderation_name admin_ban_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.ban.ban",
+      "method": "ban",
+      "patch_target": "extensions.admin.banCommand"
+    },
+    "admin_moderation_name admin_kick_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.kick.kick",
+      "method": "kick",
+      "patch_target": "extensions.admin.kickCommand"
+    },
+    "admin_moderation_name admin_nickname_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.nickname.change_nickname",
+      "method": "nickname",
+      "patch_target": "extensions.admin.changeNicknameCommand"
+    },
+    "admin_moderation_name admin_removetimeout_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.removetimeout.remove_timeout",
+      "method": "removetimeout",
+      "patch_target": "extensions.admin.removeTimeoutCommand"
+    },
+    "admin_moderation_name admin_timeout_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.timeout.timeout",
+      "method": "timeout",
+      "patch_target": "extensions.admin.timeoutCommand"
+    },
+    "admin_moderation_name admin_unban_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminModerationCommands",
+      "handler": "commands.admin.unban.unban",
+      "method": "unban",
+      "patch_target": "extensions.admin.unbanCommand"
+    },
+    "admin_purgegroup_name admin_purge_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminPurgeCommands",
+      "handler": "commands.admin.purge.purge",
+      "method": "purge",
+      "patch_target": "extensions.admin.purgeCommand"
+    },
+    "admin_report_name admin_rps_removechannel_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.ReportCommands",
+      "handler": "commands.admin.reports.remove_channel.remove_channel",
+      "method": "remove_channel",
+      "patch_target": "extensions.admin.removeReportChannelCommand"
+    },
+    "admin_report_name admin_rps_setchannel_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.ReportCommands",
+      "handler": "commands.admin.reports.set_channel.set_channel",
+      "method": "set_channel",
+      "patch_target": "extensions.admin.setReportChannelCommand"
+    },
+    "admin_report_name admin_rps_showreports_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.ReportCommands",
+      "handler": "commands.admin.reports.show_reports.show_reports",
+      "method": "show_reports",
+      "patch_target": "extensions.admin.showReportsCommand"
+    },
+    "admin_report_name admin_rps_unblockreporter_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.ReportCommands",
+      "handler": "commands.admin.reports.unblock_reporter.unblock_reporter_cmd",
+      "method": "unblock_reporter",
+      "patch_target": "extensions.admin.unblockReporterCommand"
+    },
+    "admin_role_name admin_addrole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleCommands",
+      "handler": "commands.admin.addrole.addrole",
+      "method": "addrole",
+      "patch_target": "extensions.admin.addroleCommand"
+    },
+    "admin_role_name admin_removerole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleCommands",
+      "handler": "commands.admin.removerole.removerole",
+      "method": "removerole",
+      "patch_target": "extensions.admin.removeroleCommand"
+    },
+    "admin_rolemanage_name admin_copyrole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleManageCommands",
+      "handler": "commands.admin.copyrole.copyrole",
+      "method": "copyrole",
+      "patch_target": "extensions.admin.copyRoleCommand"
+    },
+    "admin_rolemanage_name admin_createrole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleManageCommands",
+      "handler": "commands.admin.createrole.createrole",
+      "method": "createrole",
+      "patch_target": "extensions.admin.createroleCommand"
+    },
+    "admin_rolemanage_name admin_deleterole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleManageCommands",
+      "handler": "commands.admin.deleterole.deleterole",
+      "method": "deleterole",
+      "patch_target": "extensions.admin.deleteroleCommand"
+    },
+    "admin_rolemanage_name admin_moverole_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.RoleManageCommands",
+      "handler": "commands.admin.moverole.moverole",
+      "method": "moverole",
+      "patch_target": "extensions.admin.moveroleCommand"
+    },
+    "admin_setup_name admin_createticket_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.AdminSetupCommands",
+      "handler": "commands.admin.ticket.create_ticket.create_ticket",
+      "method": "create_ticket",
+      "patch_target": "extensions.admin.createTicketCommand"
+    },
+    "admin_triggermessages_name admin_tm_add_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.TriggerMessagesCommands",
+      "handler": "commands.admin.trigger_messages.add.add_trigger_message",
+      "method": "add",
+      "patch_target": "extensions.admin.addTriggerMessageCommand"
+    },
+    "admin_triggermessages_name admin_tm_configure_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.TriggerMessagesCommands",
+      "handler": "commands.admin.trigger_messages.configure.configure_trigger_messages",
+      "method": "configure",
+      "patch_target": "extensions.admin.configureTriggerMessagesCommand"
+    },
+    "admin_warn_name admin_warn_add_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.WarnCommands",
+      "handler": "commands.admin.warn.warn_user",
+      "method": "add",
+      "patch_target": "extensions.admin.warnUserCommand"
+    },
+    "admin_warn_name admin_warn_config_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.WarnCommands",
+      "handler": "commands.admin.warnconfig.warn_config",
+      "method": "config",
+      "patch_target": "extensions.admin.warnConfigCommand"
+    },
+    "admin_warn_name admin_warn_view_name": {
+      "extension": "extensions.admin",
+      "group_cls": "extensions.admin.WarnCommands",
+      "handler": "commands.admin.viewwarns.view_warnings",
+      "method": "view",
+      "patch_target": "extensions.admin.viewWarningsCommand"
+    },
+    "ai_name ai_askcustom_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.AiCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.ask_custom_situation",
+      "method": "ask_custom_situation",
+      "patch_target": "services.ai_service.AiService.get_situation"
+    },
+    "ai_name ai_askgpt_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.AiCommands",
+      "handler": "commands.ai.ask_gpt.ask_gpt",
+      "method": "ask_gpt_command",
+      "patch_target": "extensions.ai.ask_gpt"
+    },
+    "ai_name ai_asktanjuwun_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.AiCommands",
+      "handler": "commands.ai.ask_gpt.ask_gpt",
+      "method": "ask_tanjuwun_command",
+      "patch_target": "extensions.ai.ask_gpt"
+    },
+    "ai_name ai_customsituations_name ai_createcustom_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.CustomSituationCommands",
+      "handler": "commands.ai.add_custom_situation.add_custom_situation",
+      "method": "add_custom",
+      "patch_target": "extensions.ai.add_custom_situation"
+    },
+    "ai_name ai_customsituations_name ai_deletecustom_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.CustomSituationCommands",
+      "handler": "commands.ai.delete_custom_situation.delete_custom_situation",
+      "method": "delete_custom",
+      "patch_target": "extensions.ai.delete_custom_situation"
+    },
+    "ai_name ai_tokens_name": {
+      "extension": "extensions.ai",
+      "group_cls": "extensions.ai.AiCommands",
+      "handler": "commands.ai.show_tokens.show_tokens",
+      "method": "tokens_command",
+      "patch_target": "extensions.ai.show_tokens"
+    },
+    "channel_name channel_ds_name channel_ds_add_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.DynamicslowmodeCommands",
+      "handler": "commands.channel.dynamicslowmode.addDynamicslowmode",
+      "method": "add_dynamicslowmode",
+      "patch_target": "extensions.channel.addDynamicslowmodeCommand"
+    },
+    "channel_name channel_ds_name channel_ds_get_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.DynamicslowmodeCommands",
+      "handler": "commands.channel.dynamicslowmode.getDynamicslowmode_channels",
+      "method": "get_dynamicslowmode_channels",
+      "patch_target": "extensions.channel.getDynamicslowmodeChannelsCommand"
+    },
+    "channel_name channel_ds_name channel_ds_remove_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.DynamicslowmodeCommands",
+      "handler": "commands.channel.dynamicslowmode.removeDynamicslowmode",
+      "method": "remove_dynamicslowmode",
+      "patch_target": "extensions.channel.removeDynamicslowmodeCommand"
+    },
+    "channel_name channel_farewell_name channel_farewell_remove_ch_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.FarewellCommands",
+      "handler": "commands.channel.farewell.removeFarewellChannel",
+      "method": "remove_farewell_channel",
+      "patch_target": "extensions.channel.removeFarewellChannelCommand"
+    },
+    "channel_name channel_farewell_name channel_farewell_set_ch_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.FarewellCommands",
+      "handler": "commands.channel.farewell.setFarewellChannel",
+      "method": "set_farewell_channel",
+      "patch_target": "extensions.channel.setFarewellChannelCommand"
+    },
+    "channel_name channel_media_name channel_media_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.MediaCommands",
+      "handler": "commands.channel.media.addMediaChannel",
+      "method": "media_add_cmd",
+      "patch_target": "extensions.channel.addMediaChannelCommand"
+    },
+    "channel_name channel_media_name channel_mediaremove_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.MediaCommands",
+      "handler": "commands.channel.media.removeMediaChannel",
+      "method": "media_remove_cmd",
+      "patch_target": "extensions.channel.removeMediaChannelCommand"
+    },
+    "channel_name channel_welcome_name channel_w_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.WelcomeCommands",
+      "handler": "commands.channel.welcome.setWelcomeChannel",
+      "method": "welcome",
+      "patch_target": "extensions.channel.setWelcomeChannelCommand"
+    },
+    "channel_name channel_welcome_name channel_w_remove_name": {
+      "extension": "extensions.channel",
+      "group_cls": "extensions.channel.WelcomeCommands",
+      "handler": "commands.channel.welcome.removeWelcomeChannel",
+      "method": "remove_welcome",
+      "patch_target": "extensions.channel.removeWelcomeChannelCommand"
+    },
+    "funcmd_name fun_boop_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "boop",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_hug_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "hug",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_kiss_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "kiss",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_laugh_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "laugh",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_pat_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "pat",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_poke_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "poke",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_slap_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "slap",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_tickle_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "tickle",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "funcmd_name fun_wave_name": {
+      "extension": "extensions.fun",
+      "group_cls": "extensions.fun.FunCommands",
+      "handler": "commands.fun.funcommands.fun_command",
+      "method": "wave",
+      "patch_target": "extensions.fun.fun_command"
+    },
+    "games_name games_advanced_ttt_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.advanced_tic_tac_toe.advanced_tic_tac_toe",
+      "method": "advanced_ttt_cmd",
+      "patch_target": "extensions.games.advanced_tic_tac_toe"
+    },
+    "games_name games_akinator_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.akinator.akinator",
+      "method": "akinator_cmd",
+      "patch_target": "extensions.games.akinator"
+    },
+    "games_name games_battleship_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.battleship.battleship",
+      "method": "battleship_cmd",
+      "patch_target": "extensions.games.battleship"
+    },
+    "games_name games_connect4_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.connect4.connect4",
+      "method": "connect4_cmd",
+      "patch_target": "extensions.games.connect4"
+    },
+    "games_name games_flagquiz_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.flag_quiz.flag_quiz",
+      "method": "flag_quiz_cmd",
+      "patch_target": "extensions.games.flag_quiz"
+    },
+    "games_name games_hangman_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.hangman.hangman",
+      "method": "hangman_cmd",
+      "patch_target": "extensions.games.hangman"
+    },
+    "games_name games_memory_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.memory.memory",
+      "method": "memory_cmd",
+      "patch_target": "extensions.games.memory"
+    },
+    "games_name games_rps_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.rps.rps",
+      "method": "rps_cmd",
+      "patch_target": "extensions.games.rps"
+    },
+    "games_name games_ttt_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.tic_tac_toe.tic_tac_toe",
+      "method": "tic_tac_toe_cmd",
+      "patch_target": "extensions.games.tic_tac_toe"
+    },
+    "games_name games_wordle_name": {
+      "extension": "extensions.games",
+      "group_cls": "extensions.games.GameCommands",
+      "handler": "commands.games.wordle.wordle",
+      "method": "wordle_cmd",
+      "patch_target": "extensions.games.wordle"
+    },
+    "giveaway_name giveaway_blacklist_name giveaway_bl_add_role_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.BlacklistCommands",
+      "handler": "commands.giveaway.add_blacklist_role.add_blacklist_role",
+      "method": "add_role",
+      "patch_target": "extensions.giveaway.add_blacklist_role"
+    },
+    "giveaway_name giveaway_blacklist_name giveaway_bl_add_user_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.BlacklistCommands",
+      "handler": "commands.giveaway.add_blacklist_user.add_blacklist_user",
+      "method": "add_user",
+      "patch_target": "extensions.giveaway.add_blacklist_user"
+    },
+    "giveaway_name giveaway_blacklist_name giveaway_bl_list_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.BlacklistCommands",
+      "handler": "commands.giveaway.list_blacklist.list_blacklist",
+      "method": "list",
+      "patch_target": "extensions.giveaway.list_blacklist"
+    },
+    "giveaway_name giveaway_blacklist_name giveaway_bl_remove_role_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.BlacklistCommands",
+      "handler": "commands.giveaway.remove_blacklist_role.remove_blacklist_role",
+      "method": "remove_role",
+      "patch_target": "extensions.giveaway.remove_blacklist_role"
+    },
+    "giveaway_name giveaway_blacklist_name giveaway_bl_remove_user_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.BlacklistCommands",
+      "handler": "commands.giveaway.remove_blacklist_user.remove_blacklist_user",
+      "method": "remove_user",
+      "patch_target": "extensions.giveaway.remove_blacklist_user"
+    },
+    "giveaway_name giveaway_edit_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.GiveawayCommands",
+      "handler": "commands.giveaway.edit_giveaway.edit_giveaway",
+      "method": "edit",
+      "patch_target": "extensions.giveaway.edit_giveaway"
+    },
+    "giveaway_name giveaway_end_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.GiveawayCommands",
+      "handler": "commands.giveaway.end_giveaway.end_giveaway",
+      "method": "end",
+      "patch_target": "extensions.giveaway.end_giveaway"
+    },
+    "giveaway_name giveaway_reroll_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.GiveawayCommands",
+      "handler": "commands.giveaway.reroll_giveaway.reroll_giveaway",
+      "method": "reroll",
+      "patch_target": "extensions.giveaway.reroll_giveaway"
+    },
+    "giveaway_name giveaway_start_name": {
+      "extension": "extensions.giveaway",
+      "group_cls": "extensions.giveaway.GiveawayCommands",
+      "handler": "commands.giveaway.start.start_giveaway",
+      "method": "start",
+      "patch_target": "extensions.giveaway.start_giveaway"
+    },
+    "image_name image_background_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image.background.background",
+      "method": "background",
+      "patch_target": "extensions.image.background"
+    },
+    "image_name image_blur_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "blurimage",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_compress_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image.compress.compress",
+      "method": "compress",
+      "patch_target": "extensions.image.compress"
+    },
+    "image_name image_contour_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "contourimage",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_detail_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "detailimage",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_edgeenhance_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "edgeenhance",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_emboss_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "emboss",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_findedges_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "findedges",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_mirror_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image.mirror.mirror",
+      "method": "mirror",
+      "patch_target": "extensions.image.mirror"
+    },
+    "image_name image_rescale_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image.rescale.rescale",
+      "method": "rescale",
+      "patch_target": "extensions.image.rescale"
+    },
+    "image_name image_resize_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image.resize.resize",
+      "method": "resize",
+      "patch_target": "extensions.image.resize"
+    },
+    "image_name image_sharpen_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "sharpen",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "image_name image_smooth_name": {
+      "extension": "extensions.image",
+      "group_cls": "extensions.image.ImageCommands",
+      "handler": "commands.image._filter.apply_filter",
+      "method": "smooth",
+      "patch_target": "extensions.image.apply_filter"
+    },
+    "level_blacklist_name level_blacklist_addc_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.add_channel_to_blacklist_command",
+      "method": "add_channel",
+      "patch_target": "extensions.level.add_channel_to_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_addr_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.add_role_to_blacklist_command",
+      "method": "add_role",
+      "patch_target": "extensions.level.add_role_to_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_addu_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.add_user_to_blacklist_command",
+      "method": "add_user",
+      "patch_target": "extensions.level.add_user_to_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_removec_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.remove_channel_from_blacklist_command",
+      "method": "remove_channel",
+      "patch_target": "extensions.level.remove_channel_from_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_remover_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.remove_role_from_blacklist_command",
+      "method": "remove_role",
+      "patch_target": "extensions.level.remove_role_from_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_removeu_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.remove_user_from_blacklist_command",
+      "method": "remove_user",
+      "patch_target": "extensions.level.remove_user_from_blacklist_command"
+    },
+    "level_blacklist_name level_blacklist_show_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.BlacklistCommands",
+      "handler": "commands.level.level_blacklist.show_blacklist_command",
+      "method": "show",
+      "patch_target": "extensions.level.show_blacklist_command"
+    },
+    "level_boosts_name level_boosts_addchannel_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.add_channel_boost_command",
+      "method": "add_channel_boost",
+      "patch_target": "extensions.level.add_channel_boost_command"
+    },
+    "level_boosts_name level_boosts_addrole_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.add_role_boost_command",
+      "method": "add_role_boost",
+      "patch_target": "extensions.level.add_role_boost_command"
+    },
+    "level_boosts_name level_boosts_adduser_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.add_user_boost_command",
+      "method": "add_user_boost",
+      "patch_target": "extensions.level.add_user_boost_command"
+    },
+    "level_boosts_name level_boosts_calculate_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.calculate_user_channel_boost_command",
+      "method": "calculate_user_channel_boost",
+      "patch_target": "extensions.level.calculate_user_channel_boost_command"
+    },
+    "level_boosts_name level_boosts_removechannel_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.remove_channel_boost_command",
+      "method": "remove_channel_boost",
+      "patch_target": "extensions.level.remove_channel_boost_command"
+    },
+    "level_boosts_name level_boosts_removerole_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.remove_role_boost_command",
+      "method": "remove_role_boost",
+      "patch_target": "extensions.level.remove_role_boost_command"
+    },
+    "level_boosts_name level_boosts_removeuser_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.remove_user_boost_command",
+      "method": "remove_user_boost",
+      "patch_target": "extensions.level.remove_user_boost_command"
+    },
+    "level_boosts_name level_boosts_show_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelBoostCommands",
+      "handler": "commands.level.level_boosts.show_boosts_command",
+      "method": "show_boosts",
+      "patch_target": "extensions.level.show_boosts_command"
+    },
+    "level_config_name level_addlevelrole_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.add_level_role.add_level_role_command",
+      "method": "addlevelrole",
+      "patch_target": "extensions.level.add_level_role_command"
+    },
+    "level_config_name level_changelevelupmessage_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.change_levelup_message.change_levelup_message",
+      "method": "changelevelupmessage",
+      "patch_target": "extensions.level.changeLevelupMessageCommand"
+    },
+    "level_config_name level_changexpscaling_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.change_xp_scaling.change_xp_scaling_command",
+      "method": "changexpscaling",
+      "patch_target": "extensions.level.change_xp_scaling_command"
+    },
+    "level_config_name level_disable_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.disable_level_system.disable_level_system",
+      "method": "disablelevelsystem",
+      "patch_target": "extensions.level.disableLevelSystemCommand"
+    },
+    "level_config_name level_disablelevelupmessage_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.disable_levelup_message.disable_levelup_message",
+      "method": "disablelevelupmessage",
+      "patch_target": "extensions.level.disableLevelupMessageCommand"
+    },
+    "level_config_name level_enable_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.enable_level_system.enable_level_system",
+      "method": "enablelevelsystem",
+      "patch_target": "extensions.level.enableLevelSystemCommand"
+    },
+    "level_config_name level_enablelevelupmessage_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.enable_levelup_message.enable_levelup_message",
+      "method": "enablelevelupmessage",
+      "patch_target": "extensions.level.enableLevelupMessageCommand"
+    },
+    "level_config_name level_givexp_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.give_xp.give_xp_command",
+      "method": "give_xp",
+      "patch_target": "extensions.level.give_xp_command"
+    },
+    "level_config_name level_removelevelrole_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.remove_level_role.remove_level_role_command",
+      "method": "removelevelrole",
+      "patch_target": "extensions.level.remove_level_role_command"
+    },
+    "level_config_name level_setlevelupchannel_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.set_levelup_channel.set_levelup_channel_command",
+      "method": "setlevelupchannel",
+      "patch_target": "extensions.level.setLevelupChannelCommand"
+    },
+    "level_config_name level_settextcooldown_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.level_set_xp_cooldown.set_text_cooldown_command",
+      "method": "settextcooldown",
+      "patch_target": "extensions.level.set_text_cooldown_command"
+    },
+    "level_config_name level_setvoicecooldown_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.level_set_xp_cooldown.set_voice_cooldown_command",
+      "method": "setvoicecooldown",
+      "patch_target": "extensions.level.set_voice_cooldown_command"
+    },
+    "level_config_name level_showlevelroles_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.show_level_roles.show_level_roles_command",
+      "method": "showlevelroles",
+      "patch_target": "extensions.level.show_level_roles_command"
+    },
+    "level_config_name level_showxpscalings_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.change_xp_scaling.show_xp_scalings",
+      "method": "showxpscalings",
+      "patch_target": "extensions.level.show_xp_scalings"
+    },
+    "level_config_name level_takexp_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.LevelConfigCommands",
+      "handler": "commands.level.take_xp.take_xp_command",
+      "method": "take_xp",
+      "patch_target": "extensions.level.take_xp_command"
+    },
+    "levelcommands_name level_leaderboard_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.levelCommands",
+      "handler": "commands.level.leaderboard.leaderboard",
+      "method": "leaderboard",
+      "patch_target": "extensions.level.leaderboard_command"
+    },
+    "levelcommands_name level_rank_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.levelCommands",
+      "handler": "commands.level.level_rankcard.show_rankcard_command",
+      "method": "rankcard",
+      "patch_target": "extensions.level.show_rankcard_command"
+    },
+    "levelcommands_name level_setbackground_name": {
+      "extension": "extensions.level",
+      "group_cls": "extensions.level.levelCommands",
+      "handler": "commands.level.level_rankcard.set_background_command",
+      "method": "set_background",
+      "patch_target": "extensions.level.set_background_command"
+    },
+    "logs_name logs_blacklist_name logs_blacklistc_add_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.ChannelBlacklistCommands",
+      "handler": "commands.logs.blacklist_channel.blacklist_channel.blacklist_channel",
+      "method": "add_blacklist_channel_cmd",
+      "patch_target": "extensions.logs.blacklist_channel"
+    },
+    "logs_name logs_blacklist_name logs_blacklistc_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.ChannelBlacklistCommands",
+      "handler": "commands.logs.blacklist_channel.blacklist_remove_channel.blacklist_remove_channel",
+      "method": "remove_blacklist_channel_cmd",
+      "patch_target": "extensions.logs.blacklist_remove_channel"
+    },
+    "logs_name logs_blacklist_name logs_blacklistc_show_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.ChannelBlacklistCommands",
+      "handler": "commands.logs.blacklist_channel.blacklist_list_channel.blacklist_list_channel",
+      "method": "show_blacklist_channel_cmd",
+      "patch_target": "extensions.logs.blacklist_list_channel"
+    },
+    "logs_name logs_blacklistcat_name logs_blacklistcat_add_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.CategoryBlacklistCommands",
+      "handler": "commands.logs.blacklist_category.blacklist_category.blacklist_category",
+      "method": "add_blacklist_category_cmd",
+      "patch_target": "extensions.logs.blacklist_category"
+    },
+    "logs_name logs_blacklistcat_name logs_blacklistcat_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.CategoryBlacklistCommands",
+      "handler": "commands.logs.blacklist_category.blacklist_remove_category.blacklist_remove_category",
+      "method": "remove_blacklist_category_cmd",
+      "patch_target": "extensions.logs.blacklist_remove_category"
+    },
+    "logs_name logs_blacklistcat_name logs_blacklistcat_show_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.CategoryBlacklistCommands",
+      "handler": "commands.logs.blacklist_category.blacklist_list_category.blacklist_list_category",
+      "method": "show_blacklist_category_cmd",
+      "patch_target": "extensions.logs.blacklist_list_category"
+    },
+    "logs_name logs_blacklistr_name logs_blacklistr_add_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.RoleBlacklistCommands",
+      "handler": "commands.logs.blacklist_role.blacklist_role.blacklist_role",
+      "method": "add_blacklist_role_cmd",
+      "patch_target": "extensions.logs.blacklist_role"
+    },
+    "logs_name logs_blacklistr_name logs_blacklistr_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.RoleBlacklistCommands",
+      "handler": "commands.logs.blacklist_role.blacklist_remove_role.blacklist_remove_role",
+      "method": "remove_blacklist_role_cmd",
+      "patch_target": "extensions.logs.blacklist_remove_role"
+    },
+    "logs_name logs_blacklistr_name logs_blacklistr_show_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.RoleBlacklistCommands",
+      "handler": "commands.logs.blacklist_role.blacklist_list_role.blacklist_list_role",
+      "method": "show_blacklist_role_cmd",
+      "patch_target": "extensions.logs.blacklist_list_role"
+    },
+    "logs_name logs_blacklistu_name logs_blacklistu_add_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.UserBlacklistCommands",
+      "handler": "commands.logs.blacklist_user.blacklist_user.blacklist_user",
+      "method": "add_blacklist_user_cmd",
+      "patch_target": "extensions.logs.blacklist_user"
+    },
+    "logs_name logs_blacklistu_name logs_blacklistu_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.UserBlacklistCommands",
+      "handler": "commands.logs.blacklist_user.blacklist_remove_user.blacklist_remove_user",
+      "method": "remove_blacklist_user_cmd",
+      "patch_target": "extensions.logs.blacklist_remove_user"
+    },
+    "logs_name logs_blacklistu_name logs_blacklistu_show_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.UserBlacklistCommands",
+      "handler": "commands.logs.blacklist_user.blacklist_list_user.blacklist_list_user",
+      "method": "show_blacklist_user_cmd",
+      "patch_target": "extensions.logs.blacklist_list_user"
+    },
+    "logs_name logs_blacklistv_name logs_blacklistv_add_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.VoiceBlacklistCommands",
+      "handler": "commands.logs.blacklist_voice.blacklist_voice.blacklist_voice",
+      "method": "add_blacklist_voice_cmd",
+      "patch_target": "extensions.logs.blacklist_voice"
+    },
+    "logs_name logs_blacklistv_name logs_blacklistv_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.VoiceBlacklistCommands",
+      "handler": "commands.logs.blacklist_voice.blacklist_remove_voice.blacklist_remove_voice",
+      "method": "remove_blacklist_voice_cmd",
+      "patch_target": "extensions.logs.blacklist_remove_voice"
+    },
+    "logs_name logs_blacklistv_name logs_blacklistv_show_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.VoiceBlacklistCommands",
+      "handler": "commands.logs.blacklist_voice.blacklist_list_voice.blacklist_list_voice",
+      "method": "show_blacklist_voice_cmd",
+      "patch_target": "extensions.logs.blacklist_list_voice"
+    },
+    "logs_name logs_configure_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.LogsCommands",
+      "handler": "commands.logs.configure_logs.configure_logs",
+      "method": "configure_logs_cmd",
+      "patch_target": "extensions.logs.configure_logs"
+    },
+    "logs_name logs_remove_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.LogsCommands",
+      "handler": "commands.logs.remove_log_channel.remove_log_channel",
+      "method": "remove_log_channel_cmd",
+      "patch_target": "extensions.logs.remove_log_channel"
+    },
+    "logs_name logs_set_name": {
+      "extension": "extensions.logs",
+      "group_cls": "extensions.logs.LogsCommands",
+      "handler": "commands.logs.set_log_channel.set_log_channel",
+      "method": "set_log_channel_cmd",
+      "patch_target": "extensions.logs.set_log_channel"
+    },
+    "math_name math_calc_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.calc.calc",
+      "method": "calc",
+      "patch_target": "extensions.math.calcCommand"
+    },
+    "math_name math_calculator_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.calculator.calculator_command",
+      "method": "calculator",
+      "patch_target": "extensions.math.calculator_command"
+    },
+    "math_name math_faculty_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.faculty.faculty_command",
+      "method": "faculty",
+      "patch_target": "extensions.math.faculty_command"
+    },
+    "math_name math_num2word_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.num2word.num2word",
+      "method": "num2word",
+      "patch_target": "extensions.math.num2word_command"
+    },
+    "math_name math_plotfunction_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.plot_function.plot_function_command",
+      "method": "plot_function",
+      "patch_target": "extensions.math.plot_function_command"
+    },
+    "math_name math_randomnumber_name": {
+      "extension": "extensions.math",
+      "group_cls": "extensions.math.MathCommands",
+      "handler": "commands.math.randomnumber.random_number_command",
+      "method": "random_number",
+      "patch_target": "extensions.math.random_number_command"
+    },
+    "minigame_name minigames_cchcmds_name minigames_rcchallengech_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingChallengeCommands",
+      "handler": "commands.minigames.counting_challenge.removecountingchannel.removecountingchallengechannel",
+      "method": "removecountingchallengechannel",
+      "patch_target": "extensions.minigames.removeCountingChallengeChannelCommand"
+    },
+    "minigame_name minigames_cchcmds_name minigames_setcchallengech_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingChallengeCommands",
+      "handler": "commands.minigames.counting_challenge.setcountingchannel.setCountingChannel",
+      "method": "setcountingchallengechannel",
+      "patch_target": "extensions.minigames.setCountingChallengeChannelCommand"
+    },
+    "minigame_name minigames_cchcmds_name minigames_setcchallengep_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingChallengeCommands",
+      "handler": "commands.minigames.counting_challenge.setcountingprogress.setCountingProgress",
+      "method": "setcountingchallengeprogress",
+      "patch_target": "extensions.minigames.setCountingChallengeProgressCommand"
+    },
+    "minigame_name minigames_cmodescmds_name minigames_removecmodesch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingModesCommands",
+      "handler": "commands.minigames.counting_modes.removecountingchannel.removecountingmodeschannel",
+      "method": "removecountingmodeschannel",
+      "patch_target": "extensions.minigames.removeCountingModesChannelCommand"
+    },
+    "minigame_name minigames_cmodescmds_name minigames_setcmodesch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingModesCommands",
+      "handler": "commands.minigames.counting_modes.setcountingchannel.setCountingChannel",
+      "method": "setcountingmodeschannel",
+      "patch_target": "extensions.minigames.setCountingModesChannelCommand"
+    },
+    "minigame_name minigames_cmodescmds_name minigames_setcmodesprogress_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingModesCommands",
+      "handler": "commands.minigames.counting_modes.setcountingprogress.setCountingProgress",
+      "method": "setcountingmodesprogress",
+      "patch_target": "extensions.minigames.setCountingModesProgressCommand"
+    },
+    "minigame_name minigames_countingcmds_name minigames_removecountingch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingCommands",
+      "handler": "commands.minigames.counting.removecountingchannel.removeCountingChannel",
+      "method": "removecountingchannel",
+      "patch_target": "extensions.minigames.removeCountingChannelCommand"
+    },
+    "minigame_name minigames_countingcmds_name minigames_setcountingch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingCommands",
+      "handler": "commands.minigames.counting.setcountingchannel.setCountingChannel",
+      "method": "setcountingchannel",
+      "patch_target": "extensions.minigames.setCountingChannelCommand"
+    },
+    "minigame_name minigames_countingcmds_name minigames_setcprogress_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.CountingCommands",
+      "handler": "commands.minigames.counting.setcountingprogress.setCountingProgress",
+      "method": "setcountingprogress",
+      "patch_target": "extensions.minigames.setCountingProgressCommand"
+    },
+    "minigame_name minigames_wordchaincmds_name minigames_removewordchch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.WordChainCommands",
+      "handler": "commands.minigames.wordchain.removewordchainchannel.removewordchainchannel",
+      "method": "removewordchainchannel",
+      "patch_target": "extensions.minigames.removeWordChainChannelCommand"
+    },
+    "minigame_name minigames_wordchaincmds_name minigames_setwordcainch_name": {
+      "extension": "extensions.minigames",
+      "group_cls": "extensions.minigames.WordChainCommands",
+      "handler": "commands.minigames.wordchain.setwordchainchannel.setwordchainchannel",
+      "method": "setwordchainchannel",
+      "patch_target": "extensions.minigames.setWordChainChannelCommand"
+    },
+    "setup_name setup_booster_name": {
+      "extension": "extensions.setup_wizards",
+      "group_cls": "extensions.setup_wizards.SetupWizardCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard",
+      "method": "booster",
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.setup_booster_wizard"
+    },
+    "setup_name setup_giveaway_name": {
+      "extension": "extensions.setup_wizards",
+      "group_cls": "extensions.setup_wizards.SetupWizardCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.setup_giveaway_wizard",
+      "method": "giveaway",
+      "patch_target": "commands.giveaway.start.start_giveaway"
+    },
+    "setup_name setup_level_name": {
+      "extension": "extensions.setup_wizards",
+      "group_cls": "extensions.setup_wizards.SetupWizardCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.setup_level_wizard",
+      "method": "level",
+      "patch_target": "extensions.setup_wizards.api_get_level_system_status"
+    },
+    "setup_name setup_logs_name": {
+      "extension": "extensions.setup_wizards",
+      "group_cls": "extensions.setup_wizards.SetupWizardCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.setup_logs_wizard",
+      "method": "logs",
+      "patch_target": "extensions.setup_wizards.api_get_log_channel"
+    },
+    "utility_help_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCog",
+      "handler": "commands.utility.help.help",
+      "method": "help_slash",
+      "patch_target": "extensions.utility.helpCommand"
+    },
+    "utility_scheduledmessage_name utility_listscheduled_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.ScheduledMessageCommands",
+      "handler": "commands.utility.listscheduled.list_scheduled_messages",
+      "method": "listscheduled",
+      "patch_target": "extensions.utility.listScheduledCommand"
+    },
+    "utility_scheduledmessage_name utility_removescheduled_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.ScheduledMessageCommands",
+      "handler": "commands.utility.removescheduled.remove_scheduled_message",
+      "method": "removescheduled",
+      "patch_target": "extensions.utility.removeScheduledCommand"
+    },
+    "utility_scheduledmessage_name utility_schedulemessage_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.ScheduledMessageCommands",
+      "handler": "commands.utility.schedulemessage.schedule_message",
+      "method": "schedulemessage",
+      "patch_target": "extensions.utility.scheduleMessageCommand"
+    },
+    "utilitycmd_name utility_afk_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "commands.utility.afk.afk",
+      "method": "afk",
+      "patch_target": "extensions.utility.afkCommand"
+    },
+    "utilitycmd_name utility_autopublish_name utility_autopublish_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.AutoPublishCommands",
+      "handler": "commands.utility.autopublish.autopublish",
+      "method": "autopublish",
+      "patch_target": "extensions.utility.autopublishCommand"
+    },
+    "utilitycmd_name utility_autopublish_name utility_autopublish_remove_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.AutoPublishCommands",
+      "handler": "commands.utility.autopublish.autopublish_remove",
+      "method": "autopublish_remove",
+      "patch_target": "extensions.utility.autopublishRemoveCommand"
+    },
+    "utilitycmd_name utility_avatar_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "commands.utility.avatar.avatar",
+      "method": "avatar",
+      "patch_target": "extensions.utility.avatarCommand"
+    },
+    "utilitycmd_name utility_avatardecoration_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "commands.utility.avatar_decoration.avatarDecoration",
+      "method": "avatardecoration",
+      "patch_target": "extensions.utility.avatarDecorationCommand"
+    },
+    "utilitycmd_name utility_banner_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "commands.utility.banner.banner",
+      "method": "banner",
+      "patch_target": "extensions.utility.bannerCommand"
+    },
+    "utilitycmd_name utility_boosterchannel_name utility_boosterchannelinfo_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterChannelCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.booster_channel_info",
+      "method": "info",
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.booster_channel_info"
+    },
+    "utilitycmd_name utility_boosterchannel_name utility_claimboosterchannel_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterChannelCommands",
+      "handler": "commands.utility.claim_booster_channel.claimBoosterChannel",
+      "method": "claimboosterchannel",
+      "patch_target": "extensions.utility.claimboosterchannelCommand"
+    },
+    "utilitycmd_name utility_boosterchannel_name utility_deleteboosterch_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterChannelCommands",
+      "handler": "commands.utility.delete_booster_channel.deleteBoosterChannel",
+      "method": "deleteboosterchannel",
+      "patch_target": "extensions.utility.deleteboosterchannelCommand"
+    },
+    "utilitycmd_name utility_boosterchannel_name utility_setupboosterchannel_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterChannelCommands",
+      "handler": "commands.utility.setup_booster_channel.setupBoosterChannel",
+      "method": "setupboosterchannel",
+      "patch_target": "extensions.utility.setupboosterchannelCommand"
+    },
+    "utilitycmd_name utility_boosterrole_name utility_boosterroleinfo_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterRoleCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.booster_role_info",
+      "method": "info",
+      "patch_target": "tests.helpers.command_matrix.manual_handlers.booster_role_info"
+    },
+    "utilitycmd_name utility_boosterrole_name utility_claimboosterrole_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterRoleCommands",
+      "handler": "commands.utility.claim_booster_role.claimBoosterRole",
+      "method": "claimboosterrole",
+      "patch_target": "extensions.utility.claimboosterroleCommand"
+    },
+    "utilitycmd_name utility_boosterrole_name utility_deleteboosterrole_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterRoleCommands",
+      "handler": "commands.utility.delete_booster_role.deleteBoosterRole",
+      "method": "deleteboosterrole",
+      "patch_target": "extensions.utility.deleteboosterroleCommand"
+    },
+    "utilitycmd_name utility_boosterrole_name utility_setupboosterrole_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BoosterRoleCommands",
+      "handler": "commands.utility.setup_booster_role.setupBoosterRole",
+      "method": "setupboosterrole",
+      "patch_target": "extensions.utility.setupboosterroleCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_battlelog_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.battlelog.battlelog",
+      "method": "battlelog",
+      "patch_target": "extensions.utility.battlelogCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_brawlers_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.brawlers.brawlers",
+      "method": "brawlers",
+      "patch_target": "extensions.utility.brawlstarsBrawlersCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_club_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.club.club",
+      "method": "club",
+      "patch_target": "extensions.utility.brawlstarsClubCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_events_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.events.events",
+      "method": "events",
+      "patch_target": "extensions.utility.brawlstarsEventsCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_link_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.link.link",
+      "method": "link",
+      "patch_target": "extensions.utility.brawlstarsLinkCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_playerinfo_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.playerinfo.player_info",
+      "method": "playerinfo",
+      "patch_target": "extensions.utility.brawlstarsPlayerInfoCommand"
+    },
+    "utilitycmd_name utility_bs_name utility_bs_unlink_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.BrawlStarsCommands",
+      "handler": "commands.utility.brawlstars.unlink.unlink",
+      "method": "unlink",
+      "patch_target": "extensions.utility.brawlstarsUnlinkCommand"
+    },
+    "utilitycmd_name utility_feedback_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "tests.helpers.command_matrix.manual_handlers.feedback_command",
+      "method": "feedback",
+      "patch_target": "extensions.utility.feedbackCommand"
+    },
+    "utilitycmd_name utility_messagetracking_name utility_messageoptin_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.MessageTrackingCommands",
+      "handler": "commands.utility.messagetrackingoptin.optIn",
+      "method": "messagetrackingoptin",
+      "patch_target": "extensions.utility.optInCommand"
+    },
+    "utilitycmd_name utility_messagetracking_name utility_messageoptout_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.MessageTrackingCommands",
+      "handler": "commands.utility.messagetrackingoptout.optOut",
+      "method": "messagetrackingoptout",
+      "patch_target": "extensions.utility.optOutCommand"
+    },
+    "utilitycmd_name utility_report_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.UtilityCommands",
+      "handler": "commands.utility.report.report",
+      "method": "report",
+      "patch_target": "extensions.utility.reportCommand"
+    },
+    "utilitycmd_name utility_twitch_name utility_twitch_add_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.TwitchCommands",
+      "handler": "commands.utility.twitch.add_twitch_live_notification.addTwitchLiveNotification",
+      "method": "add",
+      "patch_target": "extensions.utility.addTwitchLiveNotificationCommand"
+    },
+    "utilitycmd_name utility_twitch_name utility_twitch_see_name": {
+      "extension": "extensions.utility",
+      "group_cls": "extensions.utility.TwitchCommands",
+      "handler": "commands.utility.twitch.see_twitch_live_notifications.seeTwitchLiveNotifications",
+      "method": "see",
+      "patch_target": "extensions.utility.seeTwitchLiveNotificationsCommand"
+    }
+  }
+}

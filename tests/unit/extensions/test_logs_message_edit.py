@@ -31,9 +31,9 @@ def _message(*, guild: object, content: str) -> SimpleNamespace:
     )
 
 
-def _install_message_edit_l10n_stub() -> MagicMock:
+def _message_edit_l10n_stub() -> tuple[SimpleNamespace, MagicMock]:
     name_mock = MagicMock(side_effect=lambda locale, **_: f"name:{locale}")
-    logs.l10n = SimpleNamespace(  # type: ignore[method-assign]
+    stub = SimpleNamespace(
         logs=SimpleNamespace(
             messageEdit=SimpleNamespace(
                 name=name_mock,
@@ -47,22 +47,23 @@ def _install_message_edit_l10n_stub() -> MagicMock:
             )
         )
     )
-    return name_mock
+    return stub, name_mock
 
 
 @pytest.mark.asyncio
-async def test_on_message_edit_uses_guild_preferred_locale() -> None:
+async def test_on_message_edit_uses_guild_preferred_locale(monkeypatch: pytest.MonkeyPatch) -> None:
     cog = logs.LogsCog(bot=MagicMock())
     guild = SimpleNamespace(id=123, preferred_locale="de-DE")
     before = _message(guild=guild, content="before")
     after = _message(guild=guild, content="after")
 
-    logs.get_log_enable = AsyncMock(return_value=SimpleNamespace(message_edit=True))  # type: ignore[method-assign]
-    logs.is_log_entity_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
-    logs.get_log_blacklist = AsyncMock(return_value=[])  # type: ignore[method-assign]
-    logs._is_channel_or_category_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
-    logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
-    name_mock = _install_message_edit_l10n_stub()
+    monkeypatch.setattr(logs, "get_log_enable", AsyncMock(return_value=SimpleNamespace(message_edit=True)))
+    monkeypatch.setattr(logs, "is_log_entity_blacklisted", AsyncMock(return_value=False))
+    monkeypatch.setattr(logs, "get_log_blacklist", AsyncMock(return_value=[]))
+    monkeypatch.setattr(logs, "_is_channel_or_category_blacklisted", AsyncMock(return_value=False))
+    monkeypatch.setattr(logs, "log_event_producer", AsyncMock())
+    l10n_stub, name_mock = _message_edit_l10n_stub()
+    monkeypatch.setattr(logs, "l10n", l10n_stub)
 
     await cog.on_message_edit(before, after)
 
@@ -71,18 +72,19 @@ async def test_on_message_edit_uses_guild_preferred_locale() -> None:
 
 
 @pytest.mark.asyncio
-async def test_on_message_edit_falls_back_to_en_us_without_guild_locale() -> None:
+async def test_on_message_edit_falls_back_to_en_us_without_guild_locale(monkeypatch: pytest.MonkeyPatch) -> None:
     cog = logs.LogsCog(bot=MagicMock())
     guild = SimpleNamespace(id=123)
     before = _message(guild=guild, content="before")
     after = _message(guild=guild, content="after")
 
-    logs.get_log_enable = AsyncMock(return_value=SimpleNamespace(message_edit=True))  # type: ignore[method-assign]
-    logs.is_log_entity_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
-    logs.get_log_blacklist = AsyncMock(return_value=[])  # type: ignore[method-assign]
-    logs._is_channel_or_category_blacklisted = AsyncMock(return_value=False)  # type: ignore[method-assign]
-    logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
-    name_mock = _install_message_edit_l10n_stub()
+    monkeypatch.setattr(logs, "get_log_enable", AsyncMock(return_value=SimpleNamespace(message_edit=True)))
+    monkeypatch.setattr(logs, "is_log_entity_blacklisted", AsyncMock(return_value=False))
+    monkeypatch.setattr(logs, "get_log_blacklist", AsyncMock(return_value=[]))
+    monkeypatch.setattr(logs, "_is_channel_or_category_blacklisted", AsyncMock(return_value=False))
+    monkeypatch.setattr(logs, "log_event_producer", AsyncMock())
+    l10n_stub, name_mock = _message_edit_l10n_stub()
+    monkeypatch.setattr(logs, "l10n", l10n_stub)
 
     await cog.on_message_edit(before, after)
 
@@ -99,27 +101,32 @@ class _GuildStub:
 
 
 @pytest.mark.asyncio
-async def test_on_guild_update_uses_after_guild_and_preferred_locale() -> None:
+async def test_on_guild_update_uses_after_guild_and_preferred_locale(monkeypatch: pytest.MonkeyPatch) -> None:
     cog = logs.LogsCog(bot=MagicMock())
     before = _GuildStub(id=11, preferred_locale="de-DE", name="old", emojis=[], features=[])
     after = _GuildStub(id=11, preferred_locale="de-DE", name="new", emojis=[], features=[])
 
-    logs.get_log_enable = AsyncMock(return_value=SimpleNamespace(guild_update=True))  # type: ignore[method-assign]
-    logs.log_event_producer = AsyncMock()  # type: ignore[method-assign]
+    get_log_enable = AsyncMock(return_value=SimpleNamespace(guild_update=True))
+    monkeypatch.setattr(logs, "get_log_enable", get_log_enable)
+    monkeypatch.setattr(logs, "log_event_producer", AsyncMock())
     none_mock = MagicMock(side_effect=lambda locale: f"none:{locale}")
-    logs.l10n = SimpleNamespace(  # type: ignore[method-assign]
-        logs=SimpleNamespace(
-            guildUpdate=SimpleNamespace(
-                none=none_mock,
-                name=lambda locale, **_: f"name:{locale}",
-                title=lambda locale: f"title:{locale}",
+    monkeypatch.setattr(
+        logs,
+        "l10n",
+        SimpleNamespace(
+            logs=SimpleNamespace(
+                guildUpdate=SimpleNamespace(
+                    none=none_mock,
+                    name=lambda locale, **_: f"name:{locale}",
+                    title=lambda locale: f"title:{locale}",
+                )
             )
-        )
+        ),
     )
 
     await cog.on_guild_update(before, after)
 
-    logs.get_log_enable.assert_awaited_once_with(11)
+    get_log_enable.assert_awaited_once_with(11)
     first_call = none_mock.call_args_list[0]
     assert first_call.args[0] == "de-DE"
 

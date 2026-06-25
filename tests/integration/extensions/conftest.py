@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from tests.helpers.extension_loader import (
+    _wire_bot_loop,
     fire_cog_on_ready,
     load_extension,
     make_bot_for_extensions,
@@ -112,6 +113,7 @@ def extension_bot() -> MagicMock:
 async def load_extension_bot(extension: str, *, fire_ready: bool = True) -> MagicMock:
     bot = make_bot_for_extensions()
     await load_extension(bot, extension)
+    _wire_bot_loop(bot)
     if fire_ready:
         await fire_cog_on_ready(bot)
     return bot
