@@ -287,6 +287,7 @@ class LogsPermissions:
     send_polls: LocalizedString
     send_tts_messages: LocalizedString
     send_voice_messages: LocalizedString
+    set_voice_channel_status: LocalizedString
     speak: LocalizedString
     stream: LocalizedString
     use_application_commands: LocalizedString
@@ -1754,6 +1755,7 @@ def build_logs() -> Logs:
             'send_polls': LocalizedString('logs.permissions.send_polls'),
             'send_tts_messages': LocalizedString('logs.permissions.send_tts_messages'),
             'send_voice_messages': LocalizedString('logs.permissions.send_voice_messages'),
+            'set_voice_channel_status': LocalizedString('logs.permissions.set_voice_channel_status'),
             'speak': LocalizedString('logs.permissions.speak'),
             'stream': LocalizedString('logs.permissions.stream'),
             'use_application_commands': LocalizedString('logs.permissions.use_application_commands'),
@@ -1819,6 +1821,7 @@ def build_logs() -> Logs:
         send_polls=LocalizedString('logs.permissions.send_polls'),
         send_tts_messages=LocalizedString('logs.permissions.send_tts_messages'),
         send_voice_messages=LocalizedString('logs.permissions.send_voice_messages'),
+        set_voice_channel_status=LocalizedString('logs.permissions.set_voice_channel_status'),
         speak=LocalizedString('logs.permissions.speak'),
         stream=LocalizedString('logs.permissions.stream'),
         use_application_commands=LocalizedString('logs.permissions.use_application_commands'),

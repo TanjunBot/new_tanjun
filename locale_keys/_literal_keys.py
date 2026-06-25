@@ -3792,6 +3792,7 @@ LocaleKey = Literal[
     'logs.permissions.send_polls',
     'logs.permissions.send_tts_messages',
     'logs.permissions.send_voice_messages',
+    'logs.permissions.set_voice_channel_status',
     'logs.permissions.speak',
     'logs.permissions.stream',
     'logs.permissions.use_application_commands',
