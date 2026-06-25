@@ -148,7 +148,7 @@ class LoopCog(commands.Cog):
                 return  # Skip notifications on first check
 
             streams = await twitch_service.get_streams(user_ids)
-            live_streams = {stream["user_id"]: stream for stream in streams}
+            live_streams = {stream.user_id: stream for stream in streams}
 
             # Batch notification for streams going live simultaneously
             newly_live = [

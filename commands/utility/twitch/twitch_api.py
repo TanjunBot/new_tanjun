@@ -6,11 +6,10 @@ The service itself is in services/twitch_service.py.
 from __future__ import annotations
 
 from locale_keys import locale
-from typing import Any
 import discord
-from services.twitch_service import get_twitch_service
+from services.twitch_service import LiveStreamInfo, get_twitch_service
 
-async def notify_twitch_online(client: discord.Client, uuid: str, data: dict[str, Any]) -> None:
+async def notify_twitch_online(client: discord.Client, uuid: str, data: LiveStreamInfo) -> None:
     """Send a Twitch live notification using the TwitchService."""
     service = get_twitch_service()
     if service is None:
