@@ -35,7 +35,7 @@ def audit_root_command_payloads(
     safe_limit: int = DISCORD_COMMAND_PAYLOAD_SAFE_LIMIT,
     hard_limit: int = DISCORD_COMMAND_PAYLOAD_LIMIT,
 ) -> list[CommandPayloadAudit]:
-    tree = bot.tree
+    tree: discord.app_commands.CommandTree[Any] | None = bot.tree
     if tree is None:
         return []
 

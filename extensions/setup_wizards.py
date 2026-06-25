@@ -356,9 +356,8 @@ class BoosterSetupView(View):
             return
         if not select.values:
             return
-        role = select.values[0]
-        if not isinstance(role, discord.Role):
-            role = self.guild.get_role(role.id)
+        selected: discord.Role | discord.Object = select.values[0]
+        role: discord.Role | None = selected if isinstance(selected, discord.Role) else self.guild.get_role(selected.id)
         if role is None:
             embed = utility.tanjunEmbed(title='Role Not Found', description='Could not find that role in this server.')
             await interaction.response.send_message(embed=_discord_embed(embed), ephemeral=True)
