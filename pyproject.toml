@@ -20,7 +20,7 @@ dependencies = [
     "akinator-python==1.6.0",
     "annotated-types==0.7.0",
     "anyio==4.14.1",
-    "alembic==1.18.4",
+    "alembic==1.18.5",
     "asyncmy==0.2.11",
     "attrs==26.1.0",
     "beautifulsoup4==4.15.0",
@@ -40,7 +40,7 @@ dependencies = [
     "multidict==6.7.1",
     "mysql-connector-python==9.7.0",
     "num2words==0.5.14",
-    "numpy==2.4.6",
+    "numpy==2.5.0",
     "openai==2.43.0",
     "pillow==12.2.0",
     "prometheus-client==0.25.0",
@@ -131,7 +131,7 @@ dev = [
     "freezegun>=1.4",
     "hypothesis>=6.100",
     "mypy>=1.11",
-    "ruff==0.15.19",
+    "ruff==0.15.20",
     "PyYAML>=6.0",
 ]
 docs-screenshots = [
