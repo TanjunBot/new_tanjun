@@ -171,7 +171,7 @@ class TwitchService:
             rows.append(TwitchNotification(*row))
         return rows
 
-    async def send_live_notification(self, client: discord.Client, twitch_uuid: str, stream_data: dict[str, Any]) -> None:
+    async def send_live_notification(self, client: discord.Client, twitch_uuid: str, stream_data: LiveStreamInfo) -> None:
         """Send Twitch live notifications to all configured channels for this user."""
         notifications = await self.get_notification_by_twitch_uuid(twitch_uuid)
         if not notifications:
@@ -183,12 +183,12 @@ class TwitchService:
             guild = client.get_guild(int(guild_id))
             if guild is None:
                 continue
-            message = self.parse_notification_message(notification_message, str(guild.preferred_locale), stream_data['user_name'])
+            message = self.parse_notification_message(notification_message, str(guild.preferred_locale), stream_data.user_name)
             channel = guild.get_channel(int(channel_id))
             if channel is None or isinstance(channel, (discord.ForumChannel, discord.CategoryChannel)):
                 continue
-            embed = tanjunEmbed(description=f"[{stream_data['title']}](https://www.twitch.tv/{stream_data['user_name']})")
-            embed.set_image(url=stream_data['thumbnail_url'].replace('{width}', '1920').replace('{height}', '1080'))
+            embed = tanjunEmbed(description=f"[{stream_data.title}](https://www.twitch.tv/{stream_data.user_name})")
+            embed.set_image(url=stream_data.thumbnail_url.replace('{width}', '1920').replace('{height}', '1080'))
             await channel.send(message, embed=embed)
 
     def parse_notification_message(self, message: str | None, locale_str: str, twitch_name: str) -> str:
