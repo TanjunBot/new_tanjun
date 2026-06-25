@@ -30320,6 +30320,14 @@
     "max_length": null
   },
   {
+    "identifier": "logs.permissions.set_voice_channel_status",
+    "source_string": "Set voice channel status",
+    "translation": "Set voice channel status",
+    "context": "Logging feature copy: permissions.set voice channel status.",
+    "labels": "logs",
+    "max_length": 32
+  },
+  {
     "identifier": "logs.permissions.speak",
     "source_string": "Speak",
     "translation": "Speak",
