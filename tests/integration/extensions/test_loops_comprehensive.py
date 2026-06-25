@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from services.twitch_service import LiveStreamInfo
 from tests.helpers.discord import make_guild, make_text_channel
 from tests.integration.extensions.conftest import load_extension_bot
 
@@ -118,7 +119,7 @@ async def test_poll_twitch_newly_live(loop_cog) -> None:
     svc.get_all_notification_uuids = AsyncMock(return_value=["user1"])
     svc.initial_check_done = True
     svc.stream_status = {"user1": False}
-    svc.get_streams = AsyncMock(return_value=[{"user_id": "user1", "title": "live"}])
+    svc.get_streams = AsyncMock(return_value=[LiveStreamInfo("user1", "user1", "live", 0, "", "")])
     with (
         patch.object(loops_mod, "get_twitch_service", return_value=svc),
         patch.object(loops_mod, "notify_twitch_online", new=AsyncMock()) as notify,
