@@ -40,7 +40,7 @@ dependencies = [
     "multidict==6.7.1",
     "mysql-connector-python==9.7.0",
     "num2words==0.5.14",
-    "numpy==2.4.6",
+    "numpy==2.5.0",
     "openai==2.44.0",
     "pillow==12.2.0",
     "prometheus-client==0.25.0",
