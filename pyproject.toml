@@ -63,7 +63,7 @@ dependencies = [
     "sqlalchemy==2.0.51",
     "sympy==1.14.0",
     "twitchAPI==4.5.0",
-    "typing_extensions==4.15.0",
+    "typing_extensions==4.16.0",
     "urllib3==2.7.0",
     "yarl==1.24.2",
     "rembg==2.0.76",
