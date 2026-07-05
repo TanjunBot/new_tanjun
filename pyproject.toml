@@ -42,7 +42,7 @@ dependencies = [
     "num2words==0.5.14",
     "numpy==2.5.0",
     "openai==2.44.0",
-    "pillow==12.2.0",
+    "pillow==12.3.0",
     "prometheus-client==0.25.0",
     "pycparser==3.0",
     "pydantic==2.13.4",
