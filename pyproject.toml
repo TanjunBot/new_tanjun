@@ -46,7 +46,7 @@ dependencies = [
     "prometheus-client==0.26.0",
     "pycparser==3.0",
     "pydantic==2.13.4",
-    "pydantic-settings==2.14.2",
+    "pydantic-settings==2.15.0",
     "PyGithub==2.10.0",
     "PyJWT==2.13.0",
     "PyMySQL==1.2.0",
