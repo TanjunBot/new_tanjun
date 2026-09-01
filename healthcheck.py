@@ -1,37 +1,44 @@
 """Docker health check for Tanjun bot.
 
-Verifies the bot process is alive, has connected to Discord
-by checking for the ready flag file written by on_ready(),
-and that the database connection pool is responsive.
+Runs in a separate process from main.py. Checks the on_ready marker file,
+startup marker while migrations or Discord connect are in progress, and as a
+fallback the Prometheus /health endpoint once the metrics server is up.
 """
 
-import asyncio
 import os
 import sys
-import tempfile
+import urllib.error
+import urllib.request
 from pathlib import Path
 
-READY_FILE = Path(os.path.join(tempfile.gettempdir(), "bot_ready"))
+READY_FILE = Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
+STARTUP_FILE = Path(os.environ.get("BOT_STARTUP_FILE", "/usr/local/app/.bot_startup"))
+METRICS_PORT = int(os.environ.get("METRICS_PORT", "8001"))
 
 
-async def check_health() -> bool:
-    """Run all health checks and return True only if all pass."""
-    # Check 1: Bot has fired on_ready
-    if not READY_FILE.exists():
-        return False
+def check_ready_file() -> bool:
+    return READY_FILE.is_file()
 
-    # Check 2: Database pool is responsive
+
+def check_startup_in_progress() -> bool:
+    return STARTUP_FILE.is_file()
+
+
+def check_metrics_health() -> bool:
+    url = f"http://127.0.0.1:{METRICS_PORT}/health"
     try:
-        from api import check_pool_health
-
-        return await check_pool_health()
-    except Exception:
+        with urllib.request.urlopen(url, timeout=5) as response:
+            return bool(response.status == 200)
+    except (urllib.error.URLError, TimeoutError, OSError):
         return False
+
+
+def check_health() -> bool:
+    return check_ready_file() or check_startup_in_progress() or check_metrics_health()
 
 
 def main() -> None:
-    result = asyncio.run(check_health())
-    sys.exit(0 if result else 1)
+    sys.exit(0 if check_health() else 1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,221 @@
+defaults:
+  behavior_spec: 90
+  integration: 90
+  unit_logic: 90
+  unit_extension: 90
+  e2e_live: 90
+  permission_denial: 90
+groups:
+  admin_channels_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_emoji_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_jointocreate_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_localegroup_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_messaging_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_moderation_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_purgegroup_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_report_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_role_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_rolemanage_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_setup_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_triggermessages_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  admin_warn_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  ai_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  channel_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  funcmd_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  games_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  giveaway_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  image_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  level_blacklist_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  level_boosts_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  level_config_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  levelcommands_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  logs_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  math_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  minigame_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  setup_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  utility_help_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  utility_scheduledmessage_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+  utilitycmd_name:
+    behavior_spec: 90
+    integration: 90
+    unit_logic: 90
+    unit_extension: 90
+    e2e_live: 90
+    permission_denial: 90
+global:
+  min_command_coverage: 90
+  min_manifest_paths_with_any_test: 100

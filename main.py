@@ -10,12 +10,18 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+from utils.app_command_tree import make_add_command_idempotent
+from utils.exception_reporter import handle_asyncio_exception, install_exception_reporter
+
+install_exception_reporter()
+
 import asyncio
 import os
 import sys
 import tempfile
 from pathlib import Path
 
+import aiohttp
 import asyncmy  # type: ignore[import-not-found]
 import discord
 from discord.ext import commands
@@ -34,6 +40,12 @@ from config import (
     sentry_dsn,
     sentry_environment,
     sentry_traces_sample_rate,
+    sync_commands_on_startup,
+)
+from utils.command_tree_sync import (
+    format_sync_http_error,
+    is_primary_sync_shard,
+    sync_application_commands_safe,
 )
 
 
@@ -67,6 +79,11 @@ def _should_discard_sentry_event(event: dict, hint: dict) -> dict | None:
         msg = str(exc_value).lower()
         if "10008" in msg and "unknown message" in msg:
             return None
+
+    # Transient Discord gateway handshake failures (e.g. Cloudflare 520) are
+    # retried automatically by discord.py; not actionable via Sentry.
+    if isinstance(exc_value, aiohttp.WSServerHandshakeError):
+        return None
 
     return event
 
@@ -135,15 +152,55 @@ intents.invites = True
 intents.presences = False
 
 bot = commands.AutoShardedBot(prefix, intents=intents, application_id=config.applicationId)  # type: ignore[arg-type]
+make_add_command_idempotent(bot.tree)
+
+_startup_sync_lock = asyncio.Lock()
+_startup_sync_done = False
+
+
+def _bot_ready_path() -> Path:
+    return Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready"))
+
+
+def _startup_marker_path() -> Path:
+    return Path(os.environ.get("BOT_STARTUP_FILE", "/usr/local/app/.bot_startup"))
+
+
+def _clear_startup_marker() -> None:
+    _startup_marker_path().unlink(missing_ok=True)
+
+
+async def _run_startup_command_sync() -> None:
+    global _startup_sync_done
+    if not sync_commands_on_startup or not is_primary_sync_shard(bot):
+        return
+    async with _startup_sync_lock:
+        if _startup_sync_done:
+            return
+        await asyncio.sleep(1)
+        try:
+            await sync_application_commands_safe(bot)
+        except discord.HTTPException as exc:
+            logger.error("Startup command sync failed: %s", format_sync_http_error(exc))
+            return
+        except Exception:
+            logger.exception("Startup command sync failed")
+            return
+        _startup_sync_done = True
 
 
 @bot.event
 async def on_ready() -> None:
-    Path(tempfile.gettempdir(), "bot_ready").touch()
+    _clear_startup_marker()
+    ready_path = _bot_ready_path()
+    ready_path.parent.mkdir(parents=True, exist_ok=True)
+    ready_path.touch()
     user = bot.user
     if user is not None:
         print(f"Logged in as {user} (ID: {user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
+    if sync_commands_on_startup and is_primary_sync_shard(bot):
+        bot.loop.create_task(_run_startup_command_sync())
 
 
 async def _load_all_extensions(bot: commands.AutoShardedBot) -> None:
@@ -166,6 +223,17 @@ def _database_connect_hint() -> str:
 
 async def _init_database_pool() -> asyncmy.Pool | None:
     """Initialize and return the database connection pool."""
+    from utils.db_migration import log_database_connection_debug
+
+    log_database_connection_debug(
+        context="main.py asyncmy pool init",
+        extra={
+            "connect_timeout_sec": database_connect_timeout_sec,
+            "max_retries": database_connect_max_retries,
+            "retry_delay_sec": database_connect_retry_delay_sec,
+        },
+    )
+
     max_retries = database_connect_max_retries
     delay = database_connect_retry_delay_sec
     last_error: BaseException | None = None
@@ -206,6 +274,9 @@ async def _init_database_pool() -> asyncmy.Pool | None:
 async def main() -> None:
     print("starting bot...")
     print("discord.py version: ", discord.__version__)
+
+    loop = asyncio.get_running_loop()
+    loop.set_exception_handler(handle_asyncio_exception)
 
     # Create pool-ready event before any tasks start
     # so LoopCog.on_ready can wait on it asyncio.Event-style instead of polling
@@ -301,6 +372,17 @@ async def main() -> None:
     # Step 4: Load translator (depends on extensions being loaded for tree).
     await loadTranslator(bot)
 
+    e2e_minimal_startup = os.getenv("TANJUN_E2E_MINIMAL_STARTUP", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    if e2e_minimal_startup:
+        logger.info("TANJUN_E2E_MINIMAL_STARTUP: skipping health checks for live E2E")
+        await bot.start(config.token)  # type: ignore[arg-type]
+        return
+
     # Step 5: Run startup health checks.
     health_manager = HealthCheckManager(bot)
     health_manager.register(OpenRouterHealthCheck())
@@ -312,6 +394,10 @@ async def main() -> None:
     health_manager.register(ImgBBHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(BytebinHealthCheck(), interval=1800)  # 30 minutes
     health_manager.register(GitHubAPIHealthCheck(), interval=3600)  # 60 minutes
+    from extensions.health_check import BackgroundLoopHealthCheck
+
+    health_manager.register(BackgroundLoopHealthCheck(bot))
+    bot.health_manager = health_manager
     ok, critical_failures = await health_manager.run_startup_checks()
     if not ok:
         # Can't send Discord notification before login; log prominently instead.

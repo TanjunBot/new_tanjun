@@ -6,6 +6,13 @@ class Forbidden(Exception):
 
 
 class HTTPException(Exception):
+    def __init__(self, response: object = None, message: object = None, *args: object) -> None:
+        self.response = response
+        self.status = getattr(response, "status", 0) if response is not None else 0
+        super().__init__(str(message) if message else "", *args)
+
+
+class DiscordServerError(HTTPException):
     pass
 
 

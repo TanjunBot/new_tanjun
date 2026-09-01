@@ -20,11 +20,17 @@ jobs:
   crowdin-sync:
     name: Sync Translations with Crowdin
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: development
+
+      - name: Prepare Crowdin CSV files
+        run: python scripts/crowdin_locale_csv.py to-csv
 
       - name: Upload source files to Crowdin
         uses: crowdin/github-action@v2
@@ -37,6 +43,21 @@ jobs:
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload existing translations to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: true
+          auto_approve_imported: true
+          download_translations: false
+          crowdin_branch_name: development
+          config: crowdin.yml
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download translations from Crowdin
         if: ${{ !inputs.upload_only }}
@@ -47,11 +68,26 @@ jobs:
           download_translations: true
           crowdin_branch_name: development
           config: crowdin.yml
-          create_pull_request: true
-          pull_request_title: 'New Crowdin updates'
-          pull_request_body: 'Automated translation updates from Crowdin.'
-          pull_request_labels: 'translations'
-          pull_request_base_branch_name: development
+          create_pull_request: false
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore locale JSON from Crowdin CSV
+        if: ${{ !inputs.upload_only }}
+        run: python scripts/crowdin_locale_csv.py to-json
+
+      - name: Open translation pull request
+        if: ${{ !inputs.upload_only }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: crowdin-translations
+          base: development
+          title: New Crowdin updates
+          body: Automated translation updates from Crowdin.
+          labels: translations
+          commit-message: New Crowdin updates
+          add-paths: |
+            locales/*.json

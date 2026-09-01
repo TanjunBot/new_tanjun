@@ -42,7 +42,6 @@ discord.ButtonStyle.gray = "gray"
 discord.TextStyle = MagicMock()
 discord.TextStyle.short = "short"
 discord.TextStyle.paragraph = "paragraph"
-discord.ui.Select = MagicMock()
 if hasattr(discord.app_commands, "autocomplete"):
     discord.app_commands.autocomplete = lambda *a, **k: lambda f: f
 discord.ui.UserSelect = MagicMock()

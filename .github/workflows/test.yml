@@ -1,0 +1,85 @@
+name: Test
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+
+jobs:
+  unit-and-mock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run unit tests with coverage
+        run: pytest tests/unit -m "not slow" -q -n auto --cov --cov-report= --cov-fail-under=0
+      - name: Create test environment file
+        run: |
+          cat > .env <<EOF
+          TOKEN=test-bot-token
+          APPLICATIONID=999999999999999999
+          ADMINIDS=999999999999999999
+          PREFIX=!
+          DATABASE_IP=127.0.0.1
+          DATABASE_PORT=3307
+          DATABASE_USER=test_user
+          DATABASE_PASSWORD=test_password
+          DATABASE_SCHEMA=tanjun_test
+          TANJUN_TEST_DB_HOST=127.0.0.1
+          TANJUN_TEST_DB_PORT=3307
+          TANJUN_TEST_DB_USER=test_user
+          TANJUN_TEST_DB_PASSWORD=test_password
+          TANJUN_TEST_DB_NAME=tanjun_test
+          EOF
+      - name: Start test database
+        run: docker compose -f docker-compose.test.yml up -d --wait
+      - name: Reload config after unit tests
+        run: python -c "import importlib, config; importlib.reload(config); print('database_ip:', config.settings.database_ip)"
+      - name: Run integration tests with coverage
+        env:
+          TANJUN_INTEGRATION: "true"
+          TANJUN_TEST_DB_HOST: 127.0.0.1
+          TANJUN_TEST_DB_PORT: "3307"
+          TANJUN_TEST_DB_USER: test_user
+          TANJUN_TEST_DB_PASSWORD: test_password
+          TANJUN_TEST_DB_NAME: tanjun_test
+        run: |
+          alembic upgrade head
+          python scripts/bootstrap_command_handlers.py
+          pytest tests/integration -m "not slow and not live_discord" \
+            --cov --cov-append --cov-report=term-missing --cov-fail-under=85 -q
+      - name: Stop test database
+        if: always()
+        run: docker compose -f docker-compose.test.yml down -v
+      - name: Run mock E2E tests
+        run: pytest tests/e2e/ -m "not slow" -q
+      - name: Check command test coverage mapping
+        run: python scripts/check_command_test_coverage.py
+      - name: Command coverage matrix gate
+        run: |
+          python scripts/report_command_coverage.py --all \
+            --fail-under-config coverage/thresholds.yaml \
+            --format json --output coverage/command-matrix.json
+      - name: Check diagnostics command tree manifest
+        run: python scripts/check_diagnostics_manifest.py
+
+  integration-db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Check schema migration on schema changes
+        run: python scripts/check_schema_revision.py origin/main

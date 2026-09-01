@@ -1,11 +1,15 @@
 """Pytest configuration and fixtures for Tanjun bot tests."""
 
 import sys
+import types
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import pytest_asyncio
 
 import tests.mock_config as mock_config
+
+pytest_plugins = ["tests.helpers.wizard_flow"]
 
 # Apply mock config before any test imports
 mock_config.patch_config_module()
@@ -16,12 +20,19 @@ _discord_mock.User = MagicMock()
 _discord_mock.Message = MagicMock()
 _discord_mock.AllowedMentions = MagicMock()
 _discord_mock.File = MagicMock()
-from tests.helpers.discord_exceptions import FakeEmbed, Forbidden, HTTPException, NotFound
+from tests.helpers.discord_exceptions import (
+    DiscordServerError,
+    FakeEmbed,
+    Forbidden,
+    HTTPException,
+    NotFound,
+)
 
 _discord_mock.Embed = FakeEmbed
 
 _discord_mock.Forbidden = Forbidden
 _discord_mock.HTTPException = HTTPException
+_discord_mock.DiscordServerError = DiscordServerError
 _discord_mock.NotFound = NotFound
 _discord_mock.Entitlement = MagicMock()
 _discord_mock.abc = MagicMock()
@@ -48,10 +59,6 @@ _discord_mock.ext.commands.hybrid_command = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.is_owner = lambda f: f
 _discord_mock.ext.commands.cooldown = lambda *a, **kw: lambda f: f
 _discord_mock.ext.commands.Command = type("Command", (), {})
-_discord_mock.app_commands = MagicMock()
-_discord_mock.app_commands.Command = type("AppCommand", (), {})
-
-
 class _FakeAppGroup:
     def __init__(self, *args, **kwargs) -> None:
         if args and "name" not in kwargs:
@@ -67,6 +74,7 @@ class _FakeAppGroup:
             if callable(member) and hasattr(member, "__discord_app_command_name__"):
                 cmd = MagicMock()
                 cmd.name = member.__discord_app_command_name__
+                cmd.callback = member
                 self.commands.append(cmd)
 
     def add_command(self, command) -> None:
@@ -84,22 +92,30 @@ def _app_command(*args, **kwargs):
     return decorator
 
 
-_discord_mock.app_commands.Group = _FakeAppGroup
-_discord_mock.app_commands.command = _app_command
-_discord_mock.app_commands.autocomplete = lambda *a, **k: lambda f: f
-_discord_mock.app_commands.locale_str = lambda s: s
-_discord_mock.app_commands.describe = lambda **kw: lambda f: f
-_discord_mock.app_commands.choices = lambda *a, **kw: lambda f: f
-
-
 class _FakeAppCommandRange:
     @classmethod
     def __class_getitem__(cls, item: object) -> type:
         return cls
 
 
-_discord_mock.app_commands.Range = _FakeAppCommandRange
-_discord_mock.app_commands.Choice = lambda **kw: type("Choice", (), kw)
+class _FakeAppCommandsModule:
+    Group = _FakeAppGroup
+    Command = type("AppCommand", (), {})
+    AppCommandChannel = type("AppCommandChannel", (), {})
+    AppCommandThread = type("AppCommandThread", (), {})
+    command = staticmethod(_app_command)
+    autocomplete = staticmethod(lambda *a, **k: lambda f: f)
+    locale_str = staticmethod(lambda s: s)
+    describe = staticmethod(lambda **kw: lambda f: f)
+    choices = staticmethod(lambda *a, **kw: lambda f: f)
+    Range = _FakeAppCommandRange
+    Choice = staticmethod(lambda **kw: type("Choice", (), kw))
+
+    def __getattr__(self, name: str) -> MagicMock:
+        return MagicMock()
+
+
+_discord_mock.app_commands = _FakeAppCommandsModule()
 _discord_mock.Interaction = MagicMock()
 
 
@@ -173,10 +189,38 @@ class _FakeUIButton:
         return cls
 
 
+class _FakeView:
+    def __init__(self, *args, **kwargs) -> None:
+        self.timeout = kwargs.get("timeout")
+        self.children: list = []
+        self.message = None
+
+    def add_item(self, item) -> None:
+        self.children.append(item)
+
+    async def wait(self) -> bool:
+        return True
+
+    def stop(self) -> None:
+        pass
+
+
+class _FakeSelect:
+    def __init__(self, *args, **kwargs) -> None:
+        self.options = kwargs.get("options", [])
+        self.values: list = []
+        self.placeholder = kwargs.get("placeholder", "")
+        self.disabled = False
+
+    @classmethod
+    def __class_getitem__(cls, item):
+        return cls
+
+
 _discord_mock.ui.Modal = type("Modal", (), {"__init__": lambda self, *a, **k: None})
-_discord_mock.ui.Select = type("Select", (), {"__init__": lambda self, *a, **k: None})
+_discord_mock.ui.Select = _FakeSelect
 _discord_mock.ui.TextInput = type("TextInput", (), {"__init__": lambda self, *a, **k: None})
-_discord_mock.ui.View = type("View", (), {"__init__": lambda self, *a, **k: None})
+_discord_mock.ui.View = _FakeView
 _discord_mock.ui.Button = _FakeUIButton
 _discord_mock.TextStyle = MagicMock()
 _discord_mock.TextStyle.paragraph = "paragraph"
@@ -253,6 +297,58 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "slow: slow tests")
 
 
+@pytest.fixture(autouse=True)
+def _restore_discord_app_command_mocks() -> None:
+    _ensure_discord_types()
+    import discord
+
+    discord.app_commands.Group = _FakeAppGroup
+    discord.app_commands.command = _app_command
+    discord.app_commands.autocomplete = lambda *a, **k: lambda f: f
+    discord.app_commands.describe = lambda **kw: lambda f: f
+    discord.app_commands.choices = lambda *a, **kw: lambda f: f
+    discord.app_commands.locale_str = lambda s: s
+    discord.app_commands.Range = _FakeAppCommandRange
+    discord.app_commands.Choice = lambda **kw: type("Choice", (), kw)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> None:
+    outcome = yield
+    report = outcome.get_result()
+    if report.when != "call" or not report.passed:
+        return
+    if not hasattr(item, "callspec"):
+        return
+    params = item.callspec.params
+    from tests.helpers.command_coverage.collectors.pytest_registry import register_coverage_cell
+    from tests.helpers.command_coverage.models import AssertionDepth, CoverageCell, LayerKind
+
+    if "case" in params:
+        case = params["case"]
+        register_coverage_cell(
+            CoverageCell(
+                tree_path=case.tree_path,
+                layer=case.layer,
+                dimensions=dict(case.dimensions),
+                assertion_depth=AssertionDepth.OUTPUT,
+                source="pytest:passed",
+            )
+        )
+    elif "spec" in params:
+        spec = params["spec"]
+        if getattr(spec, "tree_path", None):
+            register_coverage_cell(
+                CoverageCell(
+                    tree_path=spec.tree_path,
+                    layer=LayerKind.BEHAVIOR_SPEC,
+                    dimensions={},
+                    assertion_depth=AssertionDepth.OUTCOME,
+                    source="pytest:passed",
+                )
+            )
+
+
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     for item in items:
         path = str(item.fspath)
@@ -290,7 +386,7 @@ def integration_mode() -> str:
     return os.environ.get("TANJUN_INTEGRATION", "false").lower()
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session", loop_scope="session")
 async def integration_db_pool():
     """
     Create a real database connection pool pointing at the test database.
@@ -301,6 +397,7 @@ async def integration_db_pool():
     Yields the pool and drops + recreates all tables on teardown so each
     test session starts with a clean schema.
     """
+    import asyncio
     import os
 
     import asyncmy
@@ -311,6 +408,22 @@ async def integration_db_pool():
     password = os.environ.get("TANJUN_TEST_DB_PASSWORD", "test_password")
     db = os.environ.get("TANJUN_TEST_DB_NAME", "tanjun_test")
 
+    os.environ.setdefault("TANJUN_TEST_DB_HOST", host)
+    os.environ.setdefault("TANJUN_TEST_DB_PORT", str(port))
+    os.environ.setdefault("TANJUN_TEST_DB_USER", user)
+    os.environ.setdefault("TANJUN_TEST_DB_PASSWORD", password)
+    os.environ.setdefault("TANJUN_TEST_DB_NAME", db)
+
+    from alembic import command
+    from utils.db_migration import _alembic_config
+    from utils.schema_conformance import load_schema_drift_errors
+
+    cfg = _alembic_config()
+    command.upgrade(cfg, "head")
+    if load_schema_drift_errors():
+        command.downgrade(cfg, "base")
+        command.upgrade(cfg, "head")
+
     try:
         pool = await asyncmy.create_pool(
             host=host,
@@ -318,11 +431,11 @@ async def integration_db_pool():
             user=user,
             password=password,
             db=db,
-            minsize=1,
-            maxsize=2,
+            minsize=2,
+            maxsize=16,
         )
     except Exception as exc:
-        pytest.skip(f"Test database not available: {exc}")
+        pytest.fail(f"Test database not available: {exc}")
 
     # Set the global pool so api._get_pool() resolves
     import api
@@ -333,25 +446,12 @@ async def integration_db_pool():
     original_bot = api._bot
     set_bot(_fake_bot)
 
-    # Create all tables
-    from api import create_tables
-
-    await create_tables(_fake_bot)
-
     yield pool
 
-    # Clean up: drop all tables
-    async with pool.acquire() as conn, conn.cursor() as cursor:
-        await cursor.execute(
-            "SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`') FROM information_schema.tables WHERE table_schema = %s",
-            (db,),
-        )
-        drop_queries = await cursor.fetchall()
-        for (dq,) in drop_queries:
-            await cursor.execute(dq)
-
     pool.close()
-    await pool.wait_closed()
+    try:
+        await asyncio.wait_for(pool.wait_closed(), timeout=5.0)
+    except TimeoutError:
+        pass
 
-    # Restore original bot state
     set_bot(original_bot)

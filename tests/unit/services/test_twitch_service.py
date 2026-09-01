@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
+import discord
 import pytest
 
 from models import TwitchUserModel
@@ -38,7 +39,12 @@ def _notification_row(
 
 @pytest.fixture
 def service() -> TwitchService:
-    return TwitchService()
+    svc = TwitchService()
+    svc.client_id = "mock_twitch_id_123"
+    svc.client_secret = "mock_twitch_secret"
+    svc.access_token = "mock_token"
+    svc.headers = {"Client-ID": "mock_twitch_id_123", "Authorization": "Bearer mock_token"}
+    return svc
 
 
 @pytest.fixture(autouse=True)
@@ -98,9 +104,12 @@ class TestTwitchServiceInit:
     @pytest.mark.asyncio
     async def test_init_without_credentials(self, service: TwitchService):
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.post = MagicMock()
         service.client_id = None
         service.client_secret = None
+        service.access_token = None
+        service.headers = None
         with patch("services.twitch_service.aiohttp.ClientSession", return_value=mock_session):
             await service.init()
         assert service.access_token is None
@@ -146,7 +155,8 @@ class TestTwitchServiceInit:
 class TestTwitchServiceApi:
     @pytest.mark.asyncio
     async def test_get_user_by_login_no_session(self, service: TwitchService):
-        service.session = None
+        service.client_id = None
+        service.client_secret = None
         assert await service.get_user_by_login("streamer") is None
 
     @pytest.mark.asyncio
@@ -154,9 +164,11 @@ class TestTwitchServiceApi:
         user_data = {"id": "1", "login": "streamer", "display_name": "Streamer"}
         api_resp = _mock_resp({"data": [user_data]})
         mock_session = AsyncMock()
-        mock_session.get = MagicMock(return_value=api_resp)
+        mock_session.closed = False
+        mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {"Authorization": "Bearer tok"}
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         result = await service.get_user_by_login("streamer")
         assert isinstance(result, TwitchUserModel)
@@ -166,20 +178,39 @@ class TestTwitchServiceApi:
     async def test_get_user_by_login_not_found(self, service: TwitchService):
         api_resp = _mock_resp({"data": []})
         mock_session = AsyncMock()
-        mock_session.get = MagicMock(return_value=api_resp)
+        mock_session.closed = False
+        mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {}
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         assert await service.get_user_by_login("missing") is None
 
     @pytest.mark.asyncio
-    async def test_get_streams_empty_user_ids(self, service: TwitchService):
-        assert await service.get_streams([]) == []
+    async def test_get_user_by_login_401_retries_with_new_token(self, service: TwitchService):
+        user_data = {"id": "1", "login": "streamer", "display_name": "Streamer"}
+        resp_401 = _mock_resp({"error": "Unauthorized"}, status=401)
+        resp_200 = _mock_resp({"data": [user_data]}, status=200)
+        token_resp = _mock_resp({"access_token": "new-tok"}, status=200)
+
+        mock_session = AsyncMock()
+        mock_session.closed = False
+        mock_session.request = MagicMock(side_effect=[resp_401, resp_200])
+        mock_session.post = MagicMock(return_value=token_resp)
+        service.session = mock_session
+        service.client_id = "cid"
+        service.client_secret = "csec"
+        service.access_token = "old-tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer old-tok"}
+
+        result = await service.get_user_by_login("streamer")
+        assert isinstance(result, TwitchUserModel)
+        assert result.login == "streamer"
+        assert service.access_token == "new-tok"
 
     @pytest.mark.asyncio
-    async def test_get_streams_no_session(self, service: TwitchService):
-        service.session = None
-        assert await service.get_streams(["123"]) == []
+    async def test_get_streams_empty_user_ids(self, service: TwitchService):
+        assert await service.get_streams([]) == []
 
     @pytest.mark.asyncio
     async def test_get_streams_success(self, service: TwitchService):
@@ -193,21 +224,49 @@ class TestTwitchServiceApi:
         }
         api_resp = _mock_resp({"data": [stream_data]})
         mock_session = AsyncMock()
-        mock_session.get = MagicMock(return_value=api_resp)
+        mock_session.closed = False
+        mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {}
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         streams = await service.get_streams(["123"])
+        assert streams is not None
         assert len(streams) == 1
         assert streams[0].user_id == "123"
 
     @pytest.mark.asyncio
+    async def test_get_streams_chunking(self, service: TwitchService):
+        stream_data = {
+            "user_id": "123",
+            "user_name": "s",
+            "title": "t",
+            "viewer_count": 10,
+            "started_at": "now",
+            "thumbnail_url": "url",
+        }
+        api_resp1 = _mock_resp({"data": [stream_data]})
+        api_resp2 = _mock_resp({"data": []})
+        mock_session = AsyncMock()
+        mock_session.closed = False
+        mock_session.request = MagicMock(side_effect=[api_resp1, api_resp2])
+        service.session = mock_session
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
+
+        user_ids = [str(i) for i in range(150)]
+        streams = await service.get_streams(user_ids)
+        assert streams is not None
+        assert len(streams) == 1
+        assert mock_session.request.call_count == 2
+
+    @pytest.mark.asyncio
     async def test_get_streams_network_error(self, service: TwitchService):
         mock_session = AsyncMock()
-        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("fail"))
+        mock_session.request = MagicMock(side_effect=aiohttp.ClientError("fail"))
         service.session = mock_session
         service.headers = {}
-        assert await service.get_streams(["123"]) == []
+        assert await service.get_streams(["123"]) is None
 
     @pytest.mark.asyncio
     async def test_initialize_stream_status(self, service: TwitchService):
@@ -289,11 +348,16 @@ class TestTwitchServiceParseNotification:
         assert result == "Go watch Streamer!"
 
     def test_default_message_when_none(self, service: TwitchService):
-        with patch(
-            "services.twitch_service.tanjunLocalizer.localize",
-            return_value="Default {name} live",
-        ):
+        import services.twitch_service as twitch_mod
+        # _locale is a frozen dataclass; replace the module-level reference instead
+        orig = twitch_mod._locale
+        mock_locale = MagicMock()
+        mock_locale.commands.utility.twitch.defaultNotificationMessage = MagicMock(return_value="Default {name} live")
+        twitch_mod._locale = mock_locale
+        try:
             result = service.parse_notification_message(None, "en-US", "Streamer")
+        finally:
+            twitch_mod._locale = orig
         assert result == "Default Streamer live"
 
 
@@ -317,7 +381,7 @@ class TestTwitchServiceSendLiveNotification:
         client = MagicMock()
         with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = []
-            await service.send_live_notification(client, "uuid", {"user_name": "s", "title": "t", "thumbnail_url": "u"})
+            await service.send_live_notification(client, "uuid", LiveStreamInfo("uuid", "s", "t", 0, "", "u"))
         client.get_guild.assert_not_called()
 
     @pytest.mark.asyncio
@@ -328,7 +392,7 @@ class TestTwitchServiceSendLiveNotification:
         with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = [notification]
             await service.send_live_notification(
-                client, "uuid", {"user_name": "s", "title": "t", "thumbnail_url": "https://x/{width}/{height}"}
+                client, "uuid", LiveStreamInfo("uuid", "s", "t", 0, "", "https://x/{width}/{height}")
             )
 
     @pytest.mark.asyncio
@@ -339,11 +403,7 @@ class TestTwitchServiceSendLiveNotification:
         client = MagicMock()
         client.get_guild.return_value = guild
         notification = TwitchNotification("1", CHANNEL_ID, GUILD_ID, "uuid", "name", "Watch {name}")
-        stream_data = {
-            "user_name": "streamer",
-            "title": "Playing games",
-            "thumbnail_url": "https://x/{width}x{height}.jpg",
-        }
+        stream_data = LiveStreamInfo("uuid", "streamer", "Playing games", 0, "", "https://x/{width}x{height}.jpg")
         with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = [notification]
             await service.send_live_notification(client, "uuid", stream_data)
@@ -361,7 +421,42 @@ class TestTwitchServiceSendLiveNotification:
         notification = TwitchNotification("1", CHANNEL_ID, GUILD_ID, "uuid", "name", None)
         with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
             mock_get.return_value = [notification]
-            await service.send_live_notification(client, "uuid", {"user_name": "s", "title": "t", "thumbnail_url": "u"})
+            await service.send_live_notification(client, "uuid", LiveStreamInfo("uuid", "s", "t", 0, "", "u"))
+
+    @pytest.mark.asyncio
+    async def test_send_fallback_fetch_channel(self, service: TwitchService):
+        guild = make_guild(guild_id=int(GUILD_ID))
+        guild.get_channel = MagicMock(return_value=None)
+        guild.get_thread = MagicMock(return_value=None)
+        channel = make_text_channel(channel_id=int(CHANNEL_ID), guild=guild)
+        client = MagicMock()
+        client.get_guild.return_value = guild
+        client.get_channel.return_value = None
+        client.fetch_channel = AsyncMock(return_value=channel)
+
+        notification = TwitchNotification("1", CHANNEL_ID, GUILD_ID, "uuid", "name", "Watch {name}")
+        stream_data = LiveStreamInfo("uuid", "streamer", "Playing games", 0, "", "https://x/{width}x{height}.jpg")
+        with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
+            mock_get.return_value = [notification]
+            await service.send_live_notification(client, "uuid", stream_data)
+        client.fetch_channel.assert_awaited_once_with(int(CHANNEL_ID))
+        channel.send.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_send_handles_forbidden_error_gracefully(self, service: TwitchService):
+        guild = make_guild(guild_id=int(GUILD_ID))
+        channel = make_text_channel(channel_id=int(CHANNEL_ID), guild=guild)
+        channel.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "missing perms"))
+        guild.get_channel = MagicMock(return_value=channel)
+        client = MagicMock()
+        client.get_guild.return_value = guild
+
+        notification = TwitchNotification("1", CHANNEL_ID, GUILD_ID, "uuid", "name", "Watch {name}")
+        stream_data = LiveStreamInfo("uuid", "streamer", "Playing games", 0, "", "https://x/{width}x{height}.jpg")
+        with patch.object(service, "get_notification_by_twitch_uuid", new_callable=AsyncMock) as mock_get:
+            mock_get.return_value = [notification]
+            # Should not raise exception
+            await service.send_live_notification(client, "uuid", stream_data)
 
 
 class TestTwitchServiceSingleton:

@@ -5,9 +5,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import discord
 import pytest
 from discord import app_commands
+from discord.ext import commands
 
-from extensions.error_handler import ErrorHandlerCog, _get_locale, _set_sentry_context
-from tests.helpers.discord import make_guild, make_interaction, make_member
+from extensions.error_handler import ErrorHandlerCog, _get_locale, _get_locale_from_context, _normalize_locale, _set_sentry_context
+from tests.helpers.discord import make_guild, make_interaction, make_member, make_text_channel
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -61,6 +62,26 @@ class TestGetLocale:
         ix = _interaction()
         ix.guild_locale = MagicMock(value="en_US")
         assert _get_locale(ix) == "en"
+
+
+class TestNormalizeLocale:
+    def test_none_defaults_en(self) -> None:
+        assert _normalize_locale(None) == "en"
+
+    def test_de_de_normalized(self) -> None:
+        assert _normalize_locale("de-DE") == "de"
+
+    def test_en_us_underscore(self) -> None:
+        assert _normalize_locale("en_US") == "en"
+
+    def test_zh_cn(self) -> None:
+        assert _normalize_locale("zh-CN") == "zh"
+
+    def test_plain_en(self) -> None:
+        assert _normalize_locale("en") == "en"
+
+    def test_uppercase(self) -> None:
+        assert _normalize_locale("DE") == "de"
 
 
 class TestSentryContext:
@@ -146,11 +167,6 @@ class TestOnAppCommandError:
     async def test_transformer_error(self) -> None:
         await self._handle(app_commands.TransformerError(MagicMock(), app_commands.AppCommandOptionType.string, ValueError()))
 
-    async def test_command_invoke_error_wrapper(self) -> None:
-        inner = RuntimeError("boom")
-        wrapped = app_commands.CommandInvokeError(inner)
-        await self._handle(wrapped)
-
     async def test_unexpected_error_no_sentry(self) -> None:
         with patch("extensions.error_handler.sentry_dsn", ""):
             await self._handle(RuntimeError("unexpected"))
@@ -181,3 +197,267 @@ class TestOnAppCommandError:
         ix = _interaction()
         ix.response.send_message = AsyncMock(side_effect=RuntimeError("send failed"))
         await cog._on_app_command_error(ix, app_commands.CheckFailure("x"))
+
+    async def test_http_exception_40060_silent(self) -> None:
+        """App command: HTTP 40060 should be silently dropped."""
+        cog = await _cog()
+        ix = _interaction()
+        exc = discord.HTTPException(MagicMock(), "interaction already acked")
+        exc.status = 400
+        exc.code = 40060
+        await cog._on_app_command_error(ix, exc)
+        ix.response.send_message.assert_not_called()
+        ix.followup.send.assert_not_called()
+
+    async def test_send_40060_silent(self) -> None:
+        """App command: send_message raising 40060 should be silently dropped."""
+        cog = await _cog()
+        ix = _interaction()
+        exc = discord.HTTPException(MagicMock(), "40060")
+        exc.status = 400
+        exc.code = 40060
+        ix.response.send_message = AsyncMock(side_effect=exc)
+        await cog._on_app_command_error(ix, app_commands.CheckFailure("x"))
+        # The error is raised but caught; no crash expected
+
+    async def test_on_error_event_listener(self) -> None:
+        """The on_error listener should call handle_discord_event_error."""
+        cog = await _cog()
+        with patch("extensions.error_handler.handle_discord_event_error") as mock_handle:
+            await cog.on_error("on_message", MagicMock())
+        mock_handle.assert_called_once()
+
+
+def _prefix_context(*, guild_locale: str = "en-US") -> MagicMock:
+    guild = make_guild()
+    guild.preferred_locale = guild_locale
+    channel = make_text_channel(guild=guild)
+    author = make_member()
+    ctx = MagicMock()
+    ctx.author = author
+    ctx.guild = guild
+    ctx.channel = channel
+    ctx.command = MagicMock()
+    ctx.command.qualified_name = "test_bot"
+    ctx.message = MagicMock()
+    ctx.message.id = 999
+    ctx.send = AsyncMock()
+    author.send = AsyncMock()
+    return ctx
+
+
+class TestGetLocaleFromContext:
+    def test_guild_locale_de_de(self) -> None:
+        ctx = _prefix_context(guild_locale="de-DE")
+        assert _get_locale_from_context(ctx) == "de"
+
+    def test_no_guild_defaults_en(self) -> None:
+        ctx = _prefix_context()
+        ctx.guild = None
+        assert _get_locale_from_context(ctx) == "en"
+
+
+class TestOnPrefixCommandError:
+    async def _handle(self, error: Exception) -> MagicMock:
+        cog = await _cog()
+        ctx = _prefix_context()
+        await cog._on_prefix_command_error(ctx, error)
+        return ctx
+
+    async def test_forbidden(self) -> None:
+        ctx = await self._handle(discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+
+    async def test_command_invoke_error_forbidden(self) -> None:
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        wrapped = commands.CommandInvokeError(inner)
+        ctx = await self._handle(wrapped)
+        ctx.send.assert_awaited_once()
+
+    async def test_command_invoke_error_forbidden_dm_fallback(self) -> None:
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        await cog._on_prefix_command_error(ctx, commands.CommandInvokeError(inner))
+        ctx.author.send.assert_awaited_once()
+
+    async def test_command_not_found_silent(self) -> None:
+        cog = await _cog()
+        ctx = _prefix_context()
+        await cog._on_prefix_command_error(ctx, commands.CommandNotFound("missing"))
+        ctx.send.assert_not_called()
+
+    async def test_missing_permissions(self) -> None:
+        ctx = await self._handle(commands.MissingPermissions(["send_messages"]))
+        ctx.send.assert_awaited_once()
+
+    async def test_bot_missing_permissions(self) -> None:
+        ctx = await self._handle(commands.BotMissingPermissions(["send_messages"]))
+        ctx.send.assert_awaited_once()
+
+    async def test_check_failure_generic(self) -> None:
+        """Prefix: generic CheckFailure (no missing_permissions attr)."""
+        ctx = await self._handle(commands.CheckFailure("generic nope"))
+        ctx.send.assert_awaited_once()
+
+    async def test_conversion_error(self) -> None:
+        """Prefix: ConversionError."""
+        ctx = await self._handle(commands.ConversionError(MagicMock(), ValueError("bad")))
+        ctx.send.assert_awaited_once()
+
+    async def test_user_input_error(self) -> None:
+        """Prefix: UserInputError."""
+        ctx = await self._handle(commands.UserInputError("bad input"))
+        ctx.send.assert_awaited_once()
+
+    async def test_unexpected_error(self) -> None:
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            ctx = await self._handle(RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_unexpected_error_with_sentry(self) -> None:
+        """Prefix: unexpected error with sentry DSN configured."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope") as push_scope,
+        ):
+            scope = MagicMock()
+            scope.__enter__ = MagicMock(return_value=scope)
+            scope.__exit__ = MagicMock(return_value=False)
+            push_scope.return_value = scope
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_unexpected_error_sentry_scope_fails(self) -> None:
+        """Prefix: unexpected error with sentry but push_scope raises."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope", side_effect=RuntimeError("scope fail")),
+        ):
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_http_exception_40060_silent(self) -> None:
+        """Prefix: HTTP 40060 should be silently dropped."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        exc = discord.HTTPException(MagicMock(), "interaction already acked")
+        exc.status = 400
+        exc.code = 40060
+        await cog._on_prefix_command_error(ctx, exc)
+        ctx.send.assert_not_called()
+
+    async def test_dm_fallback_dm_also_fails(self) -> None:
+        """Prefix: send fails with Forbidden, then DM also fails."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send = AsyncMock(side_effect=discord.HTTPException(MagicMock(), "dm blocked"))
+        await cog._on_prefix_command_error(ctx, discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send.assert_awaited_once()
+
+    async def test_command_on_cooldown(self) -> None:
+        """Prefix: CommandOnCooldown error."""
+        ctx = await self._handle(commands.CommandOnCooldown(retry_after=5.0))
+        ctx.send.assert_awaited_once()
+
+    async def test_on_command_error_dispatches(self) -> None:
+        """The on_command_error listener calls _on_prefix_command_error."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        with patch.object(cog, "_on_prefix_command_error") as mock_prefix:
+            await cog.on_command_error(ctx, commands.CommandNotFound("missing"))
+        mock_prefix.assert_awaited_once()
+
+    async def test_send_prefix_fails_dm_succeeds(self) -> None:
+        """Prefix: ctx.send raises Forbidden, fallback DM succeeds."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send = AsyncMock()
+        await cog._on_prefix_command_error(ctx, discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+        ctx.author.send.assert_awaited_once()
+
+    async def test_send_prefix_fails_dm_also_fails(self) -> None:
+        """Prefix: ctx.send and DM both raise exceptions."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.send = AsyncMock(side_effect=discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.author.send = AsyncMock(side_effect=RuntimeError("dm failed"))
+        await cog._on_prefix_command_error(ctx, discord.Forbidden(MagicMock(), "forbidden"))
+        ctx.send.assert_awaited_once()
+        ctx.author.send.assert_awaited_once()
+
+    async def test_send_prefix_http_40060_silent(self) -> None:
+        """Prefix: _send_prefix_command_error catches HTTP 40060 silently."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        exc = discord.HTTPException(MagicMock(), "40060")
+        exc.status = 400
+        exc.code = 40060
+        ctx.send = AsyncMock(side_effect=exc)
+        cause = discord.HTTPException(MagicMock(), "something")
+        cause.status = 503
+        await cog._on_prefix_command_error(ctx, cause)
+        # Should not crash — 40060 is handled in _send_prefix_command_error
+
+    async def test_prefix_unexpected_no_guild(self) -> None:
+        """Prefix: unexpected error with no guild (no sentry)."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.guild = None
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_prefix_unexpected_no_command(self) -> None:
+        """Prefix: unexpected error with no command name."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.command = None
+        with patch("extensions.error_handler.sentry_dsn", ""):
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_prefix_unexpected_no_guild_with_sentry(self) -> None:
+        """Prefix: unexpected error with sentry and no guild."""
+        cog = await _cog()
+        ctx = _prefix_context()
+        ctx.guild = None
+        ctx.command = None
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope") as push_scope,
+        ):
+            scope = MagicMock()
+            scope.__enter__ = MagicMock(return_value=scope)
+            scope.__exit__ = MagicMock(return_value=False)
+            push_scope.return_value = scope
+            await cog._on_prefix_command_error(ctx, RuntimeError("boom"))
+        ctx.send.assert_awaited_once()
+
+    async def test_app_command_forbidden_wrapped_in_invoke_error(self) -> None:
+        """App command: Forbidden wrapped in CommandInvokeError."""
+        cog = await _cog()
+        ix = _interaction()
+        inner = discord.Forbidden(MagicMock(), "forbidden")
+        wrapped = app_commands.CommandInvokeError(inner)
+        await cog._on_app_command_error(ix, wrapped)
+        ix.response.send_message.assert_awaited_once()
+
+    async def test_app_command_unexpected_sentry_scope_fails_app_command(self) -> None:
+        """App command: unexpected error with sentry but push_scope raises."""
+        cog = await _cog()
+        ix = _interaction()
+        with (
+            patch("extensions.error_handler.sentry_dsn", "https://example@sentry.io/1"),
+            patch("sentry_sdk.push_scope", side_effect=RuntimeError("scope fail")),
+        ):
+            await cog._on_app_command_error(ix, RuntimeError("boom"))
+        ix.response.send_message.assert_awaited_once()

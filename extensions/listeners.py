@@ -1,17 +1,13 @@
+from locale_keys import locale as l10n
 import logging
-
 import discord
 from discord.ext import commands
-
 from api import get_counting_configs
 from commands.admin.join_to_create.listener import memberJoin, memberLeave
 from commands.admin.ticket.close_ticket import close_ticket as closeTicketListener
 from commands.admin.ticket.open_ticket import openTicket as openTicketListener
 from commands.admin.trigger_messages.send import send_trigger_message
-from commands.ai.add_custom_situation_button_handler import (
-    approve_custom_situation,
-    deny_custom_situation,
-)
+from commands.ai.add_custom_situation_button_handler import approve_custom_situation, deny_custom_situation
 from commands.channel.dynamicslowmode import dynamicslowmodeMessage
 from commands.channel.farewell import farewellUser
 from commands.channel.media import mediaChannelMessage
@@ -21,7 +17,6 @@ from commands.utility.afk import checkIfAfkHasToBeRemoved, checkIfMentionsAreAfk
 from commands.utility.autopublish import publish_message
 from commands.utility.report import report_btn_click
 from config import adminIds
-from localizer import tanjunLocalizer
 from loops._voice_tracker import voice_user_manager
 from minigames.add_level_xp import addLevelXp
 from minigames.counting import counting
@@ -30,116 +25,91 @@ from minigames.counting_modes import counting as countingModes
 from minigames.wordchain import wordchain
 from services.scheduled_message_service import ScheduledMessageService
 from utils.dispatcher import run_handlers_safe, run_handlers_sequential
-
+from utils.github import report_bot_exception
 logger = logging.getLogger(__name__)
 
-
 class ListenerCog(commands.Cog):
+
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
-        # Early filter: skip bot messages and DMs once for all handlers
         if message.author.bot:
             return
         if message.guild is None:
             return
-
-        # Single DB check for all counting configs — skip all 3 handlers if none
         counting_config, challenge_config, modes_config = await get_counting_configs(message.channel.id)
-
-        # Build handler list — counting handlers are sequential (order matters)
-        # but each is individually guarded from the others.
-        # Everything else runs concurrently via run_handlers_safe.
         counting_handlers = []
         if counting_config:
-            counting_handlers.append(("counting", counting, (message,), {"config": counting_config}))
+            counting_handlers.append(('counting', counting, (message,), {'config': counting_config}))
         if challenge_config:
-            counting_handlers.append(("counting_challenge", countingChallenge, (message,), {"config": challenge_config}))
+            counting_handlers.append(('counting_challenge', countingChallenge, (message,), {'config': challenge_config}))
         if modes_config:
-            counting_handlers.append(("counting_modes", countingModes, (message,), {"config": modes_config}))
-
-        concurrent_handlers = [
-            ("wordchain", wordchain, (message,), {}),
-            ("addLevelXp", addLevelXp, (message,), {}),
-            ("addMessageToGiveaway", addMessageToGiveaway, (message,), {}),
-            ("publish_message", publish_message, (message,), {}),
-            ("checkIfAfkHasToBeRemoved", checkIfAfkHasToBeRemoved, (message,), {}),
-            ("checkIfMentionsAreAfk", checkIfMentionsAreAfk, (message,), {}),
-            ("send_trigger_message", send_trigger_message, (message,), {}),
-            ("mediaChannelMessage", mediaChannelMessage, (message,), {}),
-            ("dynamicslowmodeMessage", dynamicslowmodeMessage, (message,), {}),
-        ]
-
+            counting_handlers.append(('counting_modes', countingModes, (message,), {'config': modes_config}))
+        concurrent_handlers = [('wordchain', wordchain, (message,), {}), ('addLevelXp', addLevelXp, (message,), {}), ('addMessageToGiveaway', addMessageToGiveaway, (message,), {}), ('publish_message', publish_message, (message,), {}), ('checkIfAfkHasToBeRemoved', checkIfAfkHasToBeRemoved, (message,), {}), ('checkIfMentionsAreAfk', checkIfMentionsAreAfk, (message,), {}), ('send_trigger_message', send_trigger_message, (message,), {}), ('mediaChannelMessage', mediaChannelMessage, (message,), {}), ('dynamicslowmodeMessage', dynamicslowmodeMessage, (message,), {})]
         await run_handlers_sequential(counting_handlers, message)
         await run_handlers_safe(concurrent_handlers, message)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
+        custom_id: str | None = None
         try:
             if not interaction.data:
                 return
-            custom_id = interaction.data.get("custom_id")
+            custom_id = interaction.data.get('custom_id')
             if not isinstance(custom_id, str):
                 return
-            if custom_id.startswith("giveaway_enter"):
-                giveaway_id = interaction.data["custom_id"].split("; ")[1]  # type: ignore[typeddict-item]
-                embed = await add_giveaway_participant(  # type: ignore[func-returns-value]
-                    giveawayid=giveaway_id,
-                    userid=interaction.user.id,
-                    client=self.bot,
-                )
+            if custom_id.startswith('giveaway_enter'):
+                giveaway_id = interaction.data['custom_id'].split('; ')[1]
+                embed = await add_giveaway_participant(giveawayid=giveaway_id, userid=interaction.user.id, client=self.bot)
                 if embed:
-                    await interaction.response.send_message(embed=embed, ephemeral=True)  # type: ignore[unreachable]
-            elif custom_id.startswith("ai_add_custom_situation_approve"):
+                    await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif custom_id.startswith('ai_add_custom_situation_approve'):
                 if interaction.user.id not in adminIds:
                     return
                 await approve_custom_situation(interaction)
-            elif custom_id.startswith("ai_add_custom_situation_deny"):
+            elif custom_id.startswith('ai_add_custom_situation_deny'):
                 if interaction.user.id not in adminIds:
                     return
                 await deny_custom_situation(interaction)
-            elif custom_id.startswith("report_"):
+            elif custom_id.startswith('report_'):
                 await report_btn_click(interaction, custom_id)
                 return
-            elif custom_id.startswith("ticket_create"):
+            elif custom_id.startswith('ticket_create'):
                 await openTicketListener(interaction)
                 return
-            elif custom_id.startswith("ticket_close"):
+            elif custom_id.startswith('ticket_close'):
                 await closeTicketListener(interaction)
                 return
         except discord.Forbidden:
-            locale = interaction.locale  # type: ignore[assignment]
-            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.forbidden")
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.forbidden(locale_str)
             await self._send_error(interaction, error_msg)
         except discord.NotFound:
-            locale = interaction.locale  # type: ignore[assignment]
-            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.notfound")
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.notfound(locale_str)
             await self._send_error(interaction, error_msg)
         except discord.HTTPException as e:
-            locale = interaction.locale  # type: ignore[assignment]
-            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.http", status=e.status)
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.http(locale_str, status=e.status)
             await self._send_error(interaction, error_msg)
-        except Exception:
-            logging.exception("Unexpected error in on_interaction listener")
-            locale = interaction.locale  # type: ignore[assignment]
-            error_msg = tanjunLocalizer.localize(locale, "listeners.interaction.error.unexpected")
+        except Exception as exc:
+            logging.exception('Unexpected error in on_interaction listener')
+            await report_bot_exception(exc, source='on_interaction', context={'custom_id': custom_id, 'interaction_id': str(interaction.id), 'channel_id': str(interaction.channel_id), 'user': str(interaction.user), 'user_id': str(interaction.user.id), 'guild_id': str(interaction.guild_id) if interaction.guild_id else 'dm'})
+            locale_str = interaction.locale
+            error_msg = l10n.listeners.interaction.error.unexpected(locale_str)
             await self._send_error(interaction, error_msg)
 
     async def _send_error(self, interaction: discord.Interaction, message: str) -> None:
-        embed = discord.Embed(
-            colour=0xE74C3C,
-            title="Error",
-            description=message,
-        )
+        embed = discord.Embed(colour=15158332, title='Error', description=message)
         try:
             if interaction.response.is_done():
                 await interaction.followup.send(embed=embed, ephemeral=True)
             else:
                 await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception:
-            pass  # Truly give up if we can't even send an error
+            pass
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, user: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
@@ -150,9 +120,6 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
         if after.reference and after.reference.message_id is not None:
-            # Update content of a scheduled message when the referenced message is edited.
-            # after.reference.message_id is the scheduled message ID when the scheduled message
-            # was sent via webhook/message reference.
             await ScheduledMessageService.update_content(after.reference.message_id, after.content)
 
     @commands.Cog.listener()
@@ -168,7 +135,6 @@ class ListenerCog(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member) -> None:
         await farewellUser(member)
-
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(ListenerCog(bot))

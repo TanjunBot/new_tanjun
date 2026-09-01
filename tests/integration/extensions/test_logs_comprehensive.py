@@ -670,8 +670,8 @@ async def test_on_ready_starts_consumer(log_api_mocks):
     bot = await load_extension_bot(EXTENSION, fire_ready=True)
     cog = bot.cogs["LogsCog"]
     assert bot.tree.add_command.called
-    assert bot.loop.create_task.called
-    assert cog._log_consumer_task is not None or bot.loop.create_task.called
+    assert cog._log_consumer_task is not None
+    assert not cog._log_consumer_task.done()
 
 
 async def test_entity_blacklist_early_returns(log_api_mocks, logs_cog):
@@ -799,7 +799,7 @@ async def test_message_edit_truncated_description(log_api_mocks, logs_cog):
     after.content = "b" + "x" * 5000
     before.attachments = after.attachments = []
     after.jump_url = "https://discord.com/1"
-    with patch("extensions.logs.tanjunLocalizer.localize", side_effect=lambda _l, _k, **kw: kw.get("diff", "d") * 500):
+    with patch("localizer.tanjunLocalizer.localize", side_effect=lambda _l, _k, **kw: kw.get("diff", "d") * 500):
         await cog.on_message_edit(before, after)
 
 
@@ -826,7 +826,7 @@ async def test_message_delete_audit_match(log_api_mocks, logs_cog):
     await cog.on_message_delete(message)
 
 
-async def test_member_update_only_name_emits(log_api_mocks, logs_cog):
+async def test_member_update_skips_when_nothing_changed(log_api_mocks, logs_cog):
     cog = await logs_cog()
     guild = make_guild()
     before = make_member()
@@ -839,6 +839,27 @@ async def test_member_update_only_name_emits(log_api_mocks, logs_cog):
     before.pending = after.pending = False
     before.timed_out_until = after.timed_out_until = None
     await cog.on_member_update(before, after)
+    log_api_mocks.assert_not_called()
+
+
+async def test_member_update_display_name_emits(log_api_mocks, logs_cog):
+    cog = await logs_cog()
+    guild = make_guild()
+    before = make_member()
+    after = make_member()
+    before.guild = after.guild = guild
+    before.display_name = "OldNick"
+    after.display_name = "NewNick"
+    before.display_avatar = after.display_avatar
+    before.banner = after.banner
+    before.roles = after.roles = []
+    before.pending = after.pending = False
+    before.timed_out_until = after.timed_out_until = None
+    await cog.on_member_update(before, after)
+    log_api_mocks.assert_called_once()
+    embed = log_api_mocks.call_args[0][1]
+    assert "OldNick" in embed.description
+    assert "NewNick" in embed.description
 
 
 async def test_user_update_skips_blacklisted_role(log_api_mocks, logs_cog):
@@ -868,7 +889,7 @@ async def test_on_ready_skips_consumer_if_running(log_api_mocks):
     running.done.return_value = False
     cog._log_consumer_task = running
     await cog.on_ready()
-    bot.loop.create_task.assert_not_called()
+    assert cog._log_consumer_task is running
 
 
 async def test_make_bot_sets_api_pool():

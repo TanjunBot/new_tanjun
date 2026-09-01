@@ -23,11 +23,17 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the entire application
 COPY --chown=appuser:appuser . /usr/local/app/
 
+RUN chmod +x /usr/local/app/scripts/docker_entrypoint.py
+
 USER appuser
 
-# Health check for container orchestration
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+ENV PYTHONPATH=/usr/local/app
+ENV TANJUN_APP_ROOT=/usr/local/app
+
+# Health check: .bot_startup during migrations/boot, .bot_ready when Discord is up
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=10 \
   CMD ["python", "/usr/local/app/healthcheck.py"]
 
-EXPOSE 8080
-CMD ["python", "main.py"]
+EXPOSE 8001
+ENTRYPOINT ["python", "/usr/local/app/scripts/docker_entrypoint.py"]
+CMD []

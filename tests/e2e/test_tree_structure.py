@@ -10,22 +10,21 @@ from tests.helpers.extension_loader import (
     get_tree_command_names,
     get_tree_commands,
 )
+from tests.integration.extensions.test_admin import ADMIN_TOP_LEVEL_GROUPS
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.e2e]
 
 TREE_GROUPS = {
-    "extensions.admin": ("admin_name", 23),
     "extensions.ai": ("ai_name", 4),
     "extensions.channel": ("channel_name", 4),
     "extensions.fun": ("funcmd_name", 1),
     "extensions.games": ("games_name", 7),
     "extensions.giveaway": ("giveaway_name", 5),
     "extensions.image": ("image_name", 13),
-    "extensions.level": ("levelcommands_name", 6),
+    "extensions.level": ("levelcommands_name", 3),
     "extensions.logs": ("logs_name", 6),
     "extensions.math": ("math_name", 6),
     "extensions.minigames": ("minigame_name", 4),
-    "extensions.utility": ("utilitycmd_name", 13),
 }
 
 
@@ -40,16 +39,24 @@ async def test_tree_root_group_exists(extension: str, root_name: str, min_subs: 
     assert len(get_subcommand_names(root)) >= min_subs
 
 
+@pytest.mark.parametrize("root_name", ADMIN_TOP_LEVEL_GROUPS)
+async def test_admin_top_level_group_exists(root_name: str):
+    bot = await load_extension_bot("extensions.admin")
+    root = find_tree_group(bot, root_name)
+    assert root is not None
+    assert len(get_subcommand_names(root)) >= 1
+
+
 async def test_admin_kick_subcommand_registered():
     bot = await load_extension_bot("extensions.admin")
-    root = find_tree_group(bot, "admin_name")
+    root = find_tree_group(bot, "admin_moderation_name")
     assert root is not None
     assert "admin_kick_name" in get_subcommand_names(root)
 
 
 async def test_admin_ban_subcommand_registered():
     bot = await load_extension_bot("extensions.admin")
-    root = find_tree_group(bot, "admin_name")
+    root = find_tree_group(bot, "admin_moderation_name")
     assert root is not None
     assert "admin_ban_name" in get_subcommand_names(root)
 
@@ -95,9 +102,11 @@ async def test_tree_add_command_invoked_for_admin():
     assert bot.tree.add_command.called
 
 
-async def test_utility_tree_root_name():
+async def test_utility_tree_roots():
     bot = await load_extension_bot("extensions.utility")
-    assert get_tree_command_names(bot) == ["utilitycmd_name"]
+    names = get_tree_command_names(bot)
+    assert "utilitycmd_name" in names
+    assert "utility_scheduledmessage_name" in names
 
 
 async def test_math_tree_root_name():

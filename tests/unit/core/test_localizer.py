@@ -48,14 +48,23 @@ class _TranslatorBase:
         pass
 
 
+class _TranslationContextLocation:
+    command_name = 0
+    command_description = 1
+    group_name = 2
+    group_description = 3
+    parameter_name = 4
+    parameter_description = 5
+    choice_name = 6
+    other = 7
+
+
 # Patch the discord mock BEFORE importing localizer/translator modules
 _orig_discord = __import__("sys").modules.get("discord")
 if _orig_discord is not None:
     _orig_discord.Locale = _LocaleBase
-    _orig_discord.app_commands = (
-        MagicMock() if isinstance(_orig_discord.app_commands, MagicMock) else _orig_discord.app_commands
-    )
     _orig_discord.app_commands.Translator = _TranslatorBase
+    _orig_discord.app_commands.TranslationContextLocation = _TranslationContextLocation
 
 import tests.mock_config  # noqa: F401, E402 – side-effect import
 from localizer import (  # noqa: E402
@@ -65,7 +74,7 @@ from localizer import (  # noqa: E402
     TranslationEntry,
     tanjunLocalizer,
 )
-from translator import TanjunTranslator  # noqa: E402
+from translator import TanjunTranslator, _normalize_discord_command_name  # noqa: E402
 
 FAKE_DE = _Locale("de")
 FAKE_EN_US = _Locale("en-US")
@@ -186,7 +195,7 @@ class TestNormalizeLocale:
         assert service._normalize_locale("en") == "en"
 
     def test_str_unknown(self, service: LocalizerService):
-        assert service._normalize_locale("fr") == "fr"
+        assert service._normalize_locale("sv") == "en"
 
 
 # ===================================================================
@@ -228,6 +237,11 @@ class TestFindEntry:
 
     def test_not_found(self, service: LocalizerService, sample_entries: list[TranslationEntry]) -> None:
         assert service._find_entry(sample_entries, "nope") is None
+
+    def test_underscore_dot_fallback(self, service: LocalizerService) -> None:
+        entries = [TranslationEntry(identifier="setup_name", translation="setup")]
+        assert service._find_entry(entries, "setup.name") is not None
+        assert service._find_entry(entries, "setup.name").translation == "setup"
 
     def test_empty(self, service: LocalizerService) -> None:
         assert service._find_entry([], "x") is None
@@ -441,21 +455,30 @@ class TestCacheManagement:
 
 class TestReportMissing:
     def test_tracks(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            assert "xx" in reported_locales
+            service._report_missing("xx", "test.key")
+            assert ("xx", "test.key") in reported_missing
 
     def test_dedup(self, service: LocalizerService):
-        from localizer import reported_locales
+        from localizer import reported_missing
 
-        reported_locales.clear()
+        reported_missing.clear()
         with patch("localizer.missingLocalization", new_callable=AsyncMock):
-            service._report_missing("xx")
-            service._report_missing("xx")
-        assert reported_locales.count("xx") == 1
+            service._report_missing("xx", "test.key")
+            service._report_missing("xx", "test.key")
+        assert len(reported_missing) == 1
+
+    def test_dedup_per_key(self, service: LocalizerService):
+        from localizer import reported_missing
+
+        reported_missing.clear()
+        with patch("localizer.missingLocalization", new_callable=AsyncMock):
+            service._report_missing("xx", "test.key.one")
+            service._report_missing("xx", "test.key.two")
+        assert len(reported_missing) == 2
 
 
 # ===================================================================
@@ -552,8 +575,9 @@ class TestTanjunTranslator:
             loop = asyncio.new_event_loop()
             r = loop.run_until_complete(t.translate(s, unsupported_locale, MagicMock()))
             loop.close()
-            # '_normalize_locale("fr")' returns "fr", which has no locale file,
-            # so _load_sync falls back to English -> "Operation successful."
+            # '_normalize_locale("fr")' now returns "en" because unknown locales
+            # are silently mapped to English to avoid creating spam "missing
+            # localization" GitHub issues.  The English file is loaded directly.
             assert r == "Operation successful."
         finally:
             restore()
@@ -570,6 +594,34 @@ class TestTanjunTranslator:
                 r = loop.run_until_complete(t.translate(s, MagicMock(), MagicMock()))
                 loop.close()
                 assert r is None
+        finally:
+            restore()
+
+    def test_normalize_discord_command_name(self) -> None:
+        assert _normalize_discord_command_name("Utilisateur") == "utilisateur"
+        assert _normalize_discord_command_name("cooldown time") == "cooldown_time"
+        assert _normalize_discord_command_name("Math is fun!") == "math_is_fun"
+        assert _normalize_discord_command_name("  ") is None
+
+    def test_translate_normalizes_command_names(self, service: LocalizerService, locale_dir: Path) -> None:
+        restore = _chdir(locale_dir)
+        try:
+            fr = locale_dir / "fr.json"
+            fr.write_text(
+                json.dumps([{"identifier": "user", "translation": "Utilisateur"}]),
+                encoding="utf-8",
+            )
+            t = TanjunTranslator(localizer=service)
+            s = MagicMock()
+            s.__str__ = lambda self: "user"
+            context = MagicMock()
+            location = MagicMock()
+            location.name = "parameter_name"
+            context.location = location
+            loop = asyncio.new_event_loop()
+            r = loop.run_until_complete(t.translate(s, _Locale("fr"), context))
+            loop.close()
+            assert r == "utilisateur"
         finally:
             restore()
 

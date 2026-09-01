@@ -156,8 +156,10 @@ The health monitoring system validates:
 
 Health checks run:
 1. On startup (before the bot is marked ready)
-2. Periodically in the background (`alivemonitor.py`)
+2. Periodically via the health check manager
 3. On demand via the `/status` command
+
+`alivemonitor.py` sends an optional Uptime Kuma push heartbeat every 60 seconds when `UPTIME_KUMA_PUSH_TOKEN` is configured.
 
 ### Configuration (`config.py`)
 
@@ -200,7 +202,7 @@ Tanjun runs several periodic background tasks:
 
 | Loop | Interval | Purpose |
 |------|----------|---------|
-| Alivemonitor | Every 5 min | Verify all health checks pass |
+| Alivemonitor | Every 60 sec | Uptime Kuma push heartbeat (when token configured) |
 | Giveaway check | Every 30 sec | End giveaways and pick winners |
 | Level processing | Every 60 sec | Process XP decay and level updates |
 | Database backup | Configurable | Create periodic database backups |

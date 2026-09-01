@@ -8,13 +8,16 @@ import pytest
 import extensions.setup_wizards as sw_mod
 from models import LogEnableModel
 from tests.helpers.discord import (
-    MockVoiceChannel,
+    MockGuild,
+    MockRole,
+    make_app_command_channel,
     make_guild,
     make_interaction,
     make_member,
     make_permissions,
     make_text_channel,
 )
+import discord
 from tests.integration.extensions.conftest import load_extension_bot
 
 pytestmark = pytest.mark.asyncio
@@ -44,9 +47,15 @@ def _log_enable(**flags: bool) -> LogEnableModel:
     return LogEnableModel(guild_id=GUILD_ID, **defaults)
 
 
-def make_voice_channel() -> MockVoiceChannel:
-    ch = MockVoiceChannel()
+class MockCategoryChannel(MockGuild):
+    pass
+
+
+def make_category_channel() -> MockCategoryChannel:
+    ch = MockCategoryChannel()
     ch.id = 777777777
+    ch.name = 'Booster Channels'
+    ch.type = discord.ChannelType.category
     return ch
 
 
@@ -65,6 +74,19 @@ def _admin_interaction(*, guild: MagicMock | None = None) -> MagicMock:
     )
     guild.get_member = MagicMock(return_value=user)
     return ix
+
+
+def _resolved_app_command_channel(
+    guild: MagicMock,
+    *,
+    send_messages: bool = True,
+    view_channel: bool = True,
+) -> MagicMock:
+    resolved = make_text_channel(guild=guild)
+    resolved.permissions_for = MagicMock(
+        return_value=make_permissions(send_messages=send_messages, view_channel=view_channel)
+    )
+    return make_app_command_channel(guild=guild, resolved=resolved)
 
 
 def _non_admin_interaction() -> MagicMock:
@@ -123,21 +145,34 @@ class TestLogChannelSelectView:
         guild.get_member = MagicMock(return_value=make_member())
         view = sw.LogChannelSelectView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=True))
-        await view.on_channel_select(ix, MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
         wizard_api_mocks["set_log"].assert_awaited_once()
         ix.response.edit_message.assert_awaited_once()
+        kwargs = ix.response.edit_message.await_args.kwargs
+        assert isinstance(kwargs["view"], sw.LogEventConfigView)
+        desc = kwargs["embed"].description or ""
+        assert "Page 1/" in desc, "transition must show paginated log events, not a static placeholder"
+        assert sw.LOG_OPTIONS[0] in desc
 
     async def test_channel_select_no_permission(self, sw, wizard_api_mocks) -> None:
         guild = make_guild()
         guild.get_member = MagicMock(return_value=make_member())
         view = sw.LogChannelSelectView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=False))
-        await view.on_channel_select(ix, MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild, send_messages=False)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
         ix.response.send_message.assert_awaited_once()
+
+    async def test_channel_select_unresolvable(self, sw, wizard_api_mocks) -> None:
+        guild = make_guild()
+        guild.get_member = MagicMock(return_value=make_member())
+        view = sw.LogChannelSelectView("en-US", guild)
+        ix = _admin_interaction(guild=guild)
+        selected = make_app_command_channel(guild=guild, resolved=None, fetch_raises=discord.NotFound)
+        await view.on_channel_select(ix, MagicMock(values=[selected]))
+        ix.response.send_message.assert_awaited_once()
+        wizard_api_mocks["set_log"].assert_not_awaited()
 
     async def test_channel_select_not_admin(self, sw, wizard_api_mocks) -> None:
         view = sw.LogChannelSelectView("en-US", make_guild())
@@ -158,9 +193,13 @@ class TestLogEventConfigView:
         ix = _admin_interaction(guild=guild)
         button = MagicMock()
         await view.enable_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.disable_page(ix, button)
         view._current_page = 1
         await view.prev_page(ix, button)
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Page 1/" in (embed.description or "")
         await view.next_page(ix, button)
         await view.finish(ix, button)
 
@@ -191,9 +230,8 @@ class TestLevelSetupFlow:
         guild.get_member = MagicMock(return_value=make_member())
         parent = sw.LevelSetupView("en-US", guild)
         view = sw.LevelChannelView("en-US", guild, parent)
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(view_channel=True, send_messages=True))
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild)
+        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[selected]))
         assert parent.completed is True
         parent2 = sw.LevelSetupView("en-US", guild)
         view2 = sw.LevelChannelView("en-US", guild, parent2)
@@ -205,64 +243,73 @@ class TestLevelSetupFlow:
         parent = sw.LevelSetupView("en-US", guild)
         view = sw.LevelChannelView("en-US", guild, parent)
         guild.get_member = MagicMock(return_value=None)
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[make_text_channel(guild=guild)]))
+        await view.on_channel_select(
+            _admin_interaction(guild=guild),
+            MagicMock(values=[_resolved_app_command_channel(guild)]),
+        )
         guild.get_member = MagicMock(return_value=make_member())
-        channel = make_text_channel(guild=guild)
-        channel.permissions_for = MagicMock(return_value=make_permissions(view_channel=False, send_messages=False))
-        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[channel]))
+        selected = _resolved_app_command_channel(guild, send_messages=False, view_channel=False)
+        await view.on_channel_select(_admin_interaction(guild=guild), MagicMock(values=[selected]))
 
 
 class TestBoosterSetup:
-    async def test_refresh_finish_and_modals(self, sw) -> None:
+    async def test_refresh_finish_and_selects(self, sw) -> None:
         guild = make_guild()
         view = sw.BoosterSetupView("en-US", guild)
         ix = _admin_interaction(guild=guild)
         svc = MagicMock()
         svc.get = AsyncMock(return_value="111")
+        guild.get_channel = MagicMock(return_value=make_category_channel())
         with patch.object(sw_mod, "BoosterService", return_value=svc):
-            await view._refresh(ix)
+            await view._update_booster_ui(ix)
             await view.finish(ix, MagicMock())
-            await view.set_channel(ix, MagicMock())
-            await view.set_role(ix, MagicMock())
+            await view.on_category_select(ix, MagicMock(values=[]))
+            await view.on_role_select(ix, MagicMock(values=[]))
 
-    async def test_booster_channel_modal_paths(self, sw) -> None:
+    async def test_booster_category_select_paths(self, sw) -> None:
         guild = make_guild()
-        parent = sw.BoosterSetupView("en-US", guild)
-        modal = sw.BoosterChannelModal("en-US", guild, parent)
+        view = sw.BoosterSetupView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        modal.children = [MagicMock(value="bad")]
-        await modal.on_submit(ix)
-        modal.children = [MagicMock(value="999")]
-        guild.get_channel = MagicMock(return_value=None)
-        await modal.on_submit(ix)
-        vc = make_voice_channel()
-        guild.get_channel = MagicMock(return_value=vc)
-        modal.children = [MagicMock(value="777777777")]
+        await view.on_category_select(ix, MagicMock(values=[]))
+        with patch.object(sw_mod, "resolve_guild_channel", new=AsyncMock(return_value=None)):
+            await view.on_category_select(
+                ix,
+                MagicMock(values=[make_app_command_channel(guild=guild)]),
+            )
+        ix.response.send_message.assert_awaited()
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="111")
+        category = make_category_channel()
         with (
             patch.object(sw_mod, "BoosterService", return_value=svc),
-            patch.object(sw_mod.discord, "VoiceChannel", MockVoiceChannel),
+            patch.object(sw_mod, "resolve_guild_channel", new=AsyncMock(return_value=category)),
         ):
-            await modal.on_submit(ix)
+            await view.on_category_select(
+                ix,
+                MagicMock(values=[make_app_command_channel(guild=guild)]),
+            )
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster category configured" in (embed.description or "")
 
-    async def test_booster_role_modal_paths(self, sw) -> None:
+    async def test_booster_role_select_paths(self, sw) -> None:
         guild = make_guild()
-        parent = sw.BoosterSetupView("en-US", guild)
-        modal = sw.BoosterRoleModal("en-US", guild, parent)
+        view = sw.BoosterSetupView("en-US", guild)
         ix = _admin_interaction(guild=guild)
-        modal.children = [MagicMock(value="bad")]
-        await modal.on_submit(ix)
-        modal.children = [MagicMock(value="555555555")]
+        await view.on_role_select(ix, MagicMock(values=[]))
+        partial_role = MagicMock(id=555555555)
         guild.get_role = MagicMock(return_value=None)
-        await modal.on_submit(ix)
-        role = MagicMock()
-        role.mention = "<@&555>"
-        guild.get_role = MagicMock(return_value=role)
+        with patch.object(sw_mod, "BoosterService", return_value=MagicMock(add=AsyncMock())):
+            await view.on_role_select(ix, MagicMock(values=[partial_role]))
+        ix.response.send_message.assert_awaited()
+        role = MockRole()
         svc = MagicMock()
         svc.add = AsyncMock()
+        svc.get = AsyncMock(return_value="555")
         with patch.object(sw_mod, "BoosterService", return_value=svc):
-            await modal.on_submit(ix)
+            await view.on_role_select(ix, MagicMock(values=[role]))
+        embed = ix.response.edit_message.await_args.kwargs["embed"]
+        assert "Booster role configured" in (embed.description or "")
 
 
 class TestSetupWizardCommands:

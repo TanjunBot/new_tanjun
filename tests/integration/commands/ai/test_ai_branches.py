@@ -4,6 +4,8 @@ import pytest
 
 from commands.ai.add_custom_situation import add_custom_situation
 from commands.ai.ask_gpt import ask_gpt
+from commands.ai.show_tokens import show_tokens
+from services.ai_service import TokenOverview
 
 pytestmark = pytest.mark.asyncio
 
@@ -104,4 +106,25 @@ async def test_ask_gpt_consume_fails(mock_service, mock_client, admin_command_in
     response.choices = [MagicMock(message=MagicMock(content="Hello!"))]
     mock_client.chat.completions.create = AsyncMock(return_value=response)
     await ask_gpt(admin_command_info, "GPT", "be helpful", "hello")
+    admin_command_info.reply.assert_awaited_once()
+
+
+@patch("commands.ai.show_tokens.AiService")
+async def test_show_tokens_with_balance(mock_service, admin_command_info):
+    mock_service.get_token_overview = AsyncMock(
+        return_value=TokenOverview(free_token=100, plus_token=50, paid_token=25, used_token=10)
+    )
+    await show_tokens(admin_command_info)
+    mock_service.initialize_user.assert_not_called()
+    admin_command_info.reply.assert_awaited_once()
+
+
+@patch("commands.ai.show_tokens.AiService")
+async def test_show_tokens_initializes_new_user(mock_service, admin_command_info):
+    mock_service.get_token_overview = AsyncMock(
+        side_effect=[None, TokenOverview(free_token=500, plus_token=0, paid_token=0, used_token=0)]
+    )
+    mock_service.initialize_user = AsyncMock()
+    await show_tokens(admin_command_info)
+    mock_service.initialize_user.assert_awaited_once()
     admin_command_info.reply.assert_awaited_once()

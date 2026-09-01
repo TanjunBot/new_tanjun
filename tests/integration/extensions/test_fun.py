@@ -20,6 +20,19 @@ pytestmark = pytest.mark.asyncio
 EXTENSION = "extensions.fun"
 COG_NAME = "FunCog"
 
+# The fun extension registers 9 subcommands under funcmd_name
+FUN_SUBCOMMANDS = [
+    "fun_hug_name",
+    "fun_kiss_name",
+    "fun_boop_name",
+    "fun_wave_name",
+    "fun_slap_name",
+    "fun_laugh_name",
+    "fun_tickle_name",
+    "fun_pat_name",
+    "fun_poke_name",
+]
+
 
 async def test_module_exposes_setup():
     module = importlib.import_module(EXTENSION)
@@ -60,15 +73,17 @@ async def test_root_command_name_is_funcmd_name():
     assert get_tree_command_names(bot) == ["funcmd_name"]
 
 
-async def test_root_group_has_1_entries():
+async def test_root_group_has_all_action_subcommands():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "funcmd_name")
     assert root is not None
-    assert len(get_subcommand_names(root)) == 1
+    assert len(get_subcommand_names(root)) == len(FUN_SUBCOMMANDS)
 
 
-async def test_subcommand_fun_action_name_registered():
+async def test_all_fun_subcommands_registered():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "funcmd_name")
     assert root is not None
-    assert "fun_action_name" in get_subcommand_names(root)
+    names = get_subcommand_names(root)
+    for expected in FUN_SUBCOMMANDS:
+        assert expected in names, f"Missing fun subcommand: {expected}"

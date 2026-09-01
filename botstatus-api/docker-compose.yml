@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  botstatus-api:
+    build: .
+    image: ghcr.io/tanjunbot/botstatus-api:latest
+    container_name: botstatus-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - BOTSTATUS_HOST=0.0.0.0
+      - BOTSTATUS_PORT=8000
+      - BOTSTATUS_TIMEOUT_SECONDS=90
+      - BOTSTATUS_DEFAULT_BOT_ID=832297321793323028
+      # Optional: set an API key for write endpoints
+      # - BOTSTATUS_API_KEY=your_secret_api_key
+      # Optional: forward to Uptime Kuma push URL
+      # - BOTSTATUS_UPTIME_KUMA_PUSH_URL=https://status.tanjun.bot/api/push/TOKEN
+    volumes:
+      - botstatus-data:/app/data
+
+volumes:
+  botstatus-data:

@@ -13,13 +13,23 @@ async def test_bot_token_configured() -> None:
 
 @pytest.mark.asyncio
 async def test_guild_id_configured() -> None:
-    guild_id = os.environ.get("TANJUN_TEST_GUILD_ID", "")
+    guild_id = (
+        os.environ.get("TANJUN_E2E_GUILD_ID", "")
+        or os.environ.get("DOC_SCREENSHOT_GUILD_ID", "")
+    )
+    if not guild_id:
+        pytest.skip("TANJUN_E2E_GUILD_ID not set")
     assert guild_id.isdigit()
 
 
 @pytest.mark.asyncio
 async def test_channel_id_configured() -> None:
-    channel_id = os.environ.get("TANJUN_TEST_CHANNEL_ID", "")
+    channel_id = (
+        os.environ.get("TANJUN_E2E_CHANNEL_ID", "")
+        or os.environ.get("DOC_SCREENSHOT_CHANNEL_ID", "")
+    )
+    if not channel_id:
+        pytest.skip("TANJUN_E2E_CHANNEL_ID not set")
     assert channel_id.isdigit()
 
 
@@ -37,4 +47,3 @@ async def test_discord_api_reachable() -> None:
             timeout=aiohttp.ClientTimeout(total=15),
         ) as resp:
             assert resp.status == 200
-

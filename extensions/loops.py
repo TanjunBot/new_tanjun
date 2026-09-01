@@ -148,7 +148,11 @@ class LoopCog(commands.Cog):
                 return  # Skip notifications on first check
 
             streams = await twitch_service.get_streams(user_ids)
-            live_streams = {stream["user_id"]: stream for stream in streams}
+            if streams is None:
+                logger.warning("pollTwitchStreams: get_streams returned None (API error), skipping status update this cycle")
+                return
+
+            live_streams = {stream.user_id: stream for stream in streams}
 
             # Batch notification for streams going live simultaneously
             newly_live = [
@@ -227,7 +231,8 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             self.sendPokemonWerbung,
         ]
         for loop in loop_starts:
-            loop.start()  # type: ignore[unused-awaitable]
+            if not loop.is_running():
+                loop.start()  # type: ignore[unused-awaitable]
             await asyncio.sleep(0.25)
 
 

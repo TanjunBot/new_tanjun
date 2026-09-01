@@ -5,6 +5,7 @@ on:
     types: [closed]
     branches:
       - development
+      - 'ver/**'
   push:
     branches:
       - main
@@ -27,14 +28,24 @@ jobs:
         with:
           ref: development
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Bump version
         id: bump_version
         run: |
-          current_version=$(tr -d '[:space:]' < VERSION)
-          IFS='.' read -r major minor patch <<< "$current_version"
+          file_version=$(tr -d '[:space:]' < VERSION)
+          latest_tag=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -1)
+          base_version="$file_version"
+          if [ -n "$latest_tag" ]; then
+            base_version=$(printf '%s\n%s\n' "$file_version" "$latest_tag" | sort -V | tail -1)
+          fi
+          IFS='.' read -r major minor patch <<< "$base_version"
           patch=$((patch + 1))
           new_version="$major.$minor.$patch"
+          while git rev-parse "refs/tags/${new_version}" >/dev/null 2>&1; do
+            patch=$((patch + 1))
+            new_version="$major.$minor.$patch"
+          done
           echo "$new_version" > VERSION
           echo "new=$new_version" >> "$GITHUB_OUTPUT"
 
@@ -50,6 +61,70 @@ jobs:
           git push origin development
           git push origin "${NEW_VERSION}"
 
+  sync_ver_branch_version:
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.base.ref, 'ver/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Resolve VERSION for release branch
+        id: version
+        env:
+          RELEASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          branch_line="${RELEASE_BRANCH#ver/}"
+          branch_major="${branch_line%%.*}"
+          branch_minor="${branch_line#*.}"
+
+          git fetch origin development
+          dev_version=$(git show origin/development:VERSION | tr -d '[:space:]')
+          IFS='.' read -r dev_maj dev_min _ <<< "$dev_version"
+
+          if [ "$dev_maj" = "$branch_major" ] && [ "$dev_min" = "$branch_minor" ]; then
+            target_version="$dev_version"
+          else
+            ver_file=$(tr -d '[:space:]' < VERSION)
+            latest_line_tag=$(git tag -l "${branch_major}.${branch_minor}.*" --sort=-v:refname | head -1)
+            base_version="$ver_file"
+            if [ -n "$latest_line_tag" ]; then
+              base_version=$(printf '%s\n%s\n' "$ver_file" "$latest_line_tag" | sort -V | tail -1)
+            fi
+            IFS='.' read -r maj min pat <<< "$base_version"
+            pat=$((pat + 1))
+            target_version="${maj}.${min}.${pat}"
+            while git rev-parse "refs/tags/${target_version}" >/dev/null 2>&1; do
+              pat=$((pat + 1))
+              target_version="${maj}.${min}.${pat}"
+            done
+          fi
+
+          echo "target=${target_version}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        env:
+          TARGET_VERSION: ${{ steps.version.outputs.target }}
+          RELEASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          current=$(tr -d '[:space:]' < VERSION)
+          if [ "$current" = "$TARGET_VERSION" ]; then
+            echo "VERSION already ${TARGET_VERSION}"
+            exit 0
+          fi
+          echo "$TARGET_VERSION" > VERSION
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION
+          git commit -m "chore: sync release version to ${TARGET_VERSION} [ignore changelog]"
+          git push origin "HEAD:${RELEASE_BRANCH}"
+
   create_release_branch:
     if: |
       github.event_name == 'push' &&
@@ -60,12 +135,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Compute release version
         id: release
         run: |
-          current_version=$(tr -d '[:space:]' < VERSION)
-          IFS='.' read -r major minor patch <<< "$current_version"
+          file_version=$(tr -d '[:space:]' < VERSION)
+          latest_tag=$(git tag -l '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -1)
+          base_version="$file_version"
+          if [ -n "$latest_tag" ]; then
+            base_version=$(printf '%s\n%s\n' "$file_version" "$latest_tag" | sort -V | tail -1)
+          fi
+          IFS='.' read -r major minor patch <<< "$base_version"
           minor=$((minor + 1))
           release_version="${major}.${minor}.0"
           release_branch="ver/${major}.${minor}"

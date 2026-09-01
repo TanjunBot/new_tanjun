@@ -48,19 +48,29 @@ from models import (
 # ── Log blacklist (delegated to LogBlacklistRepository) ─────────────────────────────
 from repositories.log_blacklist_repository import LogBlacklistType, log_blacklist_repo
 from utility import get_level_for_xp_async, get_xp_for_level_async
-from utils.cache import TTLCache
+from utils.cache import StampedeProtectedCache, TTLCache
+
+
+def _log_blacklist_cache_key(guild_id: str | int, blacklist_type: LogBlacklistType) -> tuple[str, str]:
+    return (str(guild_id), blacklist_type.name)
 
 
 async def add_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
     await log_blacklist_repo.add(guild_id, entity_id, blacklist_type)
+    _log_blacklist_cache.invalidate(_log_blacklist_cache_key(guild_id, blacklist_type))
 
 
 async def remove_log_blacklist(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> None:
     await log_blacklist_repo.remove(guild_id, entity_id, blacklist_type)
+    _log_blacklist_cache.invalidate(_log_blacklist_cache_key(guild_id, blacklist_type))
 
 
 async def get_log_blacklist(guild_id: str, blacklist_type: LogBlacklistType) -> list[str]:
-    return await log_blacklist_repo.get_all(guild_id, blacklist_type)
+    key = _log_blacklist_cache_key(guild_id, blacklist_type)
+    return await _log_blacklist_cache.get_or_fetch(
+        key,
+        lambda: log_blacklist_repo.get_all(guild_id, blacklist_type),
+    )
 
 
 async def is_log_entity_blacklisted(guild_id: str, entity_id: str, blacklist_type: LogBlacklistType) -> str | None:
@@ -116,6 +126,7 @@ class DatabaseManager:
             return None
 
         async def _callback(cursor: Any, conn: Any) -> int:
+            await conn.commit()
             return cursor.rowcount
 
         return await _execute_with_retry("execute_action", _callback, query, params, is_write=True)
@@ -131,6 +142,7 @@ class DatabaseManager:
 
         async def _callback(cursor: Any, conn: Any) -> None:
             await cursor.executemany(query, params_list)
+            await conn.commit()
             return None
 
         await _execute_with_retry("execute_batch", _callback, query, is_write=True)
@@ -204,7 +216,7 @@ def _get_pool() -> Pool | None:
 
 
 # Max retries for transient DB failures
-_MAX_DB_RETRIES = 3
+_MAX_DB_RETRIES = 5
 # Pool acquire timeout in seconds
 _POOL_ACQUIRE_TIMEOUT = 10
 # Query execution timeout in seconds
@@ -225,6 +237,32 @@ def _release_pool_connection(pool, conn, *, broken: bool = False) -> None:
     if broken:
         conn.close()
     pool.release(conn)
+
+
+def _is_stale_pool_connection_error(exc: BaseException) -> bool:
+    msg = str(exc).lower()
+    return (
+        "at_eof" in msg
+        or "lost connection" in msg
+        or "server has gone away" in msg
+        or "2013" in msg
+        or "2006" in msg
+        or "connection reset" in msg
+        or "broken pipe" in msg
+        or "incompletereaderror" in msg
+        or isinstance(exc, (ConnectionResetError, BrokenPipeError, asyncio.IncompleteReadError))
+        or (isinstance(exc, AttributeError) and "_reader" in msg)
+    )
+
+
+async def _purge_stale_pool_connections(pool) -> None:
+    clear = getattr(pool, "clear", None)
+    if clear is None:
+        return
+    try:
+        await clear()
+    except Exception:
+        pass
 
 
 async def _execute_with_retry(
@@ -256,6 +294,11 @@ async def _execute_with_retry(
             async with conn.cursor() as cursor:
                 await asyncio.wait_for(cursor.execute(query, params), timeout=_QUERY_TIMEOUT)
                 _result = await callback(cursor, conn)
+                if not is_write:
+                    try:
+                        await conn.rollback()
+                    except Exception:
+                        pass
             _elapsed = time.monotonic() - _start
             try:
                 from extensions.prometheus_metrics import record_db_query
@@ -276,16 +319,37 @@ async def _execute_with_retry(
             err_str = str(e).lower()
             if is_write and ("duplicate column" in err_str or "duplicate key name" in err_str):
                 raise
-            retryable = "deadlock" in err_str or "abort" in err_str
-            if not is_write:
+            stale_pool = _is_stale_pool_connection_error(e)
+            acquire_failed = conn is None
+            retryable = (
+                "deadlock" in err_str
+                or "abort" in err_str
+                or "restart transaction" in err_str
+                or "record has changed" in err_str
+            )
+            if not is_write or acquire_failed or stale_pool:
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
+            if stale_pool or acquire_failed:
+                retryable = True
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                if stale_pool:
+                    await _purge_stale_pool_connections(pool)
+                if is_write and conn is not None:
+                    try:
+                        await conn.rollback()
+                    except Exception:
+                        pass
                 print(f"Transient error on {operation} attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
                 last_exception = e
-                if "connection" in err_str or "timeout" in err_str:
+                if stale_pool or "connection" in err_str or "timeout" in err_str:
                     broken_connection = True
                 continue
+            if is_write and conn is not None:
+                try:
+                    await conn.rollback()
+                except Exception:
+                    pass
             _elapsed = time.monotonic() - _start
             try:
                 from extensions.prometheus_metrics import record_db_query
@@ -307,8 +371,8 @@ async def _execute_with_retry(
             record_db_query(operation, _elapsed, error=True)
         except ImportError:
             pass
-        print(f"All retries exhausted for {operation}: {safe_id}")
-        raise last_exception
+        print(f"All retries exhausted for {operation}: {safe_id} — returning None to avoid crash")
+        return None
 
 
 # ── Cache System ──────────────────────────────────────────────────────────────
@@ -317,6 +381,16 @@ async def _execute_with_retry(
 
 _blacklist_cache: TTLCache[str, dict[str, list[BlacklistEntryModel]]] = TTLCache(ttl=30)
 _guild_config_cache: TTLCache[str, dict[str, Any]] = TTLCache(ttl=300, maxsize=2000)
+_log_enable_cache: StampedeProtectedCache[str, LogEnableModel] = StampedeProtectedCache(ttl=60, maxsize=5000)
+_log_blacklist_cache: StampedeProtectedCache[tuple[str, str], list[str]] = StampedeProtectedCache(ttl=30, maxsize=5000)
+_log_channel_cache: StampedeProtectedCache[str, str | None] = StampedeProtectedCache(ttl=60, maxsize=5000)
+
+
+def clear_db_read_caches() -> None:
+    """Reset hot-path read caches (for tests and maintenance)."""
+    _log_enable_cache.clear()
+    _log_blacklist_cache.clear()
+    _log_channel_cache.clear()
 # In-memory cache for XP cooldowns: (guild_id, user_id) -> last_xp_gain_timestamp
 # Eliminates DB queries entirely when user is on cooldown
 _last_xp_gain_cache: dict[tuple[str, str], float] = {}
@@ -349,9 +423,11 @@ async def preload_guild_configs(bot=None) -> None:
     if pool is None:
         return
     _guild_config_cache.clear()
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute(query), timeout=_QUERY_TIMEOUT)
             async for row in cursor:
                 guild_id = str(row[0])
@@ -368,8 +444,16 @@ async def preload_guild_configs(bot=None) -> None:
                         "voice_cooldown": row[8],
                     },
                 )
+    except TimeoutError:
+        broken_connection = True
+        print("Error preloading guild configs: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error preloading guild configs: {e}")
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
 
 
 async def _get_cached_blacklist(guild_id: str) -> dict[str, list[BlacklistEntryModel]]:
@@ -396,9 +480,11 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
     pool = _get_pool()
     if pool is None:
         return default
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute(query, (guild_id,)), timeout=_QUERY_TIMEOUT)
             row = await cursor.fetchone()
             if row:
@@ -416,8 +502,16 @@ async def _get_cached_config(guild_id: str, key: str, default: Any = None) -> An
                 return data.get(key, default)
             # Cache the miss (no levelConfig row for this guild)
             _guild_config_cache.set(guild_id, {})
+    except TimeoutError:
+        broken_connection = True
+        print(f"Error caching guild config for {guild_id}: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error caching guild config for {guild_id}: {e}")
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
     return default
 
 
@@ -452,14 +546,16 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
     safe_id = _query_safe_id(query)
     _start = time.monotonic()
     for attempt in range(_MAX_DB_RETRIES):
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn:
-                async with conn.cursor() as cursor:
-                    await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
-                await conn.commit()
+            async with conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.executemany(query, params_list), timeout=_QUERY_TIMEOUT)
+            await conn.commit()
             return
         except TimeoutError:
+            broken_connection = True
             msg = f"Timeout on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}"
             print(msg)
             last_exception = TimeoutError(msg)
@@ -468,6 +564,8 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
             continue
         except Exception as e:
             err_str = str(e).lower()
+            if "connection" in err_str or "timeout" in err_str:
+                broken_connection = True
             # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
             retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
@@ -485,6 +583,9 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
                 pass
             print(f"Error during execute_batch: {e} — {safe_id}")
             raise
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
 
     if last_exception:
         _elapsed = time.monotonic() - _start
@@ -529,6 +630,10 @@ async def execute_query_iter(
                 async for row in cursor:
                     yielded_any = True
                     yield row
+            try:
+                await conn.rollback()
+            except Exception:
+                pass
             return
         except TimeoutError:
             broken_connection = True
@@ -544,11 +649,14 @@ async def execute_query_iter(
                 logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
                 raise
             err_str = str(e).lower()
-            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str
+            stale_pool = _is_stale_pool_connection_error(e)
+            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str or stale_pool
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                if stale_pool:
+                    await _purge_stale_pool_connections(pool)
                 print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
-                if "connection" in err_str or "timeout" in err_str:
+                if stale_pool or "connection" in err_str or "timeout" in err_str:
                     broken_connection = True
                 continue
             print(f"Error during query iteration: {e} — {safe_id}")
@@ -563,8 +671,13 @@ async def safe_execute_query(
     query: str, params: Sequence[Any] | dict[str, Any] | None = None, bot=None
 ) -> list[tuple[Any, ...]]:
     """Like execute_query but always returns a list (empty on error)."""
-    result = await execute_query(query, params, bot)
-    return result if result is not None else []
+    try:
+        result = await execute_query(query, params, bot)
+        if not result:
+            return []
+        return list(result)
+    except Exception:
+        return []
 
 
 @asynccontextmanager
@@ -576,43 +689,78 @@ async def transaction(bot=None):
 
     for attempt in range(_MAX_DB_RETRIES):
         safe_id = str(uuid.uuid4())
+        conn = None
+        broken_connection = False
         try:
             conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn:
-                try:
-                    yield conn
-                    await conn.commit()
-                except Exception:
-                    await conn.rollback()
-                    raise
+            try:
+                yield conn
+                await conn.commit()
+            except Exception:
+                await conn.rollback()
+                raise
             return
         except TimeoutError:
+            broken_connection = True
             print(f"Timeout on transaction acquire attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
             if attempt < _MAX_DB_RETRIES - 1:
                 await asyncio.sleep(0.5 * (attempt + 1))
             continue
-        except Exception:
+        except Exception as e:
+            err_str = str(e).lower()
+            if "connection" in err_str or "timeout" in err_str:
+                broken_connection = True
             raise
+        finally:
+            if conn is not None:
+                _release_pool_connection(pool, conn, broken=broken_connection)
     raise RuntimeError(f"Could not acquire database connection after {_MAX_DB_RETRIES} attempts [{safe_id}]")
 
 
 async def check_pool_health(bot=None) -> bool:
-    """Check if the database pool is healthy by running SELECT 1."""
-    pool = _get_pool()
-    if pool is None:
-        return False
-    for attempt in range(_MAX_DB_RETRIES):
-        try:
-            conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-            async with conn, conn.cursor() as cursor:
-                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=_QUERY_TIMEOUT)
+    """Check if the database is responsive.
+
+    Uses a short-lived standalone connection instead of the shared pool
+    so that repeated health checks cannot exhaust the connection pool.
+    Previously, this function acquired from the pool with a timeout;
+    if the pool was full, the timeout leaked connections until the pool
+    was completely drained.
+    """
+    try:
+        import asyncmy
+        import os
+
+        host = os.environ.get("MARIADB_HOST") or os.environ.get("MYSQL_HOST")
+        port = int(os.environ.get("MARIADB_PORT") or os.environ.get("MYSQL_PORT", "3306"))
+        user = os.environ.get("MARIADB_USER") or os.environ.get("MYSQL_USER")
+        password = os.environ.get("MARIADB_PASSWORD") or os.environ.get("MYSQL_PASSWORD")
+        db = os.environ.get("MARIADB_DATABASE") or os.environ.get("MYSQL_DATABASE")
+
+        if not all((host, user, password, db)):
+            # No DB config available — use pool-based health check as fallback
+            pool = _get_pool()
+            if pool is None:
+                return False
+            async with pool.acquire() as conn:
+                async with conn.cursor() as cursor:
+                    await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=5)
             return True
-        except Exception:
-            if attempt < _MAX_DB_RETRIES - 1:
-                await asyncio.sleep(0.5 * (attempt + 1))
-                continue
-            return False
-    return False
+
+        conn = await asyncio.wait_for(
+            asyncmy.connect(
+                host=host, port=port, user=user, password=password, db=db,
+                connect_timeout=5,
+            ),
+            timeout=8,
+        )
+        try:
+            async with conn.cursor() as cursor:
+                await asyncio.wait_for(cursor.execute("SELECT 1"), timeout=5)
+            return True
+        finally:
+            conn.close()
+    except Exception:
+        return False
 
 
 async def bulk_update_user_xp(
@@ -1002,350 +1150,16 @@ def get_table_defs() -> dict[str, "TableDef"]:
         primary_key=["guild_id", "channel_id"],
     )
 
+    from table_def_models.extra_table_defs import register_extra_table_defs
+
+    register_extra_table_defs(_t)
+
     return _t
 
 
 def get_table_definitions() -> dict[str, str]:
-    """Return the table DDL definitions used by create_tables.
-
-    Exported for testing purposes to avoid DDL duplication.
-    Now uses Pydantic TableDef models for a growing subset of tables;
-    remaining tables still use raw SQL strings.
-    """
-    tables: dict[str, str] = {}
-
-    # Convert model-backed tables
-    for name, tdef in get_table_defs().items():
-        tables[name] = tdef.to_sql()
-
-    # ── Tables still using raw SQL (not yet converted to models) ────────
-    tables["giveaway"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway` (
-        `giveaway_id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        `guild_id` VARCHAR(20) NOT NULL,
-        `title` VARCHAR(128) NOT NULL,
-        `description` VARCHAR(1024),
-        `winners` TINYINT(4) DEFAULT 1,
-        `withButton` TINYINT(1) DEFAULT 1,
-        `customName` VARCHAR(32),
-        `sponsor` VARCHAR(20),
-        `price` VARCHAR(64),
-        `message` VARCHAR(128),
-        `endtime` DATETIME NOT NULL,
-        `starttime` DATETIME,
-        `started` TINYINT(1) DEFAULT 0,
-        `ended` TINYINT(1) DEFAULT 0,
-        `newMessageRequirement` SMALLINT UNSIGNED,
-        `dayRequirement` SMALLINT UNSIGNED,
-        `voiceRequirement` SMALLINT UNSIGNED,
-        `sendFailed` TINYINT(1) DEFAULT 0,
-        `channel_id` VARCHAR(20),
-        `messageId` VARCHAR(20) DEFAULT "pending",
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveaway_channelRequirement"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway_channelRequirement` (
-        `giveaway_id` INT UNSIGNED,
-        `channel_id` VARCHAR(20),
-        `amount` SMALLINT UNSIGNED,
-        PRIMARY KEY(`giveaway_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayVoiceTime"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayVoiceTime` (
-        `giveaway_id` INT UNSIGNED,
-        `user_id` VARCHAR(20),
-        `voiceMinutes` MEDIUMINT UNSIGNED DEFAULT 0,
-        PRIMARY KEY(`giveaway_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveawayNewMessage"] = """
-    CREATE TABLE IF NOT EXISTS `giveawayNewMessage` (
-        `giveaway_id` INT UNSIGNED,
-        `user_id` VARCHAR(20),
-        `messages` MEDIUMINT UNSIGNED,
-        PRIMARY KEY(`giveaway_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["giveaway_channelMessages"] = """
-    CREATE TABLE IF NOT EXISTS `giveaway_channelMessages` (
-        `giveaway_id` INT UNSIGNED,
-        `channel_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        `amount` MEDIUMINT UNSIGNED DEFAULT 0,
-        PRIMARY KEY(`giveaway_id`, `channel_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["aiSituations"] = """
-    CREATE TABLE IF NOT EXISTS `aiSituations` (
-        `user_id` VARCHAR(20) PRIMARY KEY,
-        `situation` VARCHAR(4000) DEFAULT NULL,
-        `name` VARCHAR(15) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `temperature` DECIMAL(3, 2) DEFAULT 1,
-        `top_p` DECIMAL(3, 2) DEFAULT 1,
-        `frequency_penalty` DECIMAL(3, 2) DEFAULT 0,
-        `presence_penalty` DECIMAL(3, 2) DEFAULT 0,
-        `unlocked` TINYINT(1) DEFAULT 0
-    ) ENGINE=InnoDB;
-    """
-    tables["claimedBoosterChannel"] = """
-    CREATE TABLE IF NOT EXISTS `claimedBoosterChannel` (
-        `user_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        PRIMARY KEY(`user_id`, `channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["claimedBoosterRole"] = """
-    CREATE TABLE IF NOT EXISTS `claimedBoosterRole` (
-        `user_id` VARCHAR(20),
-        `role_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        PRIMARY KEY(`user_id`, `role_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["log_enables"] = """
-    CREATE TABLE IF NOT EXISTS `log_enables` (
-        `guild_id` VARCHAR(20),
-        `automodRuleCreate` TINYINT(1) DEFAULT 1,
-        `automodRuleUpdate` TINYINT(1) DEFAULT 1,
-        `automodRuleDelete` TINYINT(1) DEFAULT 1,
-        `automodAction` TINYINT(1) DEFAULT 0,
-        `guild_channelDelete` TINYINT(1) DEFAULT 1,
-        `guild_channelCreate` TINYINT(1) DEFAULT 1,
-        `guild_channelUpdate` TINYINT(1) DEFAULT 1,
-        `guildUpdate` TINYINT(1) DEFAULT 1,
-        `inviteCreate` TINYINT(1) DEFAULT 1,
-        `inviteDelete` TINYINT(1) DEFAULT 0,
-        `memberJoin` TINYINT(1) DEFAULT 1,
-        `memberLeave` TINYINT(1) DEFAULT 1,
-        `memberUpdate` TINYINT(1) DEFAULT 1,
-        `userUpdate` TINYINT(1) DEFAULT 1,
-        `memberBan` TINYINT(1) DEFAULT 1,
-        `memberUnban` TINYINT(1) DEFAULT 1,
-        `presenceUpdate` TINYINT(1) DEFAULT 1,
-        `messageEdit` TINYINT(1) DEFAULT 1,
-        `messageDelete` TINYINT(1) DEFAULT 1,
-        `reactionAdd` TINYINT(1) DEFAULT 0,
-        `reactionRemove` TINYINT(1) DEFAULT 0,
-        `guildRoleCreate` TINYINT(1) DEFAULT 1,
-        `guildRoleDelete` TINYINT(1) DEFAULT 1,
-        `guildRoleUpdate` TINYINT(1) DEFAULT 1,
-        PRIMARY KEY(`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["scheduledMessages"] = """
-    CREATE TABLE IF NOT EXISTS `scheduledMessages` (
-        `messageId` BIGINT PRIMARY KEY AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `user_id` VARCHAR(20) NOT NULL,
-        `content` VARCHAR(1024) NOT NULL,
-        `send_time` DATETIME NOT NULL,
-        `repeatInterval` MEDIUMINT UNSIGNED,
-        `repeatAmount` MEDIUMINT UNSIGNED,
-        `attachments` TEXT,
-        `discord_message_id` VARCHAR(20) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX `idx_sendtime` (send_time),
-        INDEX `idx_user` (user_id),
-        INDEX `idx_guild` (guild_id),
-        INDEX `idx_discord_message` (discord_message_id)
-    ) ENGINE=InnoDB;
-    """
-    tables["reports"] = """
-    CREATE TABLE IF NOT EXISTS `reports` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        `reporterId` VARCHAR(20),
-        `reason` VARCHAR(1024),
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `status` VARCHAR(20) DEFAULT 'pending',
-        `status_updated_at` TIMESTAMP DEFAULT NULL,
-        `status_updated_by` VARCHAR(20) DEFAULT NULL,
-        `status_note` VARCHAR(1024) DEFAULT NULL,
-        `anonymous` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`id`),
-        INDEX `idx_status` (`status`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["report_evidence"] = """
-    CREATE TABLE IF NOT EXISTS `report_evidence` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `report_id` INT,
-        `url` VARCHAR(2048),
-        `filename` VARCHAR(255) DEFAULT NULL,
-        `uploaded_by` VARCHAR(20) DEFAULT NULL,
-        `uploaded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY(`id`),
-        INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`report_id`)
-            REFERENCES `reports`(`id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["report_mod_actions"] = """
-    CREATE TABLE IF NOT EXISTS `report_mod_actions` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `report_id` INT,
-        `action_type` VARCHAR(20),
-        `target_id` VARCHAR(20),
-        `performed_by` VARCHAR(20),
-        `details` VARCHAR(1024) DEFAULT NULL,
-        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY(`id`),
-        INDEX `idx_report` (`guild_id`, `report_id`),
-        FOREIGN KEY (`report_id`)
-            REFERENCES `reports`(`id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["report_anonymity"] = """
-    CREATE TABLE IF NOT EXISTS `report_anonymity` (
-        `guild_id` VARCHAR(20),
-        `enabled` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["report_notification_optout"] = """
-    CREATE TABLE IF NOT EXISTS `report_notification_optout` (
-        `guild_id` VARCHAR(20),
-        `user_id` VARCHAR(20),
-        PRIMARY KEY(`guild_id`, `user_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["triggerMessages"] = """
-    CREATE TABLE IF NOT EXISTS `triggerMessages` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `trigger` VARCHAR(128),
-        `response` VARCHAR(1024),
-        `case_sensitive` TINYINT(1) DEFAULT 0,
-        PRIMARY KEY(`id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["triggerMessagesChannel"] = """
-    CREATE TABLE IF NOT EXISTS `triggerMessagesChannel` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `triggerId` INT,
-        PRIMARY KEY(`guild_id`, `channel_id`, `triggerId`),
-        FOREIGN KEY (`guild_id`, `triggerId`)
-            REFERENCES `triggerMessages`(`guild_id`, `id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["ticketMessages"] = """
-    CREATE TABLE IF NOT EXISTS `ticketMessages` (
-        `id` INT AUTO_INCREMENT,
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `introduction` VARCHAR(1024),
-        `pingRole` VARCHAR(20),
-        `name` VARCHAR(128),
-        `description` VARCHAR(1024),
-        `summaryChannelId` VARCHAR(20),
-        PRIMARY KEY(`id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["tickets"] = """
-    CREATE TABLE IF NOT EXISTS `tickets` (
-        `guild_id` VARCHAR(20),
-        `openerId` VARCHAR(20),
-        `openedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        `closed` TINYINT(1) DEFAULT 0,
-        `closedAt` TIMESTAMP DEFAULT NULL,
-        `closedBy` VARCHAR(20) DEFAULT NULL,
-        `channel_id` VARCHAR(20),
-        `ticketMessageId` INT,
-        PRIMARY KEY(`guild_id`, `channel_id`, `ticketMessageId`),
-        FOREIGN KEY (`guild_id`, `ticketMessageId`)
-            REFERENCES `ticketMessages`(`guild_id`, `id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["wordle_stats"] = """
-    CREATE TABLE IF NOT EXISTS `wordle_stats` (
-        `user_id` VARCHAR(20) NOT NULL,
-        `guild_id` VARCHAR(20) NOT NULL,
-        `games_played` INT UNSIGNED DEFAULT 0,
-        `games_won` INT UNSIGNED DEFAULT 0,
-        `current_streak` INT UNSIGNED DEFAULT 0,
-        `max_streak` INT UNSIGNED DEFAULT 0,
-        `guess_distribution` VARCHAR(64) DEFAULT '0,0,0,0,0,0',
-        `hard_mode_games_played` INT UNSIGNED DEFAULT 0,
-        `hard_mode_games_won` INT UNSIGNED DEFAULT 0,
-        PRIMARY KEY (`user_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["welcome_channel"] = """
-    CREATE TABLE IF NOT EXISTS `welcome_channel` (
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `message` VARCHAR(1024) DEFAULT NULL,
-        `imageBackground` VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY(`channel_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["leave_channel"] = """
-    CREATE TABLE IF NOT EXISTS `leave_channel` (
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `message` VARCHAR(1024) DEFAULT NULL,
-        `imageBackground` VARCHAR(255) DEFAULT NULL,
-        PRIMARY KEY(`channel_id`, `guild_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["dynamicslowmode"] = """
-    CREATE TABLE IF NOT EXISTS `dynamicslowmode` (
-        `guild_id` VARCHAR(20),
-        `channel_id` VARCHAR(20),
-        `messages` INT,
-        `per` INT,
-        `resetafter` INT,
-        `cashedSlowmode` INT,
-        PRIMARY KEY(`channel_id`)
-    ) ENGINE=InnoDB;
-    """
-    tables["dynamicslowmode_messages"] = """
-    CREATE TABLE IF NOT EXISTS `dynamicslowmode_messages` (
-        `id` INT AUTO_INCREMENT,
-        `channel_id` VARCHAR(20),
-        `messageId` VARCHAR(20),
-        `send_time` DATETIME,
-        PRIMARY KEY(`id`),
-        INDEX `idx_channel` (`channel_id`),
-        INDEX `idx_message` (`messageId`),
-        INDEX `idx_sendtime` (`send_time`),
-        FOREIGN KEY (`channel_id`)
-            REFERENCES `dynamicslowmode`(`channel_id`)
-            ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-    """
-    tables["twitchOnlineNotification"] = """
-    CREATE TABLE IF NOT EXISTS `twitchOnlineNotification` (
-        `id` INT AUTO_INCREMENT,
-        `channel_id` VARCHAR(20),
-        `guild_id` VARCHAR(20),
-        `twitchUuid` VARCHAR(64),
-        `twitchName` VARCHAR(128),
-        `notification_message` VARCHAR(1024) DEFAULT NULL,
-        PRIMARY KEY(`id`),
-        INDEX `idx_channel` (`channel_id`),
-        INDEX `idx_guild` (`guild_id`)
-    ) ENGINE=InnoDB;
-    """
-
-    return tables
+    """Return the table DDL definitions used by create_tables and Alembic."""
+    return {name: tdef.to_sql() for name, tdef in get_table_defs().items()}
 
 
 async def create_tables(bot=None) -> None:
@@ -1355,14 +1169,24 @@ async def create_tables(bot=None) -> None:
     pool = _get_pool()
     if pool is None:
         return
+    conn = None
+    broken_connection = False
     try:
         conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
-        async with conn, conn.cursor() as cursor:
+        async with conn.cursor() as cursor:
             await asyncio.wait_for(cursor.execute("SHOW TABLES"), timeout=_QUERY_TIMEOUT)
             existing = {row[0] for row in await cursor.fetchall()}
+    except TimeoutError:
+        broken_connection = True
+        print("Error discovering existing tables: timed out while using database connection")
     except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
         print(f"Error discovering existing tables: {e}")
         return
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
 
     # Build dependency map: table -> list of tables it depends on (via FK REFERENCES)
     dependencies = {
@@ -1392,51 +1216,44 @@ async def create_tables(bot=None) -> None:
         created.update(batch)
 
     # Create tables in dependency order, one at a time to avoid DDL lock contention.
-    for batch in batches:
-        for table_name in sorted(batch):
-            await execute_action(tables[table_name], bot=bot)
+    from utils.db_migration import ensure_database_schema
 
-    # Run schema migrations for existing tables that need column additions
-    migrations = [
-        # Add attachments column to scheduledMessages for attachment support
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `attachments` TEXT DEFAULT NULL
-         AFTER `repeatAmount`""",
-        # Add discord_message_id column to scheduledMessages for exact-match deletion
-        """ALTER TABLE `scheduledMessages`
-         ADD COLUMN `discord_message_id` VARCHAR(20) DEFAULT NULL
-         AFTER `attachments`,
-         ADD INDEX `idx_discord_message` (`discord_message_id`)""",
-        """ALTER TABLE `reports`
-         ADD COLUMN `status` VARCHAR(20) DEFAULT 'PENDING'
-         AFTER `created_at`,
-         ADD COLUMN `status_updated_at` TIMESTAMP DEFAULT NULL
-         AFTER `status`,
-         ADD COLUMN `status_updated_by` VARCHAR(20) DEFAULT NULL
-         AFTER `status_updated_at`,
-         ADD INDEX `idx_status` (`status`)""",
-        """ALTER TABLE `level`
-         ADD INDEX `idx_level_guild_xp` (`guild_id`, `xp` DESC)""",
-        """ALTER TABLE `warnings`
-         ADD INDEX `idx_warnings_user_guild` (`user_id`, `guild_id`)""",
-        """ALTER TABLE `giveaway`
-         ADD INDEX `idx_giveaway_ended_endtime` (`ended`, `endtime`)""",
-    ]
-    for migration in migrations:
-        try:
-            await execute_action(migration, bot=bot)
-        except Exception as exc:
-            exc_str = str(exc).lower()
-            if (
-                "column already exists" in exc_str
-                or "duplicate column" in exc_str
-                or "duplicate column name" in exc_str
-                or "duplicate key name" in exc_str
-            ):
-                logging.debug("Migration skipped (already applied): %s", migration[:60])
-            else:
-                logging.exception("Unexpected migration error: %s", migration[:60])
-                raise
+    try:
+        ensure_database_schema()
+    except Exception as exc:
+        print(f"Alembic migration failed, falling back to CREATE TABLE loop: {exc}")
+        for batch in batches:
+            for table_name in sorted(batch):
+                if table_name not in existing:
+                    await execute_action(tables[table_name], bot=bot)
+        return
+
+    conn = None
+    broken_connection = False
+    existing_after: set[str] = set()
+    try:
+        conn = await asyncio.wait_for(pool.acquire(), timeout=_POOL_ACQUIRE_TIMEOUT)
+        async with conn.cursor() as cursor:
+            await asyncio.wait_for(cursor.execute("SHOW TABLES"), timeout=_QUERY_TIMEOUT)
+            existing_after = {row[0] for row in await cursor.fetchall()}
+    except TimeoutError:
+        broken_connection = True
+        print("Error re-checking tables after migration: timed out")
+        return
+    except Exception as e:
+        if "connection" in str(e).lower() or "timeout" in str(e).lower():
+            broken_connection = True
+        print(f"Error re-checking tables after migration: {e}")
+        return
+    finally:
+        if conn is not None:
+            _release_pool_connection(pool, conn, broken=broken_connection)
+
+    missing_after = sorted(name for name in tables if name not in existing_after)
+    if missing_after:
+        raise RuntimeError(
+            "Alembic reported head but tables are still missing: " + ", ".join(missing_after)
+        )
 
 
 # ── Warning functions (delegated to WarningRepository) ───────────────────────────
@@ -2441,7 +2258,7 @@ async def getTokenOverview(user_id: str) -> TokenOverviewModel | None:
 
 
 async def includeToToken(user_id: str) -> None:
-    query = "INSERT INTO aiToken (user_id) VALUES (%s)"
+    query = "INSERT IGNORE INTO aiToken (user_id) VALUES (%s)"
     params = (user_id,)
     await execute_action(query, params)
 
@@ -2712,27 +2529,60 @@ async def get_claimed_booster_role(
     return await booster_service.get_all_claims(ClaimedBoosterType.ROLE) or None
 
 
+_log_enables_table_ensured = False
+_log_enables_table_lock = asyncio.Lock()
+
+
+async def _ensure_log_enables_table() -> None:
+    global _log_enables_table_ensured
+    if _log_enables_table_ensured:
+        return
+    async with _log_enables_table_lock:
+        if _log_enables_table_ensured:
+            return
+        result = await execute_action(get_table_defs()["log_enables"].to_sql())
+        if result is None:
+            return
+        _log_enables_table_ensured = True
+
+
+async def _ensure_log_enable_row(guild_id: str) -> None:
+    await _ensure_log_enables_table()
+    await execute_action(
+        "INSERT INTO log_enables (guild_id) VALUES (%s) "
+        "ON DUPLICATE KEY UPDATE guild_id = guild_id",
+        (guild_id,),
+    )
+    _log_enable_cache.invalidate(str(guild_id))
+
+
 async def set_log_channel(guild_id: str, channel_id: str) -> None:
-    query = "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s)"
-    params: Any = (guild_id, channel_id)
-    existing = await execute_query("SELECT 1 FROM log_enables WHERE guild_id = %s", (guild_id,))
-    if not existing:
-        query = "REPLACE INTO log_enables (guild_id) VALUES (%s)"
-        params = (guild_id,)
-    await execute_action(query, params)
+    await _ensure_log_enable_row(guild_id)
+    await execute_action("DELETE FROM log_channel WHERE guild_id = %s", (guild_id,))
+    await execute_action(
+        "INSERT INTO log_channel (guild_id, channel_id) VALUES (%s, %s)",
+        (guild_id, channel_id),
+    )
+    _log_channel_cache.invalidate(str(guild_id))
 
 
 async def remove_log_channel(guild_id: str) -> None:
     query = "DELETE FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     await execute_action(query, params)
+    _log_channel_cache.invalidate(str(guild_id))
 
 
-async def get_log_channel(guild_id: str) -> str | None:
+async def _fetch_log_channel_from_db(guild_id: str) -> str | None:
     query = "SELECT channel_id FROM log_channel WHERE guild_id = %s"
     params = (guild_id,)
     result = await execute_query(query, params)
     return result[0][0] if result else None
+
+
+async def get_log_channel(guild_id: str) -> str | None:
+    gid = str(guild_id)
+    return await _log_channel_cache.get_or_fetch(gid, lambda: _fetch_log_channel_from_db(gid))
 
 
 _LOG_ENABLE_COLUMNS = frozenset(
@@ -2767,6 +2617,7 @@ _LOG_ENABLE_COLUMNS = frozenset(
 
 
 async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
+    await _ensure_log_enable_row(guild_id)
     query = "UPDATE log_enables SET "
     end_query = " WHERE guild_id = %s"
     params: list[Any] = []
@@ -2784,14 +2635,10 @@ async def set_log_enable(guild_id: str, **kwargs: Any) -> None:
     query = query.rstrip(", ") + end_query
 
     await execute_action(query, tuple(params))
+    _log_enable_cache.invalidate(str(guild_id))
 
 
-async def get_log_enable(guild_id: str | int) -> LogEnableModel:
-    query = "SELECT guild_id, automodRuleCreate, automodRuleUpdate, automodRuleDelete, automodAction, guild_channelDelete, guild_channelCreate, guild_channelUpdate, guildUpdate, inviteCreate, inviteDelete, memberJoin, memberLeave, memberUpdate, userUpdate, memberBan, memberUnban, presenceUpdate, messageEdit, messageDelete, reactionAdd, reactionRemove, guildRoleCreate, guildRoleDelete, guildRoleUpdate FROM log_enables WHERE guild_id = %s"
-    params = (str(guild_id),)
-    result = await execute_query(query, params)
-    if result and result[0]:
-        return LogEnableModel.from_row(result[0])
+def _default_log_enable(guild_id: str | int) -> LogEnableModel:
     return LogEnableModel(
         guild_id=str(guild_id),
         automod_rule_create=True,
@@ -2819,6 +2666,28 @@ async def get_log_enable(guild_id: str | int) -> LogEnableModel:
         guild_role_delete=True,
         guild_role_update=True,
     )
+
+
+_LOG_ENABLE_SELECT = (
+    "SELECT guild_id, automodRuleCreate, automodRuleUpdate, automodRuleDelete, automodAction, "
+    "guild_channelDelete, guild_channelCreate, guild_channelUpdate, guildUpdate, inviteCreate, "
+    "inviteDelete, memberJoin, memberLeave, memberUpdate, userUpdate, memberBan, memberUnban, "
+    "presenceUpdate, messageEdit, messageDelete, reactionAdd, reactionRemove, guildRoleCreate, "
+    "guildRoleDelete, guildRoleUpdate FROM log_enables WHERE guild_id = %s"
+)
+
+
+async def _fetch_log_enable_from_db(guild_id: str) -> LogEnableModel:
+    await _ensure_log_enables_table()
+    result = await execute_query(_LOG_ENABLE_SELECT, (guild_id,))
+    if result and result[0]:
+        return LogEnableModel.from_row(result[0])
+    return _default_log_enable(guild_id)
+
+
+async def get_log_enable(guild_id: str | int) -> LogEnableModel:
+    gid = str(guild_id)
+    return await _log_enable_cache.get_or_fetch(gid, lambda: _fetch_log_enable_from_db(gid))
 
 
 async def add_scheduled_message(
@@ -3186,7 +3055,12 @@ async def get_welcome_channel(guild_id: str) -> WelcomeChannelModel | None:
 
 
 async def set_welcome_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO welcome_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 
@@ -3205,7 +3079,12 @@ async def get_leave_channel(guild_id: str) -> LeaveChannelModel | None:
 
 
 async def set_leave_channel(guild_id: str, channel_id: str, message: str, image_background: str) -> None:
-    query = "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) VALUES (%s, %s, %s, %s)"
+    query = (
+        "INSERT INTO leave_channel (guild_id, channel_id, message, imageBackground) "
+        "VALUES (%s, %s, %s, %s) "
+        "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id), message = VALUES(message), "
+        "imageBackground = VALUES(imageBackground)"
+    )
     params = (guild_id, channel_id, message, image_background)
     await execute_action(query, params)
 

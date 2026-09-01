@@ -50,10 +50,12 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+coverage/command-matrix.json
 
 # Translations
 *.mo
 *.pot
+locales/*.csv
 
 # Django stuff:
 *.log
@@ -121,6 +123,15 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Discord doc screenshot session (Playwright storage state)
+.discord-doc-auth.json
+.discord-e2e-chrome-profile/
+.tanjun-e2e-bot-ready
+.tanjun-e2e-bot.log
+
+# Live E2E debug captures
+tests/e2e_live/_debug_screenshots/
+
 # Environments
 .env
 .venv
@@ -173,6 +184,24 @@ lib64
 
 # Debug / temporary files
 tmp.py
+temp_*.py
+temp_*.txt
+temp_*.sql
+
+# Database dumps
+*.sql
+!docs/**/*.sql
+!tests/fixtures/schema_legacy/*.sql
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# uv (project uses pip)
+uv.lock
 
 # Mypy Logs
 current_mypy.txt

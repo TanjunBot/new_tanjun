@@ -99,7 +99,7 @@ async def test_subcommand_hangman_name_registered():
     bot = await load_extension_bot(EXTENSION)
     root = find_tree_group(bot, "games_name")
     assert root is not None
-    assert "hangman_name" in get_subcommand_names(root)
+    assert "games_hangman_name" in get_subcommand_names(root)
 
 
 async def test_subcommand_games_flagquiz_name_registered():

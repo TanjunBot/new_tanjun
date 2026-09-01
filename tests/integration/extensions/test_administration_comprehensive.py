@@ -1,33 +1,22 @@
 from __future__ import annotations
-
+from io import BytesIO, StringIO
+from locale_keys import locale
 from contextlib import asynccontextmanager
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
-
 import aiohttp
 import pytest
-
 import config
 import extensions.administration as admin_mod
 from extensions.administration import AdministrationCog, _mysql_defaults_file
 from tests.helpers.discord import make_guild, make_member, make_message, make_text_channel
 from tests.integration.extensions.conftest import load_extension_bot
-
-EXTENSION = "extensions.administration"
-COG_NAME = "AdministrationCog"
+EXTENSION = 'extensions.administration'
+COG_NAME = 'AdministrationCog'
 ADMIN_ID = 1001
 NON_ADMIN_ID = 999999
 
-
-def make_context(
-    bot: MagicMock,
-    *,
-    author_id: int = ADMIN_ID,
-    guild_locale: str = "en-US",
-    guild: MagicMock | None = None,
-    channel: MagicMock | None = None,
-    attachments: list[Any] | None = None,
-) -> MagicMock:
+def make_context(bot: MagicMock, *, author_id: int=ADMIN_ID, guild_locale: str='en-US', guild: MagicMock | None=None, channel: MagicMock | None=None, attachments: list[Any] | None=None) -> MagicMock:
     guild = guild or make_guild()
     guild.preferred_locale = guild_locale
     channel = channel or make_text_channel(guild=guild)
@@ -42,86 +31,50 @@ def make_context(
     ctx.message.attachments = attachments or []
     return ctx
 
-
 @pytest.fixture
 async def cog() -> AdministrationCog:
     bot = await load_extension_bot(EXTENSION, fire_ready=False)
     return bot.cogs[COG_NAME]
 
-
 @pytest.fixture
 def bot(cog: AdministrationCog) -> MagicMock:
     return cog.bot
 
-
 class TestLocale:
+
     def test_locale_no_guild(self, cog: AdministrationCog) -> None:
         ctx = MagicMock()
         ctx.guild = None
-        assert cog._locale(ctx) == "en"
+        assert cog._locale(ctx) == 'en'
 
     def test_locale_german(self, cog: AdministrationCog) -> None:
         ctx = MagicMock()
-        ctx.guild = MagicMock(preferred_locale="de")
-        assert cog._locale(ctx) == "de"
+        ctx.guild = MagicMock(preferred_locale='de')
+        assert cog._locale(ctx) == 'de'
 
     def test_locale_unknown_fallback(self, cog: AdministrationCog) -> None:
         ctx = MagicMock()
-        ctx.guild = MagicMock(preferred_locale="fr")
-        assert cog._locale(ctx) == "en"
+        ctx.guild = MagicMock(preferred_locale='fr')
+        assert cog._locale(ctx) == 'en'
 
     def test_locale_en_gb(self, cog: AdministrationCog) -> None:
         ctx = MagicMock()
-        ctx.guild = MagicMock(preferred_locale="en_GB")
-        assert cog._locale(ctx) == "en"
-
+        ctx.guild = MagicMock(preferred_locale='en_GB')
+        assert cog._locale(ctx) == 'en'
 
 @pytest.mark.asyncio
 class TestNonAdminEarlyReturn:
-    @pytest.mark.parametrize(
-        "method_name,extra_kwargs",
-        [
-            ("sync", {}),
-            ("feedback", {"content": "hi"}),
-            ("blockFeedback", {"user": make_member()}),
-            ("unblockFeedback", {"user": make_member()}),
-            ("test_bot", {}),
-            ("test_translation", {}),
-            ("update", {}),
-            ("welcome", {}),
-            ("farewell", {}),
-            (
-                "onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus",
-                {},
-            ),
-            ("bsstarpoweremojis", {}),
-            ("bsgadgetsemojis", {}),
-            ("bsaccdata", {"id": "ABC123"}),
-            ("editembedmessage", {}),
-            ("setguildlocale", {"locale": "de"}),
-            ("testgithubauthtoken", {}),
-            ("testupdateuserroles", {}),
-            ("testgetcorrectnextnumber", {"mode": 1, "numbers": 3}),
-            ("sendUpdateTextToAllAdmins", {}),
-            ("sendDemoIsNoMoreToAllAdmins", {}),
-            ("me", {}),
-            ("permissionTest", {}),
-            ("permissionTest2", {}),
-            ("listPermissions", {}),
-            ("database_sync", {}),
-        ],
-    )
-    async def test_non_admin_returns(
-        self, cog: AdministrationCog, bot: MagicMock, method_name: str, extra_kwargs: dict[str, Any]
-    ) -> None:
+
+    @pytest.mark.parametrize('method_name,extra_kwargs', [('sync', {}), ('feedback', {'content': 'hi'}), ('blockFeedback', {'user': make_member()}), ('unblockFeedback', {'user': make_member()}), ('test_bot', {}), ('benchmark_bot', {}), ('test_translation', {}), ('update', {}), ('welcome', {}), ('farewell', {}), ('onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus', {}), ('bsstarpoweremojis', {}), ('bsgadgetsemojis', {}), ('bsaccdata', {'id': 'ABC123'}), ('editembedmessage', {}), ('setguildlocale', {'locale': 'de'}), ('testgithubauthtoken', {}), ('testupdateuserroles', {}), ('testgetcorrectnextnumber', {'mode': 1, 'numbers': 3}), ('sendUpdateTextToAllAdmins', {}), ('sendDemoIsNoMoreToAllAdmins', {}), ('me', {}), ('permissionTest', {}), ('permissionTest2', {}), ('listPermissions', {}), ('database_sync', {})])
+    async def test_non_admin_returns(self, cog: AdministrationCog, bot: MagicMock, method_name: str, extra_kwargs: dict[str, Any]) -> None:
         ctx = make_context(bot, author_id=NON_ADMIN_ID)
         method = getattr(cog, method_name)
         await method(ctx, **extra_kwargs)
         ctx.send.assert_not_called()
 
-
 @pytest.mark.asyncio
 class TestSync:
+
     async def test_sync_no_tree(self, cog: AdministrationCog, bot: MagicMock) -> None:
         bot.tree = None
         ctx = make_context(bot)
@@ -130,105 +83,352 @@ class TestSync:
 
     async def test_sync_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         bot.tree = MagicMock()
+        bot.tree.walk_commands = MagicMock(return_value=[MagicMock(), MagicMock(), MagicMock()])
         bot.tree.sync = AsyncMock(return_value=[MagicMock(), MagicMock()])
+        status_msg = MagicMock()
+        status_msg.edit = AsyncMock()
         ctx = make_context(bot)
+        ctx.send = AsyncMock(return_value=status_msg)
         await cog.sync(ctx)
         ctx.send.assert_awaited_once()
+        bot.tree.sync.assert_awaited_once()
+        status_msg.edit.assert_awaited()
 
+    async def test_sync_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        bot.tree = MagicMock()
+        bot.tree.walk_commands = MagicMock(return_value=[])
+        bot.tree.sync = AsyncMock(side_effect=RuntimeError('discord down'))
+        status_msg = MagicMock()
+        status_msg.edit = AsyncMock()
+        ctx = make_context(bot)
+        ctx.send = AsyncMock(return_value=status_msg)
+        await cog.sync(ctx)
+        status_msg.edit.assert_awaited()
+        assert status_msg.edit.await_args.kwargs['embed'] is not None
 
 @pytest.mark.asyncio
 class TestFeedbackCommands:
+
     async def test_feedback(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.addFeedback", new=AsyncMock()) as add_fb:
-            await cog.feedback(ctx, content="test feedback")
-        add_fb.assert_awaited_once_with("test feedback", ctx.author.name)
+        with patch('extensions.administration.addFeedback', new=AsyncMock()) as add_fb:
+            await cog.feedback(ctx, content='test feedback')
+        add_fb.assert_awaited_once_with('test feedback', ctx.author.name)
         ctx.send.assert_awaited_once()
 
     async def test_block_feedback(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        user = make_member(user_id=222222222, name="Blocked")
-        with patch("extensions.administration.feedbackBlockUser", new=AsyncMock()) as block:
+        user = make_member(user_id=222222222, name='Blocked')
+        with patch('extensions.administration.feedbackBlockUser', new=AsyncMock()) as block:
             await cog.blockFeedback(ctx, user=user)
         block.assert_awaited_once_with(222222222)
         ctx.send.assert_awaited_once()
 
     async def test_unblock_feedback(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        user = make_member(user_id=333333333, name="Unblocked")
-        with patch("extensions.administration.feedbackUnblockUser", new=AsyncMock()) as unblock:
+        user = make_member(user_id=333333333, name='Unblocked')
+        with patch('extensions.administration.feedbackUnblockUser', new=AsyncMock()) as unblock:
             await cog.unblockFeedback(ctx, user=user)
         unblock.assert_awaited_once_with(333333333)
         ctx.send.assert_awaited_once()
 
-
 @pytest.mark.asyncio
 class TestTestBot:
-    async def test_tests_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
-        ctx = make_context(bot)
-        sent = MagicMock()
-        sent.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=sent)
-        with patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", False):
-            await cog.test_bot(ctx)
-        assert sent.edit.await_count >= 1
 
-    async def test_ping_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_diagnostics_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        ctx.send.assert_awaited_once()
+        sent.edit.assert_awaited()
+        sent.create_thread.assert_not_awaited()
+
+    async def test_diagnostics_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 987654321
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', autospec=True) as mock_runner_cls:
+            mock_runner = mock_runner_cls.return_value
+            mock_runner.run_all = AsyncMock(side_effect=RuntimeError('diagnostics fail'))
+            await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-987654321')
+        mock_runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='en')
+        sent.edit.assert_awaited()
+        thread.send.assert_awaited_once_with('Diagnostics aborted: diagnostics fail')
+
+    async def test_diagnostics_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 222
+        ctx.guild.preferred_locale = 'de'
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        mock_runner = MagicMock()
+        mock_runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=mock_runner) as runner_cls:
+            await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-222')
+        runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='de')
+        mock_runner.run_all.assert_awaited_once()
+        thread.send.assert_not_awaited()
+        sent.edit.assert_not_awaited()
+
+    async def test_diagnostics_thread_creation_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 111
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(side_effect=RuntimeError('thread fail'))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', autospec=True) as runner_cls:
+            await cog.test_bot(ctx)
+        sent.create_thread.assert_awaited_once_with(name='bot-diagnostics-111')
+        sent.edit.assert_awaited_once()
+        runner_cls.assert_not_called()
+
+    async def test_diagnostics_unavailable_uses_en_fallback_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='fr')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        first_embed = ctx.send.await_args.kwargs['embed']
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert first_embed.title == 'Bot Diagnostics'
+        assert edited_embed.title == 'Bot Diagnostics'
+        sent.create_thread.assert_not_awaited()
+
+    async def test_diagnostics_without_guild_uses_default_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.guild = None
+        ctx.message.id = 4321
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner) as runner_cls:
+            await cog.test_bot(ctx)
+        runner_cls.assert_called_once_with(cog.bot, ctx, thread, sent, locale='en')
+        runner.run_all.assert_awaited_once()
+
+    async def test_diagnostics_error_without_thread_does_not_send_abort(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.create_thread = AsyncMock(side_effect=RuntimeError('create thread failed'))
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True):
+            await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+
+    async def test_diagnostics_error_embed_contains_test_name(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('boom'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert edited_embed.title == 'Bot Diagnostics'
+        assert 'Diagnostics' in edited_embed.description
+        assert 'boom' in edited_embed.description
+
+    async def test_diagnostics_thread_name_is_trimmed_to_100_chars(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = int('9' * 120)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        created_name = sent.create_thread.await_args.kwargs['name']
+        assert len(created_name) == 100
+        assert created_name.startswith('bot-diagnostics-')
+
+    async def test_diagnostics_start_embed_title_is_constant(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        start_embed = ctx.send.await_args.kwargs['embed']
+        assert start_embed.title == 'Bot Diagnostics'
+
+    async def test_diagnostics_start_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        start_embed = ctx.send.await_args.kwargs['embed']
+        assert start_embed.description == locale.commands.admin.administration.test_bot.starting('de')
+
+    async def test_diagnostics_unavailable_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        sent.edit = AsyncMock()
+        sent.create_thread = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.test_bot(ctx)
+        unavailable_embed = sent.edit.await_args.kwargs['embed']
+        assert unavailable_embed.description == locale.commands.admin.administration.test_bot.tests_unavailable('de')
+
+    async def test_diagnostics_error_embed_description_matches_locale(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot, guild_locale='de')
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('kaputt'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        edited_embed = sent.edit.await_args.kwargs['embed']
+        assert edited_embed.description == locale.commands.admin.administration.test_bot.error('de', test_name='Diagnostics', error=RuntimeError('kaputt'))
+
+    async def test_diagnostics_send_failure_bubbles_up(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.send = AsyncMock(side_effect=RuntimeError('send failed'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            with pytest.raises(RuntimeError, match='send failed'):
+                await cog.test_bot(ctx)
+
+    async def test_diagnostics_runner_constructor_failure_edits_and_notifies_thread(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', side_effect=RuntimeError('ctor fail')):
+            await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+        thread.send.assert_awaited_once_with('Diagnostics aborted: ctor fail')
+
+    async def test_diagnostics_abort_notification_failure_bubbles_up(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock(side_effect=RuntimeError('thread notify failed')))
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock(side_effect=RuntimeError('runner fail'))
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            with pytest.raises(RuntimeError, match='thread notify failed'):
+                await cog.test_bot(ctx)
+        sent.edit.assert_awaited_once()
+
+    async def test_diagnostics_success_call_order_send_then_thread_then_runner(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        call_order: list[str] = []
+        ctx = make_context(bot)
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+
+        async def _create_thread(*args: Any, **kwargs: Any) -> MagicMock:
+            call_order.append('create_thread')
+            return thread
+
+        sent.create_thread = AsyncMock(side_effect=_create_thread)
+        sent.edit = AsyncMock()
+
+        async def _send(*args: Any, **kwargs: Any) -> MagicMock:
+            call_order.append('send')
+            return sent
+
+        ctx.send = AsyncMock(side_effect=_send)
+        runner = MagicMock()
+
+        async def _run_all() -> None:
+            call_order.append('run_all')
+
+        runner.run_all = AsyncMock(side_effect=_run_all)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        assert call_order == ['send', 'create_thread', 'run_all']
+
+    async def test_diagnostics_thread_name_exact_for_short_message_id(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        ctx.message.id = 17
+        sent = MagicMock()
+        thread = MagicMock(send=AsyncMock())
+        sent.create_thread = AsyncMock(return_value=thread)
+        sent.edit = AsyncMock()
+        ctx.send = AsyncMock(return_value=sent)
+        runner = MagicMock()
+        runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch('extensions.administration.DiagnosticsRunner', return_value=runner):
+            await cog.test_bot(ctx)
+        assert sent.create_thread.await_args.kwargs['name'] == 'bot-diagnostics-17'
+
+@pytest.mark.asyncio
+class TestBenchmarkBot:
+
+    async def test_benchmark_unavailable(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock(side_effect=RuntimeError("ping fail"))),
-        ):
-            await cog.test_bot(ctx)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', False):
+            await cog.benchmark_bot(ctx)
         sent.edit.assert_awaited()
 
-    async def test_database_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_benchmark_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock(side_effect=RuntimeError("db fail"))),
-        ):
-            await cog.test_bot(ctx)
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch.object(admin_mod, 'BenchmarkRunner', autospec=True) as mock_runner_cls:
+            mock_runner = mock_runner_cls.return_value
+            mock_runner.run_all = AsyncMock(side_effect=RuntimeError('benchmark fail'))
+            await cog.benchmark_bot(ctx)
         sent.edit.assert_awaited()
 
-    async def test_commands_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_benchmark_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         sent = MagicMock()
+        sent.create_thread = AsyncMock(return_value=MagicMock(send=AsyncMock()))
         sent.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock()),
-            patch.object(admin_mod, "test_commands", new=AsyncMock(side_effect=RuntimeError("cmds fail"))),
-        ):
-            await cog.test_bot(ctx)
-        sent.edit.assert_awaited()
-
-    async def test_all_completed(self, cog: AdministrationCog, bot: MagicMock) -> None:
-        ctx = make_context(bot)
-        sent = MagicMock()
-        sent.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=sent)
-        with (
-            patch.object(admin_mod, "TEST_FUNCTIONS_AVAILABLE", True),
-            patch.object(admin_mod, "test_ping", new=AsyncMock()),
-            patch.object(admin_mod, "test_database", new=AsyncMock()),
-            patch.object(admin_mod, "test_commands", new=AsyncMock()),
-        ):
-            await cog.test_bot(ctx)
-        sent.edit.assert_awaited()
-
+        mock_runner = MagicMock()
+        mock_runner.run_all = AsyncMock()
+        with patch.object(admin_mod, 'DIAGNOSTICS_AVAILABLE', True), patch.object(admin_mod, 'BenchmarkRunner', return_value=mock_runner):
+            await cog.benchmark_bot(ctx)
+        mock_runner.run_all.assert_awaited_once()
 
 @pytest.mark.asyncio
 class TestMiscCommands:
+
     async def test_test_translation(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         await cog.test_translation(ctx)
@@ -239,23 +439,16 @@ class TestMiscCommands:
         bot.application_id = 12345
         mock_resp = MagicMock()
         mock_resp.status = 500
-        mock_resp.text = AsyncMock(return_value="error body")
+        mock_resp.text = AsyncMock(return_value='error body')
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch("extensions.administration.send_logEmbeds", new=AsyncMock()),
-            patch("extensions.administration.create_database_backup", new=AsyncMock()),
-            patch("extensions.administration.removeAllJoinToCreateChannels", new=AsyncMock()),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch('extensions.administration.send_logEmbeds', new=AsyncMock()), patch('extensions.administration.create_database_backup', new=AsyncMock()), patch('extensions.administration.removeAllJoinToCreateChannels', new=AsyncMock()), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.update(ctx)
         assert ctx.send.await_count >= 2
 
@@ -263,16 +456,10 @@ class TestMiscCommands:
         ctx = make_context(bot)
         bot.application_id = 12345
         mock_session = MagicMock()
-        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("connection refused"))
+        mock_session.get = MagicMock(side_effect=aiohttp.ClientError('connection refused'))
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch("extensions.administration.send_logEmbeds", new=AsyncMock()),
-            patch("extensions.administration.create_database_backup", new=AsyncMock()),
-            patch("extensions.administration.removeAllJoinToCreateChannels", new=AsyncMock()),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch('extensions.administration.send_logEmbeds', new=AsyncMock()), patch('extensions.administration.create_database_backup', new=AsyncMock()), patch('extensions.administration.removeAllJoinToCreateChannels', new=AsyncMock()), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.update(ctx)
         assert ctx.send.await_count >= 2
 
@@ -281,49 +468,42 @@ class TestMiscCommands:
         bot.application_id = 12345
         mock_resp = MagicMock()
         mock_resp.status = 200
-        mock_resp.text = AsyncMock(return_value="restarting")
+        mock_resp.text = AsyncMock(return_value='restarting')
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch("extensions.administration.send_logEmbeds", new=AsyncMock()),
-            patch("extensions.administration.create_database_backup", new=AsyncMock()),
-            patch("extensions.administration.removeAllJoinToCreateChannels", new=AsyncMock()),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch('extensions.administration.send_logEmbeds', new=AsyncMock()), patch('extensions.administration.create_database_backup', new=AsyncMock()), patch('extensions.administration.removeAllJoinToCreateChannels', new=AsyncMock()), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.update(ctx)
         assert ctx.send.await_count >= 2
 
     async def test_welcome_default_user(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.welcomeNewUser", new=AsyncMock()) as welcome:
+        with patch('extensions.administration.welcomeNewUser', new=AsyncMock()) as welcome:
             await cog.welcome(ctx)
         welcome.assert_awaited_once_with(ctx.author)
 
     async def test_welcome_explicit_user(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         member = make_member(user_id=777777777)
-        with patch("extensions.administration.welcomeNewUser", new=AsyncMock()) as welcome:
+        with patch('extensions.administration.welcomeNewUser', new=AsyncMock()) as welcome:
             await cog.welcome(ctx, user=member)
         welcome.assert_awaited_once_with(member)
 
     async def test_farewell_default_user(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.farewellUser", new=AsyncMock()) as farewell:
+        with patch('extensions.administration.farewellUser', new=AsyncMock()) as farewell:
             await cog.farewell(ctx)
         farewell.assert_awaited_once_with(ctx.author)
 
     async def test_farewell_explicit_user(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         member = make_member(user_id=888888888)
-        with patch("extensions.administration.farewellUser", new=AsyncMock()) as farewell:
+        with patch('extensions.administration.farewellUser', new=AsyncMock()) as farewell:
             await cog.farewell(ctx, user=member)
         farewell.assert_awaited_once_with(member)
 
@@ -332,9 +512,7 @@ class TestMiscCommands:
         emoji = MagicMock()
         bot.get_emoji = MagicMock(return_value=emoji)
         config.WELCOME_EMOJI_ID = 12345
-        await cog.onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(
-            ctx
-        )
+        await cog.onethingaboutmeichfahrautoseitvierjahreneinestageswolltichindenclubfahnichstandaneinerrotenampelundichwarganzalleinhintermirwareinbusunderfihrmirreinerhuptemichanhuphupichschaumiranwaspassiertistunderkommtraus(ctx)
         ctx.send.assert_awaited_once()
 
     async def test_me(self, cog: AdministrationCog, bot: MagicMock) -> None:
@@ -363,7 +541,7 @@ class TestMiscCommands:
     async def test_list_permissions_default_channel(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         perms = MagicMock()
-        perms.__iter__ = MagicMock(return_value=iter(["send_messages", "read_messages"]))
+        perms.__iter__ = MagicMock(return_value=iter(['send_messages', 'read_messages']))
         ctx.channel.permissions_for = MagicMock(return_value=perms)
         await cog.listPermissions(ctx)
         ctx.send.assert_awaited_once()
@@ -372,27 +550,27 @@ class TestMiscCommands:
         ctx = make_context(bot)
         channel = make_text_channel()
         perms = MagicMock()
-        perms.__iter__ = MagicMock(return_value=iter(["manage_messages"]))
+        perms.__iter__ = MagicMock(return_value=iter(['manage_messages']))
         channel.permissions_for = MagicMock(return_value=perms)
         await cog.listPermissions(ctx, channel=channel)
         ctx.send.assert_awaited_once()
 
     async def test_setguildlocale(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.tanjunLocalizer.localize", return_value="locale set"):
-            await cog.setguildlocale(ctx, locale="de")
+        with patch('localizer.tanjunLocalizer.localize', return_value='locale set'):
+            await cog.setguildlocale(ctx, locale='de')
         ctx.guild.edit.assert_awaited_once()
         ctx.send.assert_awaited_once()
 
     async def test_testgithubauthtoken(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.missingLocalization", new=AsyncMock()):
+        with patch('extensions.administration.missingLocalization', new=AsyncMock()):
             await cog.testgithubauthtoken(ctx)
         ctx.send.assert_awaited_once()
 
     async def test_testupdateuserroles(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch("extensions.administration.update_user_roles", new=AsyncMock()) as update:
+        with patch('extensions.administration.update_user_roles', new=AsyncMock()) as update:
             await cog.testupdateuserroles(ctx)
         update.assert_awaited_once()
 
@@ -406,13 +584,13 @@ class TestMiscCommands:
         msg = MagicMock()
         msg.edit = AsyncMock()
         ctx.send = AsyncMock(return_value=msg)
-        with patch("extensions.administration.asyncio.sleep", new=AsyncMock()):
+        with patch('extensions.administration.asyncio.sleep', new=AsyncMock()):
             await cog.editembedmessage(ctx)
         msg.edit.assert_awaited_once()
 
-
 @pytest.mark.asyncio
 class TestBrawlStars:
+
     async def test_get_brawlers_non_dict(self, cog: AdministrationCog) -> None:
         mock_resp = MagicMock()
         mock_resp.json = AsyncMock(return_value=[])
@@ -420,62 +598,49 @@ class TestBrawlStars:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             result = await cog.getBrawlers()
-        assert result == {"items": []}
+        assert result == {'items': []}
 
     async def test_get_acc_data_non_dict(self, cog: AdministrationCog) -> None:
         mock_resp = MagicMock()
-        mock_resp.json = AsyncMock(return_value="not a dict")
+        mock_resp.json = AsyncMock(return_value='not a dict')
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            result = await cog.getAccData("ABC")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            result = await cog.getAccData('ABC')
         assert result == {}
 
     async def test_bsaccdata(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        with patch.object(
-            cog,
-            "getAccData",
-            new=AsyncMock(return_value={"brawlers": [{"name": "a"}, {"name": "b"}]}),
-        ):
-            await cog.bsaccdata(ctx, id="TAG")
+        with patch.object(cog, 'getAccData', new=AsyncMock(return_value={'brawlers': [{'name': 'a'}, {'name': 'b'}]})):
+            await cog.bsaccdata(ctx, id='TAG')
         ctx.send.assert_awaited_once()
 
     async def test_bsstarpoweremojis_download_fail(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        brawlers = {"items": [{"star_powers": [{"id": 1, "name": "Power1"}]}]}
+        brawlers = {'items': [{'star_powers': [{'id': 1, 'name': 'Power1'}]}]}
         mock_resp = MagicMock()
         mock_resp.status = 404
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsstarpoweremojis(ctx)
         ctx.send.assert_awaited()
 
@@ -483,72 +648,53 @@ class TestBrawlStars:
         ctx = make_context(bot)
         emoji = MagicMock()
         ctx.guild.create_custom_emoji = AsyncMock(return_value=emoji)
-        brawlers = {"items": [{"star_powers": [{"id": 1, "name": "Power1"}]}]}
+        brawlers = {'items': [{'star_powers': [{'id': 1, 'name': 'Power1'}]}]}
         mock_resp = MagicMock()
         mock_resp.status = 200
-        mock_resp.read = AsyncMock(return_value=b"png")
+        mock_resp.read = AsyncMock(return_value=b'png')
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsstarpoweremojis(ctx)
         ctx.send.assert_awaited()
 
     async def test_bsstarpoweremojis_exception(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        brawlers = {"items": [{"star_powers": [{"id": 1, "name": "Power1"}]}]}
+        brawlers = {'items': [{'star_powers': [{'id': 1, 'name': 'Power1'}]}]}
         mock_session = MagicMock()
         mock_session.get = MagicMock(side_effect=TimeoutError())
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsstarpoweremojis(ctx)
         ctx.send.assert_awaited()
 
     async def test_bsstarpoweremojis_skip_start(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        brawlers = {
-            "items": [
-                {"star_powers": [{"id": 1, "name": "P0"}]},
-                {"star_powers": [{"id": 2, "name": "P1"}]},
-            ]
-        }
-        with patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)):
+        brawlers = {'items': [{'star_powers': [{'id': 1, 'name': 'P0'}]}, {'star_powers': [{'id': 2, 'name': 'P1'}]}]}
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)):
             await cog.bsstarpoweremojis(ctx, start=1)
 
     async def test_bsgadgetsemojis_download_fail(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        brawlers = {"items": [{"gadgets": [{"id": 10, "name": "Gadget1"}]}]}
+        brawlers = {'items': [{'gadgets': [{'id': 10, 'name': 'Gadget1'}]}]}
         mock_resp = MagicMock()
         mock_resp.status = 500
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsgadgetsemojis(ctx)
         ctx.send.assert_awaited()
 
@@ -556,42 +702,32 @@ class TestBrawlStars:
         ctx = make_context(bot)
         emoji = MagicMock()
         ctx.guild.create_custom_emoji = AsyncMock(return_value=emoji)
-        brawlers = {"items": [{"gadgets": [{"id": 10, "name": "Gadget1"}]}]}
+        brawlers = {'items': [{'gadgets': [{'id': 10, 'name': 'Gadget1'}]}]}
         mock_resp = MagicMock()
         mock_resp.status = 200
-        mock_resp.read = AsyncMock(return_value=b"png")
+        mock_resp.read = AsyncMock(return_value=b'png')
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsgadgetsemojis(ctx)
         ctx.send.assert_awaited()
 
     async def test_bsgadgetsemojis_exception(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
-        brawlers = {"items": [{"gadgets": [{"id": 10, "name": "Gadget1"}]}]}
+        brawlers = {'items': [{'gadgets': [{'id': 10, 'name': 'Gadget1'}]}]}
         mock_session = MagicMock()
-        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("fail"))
+        mock_session.get = MagicMock(side_effect=aiohttp.ClientError('fail'))
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with (
-            patch.object(cog, "getBrawlers", new=AsyncMock(return_value=brawlers)),
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-        ):
+        with patch.object(cog, 'getBrawlers', new=AsyncMock(return_value=brawlers)), patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.bsgadgetsemojis(ctx)
         ctx.send.assert_awaited()
-
 
 def _confirmation_msg(content: str, author: MagicMock, channel: MagicMock) -> MagicMock:
     msg = MagicMock()
@@ -600,9 +736,9 @@ def _confirmation_msg(content: str, author: MagicMock, channel: MagicMock) -> Ma
     msg.channel = channel
     return msg
 
-
 @pytest.mark.asyncio
 class TestBroadcastCommands:
+
     async def test_send_update_timeout(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
@@ -613,7 +749,7 @@ class TestBroadcastCommands:
     async def test_send_update_cancelled_first(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("n", ctx.author, ctx.channel))
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('n', ctx.author, ctx.channel))
         await cog.sendUpdateTextToAllAdmins(ctx)
         assert ctx.channel.send.await_count >= 2
 
@@ -621,16 +757,8 @@ class TestBroadcastCommands:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
         from localizer import tanjunLocalizer
-
-        expected = tanjunLocalizer.localize("en", "commands.admin.update_text.expected_password").lower()
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("wallah", ctx.author, ctx.channel),
-                _confirmation_msg("wrong-password", ctx.author, ctx.channel),
-            ]
-        )
+        expected = locale.commands.admin.update_text.expected_password('en').lower()
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg('wrong-password', ctx.author, ctx.channel)])
         await cog.sendUpdateTextToAllAdmins(ctx)
         assert ctx.channel.send.await_count >= 4
 
@@ -638,46 +766,27 @@ class TestBroadcastCommands:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
         from localizer import tanjunLocalizer
-
-        expected = tanjunLocalizer.localize("en", "commands.admin.update_text.expected_password").lower()
+        expected = locale.commands.admin.update_text.expected_password('en').lower()
         owner = make_member(user_id=555555555)
         owner.send = AsyncMock()
         guild = make_guild()
         guild.owner = owner
         bot.guilds = [guild]
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("wallah", ctx.author, ctx.channel),
-                _confirmation_msg(expected, ctx.author, ctx.channel),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg(expected, ctx.author, ctx.channel)])
         await cog.sendUpdateTextToAllAdmins(ctx)
         owner.send.assert_awaited()
 
     async def test_send_update_wallah_cancel(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("no-wallah", ctx.author, ctx.channel),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('no-wallah', ctx.author, ctx.channel)])
         await cog.sendUpdateTextToAllAdmins(ctx)
         assert ctx.channel.send.await_count >= 3
 
     async def test_send_update_second_confirm_timeout(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                TimeoutError(),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), TimeoutError()])
         await cog.sendUpdateTextToAllAdmins(ctx)
 
     async def test_send_demo_timeout(self, cog: AdministrationCog, bot: MagicMock) -> None:
@@ -689,41 +798,26 @@ class TestBroadcastCommands:
     async def test_send_demo_cancelled(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("n", ctx.author, ctx.channel))
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('n', ctx.author, ctx.channel))
         await cog.sendDemoIsNoMoreToAllAdmins(ctx)
 
     async def test_send_demo_wrong_password(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("wallah", ctx.author, ctx.channel),
-                _confirmation_msg("bad", ctx.author, ctx.channel),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg('bad', ctx.author, ctx.channel)])
         await cog.sendDemoIsNoMoreToAllAdmins(ctx)
 
     async def test_send_demo_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
         from localizer import tanjunLocalizer
-
-        expected = tanjunLocalizer.localize("en", "commands.admin.update_text.expected_password").lower()
+        expected = locale.commands.admin.update_text.expected_password('en').lower()
         owner = make_member(user_id=666666666)
         owner.send = AsyncMock()
         guild = make_guild()
         guild.owner = owner
         bot.guilds = [guild, guild]
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("wallah", ctx.author, ctx.channel),
-                _confirmation_msg(expected, ctx.author, ctx.channel),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg(expected, ctx.author, ctx.channel)])
         await cog.sendDemoIsNoMoreToAllAdmins(ctx)
         owner.send.assert_awaited()
 
@@ -731,69 +825,150 @@ class TestBroadcastCommands:
         ctx = make_context(bot)
         ctx.channel.send = AsyncMock()
         from localizer import tanjunLocalizer
-
-        expected = tanjunLocalizer.localize("en", "commands.admin.update_text.expected_password").lower()
+        expected = locale.commands.admin.update_text.expected_password('en').lower()
         guild = make_guild()
         guild.owner = None
         bot.guilds = [guild]
-        bot.wait_for = AsyncMock(
-            side_effect=[
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("y", ctx.author, ctx.channel),
-                _confirmation_msg("wallah", ctx.author, ctx.channel),
-                _confirmation_msg(expected, ctx.author, ctx.channel),
-            ]
-        )
+        bot.wait_for = AsyncMock(side_effect=[_confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('y', ctx.author, ctx.channel), _confirmation_msg('wallah', ctx.author, ctx.channel), _confirmation_msg(expected, ctx.author, ctx.channel)])
         await cog.sendUpdateTextToAllAdmins(ctx)
+
+def _database_sync_thread_ctx(
+    ctx: MagicMock,
+    *,
+    status: MagicMock | None = None,
+    first_send_returns_none: bool = False,
+) -> MagicMock:
+    thread_status = status if status is not None else MagicMock(edit=AsyncMock())
+    thread = MagicMock()
+    if first_send_returns_none:
+        thread.send = AsyncMock(return_value=None)
+    else:
+        thread.send = AsyncMock(return_value=thread_status)
+    ctx.channel.create_thread = AsyncMock(return_value=thread)
+    return thread
+
+
+def _mock_create_subprocess_exec(*, import_returncode: int = 0, verify_table_count: str = '1') -> Any:
+    mysql_import_calls = 0
+
+    async def _create_subprocess_exec(*args: Any, **kwargs: Any) -> MagicMock:
+        nonlocal mysql_import_calls
+        proc = MagicMock()
+        if args and args[0] == 'mysql' and kwargs.get('stdin') is not None:
+            mysql_import_calls += 1
+            proc.returncode = import_returncode
+            proc.communicate = AsyncMock(return_value=(b'', b'mysql import failed' if import_returncode else b''))
+        elif args and args[0] == 'mysql' and '-N' in args:
+            proc.returncode = 0
+            proc.communicate = AsyncMock(return_value=(verify_table_count.encode(), b''))
+        else:
+            proc.returncode = 0
+            proc.communicate = AsyncMock(return_value=(b'', b''))
+        return proc
+
+    return patch('asyncio.create_subprocess_exec', side_effect=_create_subprocess_exec)
+
+
+def _database_sync_open_mock(
+    sql_content: bytes | str,
+    *,
+    fail_filtered_write: bool = False,
+) -> Any:
+    sql_text = sql_content.decode() if isinstance(sql_content, bytes) else sql_content
+    real_open = open
+
+    def open_side_effect(path: str, *args: Any, **kwargs: Any) -> Any:
+        path_str = str(path)
+        mode = args[0] if args and isinstance(args[0], str) else kwargs.get('mode', 'r')
+        if path_str == 'temp_import.sql' and 'b' not in mode:
+            return StringIO(sql_text)
+        if path_str == 'filtered_import.sql' and 'w' in mode:
+            if fail_filtered_write:
+                raise OSError('cannot write filter')
+            handle = MagicMock()
+            handle.__enter__ = MagicMock(return_value=handle)
+            handle.__exit__ = MagicMock(return_value=False)
+            handle.write = MagicMock()
+            return handle
+        if path_str == 'filtered_import.sql' and 'rb' in mode:
+            return BytesIO(sql_text.encode())
+        if path_str.endswith('_only.sql') and 'w' in mode:
+            handle = MagicMock()
+            handle.__enter__ = MagicMock(return_value=handle)
+            handle.__exit__ = MagicMock(return_value=False)
+            handle.write = MagicMock()
+            return handle
+        return real_open(path, *args, **kwargs)
+
+    return patch('builtins.open', side_effect=open_side_effect)
 
 
 @pytest.mark.asyncio
 class TestDatabaseSync:
+
     async def test_no_attachment(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
+        thread = _database_sync_thread_ctx(ctx)
         await cog.database_sync(ctx)
-        ctx.send.assert_awaited_once()
+        thread.send.assert_awaited_once()
+
+    async def test_initial_thread_send_none_does_not_raise(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        attachment = MagicMock()
+        attachment.url = 'http://example.com/dump.sql'
+        ctx.message.attachments = [attachment]
+        thread = _database_sync_thread_ctx(ctx, first_send_returns_none=True)
+        await cog.database_sync(ctx)
+        thread.send.assert_awaited_once()
+
+    async def test_thread_send_exception_does_not_raise(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        attachment = MagicMock()
+        attachment.url = 'http://example.com/dump.sql'
+        ctx.message.attachments = [attachment]
+        thread = MagicMock()
+        thread.send = AsyncMock(side_effect=RuntimeError('discord send failed'))
+        ctx.channel.create_thread = AsyncMock(return_value=thread)
+        await cog.database_sync(ctx)
+        thread.send.assert_awaited_once()
 
     async def test_with_url(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
+        _database_sync_thread_ctx(ctx, status=status)
         mock_resp = MagicMock()
         mock_resp.status = 404
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
         status.edit.assert_awaited()
 
     async def test_download_exception(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
+        _database_sync_thread_ctx(ctx, status=status)
         mock_session = MagicMock()
-        mock_session.get = MagicMock(side_effect=RuntimeError("download failed"))
+        mock_session.get = MagicMock(side_effect=RuntimeError('download failed'))
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_schema_timeout(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -801,23 +976,20 @@ class TestDatabaseSync:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
         bot.wait_for = AsyncMock(side_effect=TimeoutError())
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_schema_cancel(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -825,27 +997,82 @@ class TestDatabaseSync:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
         from localizer import tanjunLocalizer
-
-        cancel = tanjunLocalizer.localize("en", "commands.admin.database_sync.cancel_token")
+        cancel = locale.commands.admin.database_sync.cancel_token('en')
         bot.wait_for = AsyncMock(return_value=_confirmation_msg(cancel, ctx.author, ctx.channel))
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_schema_warning_unknown(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('unknown_schema', ctx.author, ctx.channel))
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session), _mock_create_subprocess_exec() as run_mock:
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
+        run_mock.assert_not_called()
+
+    async def test_mysqldump_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+
+        async def mock_exec(*args: Any, **kwargs: Any) -> MagicMock:
+            proc = MagicMock()
+            if args and args[0] == 'mysqldump':
+                proc.returncode = 1
+                proc.communicate = AsyncMock(return_value=(b'', b'dump failed'))
+            else:
+                proc.returncode = 0
+                proc.communicate = AsyncMock(return_value=(b'', b''))
+            return proc
+
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            patch('asyncio.create_subprocess_exec', side_effect=mock_exec),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
+        ):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
+
+    async def test_import_verification_unreadable_table_count(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -858,21 +1085,24 @@ class TestDatabaseSync:
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("unknown_schema", ctx.author, ctx.channel))
-
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
         with (
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-            patch("extensions.administration.subprocess.run", side_effect=RuntimeError("dump fail")),
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(verify_table_count='not-a-number'),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
         ):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_full_import_success(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE foo (id INT);\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (id INT);\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -880,40 +1110,30 @@ class TestDatabaseSync:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("testdb", ctx.author, ctx.channel))
-
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
         attachment = MagicMock()
-        attachment.url = "http://example.com/dump.sql"
-
+        attachment.url = 'http://example.com/dump.sql'
         with (
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-            patch("extensions.administration.subprocess.run"),
-            patch("extensions.administration.discord.File", return_value=MagicMock()),
-            patch("extensions.administration.os.path.exists", return_value=True),
-            patch("extensions.administration.os.remove"),
-            patch("extensions.administration.os.unlink"),
-            patch("builtins.open", create=True) as mock_open,
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
         ):
-            file_handle = MagicMock()
-            file_handle.__enter__ = MagicMock(return_value=file_handle)
-            file_handle.__exit__ = MagicMock(return_value=False)
-            file_handle.write = MagicMock()
-            file_handle.read = MagicMock(return_value="")
-            mock_open.return_value = file_handle
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_import_subprocess_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\nCREATE TABLE `foo` (`id` int);\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -921,44 +1141,28 @@ class TestDatabaseSync:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("testdb", ctx.author, ctx.channel))
-
-        import subprocess
-
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
         with (
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-            patch(
-                "extensions.administration.subprocess.run",
-                side_effect=[
-                    None,
-                    subprocess.CalledProcessError(1, "mysql"),
-                ],
-            ),
-            patch("extensions.administration.discord.File", return_value=MagicMock()),
-            patch("extensions.administration.os.path.exists", return_value=True),
-            patch("extensions.administration.os.remove"),
-            patch("extensions.administration.os.unlink"),
-            patch("builtins.open", create=True) as mock_open,
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(import_returncode=1),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.path.exists', return_value=True),
+            patch('extensions.administration.os.remove'),
+            patch('extensions.administration.os.unlink'),
         ):
-            file_handle = MagicMock()
-            file_handle.__enter__ = MagicMock(return_value=file_handle)
-            file_handle.__exit__ = MagicMock(return_value=False)
-            file_handle.write = MagicMock()
-            mock_open.return_value = file_handle
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_no_schema_in_dump(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"-- empty dump\nSELECT 1;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'-- empty dump\nSELECT 1;\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -966,46 +1170,41 @@ class TestDatabaseSync:
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
         bot.wait_for = AsyncMock(side_effect=TimeoutError())
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
     async def test_with_attachment(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         attachment = MagicMock()
-        attachment.url = "http://example.com/from-attachment.sql"
+        attachment.url = 'http://example.com/from-attachment.sql'
         ctx.message.attachments = [attachment]
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
+        _database_sync_thread_ctx(ctx, status=status)
         mock_resp = MagicMock()
         mock_resp.status = 500
 
         @asynccontextmanager
         async def mock_get(*_a: Any, **_k: Any):
             yield mock_resp
-
         mock_session = MagicMock()
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-
-        with patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session):
+        with patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session):
             await cog.database_sync(ctx)
 
-    async def test_filter_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+    async def test_filtered_import_validation_failure(self, cog: AdministrationCog, bot: MagicMock) -> None:
         ctx = make_context(bot)
         status = MagicMock()
         status.edit = AsyncMock()
-        ctx.channel.send = AsyncMock()
-        ctx.send = AsyncMock(return_value=status)
-        sql_content = b"CREATE DATABASE `testdb`;\nUSE `testdb`;\n"
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'USE `testdb`;\nSELECT 1;\n'
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_resp.read = AsyncMock(return_value=sql_content)
@@ -1018,38 +1217,55 @@ class TestDatabaseSync:
         mock_session.get = mock_get
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=None)
-        bot.wait_for = AsyncMock(return_value=_confirmation_msg("testdb", ctx.author, ctx.channel))
-
-        real_open = open
-
-        def failing_open(path: str, *args: Any, **kwargs: Any):
-            if path == "filtered_import.sql" and "w" in args:
-                raise OSError("cannot write filter")
-            return real_open(path, *args, **kwargs)
-
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
         with (
-            patch("extensions.administration.aiohttp.ClientSession", return_value=mock_session),
-            patch("extensions.administration.subprocess.run"),
-            patch("extensions.administration.discord.File", return_value=MagicMock()),
-            patch("extensions.administration.os.unlink"),
-            patch("builtins.open", side_effect=failing_open),
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
         ):
-            await cog.database_sync(ctx, url="http://example.com/dump.sql")
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
+    async def test_filter_error(self, cog: AdministrationCog, bot: MagicMock) -> None:
+        ctx = make_context(bot)
+        status = MagicMock()
+        status.edit = AsyncMock()
+        _database_sync_thread_ctx(ctx, status=status)
+        sql_content = b'CREATE DATABASE `testdb`;\nUSE `testdb`;\n'
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read = AsyncMock(return_value=sql_content)
+
+        @asynccontextmanager
+        async def mock_get(*_a: Any, **_k: Any):
+            yield mock_resp
+        mock_session = MagicMock()
+        mock_session.get = mock_get
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+        bot.wait_for = AsyncMock(return_value=_confirmation_msg('testdb', ctx.author, ctx.channel))
+        with (
+            patch('extensions.administration.aiohttp.ClientSession', return_value=mock_session),
+            _mock_create_subprocess_exec(),
+            _database_sync_open_mock(sql_content, fail_filtered_write=True),
+            patch('extensions.administration.discord.File', return_value=MagicMock()),
+            patch('extensions.administration.os.unlink'),
+        ):
+            await cog.database_sync(ctx, url='http://example.com/dump.sql')
 
 class TestHelpers:
+
     def test_mysql_defaults_file(self) -> None:
-        path = _mysql_defaults_file("user", "pass", "host", 3306)
+        path = _mysql_defaults_file('user', 'pass', 'host', 3306)
         try:
             with open(path) as f:
                 content = f.read()
-            assert "user=user" in content
-            assert "password=pass" in content
+            assert 'user=user' in content
+            assert 'password=pass' in content
         finally:
             import os
-
             os.unlink(path)
-
 
 @pytest.mark.asyncio
 async def test_setup_registers_cog() -> None:

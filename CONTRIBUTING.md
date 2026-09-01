@@ -162,6 +162,8 @@ pytest tests/integration/
 pytest tests/e2e/
 ```
 
+CI runs unit tests, integration tests (excluding `slow` and `live_discord`), and mock E2E tests (`tests/e2e/`). Database integration tests run in a separate workflow job with Docker MariaDB.
+
 ### Coverage (85% total + per-file gate)
 
 CI merges coverage from separate pytest runs. Locally:
@@ -190,6 +192,35 @@ API integration tests against MariaDB use `docker compose -f docker-compose.test
 | `TANJUN_TEST_DB_NAME` | `tanjun_test` |
 
 Set `TANJUN_INTEGRATION=true` or leave DB unreachable to skip DB tests.
+
+### Database schema changes
+
+All tables are defined as `TableDef` models in `get_table_defs()` inside [`api.py`](api.py). Schema evolution is managed with [Alembic](https://alembic.sqlalchemy.org/) under [`migrations/versions/`](migrations/versions/).
+
+When you change the database schema:
+
+1. Update the `TableDef` in `get_table_defs()` (or [`table_def_models/extra_table_defs.py`](table_def_models/extra_table_defs.py)).
+2. Add a new revision: `alembic revision -m "short description"` and implement `upgrade()` / `downgrade()`.
+   Do not edit `migrations/snapshot_001.py` or `001_initial_schema` for new tables; regenerate the snapshot only when intentionally rebasing the initial revision.
+3. If the change repairs legacy production databases, add or update a fixture under [`tests/fixtures/schema_legacy/`](tests/fixtures/schema_legacy/) and cover it in [`tests/integration/api/test_schema_conformance.py`](tests/integration/api/test_schema_conformance.py).
+4. Run migrations and conformance tests locally:
+
+```bash
+docker compose -f docker-compose.test.yml up -d --wait
+export TANJUN_TEST_DB_HOST=127.0.0.1 TANJUN_TEST_DB_PORT=3307
+export TANJUN_TEST_DB_USER=test_user TANJUN_TEST_DB_PASSWORD=test_password
+export TANJUN_TEST_DB_NAME=tanjun_test
+alembic upgrade head
+pytest tests/integration/api/test_schema_conformance.py -v
+```
+
+Also update [`docs/database-schema.md`](docs/database-schema.md) when columns or tables change.
+
+CI runs `scripts/check_schema_revision.py` so pull requests that touch schema definitions must include a new file under `migrations/versions/`.
+
+Existing deployments: back up the database, then deploy. Docker and `create_tables()` call `ensure_database_schema()`, which runs `alembic upgrade head` when the schema is behind and **`alembic stamp head` automatically** when the live database already matches `TableDef` but `alembic_version` was never written (typical for databases created before Alembic). Manual `alembic stamp head` is only needed if you intentionally manage revisions outside the bot.
+
+**Why TableDef + Alembic instead of a runtime ORM?** Tanjun’s data layer is built on asyncmy with explicit SQL in repositories and `api.py` (~65 tables, high query variety). SQLAlchemy is used only for migrations (sync PyMySQL). Moving runtime reads/writes to SQLAlchemy ORM would be a large, risky rewrite with little payoff for drift prevention—which `TableDef` (canonical schema) + Alembic (versioned upgrades) already solve. New work should extend `TableDef` and add Alembic revisions; a gradual ORM adoption per domain is possible later but is out of scope unless deliberately planned.
 
 ### Live Discord E2E (optional)
 

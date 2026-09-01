@@ -16,7 +16,7 @@ async def test_invalid_attachment():
     image = MagicMock()
     image.read = AsyncMock(return_value=b"")
     info = make_command_info()
-    with patch("commands.image.resize.ImageService.validate_attachment", return_value="too_large"):
+    with patch("commands.image.resize.ImageService.validate_attachment", return_value="filesize"):
         await command_fn(info, image, 100, 100)
     embed_from_reply(info.reply)
 

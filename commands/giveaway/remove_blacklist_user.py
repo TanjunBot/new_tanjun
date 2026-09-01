@@ -1,55 +1,17 @@
+from locale_keys import locale
 import discord
-
 import utility
-from localizer import tanjunLocalizer
 from services.giveaway_service import giveaway_service
 
-
-async def remove_blacklist_user(
-    command_info: utility.CommandInfo,
-    user: discord.User,
-) -> None:
+async def remove_blacklist_user(command_info: utility.CommandInfo, user: discord.User) -> None:
     if not command_info.permissions.administrator:
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.giveaway.remove_blacklist_user.missingPermission.title",
-            ),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.giveaway.remove_blacklist_user.missingPermission.description",
-            ),
-        )
+        embed = utility.tanjunEmbed(title=locale.commands.giveaway.remove_blacklist_user.missingPermission.title(command_info.locale), description=locale.commands.giveaway.remove_blacklist_user.missingPermission.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
-
-    if not await giveaway_service.is_user_blacklisted(str(command_info.guild.id), str(user.id)):  # type: ignore[union-attr]
-        embed = utility.tanjunEmbed(
-            title=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.giveaway.remove_blacklist_user.notBlacklisted.title",
-            ),
-            description=tanjunLocalizer.localize(
-                command_info.locale,
-                "commands.giveaway.remove_blacklist_user.notBlacklisted.description",
-            ),
-        )
+    if not await giveaway_service.is_user_blacklisted(str(command_info.guild.id), str(user.id)):
+        embed = utility.tanjunEmbed(title=locale.commands.giveaway.remove_blacklist_user.notBlacklisted.title(command_info.locale), description=locale.commands.giveaway.remove_blacklist_user.notBlacklisted.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
-
-    await giveaway_service.remove_blacklisted_user(
-        guild_id=str(command_info.guild.id),  # type: ignore[union-attr]
-        user_id=str(user.id),
-    )
-
-    embed = utility.tanjunEmbed(
-        title=tanjunLocalizer.localize(
-            command_info.locale,
-            "commands.giveaway.remove_blacklist_user.success.title",
-        ),
-        description=tanjunLocalizer.localize(
-            command_info.locale,
-            "commands.giveaway.remove_blacklist_user.success.description",
-        ),
-    )
+    await giveaway_service.remove_blacklisted_user(guild_id=str(command_info.guild.id), user_id=str(user.id))
+    embed = utility.tanjunEmbed(title=locale.commands.giveaway.remove_blacklist_user.success.title(command_info.locale), description=locale.commands.giveaway.remove_blacklist_user.success.description(command_info.locale))
     await command_info.reply(embed=embed)
