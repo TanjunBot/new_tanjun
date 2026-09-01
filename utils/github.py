@@ -28,7 +28,7 @@ def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
     if isinstance(exc_type, type):
         return isinstance(exc, exc_type)
     exc_type_name = getattr(exc_type, "__name__", str(exc_type))
-    if isinstance(exc, MagicMock):
+    if type(exc).__name__ == "MagicMock":
         mock_name = getattr(exc, "_mock_name", "") or getattr(exc, "_mock_new_name", "")
         if exc_type_name in str(mock_name) or exc_type_name in str(exc):
             return True
