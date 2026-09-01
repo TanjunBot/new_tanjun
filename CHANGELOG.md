@@ -5,7 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - Unreleased
+## [1.3.0] - 2026-09-01
+
+### Added
+
+- **Botstatus API microservice**: Standalone high-performance service in `botstatus-api/` for status ingestion, health checks, Prometheus metrics, and Shields.io dynamic badges with Docker & Coolify support (#1140).
+- **Twitch service resilience**: Automatic OAuth app token refresh on HTTP 401, chunked batching for >100 user IDs, and robust fallback Discord channel lookup with per-guild error isolation.
+- **Heartbeat & status monitoring**: Tanjun bot heartbeat ping support to both Uptime Kuma and `botstatus-api` endpoints.
+
+### Fixed
+
+- **Audit log lookup error handling**: Prevent `DiscordServerError` (503/500) and transient HTTP failures from crashing log event listeners and suppressing log embeds (#3352).
+- **MySQL connection recovery**: Handle and retry `OperationalError` (lost connection / 2013 / 2006) and `IncompleteReadError` on database connection drops with automatic pool purging (#3346).
+- **Localization key alignment**: Synchronized `logs.inviteCreate.targetTypeLocales` keys across all 22 locale files with the discord.py `InviteTarget` enum (#3347).
+- **Localization merge fixes**: Resolved missing and conflicted strings for bypass slowmode and pin messages across all languages (#3280, #3281).
+- **UI & interaction fixes**: Fixed channel mention id mapping in `/twitch list`, confirm view message attribute resolution (#3282), and infinite latency display overflow (#3284).
+- **Booster setup & test harness**: Resolved select menu conflicts and achieved zero skips in test suite.
+- **Mypy module naming**: Resolved duplicate module name conflict for `botstatus-api` (#3354).
+
+### Changed
+
+- **Dependency updates**: Upgraded `pydantic` to 2.13.5, `pydantic-settings` to 2.15.0, `platformdirs` to 4.11.6, `openai` to 3.6.0, `mysql-connector-python` to 26.7.0.
+- **Translations**: Updated Crowdin translations for all supported languages.
+
+## [1.2.0] - 2026-06-03
 
 ### Added
 
