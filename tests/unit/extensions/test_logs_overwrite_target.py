@@ -44,3 +44,39 @@ def test_target_prefers_mention_over_name() -> None:
 def test_target_without_name_or_mention_or_id_is_unknown() -> None:
     target = SimpleNamespace()
     assert _overwrite_target_str(target) == 'ID: ?'
+
+
+@pytest.mark.asyncio
+async def test_find_audit_log_entry_handles_discord_server_error() -> None:
+    from unittest.mock import MagicMock
+    from extensions.logs import _find_audit_log_entry
+
+    guild = MagicMock()
+
+    async def fake_audit_logs(*args, **kwargs):
+        resp = MagicMock()
+        resp.status = 503
+        raise discord.DiscordServerError(resp, "503 Service Unavailable")
+        yield  # make it an async generator
+
+    guild.audit_logs = fake_audit_logs
+    result = await _find_audit_log_entry(guild, discord.AuditLogAction.channel_update, lambda e: True)
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_find_audit_log_entry_handles_forbidden() -> None:
+    from unittest.mock import MagicMock
+    from extensions.logs import _find_audit_log_entry
+
+    guild = MagicMock()
+
+    async def fake_audit_logs(*args, **kwargs):
+        resp = MagicMock()
+        resp.status = 403
+        raise discord.Forbidden(resp, "Missing Permissions")
+        yield
+
+    guild.audit_logs = fake_audit_logs
+    result = await _find_audit_log_entry(guild, discord.AuditLogAction.channel_update, lambda e: True)
+    assert result is None

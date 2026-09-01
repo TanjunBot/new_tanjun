@@ -33,20 +33,22 @@ def should_report_exception(exc: BaseException) -> bool:
         return False
     if _is_discord_instance(exc, discord.NotFound):
         return False
-    if _is_discord_instance(exc, discord.HTTPException) and exc.status == 429:
+    if _is_discord_instance(exc, discord.DiscordServerError):
+        return False
+    if _is_discord_instance(exc, discord.HTTPException) and getattr(exc, "status", 0) in (429, 500, 502, 503, 504):
         return False
     if _is_discord_instance(exc, discord.DiscordException):
         msg = str(exc).lower()
-        if '10008' in msg and 'unknown message' in msg:
+        if "10008" in msg and "unknown message" in msg:
             return False
-    if type(exc).__name__ == 'ClientConnectionResetError':
+    if type(exc).__name__ == "ClientConnectionResetError":
         return False
-    if isinstance(exc, RuntimeError) and 'task is already launched' in str(exc).lower():
+    if isinstance(exc, RuntimeError) and "task is already launched" in str(exc).lower():
         return False
-    if type(exc).__name__ == 'CommandNotFound' and (type(exc).__module__ or '').startswith('discord'):
+    if type(exc).__name__ == "CommandNotFound" and (type(exc).__module__ or "").startswith("discord"):
         return False
-    if isinstance(exc, aiohttp.WSServerHandshakeError):
-        # Transient Discord gateway handshake failures (e.g. Cloudflare 520)
+    if isinstance(exc, (aiohttp.WSServerHandshakeError, aiohttp.ServerDisconnectedError, aiohttp.ClientOSError)):
+        # Transient Discord gateway / network connection failures (e.g. Cloudflare 520)
         # are retried automatically by discord.py; not actionable for us.
         return False
     return True

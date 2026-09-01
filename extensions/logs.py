@@ -52,8 +52,10 @@ async def _find_audit_log_entry(guild: discord.Guild, action: discord.AuditLogAc
         async for entry in guild.audit_logs(limit=limit, action=action):
             if predicate(entry):
                 return entry
-    except discord.Forbidden:
+    except (discord.Forbidden, discord.NotFound, discord.HTTPException, TimeoutError, aiohttp.ClientError):
         pass
+    except Exception:
+        logger.debug("Failed to fetch audit log for guild %s", guild.id, exc_info=True)
     return None
 
 def _overwrite_target_str(target: discord.Role | discord.Member | discord.Object) -> str:

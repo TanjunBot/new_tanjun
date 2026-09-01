@@ -53,6 +53,15 @@ class TestShouldReportException:
 
         assert should_report_exception(CommandNotFound('Command "synnc" is not found')) is False
 
+    def test_skips_discord_server_error(self):
+        assert should_report_exception(discord.DiscordServerError(MagicMock(), "503 Service Unavailable")) is False
+
+    def test_skips_http_503(self):
+        resp = MagicMock()
+        resp.status = 503
+        exc = discord.HTTPException(resp, "Service Unavailable")
+        assert should_report_exception(exc) is False
+
     def test_skips_ws_server_handshake_error(self):
         request_info = MagicMock()
         request_info.real_url = "wss://gateway-us-east1-b.discord.gg/?v=10&encoding=json&compress=zlib-stream"
