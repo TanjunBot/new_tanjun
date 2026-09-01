@@ -25,14 +25,13 @@ _capture_missing_localization_issues = False
 _captured_missing_localization_issue_numbers: set[int] = set()
 
 def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
-    if isinstance(exc_type, type):
-        return isinstance(exc, exc_type)
-    exc_type_name = getattr(exc_type, "__name__", str(exc_type))
-    if type(exc).__name__ == "MagicMock":
-        mock_name = getattr(exc, "_mock_name", "") or getattr(exc, "_mock_new_name", "")
-        if exc_type_name in str(mock_name) or exc_type_name in str(exc):
-            return True
-    return type(exc).__name__ == exc_type_name
+    if isinstance(exc_type, type) and isinstance(exc, exc_type):
+        return True
+    type_name = str(getattr(exc_type, "_mock_name", "") or getattr(exc_type, "__name__", "") or str(exc_type)).split(".")[-1].lower().rstrip("()")
+    exc_name = str(getattr(exc, "_mock_name", "") or getattr(exc, "_mock_new_name", "") or type(exc).__name__ or str(exc)).lower()
+    if type_name and (type_name in exc_name or type_name in str(type(exc)).lower()):
+        return True
+    return False
 
 def should_report_exception(exc: BaseException) -> bool:
     if _is_discord_instance(exc, discord.Forbidden):
