@@ -22,7 +22,6 @@ class _LoopProxy:
     def __getattr__(self, name: str) -> Any:
         return getattr(self._loop, name)
 
-
 EXTENSION_NAMES = [
     "extensions.admin",
     "extensions.administration",

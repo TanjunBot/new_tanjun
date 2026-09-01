@@ -44,6 +44,11 @@ jobs:
       - name: Run integration tests with coverage
         env:
           TANJUN_INTEGRATION: "true"
+          TANJUN_TEST_DB_HOST: 127.0.0.1
+          TANJUN_TEST_DB_PORT: "3307"
+          TANJUN_TEST_DB_USER: test_user
+          TANJUN_TEST_DB_PASSWORD: test_password
+          TANJUN_TEST_DB_NAME: tanjun_test
         run: |
           alembic upgrade head
           python scripts/bootstrap_command_handlers.py
