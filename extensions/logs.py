@@ -1,4 +1,5 @@
 from locale_keys import locale as l10n
+import aiohttp
 import asyncio
 import difflib
 import logging
