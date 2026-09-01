@@ -73,6 +73,19 @@ class TestShouldReportException:
         )
         assert should_report_exception(exc) is False
 
+    def test_skips_mysql_operational_error_lost_connection(self):
+        class OperationalError(Exception):
+            pass
+
+        exc = OperationalError("(2013, 'Lost connection to MySQL server during query')")
+        assert should_report_exception(exc) is False
+
+    def test_skips_incomplete_read_error(self):
+        import asyncio
+
+        exc = asyncio.IncompleteReadError(b"", 4)
+        assert should_report_exception(exc) is False
+
 
 class TestReportBotException:
     @pytest.mark.asyncio

@@ -241,7 +241,18 @@ def _release_pool_connection(pool, conn, *, broken: bool = False) -> None:
 
 def _is_stale_pool_connection_error(exc: BaseException) -> bool:
     msg = str(exc).lower()
-    return "at_eof" in msg or (isinstance(exc, AttributeError) and "_reader" in msg)
+    return (
+        "at_eof" in msg
+        or "lost connection" in msg
+        or "server has gone away" in msg
+        or "2013" in msg
+        or "2006" in msg
+        or "connection reset" in msg
+        or "broken pipe" in msg
+        or "incompletereaderror" in msg
+        or isinstance(exc, (ConnectionResetError, BrokenPipeError, asyncio.IncompleteReadError))
+        or (isinstance(exc, AttributeError) and "_reader" in msg)
+    )
 
 
 async def _purge_stale_pool_connections(pool) -> None:
@@ -309,10 +320,16 @@ async def _execute_with_retry(
             if is_write and ("duplicate column" in err_str or "duplicate key name" in err_str):
                 raise
             stale_pool = _is_stale_pool_connection_error(e)
-            retryable = "deadlock" in err_str or "abort" in err_str or "restart transaction" in err_str or "record has changed" in err_str
-            if not is_write:
+            acquire_failed = conn is None
+            retryable = (
+                "deadlock" in err_str
+                or "abort" in err_str
+                or "restart transaction" in err_str
+                or "record has changed" in err_str
+            )
+            if not is_write or acquire_failed or stale_pool:
                 retryable = retryable or "connection" in err_str or "timeout" in err_str
-            if stale_pool:
+            if stale_pool or acquire_failed:
                 retryable = True
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 if stale_pool:
@@ -632,11 +649,14 @@ async def execute_query_iter(
                 logger.error(f"Error after yielding rows during query iteration: {e} — {safe_id}")
                 raise
             err_str = str(e).lower()
-            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str
+            stale_pool = _is_stale_pool_connection_error(e)
+            retryable = "deadlock" in err_str or "connection" in err_str or "timeout" in err_str or stale_pool
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
+                if stale_pool:
+                    await _purge_stale_pool_connections(pool)
                 print(f"Transient error on execute_query_iter attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
-                if "connection" in err_str or "timeout" in err_str:
+                if stale_pool or "connection" in err_str or "timeout" in err_str:
                     broken_connection = True
                 continue
             print(f"Error during query iteration: {e} — {safe_id}")

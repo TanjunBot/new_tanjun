@@ -47,9 +47,13 @@ def should_report_exception(exc: BaseException) -> bool:
         return False
     if type(exc).__name__ == "CommandNotFound" and (type(exc).__module__ or "").startswith("discord"):
         return False
-    if isinstance(exc, (aiohttp.WSServerHandshakeError, aiohttp.ServerDisconnectedError, aiohttp.ClientOSError)):
+    if isinstance(exc, (aiohttp.WSServerHandshakeError, aiohttp.ServerDisconnectedError, aiohttp.ClientOSError, asyncio.IncompleteReadError)):
         # Transient Discord gateway / network connection failures (e.g. Cloudflare 520)
         # are retried automatically by discord.py; not actionable for us.
+        return False
+    if type(exc).__name__ in ("OperationalError", "InterfaceError") and any(
+        err in str(exc).lower() for err in ("lost connection", "server has gone away", "2013", "2006")
+    ):
         return False
     return True
 

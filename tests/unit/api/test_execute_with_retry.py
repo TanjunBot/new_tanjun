@@ -104,6 +104,47 @@ class TestExecuteWithRetry:
         assert cursor.execute.await_count == 2
 
     @pytest.mark.asyncio
+    async def test_mysql_lost_connection_2013_on_write_retries(self):
+        pool, conn, cursor = make_mock_pool()
+        pool.release = MagicMock()
+        pool.clear = AsyncMock()
+        conn.close = MagicMock()
+
+        class OperationalError(Exception):
+            pass
+
+        lost_conn = OperationalError("(2013, 'Lost connection to MySQL server during query')")
+        cursor.execute = AsyncMock(side_effect=[lost_conn, None])
+
+        with patch("asyncio.sleep", new_callable=AsyncMock):
+            result, callback = await _run_retry(pool, cursor, is_write=True)
+
+        assert result == "ok"
+        pool.clear.assert_awaited_once()
+        assert cursor.execute.await_count == 2
+        callback.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_pool_acquire_failure_on_write_retries(self):
+        pool, conn, cursor = make_mock_pool()
+        pool.release = MagicMock()
+        pool.clear = AsyncMock()
+
+        class OperationalError(Exception):
+            pass
+
+        lost_conn = OperationalError("(2013, 'Lost connection to MySQL server during query')")
+        pool.acquire = AsyncMock(side_effect=[lost_conn, conn])
+
+        with patch("asyncio.sleep", new_callable=AsyncMock):
+            result, callback = await _run_retry(pool, cursor, is_write=True)
+
+        assert result == "ok"
+        pool.clear.assert_awaited_once()
+        assert pool.acquire.await_count == 2
+        callback.assert_awaited_once()
+
+    @pytest.mark.asyncio
     async def test_record_db_query_error_flag(self):
         pool, conn, cursor = make_mock_pool()
         pool.release = MagicMock()
