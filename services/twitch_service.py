@@ -85,7 +85,7 @@ class TwitchService:
 
     async def _ensure_session(self) -> aiohttp.ClientSession:
         """Ensure an active aiohttp session exists."""
-        if self.session is None or self.session.closed:
+        if self.session is None or getattr(self.session, "closed", False) is True:
             self.session = aiohttp.ClientSession()
         return self.session
 
@@ -93,6 +93,7 @@ class TwitchService:
         """Obtain an OAuth app access token from Twitch."""
         auth_url = "https://id.twitch.tv/oauth2/token"
         if self.client_id is None or self.client_secret is None:
+            self.access_token = None
             return
         session = await self._ensure_session()
         params: Mapping[str, str] = {

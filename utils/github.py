@@ -25,9 +25,10 @@ _capture_missing_localization_issues = False
 _captured_missing_localization_issue_numbers: set[int] = set()
 
 def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
-    if not isinstance(exc_type, type):
-        return False
-    return isinstance(exc, exc_type)
+    if isinstance(exc_type, type) and isinstance(exc, exc_type):
+        return True
+    exc_type_name = getattr(exc_type, "__name__", str(exc_type))
+    return type(exc).__name__ == exc_type_name or isinstance(exc, exc_type)
 
 def should_report_exception(exc: BaseException) -> bool:
     if _is_discord_instance(exc, discord.Forbidden):

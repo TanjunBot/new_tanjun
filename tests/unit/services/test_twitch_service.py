@@ -104,9 +104,12 @@ class TestTwitchServiceInit:
     @pytest.mark.asyncio
     async def test_init_without_credentials(self, service: TwitchService):
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.post = MagicMock()
         service.client_id = None
         service.client_secret = None
+        service.access_token = None
+        service.headers = None
         with patch("services.twitch_service.aiohttp.ClientSession", return_value=mock_session):
             await service.init()
         assert service.access_token is None
@@ -161,9 +164,11 @@ class TestTwitchServiceApi:
         user_data = {"id": "1", "login": "streamer", "display_name": "Streamer"}
         api_resp = _mock_resp({"data": [user_data]})
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {"Authorization": "Bearer tok"}
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         result = await service.get_user_by_login("streamer")
         assert isinstance(result, TwitchUserModel)
@@ -173,8 +178,11 @@ class TestTwitchServiceApi:
     async def test_get_user_by_login_not_found(self, service: TwitchService):
         api_resp = _mock_resp({"data": []})
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         assert await service.get_user_by_login("missing") is None
 
@@ -186,13 +194,14 @@ class TestTwitchServiceApi:
         token_resp = _mock_resp({"access_token": "new-tok"}, status=200)
 
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.request = MagicMock(side_effect=[resp_401, resp_200])
         mock_session.post = MagicMock(return_value=token_resp)
         service.session = mock_session
         service.client_id = "cid"
         service.client_secret = "csec"
         service.access_token = "old-tok"
-        service.headers = {"Authorization": "Bearer old-tok"}
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer old-tok"}
 
         result = await service.get_user_by_login("streamer")
         assert isinstance(result, TwitchUserModel)
@@ -215,8 +224,11 @@ class TestTwitchServiceApi:
         }
         api_resp = _mock_resp({"data": [stream_data]})
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         streams = await service.get_streams(["123"])
         assert streams is not None
@@ -236,8 +248,11 @@ class TestTwitchServiceApi:
         api_resp1 = _mock_resp({"data": [stream_data]})
         api_resp2 = _mock_resp({"data": []})
         mock_session = AsyncMock()
+        mock_session.closed = False
         mock_session.request = MagicMock(side_effect=[api_resp1, api_resp2])
         service.session = mock_session
+        service.access_token = "tok"
+        service.headers = {"Client-ID": "cid", "Authorization": "Bearer tok"}
 
         user_ids = [str(i) for i in range(150)]
         streams = await service.get_streams(user_ids)
