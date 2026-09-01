@@ -14,8 +14,8 @@ _botstatus_dir = str(Path(__file__).resolve().parent.parent.parent.parent / "bot
 if _botstatus_dir not in sys.path:
     sys.path.insert(0, _botstatus_dir)
 
-import main as botstatus_module
-from main import StatusManager, app, settings
+import app as botstatus_module
+from app import StatusManager, app, settings
 
 
 @pytest.fixture
