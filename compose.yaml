@@ -16,3 +16,24 @@ services:
       timeout: 10s
       retries: 3
       start_period: 120s
+
+  botstatus-api:
+    build:
+      context: ./botstatus-api
+      dockerfile: Dockerfile
+    image: ghcr.io/tanjunbot/botstatus-api:latest
+    container_name: botstatus-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - BOTSTATUS_HOST=0.0.0.0
+      - BOTSTATUS_PORT=8000
+      - BOTSTATUS_TIMEOUT_SECONDS=90
+      - BOTSTATUS_DEFAULT_BOT_ID=832297321793323028
+    volumes:
+      - botstatus-data:/app/data
+
+volumes:
+  botstatus-data:

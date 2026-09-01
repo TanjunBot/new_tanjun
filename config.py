@@ -88,6 +88,10 @@ class Settings(BaseSettings, cli_parse_args=False):
     uptime_kuma_push_token: SecretStr = Field(default=SecretStr(""), alias="UPTIME_KUMA_PUSH_TOKEN")
     uptime_kuma_status_url: str = Field(default="https://status.tanjun.bot", alias="UPTIME_KUMA_STATUS_URL")
 
+    # ── Botstatus API ─────────────────────────────────────────────────────────
+    botstatus_api_url: str = Field(default="", alias="BOTSTATUS_API_URL")
+    botstatus_api_token: SecretStr = Field(default=SecretStr(""), alias="BOTSTATUS_API_TOKEN")
+
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
 
@@ -160,6 +164,8 @@ metrics_port: int = settings.metrics_port
 sync_commands_on_startup: bool = settings.sync_commands_on_startup
 UPTIME_KUMA_PUSH_TOKEN: str = settings.uptime_kuma_push_token.get_secret_value()
 UPTIME_KUMA_STATUS_URL: str = settings.uptime_kuma_status_url.rstrip("/")
+BOTSTATUS_API_URL: str = settings.botstatus_api_url.strip()
+BOTSTATUS_API_TOKEN: str = settings.botstatus_api_token.get_secret_value()
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────
 

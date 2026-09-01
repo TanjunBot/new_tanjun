@@ -54,6 +54,34 @@ async def test_ping_server_push_success(mock_session_cls):
     assert "ping=100" in call_url
 
 
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "")
+@patch("loops.alivemonitor.config.BOTSTATUS_API_URL", "https://botstatus-api.example.test/status")
+@patch("loops.alivemonitor.aiohttp.ClientSession")
+async def test_ping_server_botstatus_api_push(mock_session_cls):
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = 0.05
+    client.guilds = [1, 2, 3]
+
+    resp = AsyncMock()
+    resp.status = 200
+    resp.__aenter__ = AsyncMock(return_value=resp)
+    resp.__aexit__ = AsyncMock(return_value=None)
+    session = AsyncMock()
+    session.post = MagicMock(return_value=resp)
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    mock_session_cls.return_value = session
+
+    await alivemonitor.ping_server(client)
+    session.post.assert_called_once()
+    assert session.post.call_args[0][0] == "https://botstatus-api.example.test/status"
+    payload = session.post.call_args[1]["json"]
+    assert payload["id"] == "1"
+    assert payload["status"] == "alive"
+    assert payload["latency_ms"] == 50
+
+
 @patch("loops.alivemonitor.config.UPTIME_KUMA_STATUS_URL", "https://status.example.test")
 @patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "test-push-token")
 @patch("loops.alivemonitor.aiohttp.ClientSession")
