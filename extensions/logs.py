@@ -8,6 +8,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import utility
+
+logger = logging.getLogger(__name__)
 from api import LogBlacklistType, get_log_blacklist, get_log_channel, get_log_enable, is_log_entity_blacklisted
 from commands.logs.blacklist_category.blacklist_category import blacklist_category
 from commands.logs.blacklist_category.blacklist_list_category import blacklist_list_category

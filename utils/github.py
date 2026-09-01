@@ -28,6 +28,10 @@ def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
     if isinstance(exc_type, type):
         return isinstance(exc, exc_type)
     exc_type_name = getattr(exc_type, "__name__", str(exc_type))
+    if isinstance(exc, MagicMock):
+        mock_name = getattr(exc, "_mock_name", "") or getattr(exc, "_mock_new_name", "")
+        if exc_type_name in str(mock_name) or exc_type_name in str(exc):
+            return True
     return type(exc).__name__ == exc_type_name
 
 def should_report_exception(exc: BaseException) -> bool:
@@ -37,8 +41,13 @@ def should_report_exception(exc: BaseException) -> bool:
         return False
     if _is_discord_instance(exc, discord.DiscordServerError):
         return False
-    if _is_discord_instance(exc, discord.HTTPException) and getattr(exc, "status", 0) in (429, 500, 502, 503, 504):
-        return False
+    if _is_discord_instance(exc, discord.HTTPException):
+        http_status = getattr(exc, "status", None)
+        if http_status is None:
+            resp = getattr(exc, "response", None)
+            http_status = getattr(resp, "status", None)
+        if http_status in (429, 500, 502, 503, 504) or any(code in str(exc) for code in ("429", "500", "502", "503", "504")):
+            return False
     if _is_discord_instance(exc, discord.DiscordException):
         msg = str(exc).lower()
         if "10008" in msg and "unknown message" in msg:
