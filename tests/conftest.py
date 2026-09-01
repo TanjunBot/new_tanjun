@@ -20,12 +20,19 @@ _discord_mock.User = MagicMock()
 _discord_mock.Message = MagicMock()
 _discord_mock.AllowedMentions = MagicMock()
 _discord_mock.File = MagicMock()
-from tests.helpers.discord_exceptions import FakeEmbed, Forbidden, HTTPException, NotFound
+from tests.helpers.discord_exceptions import (
+    DiscordServerError,
+    FakeEmbed,
+    Forbidden,
+    HTTPException,
+    NotFound,
+)
 
 _discord_mock.Embed = FakeEmbed
 
 _discord_mock.Forbidden = Forbidden
 _discord_mock.HTTPException = HTTPException
+_discord_mock.DiscordServerError = DiscordServerError
 _discord_mock.NotFound = NotFound
 _discord_mock.Entitlement = MagicMock()
 _discord_mock.abc = MagicMock()
