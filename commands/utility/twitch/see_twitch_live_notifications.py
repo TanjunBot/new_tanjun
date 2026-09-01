@@ -73,7 +73,7 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
                 title = locale.commands.utility.twitch.listTwitchLiveNotifications.title(command_info.locale, current_page=self.current_page + 1, total_pages=len(self.notifications))
             else:
                 title = locale.commands.utility.twitch.listTwitchLiveNotifications.titleNoPages(command_info.locale)
-            embed = tanjunEmbed(title=title, description=locale.commands.utility.twitch.listTwitchLiveNotifications.description(command_info.locale, channel=self.notifications[self.current_page].id, twitch_name=self.notifications[self.current_page].twitch_name, message=notification))
+            embed = tanjunEmbed(title=title, description=locale.commands.utility.twitch.listTwitchLiveNotifications.description(command_info.locale, channel=self.notifications[self.current_page].channel_id, twitch_name=self.notifications[self.current_page].twitch_name, message=notification))
             if len(self.notifications) > 1:
                 view = TwitchLiveNotification(self.current_page, self.notifications, self.command_info)
                 await interaction.response.edit_message(embed=embed, view=view)
@@ -85,5 +85,5 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
         title = locale.commands.utility.twitch.listTwitchLiveNotifications.title(command_info.locale, current_page=1, total_pages=len(notifications))
     else:
         title = locale.commands.utility.twitch.listTwitchLiveNotifications.titleNoPages(command_info.locale)
-    embed = tanjunEmbed(title=title, description=locale.commands.utility.twitch.listTwitchLiveNotifications.description(command_info.locale, channel=notifications[0].id, twitch_name=notifications[0].twitch_name, message=notification))
+    embed = tanjunEmbed(title=title, description=locale.commands.utility.twitch.listTwitchLiveNotifications.description(command_info.locale, channel=notifications[0].channel_id, twitch_name=notifications[0].twitch_name, message=notification))
     await command_info.reply(embed=embed, view=view)

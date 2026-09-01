@@ -12,9 +12,10 @@ from tests.integration.commands.admin.conftest import make_view_interaction
 pytestmark = pytest.mark.asyncio
 
 
-def _notification(nid: str = "111", twitch_name: str = "streamer") -> MagicMock:
+def _notification(nid: str = "111", twitch_name: str = "streamer", channel_id: str = "222222222") -> MagicMock:
     n = MagicMock()
     n.id = nid
+    n.channel_id = channel_id
     n.twitch_name = twitch_name
     n.notification_message = "Live now!"
     return n

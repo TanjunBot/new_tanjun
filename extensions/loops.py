@@ -148,6 +148,10 @@ class LoopCog(commands.Cog):
                 return  # Skip notifications on first check
 
             streams = await twitch_service.get_streams(user_ids)
+            if streams is None:
+                logger.warning("pollTwitchStreams: get_streams returned None (API error), skipping status update this cycle")
+                return
+
             live_streams = {stream.user_id: stream for stream in streams}
 
             # Batch notification for streams going live simultaneously
