@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
+import discord
 import pytest
 
 from models import TwitchUserModel
@@ -38,7 +39,12 @@ def _notification_row(
 
 @pytest.fixture
 def service() -> TwitchService:
-    return TwitchService()
+    svc = TwitchService()
+    svc.client_id = "mock_twitch_id_123"
+    svc.client_secret = "mock_twitch_secret"
+    svc.access_token = "mock_token"
+    svc.headers = {"Client-ID": "mock_twitch_id_123", "Authorization": "Bearer mock_token"}
+    return svc
 
 
 @pytest.fixture(autouse=True)
@@ -169,7 +175,6 @@ class TestTwitchServiceApi:
         mock_session = AsyncMock()
         mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {}
 
         assert await service.get_user_by_login("missing") is None
 
@@ -212,7 +217,6 @@ class TestTwitchServiceApi:
         mock_session = AsyncMock()
         mock_session.request = MagicMock(return_value=api_resp)
         service.session = mock_session
-        service.headers = {}
 
         streams = await service.get_streams(["123"])
         assert streams is not None
@@ -234,7 +238,6 @@ class TestTwitchServiceApi:
         mock_session = AsyncMock()
         mock_session.request = MagicMock(side_effect=[api_resp1, api_resp2])
         service.session = mock_session
-        service.headers = {}
 
         user_ids = [str(i) for i in range(150)]
         streams = await service.get_streams(user_ids)
@@ -409,6 +412,7 @@ class TestTwitchServiceSendLiveNotification:
     async def test_send_fallback_fetch_channel(self, service: TwitchService):
         guild = make_guild(guild_id=int(GUILD_ID))
         guild.get_channel = MagicMock(return_value=None)
+        guild.get_thread = MagicMock(return_value=None)
         channel = make_text_channel(channel_id=int(CHANNEL_ID), guild=guild)
         client = MagicMock()
         client.get_guild.return_value = guild

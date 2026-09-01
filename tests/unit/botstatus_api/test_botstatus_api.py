@@ -7,6 +7,8 @@ from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
+fastapi = pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 
 # Add botstatus-api directory to sys.path for testing

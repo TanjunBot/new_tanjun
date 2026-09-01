@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+import discord
 import pytest
 
 import tests.mock_config as mock_config

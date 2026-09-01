@@ -4,6 +4,7 @@ Extracted from ``utility.py`` as part of refactoring (issue #1608).
 """
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import logging
 import time
