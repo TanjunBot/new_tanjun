@@ -29536,7 +29536,7 @@
     "max_length": null
   },
   {
-    "identifier": "logs.inviteCreate.targetTypeLocales.\"InviteTarget.embeddedApplication\"",
+    "identifier": "logs.inviteCreate.targetTypeLocales.InviteTarget.embedded_application",
     "source_string": "Invitation leads to an embedded application",
     "translation": "Invitation leads to an embedded application",
     "context": "Logging feature copy: invite Create.target Type Locales.\"Invite Target.embedded Application\".",
@@ -29544,7 +29544,7 @@
     "max_length": null
   },
   {
-    "identifier": "logs.inviteCreate.targetTypeLocales.\"InviteTarget.stream\"",
+    "identifier": "logs.inviteCreate.targetTypeLocales.InviteTarget.stream",
     "source_string": "Invitation leads to a stream",
     "translation": "Invitation leads to a stream",
     "context": "Logging feature copy: invite Create.target Type Locales.\"Invite Target.stream\".",
@@ -29552,7 +29552,7 @@
     "max_length": null
   },
   {
-    "identifier": "logs.inviteCreate.targetTypeLocales.\"InviteTarget.unknown\"",
+    "identifier": "logs.inviteCreate.targetTypeLocales.InviteTarget.unknown",
     "source_string": "Invitation leads to an unknown destination",
     "translation": "Invitation leads to an unknown destination",
     "context": "Logging feature copy: invite Create.target Type Locales.\"Invite Target.unknown\".",

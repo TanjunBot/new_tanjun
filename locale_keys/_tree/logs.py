@@ -763,9 +763,7 @@ class LogsInviteCreateMaxUsesLocales:
 
 @dataclass(frozen=True, slots=True)
 class LogsInviteCreateTargetTypeLocales:
-    InviteTarget_embeddedApplication: LocalizedString
-    InviteTarget_stream: LocalizedString
-    InviteTarget_unknown: LocalizedString
+    InviteTarget: LogsInviteCreateTargetTypeLocalesInviteTarget
     resolve: ResolveMap
 
 @dataclass(frozen=True, slots=True)
@@ -839,6 +837,12 @@ class LogsBlacklistuAddParams:
 @dataclass(frozen=True, slots=True)
 class LogsBlacklistuRemoveParams:
     user: LogsBlacklistuRemoveParamsUser
+
+@dataclass(frozen=True, slots=True)
+class LogsInviteCreateTargetTypeLocalesInviteTarget:
+    embedded_application: LocalizedString
+    stream: LocalizedString
+    unknown: LocalizedString
 
 @dataclass(frozen=True, slots=True)
 class LogsSetParamsChannel:
@@ -1612,18 +1616,21 @@ def build_logs() -> Logs:
     _n_logs_inviteCreate_maxUsesLocales = LogsInviteCreateMaxUsesLocales(
         infinite=LocalizedString('logs.inviteCreate.maxUsesLocales.infinite'),
     )
+    _n_logs_inviteCreate_targetTypeLocales_InviteTarget = LogsInviteCreateTargetTypeLocalesInviteTarget(
+        embedded_application=LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.embedded_application'),
+        stream=LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.stream'),
+        unknown=LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.unknown'),
+    )
     _n_logs_inviteCreate_targetTypeLocales_resolve = ResolveMap(
         'logs.inviteCreate.targetTypeLocales.',
         {
-            '"InviteTarget.embeddedApplication"': LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.embeddedApplication"'),
-            '"InviteTarget.stream"': LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.stream"'),
-            '"InviteTarget.unknown"': LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.unknown"'),
+            'InviteTarget.embedded_application': LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.embedded_application'),
+            'InviteTarget.stream': LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.stream'),
+            'InviteTarget.unknown': LocalizedString('logs.inviteCreate.targetTypeLocales.InviteTarget.unknown'),
         },
     )
     _n_logs_inviteCreate_targetTypeLocales = LogsInviteCreateTargetTypeLocales(
-        InviteTarget_embeddedApplication=LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.embeddedApplication"'),
-        InviteTarget_stream=LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.stream"'),
-        InviteTarget_unknown=LocalizedString('logs.inviteCreate.targetTypeLocales."InviteTarget.unknown"'),
+        InviteTarget=_n_logs_inviteCreate_targetTypeLocales_InviteTarget,
         resolve=_n_logs_inviteCreate_targetTypeLocales_resolve,
     )
     _n_logs_inviteCreate = LogsInviteCreate(

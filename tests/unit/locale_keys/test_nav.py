@@ -58,3 +58,12 @@ class TestAt:
 
 def _is_valid_identifier(s: str) -> bool:
     return s.isidentifier()
+
+
+def test_invite_target_embedded_application_resolve() -> None:
+    from locale_keys import locale as l10n
+
+    res = l10n.logs.inviteCreate.targetTypeLocales.resolve("InviteTarget.embedded_application")
+    assert res.key == "logs.inviteCreate.targetTypeLocales.InviteTarget.embedded_application"
+    text = res("en")
+    assert "embedded application" in text.lower()
