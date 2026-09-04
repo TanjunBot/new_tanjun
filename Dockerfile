@@ -34,6 +34,6 @@ ENV TANJUN_APP_ROOT=/usr/local/app
 HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=10 \
   CMD ["python", "/usr/local/app/healthcheck.py"]
 
-EXPOSE 8001
+EXPOSE 8001 8080
 ENTRYPOINT ["python", "/usr/local/app/scripts/docker_entrypoint.py"]
 CMD []

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Tanjun Discord Activity Client Application
  * Supports Discord Embedded App SDK & Fallback Standalone / Browser mode.
  */
@@ -80,28 +80,37 @@ class TanjunActivityClient {
     const paramSession = urlParams.get("session") || urlParams.get("instance_id");
 
     // Initialize Discord Embedded App SDK if available in window
+    let discordSdkReady = false;
     if (window.DiscordSDK) {
       try {
         const configResp = await fetch("/api/config");
-        const config = await configResp.json();
-        this.discordSdk = new window.DiscordSDK(config.client_id);
-        await this.discordSdk.ready();
+        if (configResp.ok) {
+          const config = await configResp.json();
+          if (config.client_id) {
+            this.discordSdk = new window.DiscordSDK(config.client_id);
+            await this.discordSdk.ready();
+            discordSdkReady = true;
 
-        // Authorize with Discord Client
-        const { code } = await this.discordSdk.commands.authorize({
-          client_id: config.client_id,
-          response_type: "code",
-          state: "",
-          prompt: "none",
-          scope: ["identify", "guilds"]
-        });
+            if (this.discordSdk.instanceId) {
+              this.sessionId = this.discordSdk.instanceId;
+            }
 
-        // Set user info if Discord SDK instance provides it
-        if (this.discordSdk.instanceId) {
-          this.sessionId = this.discordSdk.instanceId;
+            // Optional: try authorize in background without blocking game init
+            try {
+              await this.discordSdk.commands.authorize({
+                client_id: config.client_id,
+                response_type: "code",
+                state: "",
+                prompt: "none",
+                scope: ["identify", "guilds"]
+              });
+            } catch (authErr) {
+              console.log("Discord authorize skipped/not configured:", authErr);
+            }
+          }
         }
       } catch (err) {
-        console.warn("Discord SDK initialization skipped/running in web mode:", err);
+        console.warn("Discord SDK initialization error, falling back to direct mode:", err);
       }
     }
 
@@ -109,8 +118,8 @@ class TanjunActivityClient {
     this.el.usernameDisplay.textContent = this.user.displayName;
     this.el.userAvatar.src = this.user.avatarUrl;
 
-    if (paramSession) {
-      this.sessionId = paramSession;
+    if (paramSession || this.sessionId) {
+      this.sessionId = this.sessionId || paramSession;
       this.connectWebSocket();
     }
   }
