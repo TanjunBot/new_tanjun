@@ -146,14 +146,31 @@ class ActivityServer:
 
                         session.sockets[user_id] = ws
 
-                        player = Player(
-                            user_id=user_id,
-                            username=username,
-                            display_name=display_name,
-                            avatar_url=avatar_url,
-                            is_host=(user_id == session.game.host.user_id)
-                        )
-                        session.game.add_player(player)
+                        # If the session was auto-created with a placeholder host,
+                        # promote the first real user to host instead of adding them as player 2.
+                        PLACEHOLDER_HOST_ID = "discord_player"
+                        if session.game.host.user_id == PLACEHOLDER_HOST_ID:
+                            # Replace the placeholder host with the real user
+                            real_host = Player(
+                                user_id=user_id,
+                                username=username,
+                                display_name=display_name,
+                                avatar_url=avatar_url,
+                                is_host=True
+                            )
+                            # Remove placeholder from players list and set real host
+                            session.game.players = [p for p in session.game.players if p.user_id != PLACEHOLDER_HOST_ID]
+                            session.game.host = real_host
+                            session.game.players.insert(0, real_host)
+                        else:
+                            player = Player(
+                                user_id=user_id,
+                                username=username,
+                                display_name=display_name,
+                                avatar_url=avatar_url,
+                                is_host=(user_id == session.game.host.user_id)
+                            )
+                            session.game.add_player(player)
 
                         await ws.send_json({
                             "type": "joined",

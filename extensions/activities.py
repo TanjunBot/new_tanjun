@@ -142,6 +142,44 @@ class ActivitiesCog(commands.Cog):
         if self.bot.tree:
             self.bot.tree.add_command(activity_group)
 
+        # Register the PRIMARY_ENTRY_POINT command (type 4) via Discord REST API.
+        # This is required so the Activity can be launched from the Discord Activities shelf.
+        # handler=2 (DISCORD_LAUNCH_ACTIVITY) means Discord handles the launch automatically.
+        await self._register_entry_point_command()
+
+    async def _register_entry_point_command(self) -> None:
+        """Register or update the Activity Entry Point command via Discord REST API."""
+        import aiohttp
+
+        application_id = config.applicationId
+        bot_token = config.token
+        if not application_id or not bot_token:
+            logger.warning("[Activities] Cannot register Entry Point command: missing applicationId or botToken in config.")
+            return
+
+        url = f"https://discord.com/api/v10/applications/{application_id}/commands"
+        payload = {
+            "type": 4,           # PRIMARY_ENTRY_POINT
+            "name": "launch",    # Shown as button label in Discord Activities shelf
+            "description": "Tanjun Activity starten",
+            "handler": 2         # DISCORD_LAUNCH_ACTIVITY — Discord handles the launch
+        }
+        headers = {
+            "Authorization": f"Bot {bot_token}",
+            "Content-Type": "application/json"
+        }
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(url, json=payload, headers=headers) as resp:
+                    if resp.status in (200, 201):
+                        logger.info("[Activities] Entry Point command registered successfully (status %s).", resp.status)
+                    else:
+                        body = await resp.text()
+                        logger.warning("[Activities] Entry Point command registration failed (status %s): %s", resp.status, body)
+        except Exception as exc:
+            logger.error("[Activities] Error registering Entry Point command: %s", exc)
+
 
 async def setup(bot: commands.AutoShardedBot) -> None:
     await bot.add_cog(ActivitiesCog(bot))
