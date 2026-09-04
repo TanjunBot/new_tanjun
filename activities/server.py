@@ -111,11 +111,14 @@ class ActivityServer:
         session_id = request.match_info.get("session_id", "")
         session = session_manager.get_session(session_id)
         if not session:
-            ws = web.WebSocketResponse()
-            await ws.prepare(request)
-            await ws.send_json({"type": "error", "message": "Session not found"})
-            await ws.close()
-            return ws
+            # If launched directly through Discord instance_id or direct link, auto-create session
+            default_host = Player(
+                user_id="discord_player",
+                username="Player",
+                display_name="Player",
+                is_host=True
+            )
+            session = session_manager.create_session("tictactoe", host=default_host, session_id=session_id)
 
         ws = web.WebSocketResponse(heartbeat=30.0)
         await ws.prepare(request)
@@ -192,11 +195,13 @@ class ActivityServer:
         self.site = web.TCPSite(self.runner, self.host, self.port)
         try:
             await self.site.start()
-        except OSError:
-            pass
+            print(f"[Activities] Discord Activity HTTP & WebSocket server started on http://{self.host}:{self.port}")
+        except OSError as exc:
+            print(f"[Activities] Warning: Could not bind Activity server to {self.host}:{self.port}: {exc}")
 
     async def stop(self) -> None:
         if self.runner:
             await self.runner.cleanup()
             self.runner = None
             self.site = None
+            print("[Activities] Discord Activity server stopped.")

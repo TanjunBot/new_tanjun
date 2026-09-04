@@ -10,6 +10,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=Europe/Berlin
+    ports:
+      - "8080:8080"
     healthcheck:
       test: ["CMD", "python", "healthcheck.py"]
       interval: 30s
