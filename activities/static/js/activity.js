@@ -81,6 +81,7 @@ class TanjunActivityClient {
 
     // Initialize Discord Embedded App SDK if available in window
     let discordSdkReady = false;
+    let launchedFromDiscord = false;
     if (window.DiscordSDK) {
       try {
         const configResp = await fetch("/api/config");
@@ -93,9 +94,10 @@ class TanjunActivityClient {
 
             if (this.discordSdk.instanceId) {
               this.sessionId = this.discordSdk.instanceId;
+              launchedFromDiscord = true;
             }
 
-            // Optional: try authorize in background without blocking game init
+            // Try to get user identity via OAuth; update user info if successful
             try {
               await this.discordSdk.commands.authorize({
                 client_id: config.client_id,
@@ -120,8 +122,14 @@ class TanjunActivityClient {
 
     if (paramSession || this.sessionId) {
       this.sessionId = this.sessionId || paramSession;
+
+      if (launchedFromDiscord) {
+        // Inside Discord: skip lobby, auto-connect and auto-start vs bot
+        this._autoStart = true;
+      }
       this.connectWebSocket();
     }
+    // If neither, just show the lobby (browser-direct access)
   }
 
   setMode(mode) {
@@ -192,7 +200,17 @@ class TanjunActivityClient {
     this.ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
-        if (msg.type === "state_update" || msg.type === "joined") {
+        if (msg.type === "joined") {
+          // If auto-started from Discord, immediately kick off a bot game
+          if (this._autoStart) {
+            this._autoStart = false;
+            this.sendAction("start", {
+              mode: "bot",
+              difficulty: this.selectedDifficulty
+            });
+          }
+          this.handleStateUpdate(msg.state);
+        } else if (msg.type === "state_update") {
           this.handleStateUpdate(msg.state);
         }
       } catch (err) {
@@ -240,8 +258,11 @@ class TanjunActivityClient {
   handleStateUpdate(state) {
     this.gameState = state;
 
-    this.el.lobbyView.style.display = "none";
-    this.el.gameView.style.display = "flex";
+    // Only transition to game view once the game has actually started
+    if (state.is_started) {
+      this.el.lobbyView.style.display = "none";
+      this.el.gameView.style.display = "flex";
+    }
 
     // Update scoreboard
     const players = state.players || [];
