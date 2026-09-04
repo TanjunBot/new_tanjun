@@ -29,6 +29,10 @@ class ActivityServer:
         response.headers["Access-Control-Allow-Origin"] = "*"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "*"
+        # Discord Activity iframe support
+        response.headers["Content-Security-Policy"] = "frame-ancestors https://*.discord.com https://discord.com;"
+        if "X-Frame-Options" in response.headers:
+            del response.headers["X-Frame-Options"]
         return response
 
     def _setup_routes(self) -> None:
