@@ -92,6 +92,11 @@ class Settings(BaseSettings, cli_parse_args=False):
     botstatus_api_url: str = Field(default="", alias="BOTSTATUS_API_URL")
     botstatus_api_token: SecretStr = Field(default=SecretStr(""), alias="BOTSTATUS_API_TOKEN")
 
+    # ── Discord Activities ───────────────────────────────────────────────────
+    activity_server_port: int = Field(default=8080, alias="ACTIVITY_SERVER_PORT")
+    activity_server_host: str = Field(default="0.0.0.0", alias="ACTIVITY_SERVER_HOST")
+    activity_public_url: str = Field(default="", alias="ACTIVITY_PUBLIC_URL")
+
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
 
@@ -166,6 +171,9 @@ UPTIME_KUMA_PUSH_TOKEN: str = settings.uptime_kuma_push_token.get_secret_value()
 UPTIME_KUMA_STATUS_URL: str = settings.uptime_kuma_status_url.rstrip("/")
 BOTSTATUS_API_URL: str = settings.botstatus_api_url.strip()
 BOTSTATUS_API_TOKEN: str = settings.botstatus_api_token.get_secret_value()
+activity_server_port: int = settings.activity_server_port
+activity_server_host: str = settings.activity_server_host
+activity_public_url: str = settings.activity_public_url
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────
 

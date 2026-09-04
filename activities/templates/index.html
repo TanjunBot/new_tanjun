@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tanjun Games - Discord Activity</title>
+  <!-- Discord Embedded App SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.1.0/output/index.js"></script>
+  <link rel="stylesheet" href="/static/css/activity.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="header glass-panel">
+    <div class="brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">Tanjun Activities</div>
+    </div>
+    <div class="user-badge">
+      <img id="userAvatar" class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+      <span id="usernameDisplay">Spieler</span>
+    </div>
+  </header>
+
+  <main class="game-container">
+    <!-- Lobby / Mode Selection Screen -->
+    <section id="lobbyView" class="lobby-section glass-panel">
+      <h1 class="lobby-title">Tic-Tac-Toe Arena</h1>
+      <p class="lobby-subtitle">Wähle deinen Spielmodus und trete gegen Freunde oder den Tanjun Bot an!</p>
+
+      <div class="mode-selector">
+        <button id="modeBotBtn" class="mode-btn active" type="button">
+          <div class="mode-icon">🤖</div>
+          <div class="mode-label">Gegen Tanjun Bot</div>
+        </button>
+        <button id="modePvpBtn" class="mode-btn" type="button">
+          <div class="mode-icon">⚔️</div>
+          <div class="mode-label">Gegen Mitspieler</div>
+        </button>
+      </div>
+
+      <div id="diffContainer" class="difficulty-container">
+        <div class="difficulty-label">
+          <span>Bot Schwierigkeit</span>
+          <span>Stufe 1 bis 5</span>
+        </div>
+        <div class="diff-pills">
+          <div class="diff-pill" data-diff="1">1 (Leicht)</div>
+          <div class="diff-pill" data-diff="2">2</div>
+          <div class="diff-pill active" data-diff="3">3 (Normal)</div>
+          <div class="diff-pill" data-diff="4">4</div>
+          <div class="diff-pill" data-diff="5">5 (Unbesiegbar)</div>
+        </div>
+      </div>
+
+      <button id="startBtn" class="btn-primary" type="button">Spiel Starten</button>
+    </section>
+
+    <!-- Active Game Screen -->
+    <section id="gameView" class="glass-panel" style="display: none; flex-direction: column;">
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <div id="p1Card" class="player-card">
+          <div class="player-avatar-wrap">
+            <img id="p1Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="P1">
+            <div class="player-symbol-tag sym-x">X</div>
+          </div>
+          <div>
+            <div id="p1Name" class="player-name">Spieler 1</div>
+            <div id="p1Score" class="player-score">0 Siege</div>
+          </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div id="p2Card" class="player-card reverse">
+          <div class="player-avatar-wrap">
+            <img id="p2Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/1.png" alt="P2">
+            <div class="player-symbol-tag sym-o">O</div>
+          </div>
+          <div>
+            <div id="p2Name" class="player-name">Tanjun AI</div>
+            <div id="p2Score" class="player-score">0 Siege</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn & Event Status -->
+      <div id="statusBar" class="game-status-bar">
+        Du bist am Zug!
+      </div>
+
+      <!-- Tic Tac Toe Grid -->
+      <div class="board-container">
+        <div id="tttBoard" class="ttt-board">
+          <div class="cell" data-index="0"></div>
+          <div class="cell" data-index="1"></div>
+          <div class="cell" data-index="2"></div>
+          <div class="cell" data-index="3"></div>
+          <div class="cell" data-index="4"></div>
+          <div class="cell" data-index="5"></div>
+          <div class="cell" data-index="6"></div>
+          <div class="cell" data-index="7"></div>
+          <div class="cell" data-index="8"></div>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="controls-footer">
+        <button id="restartBtn" class="btn-secondary" type="button">🔄 Neue Runde</button>
+        <button id="leaveBtn" class="btn-secondary" type="button">🚪 Lobby verlassen</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/js/activity.js"></script>
+</body>
+</html>
