@@ -19,8 +19,8 @@ dependencies = [
     "aiohttp==3.14.3",
     "akinator-python==1.6.0",
     "annotated-types==0.8.0",
-    "anyio==4.14.2",
-    "alembic==1.19.1",
+    "anyio==4.15.1",
+    "alembic==1.19.2",
     "asyncmy==0.2.14",
     "attrs==26.1.0",
     "beautifulsoup4==4.15.0",
@@ -40,7 +40,7 @@ dependencies = [
     "multidict==6.7.1",
     "mysql-connector-python==26.7.0",
     "num2words==0.5.14",
-    "numpy==2.5.2",
+    "numpy==2.5.3",
     "openai==3.6.0",
     "pillow==12.3.0",
     "prometheus-client==0.26.0",
@@ -66,7 +66,7 @@ dependencies = [
     "typing_extensions==4.16.0",
     "urllib3==2.7.0",
     "yarl==1.24.5",
-    "rembg==2.0.81",
+    "rembg==2.0.83",
 ]
 
 [project.optional-dependencies]
@@ -104,7 +104,7 @@ dev = [
     "pandocfilters==1.5.1",
     "parso==0.8.7",
     "pickleshare==0.7.5",
-    "platformdirs==4.11.6",
+    "platformdirs==4.11.7",
     "prompt_toolkit==3.0.53",
     "propcache==0.5.2",
     "pure_eval==0.2.3",
@@ -131,7 +131,7 @@ dev = [
     "freezegun>=1.4",
     "hypothesis>=6.100",
     "mypy>=1.11",
-    "ruff==0.16.5",
+    "ruff==0.16.6",
     "PyYAML>=6.0",
 ]
 docs-screenshots = [
