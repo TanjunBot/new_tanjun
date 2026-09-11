@@ -1196,125 +1196,191 @@ body {
    Tournament Styles (Discord Dark Theme)
    ========================================================================== */
 
-/* ── Tournament Arena Header & Badges ───────────────────────── */
-.tourney-arena-header {
+/* ── Persistent Tournament HUD (Top Bar across all games) ─────── */
+.tourney-hud {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 14px;
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-  gap: 8px;
+  background: linear-gradient(135deg, rgba(30, 31, 34, 0.95) 0%, rgba(43, 45, 49, 0.95) 100%);
+  border: 1px solid rgba(88, 101, 242, 0.35);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.tourney-arena-meta {
+.tourney-hud-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.tourney-hud-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.tourney-hud-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tourney-hud-title-row {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.tourney-round-pill {
-  background-color: var(--discord-blurple);
-  color: #ffffff;
-  font-size: 0.75rem;
+.tourney-hud-cup-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-header);
+}
+
+.tourney-hud-pill {
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: var(--radius-xs);
   letter-spacing: 0.02em;
 }
 
-.tourney-game-pill {
-  background-color: var(--bg-secondary);
-  color: var(--text-header);
-  border: 1px solid var(--border-subtle);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
-}
-
-.tourney-mode-pill {
-  background-color: rgba(240, 178, 50, 0.15);
-  color: var(--discord-yellow);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: var(--radius-xs);
-}
-
-.btn-sm {
-  padding: 5px 10px;
-  font-size: 0.78rem;
-  min-width: auto;
-  flex: none;
-}
-
-/* ── Parallel Match Switcher ────────────────────────────────── */
-.tourney-match-switcher {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--bg-tertiary);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-  overflow-x: auto;
-}
-
-.tourney-switcher-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.tourney-match-tabs {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-}
-
-.tourney-tab-btn {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-normal);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s;
-}
-
-.tourney-tab-btn:hover {
-  background-color: var(--bg-hover);
-}
-
-.tourney-tab-btn.active {
+.tourney-hud-pill.round-pill {
   background-color: var(--discord-blurple);
-  border-color: var(--discord-blurple);
   color: #ffffff;
 }
 
-/* ── Duel Stage & Board Stage ───────────────────────────────── */
-.tourney-scoreboard {
-  margin-bottom: 10px;
+.tourney-hud-pill.game-pill {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-normal);
 }
 
-.tourney-board-stage {
-  position: relative;
+.tourney-hud-match-row {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--discord-yellow);
+}
+
+.tourney-hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tourney-hud-user-stats {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+  margin-right: 4px;
+}
+
+.tourney-hud-score-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.tourney-hud-score-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--discord-yellow);
+}
+
+/* ── Tournament Leaderboard Modal & Drawer ───────────────────── */
+.tourney-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 280px;
+  padding: 16px;
+}
+
+.tourney-modal-dialog {
   width: 100%;
-  margin-bottom: 12px;
+  max-width: 480px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tourney-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tourney-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-header);
+}
+
+.tourney-modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tourney-modal-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tourney-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tourney-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  background-color: var(--bg-tertiary);
+  padding: 6px 10px;
+  border-radius: var(--radius-xs);
+  color: var(--text-normal);
+}
+
+.tourney-history-winner {
+  font-weight: 700;
+  color: var(--discord-green);
 }
 
 /* ── Spectator Cheer Bar & Floating Emotes ───────────────────── */
@@ -1414,7 +1480,7 @@ body {
 /* ── Round End Box ──────────────────────────────────────────── */
 .tourney-round-end-box {
   background-color: var(--bg-tertiary);
-  border: 1px solid var(--discord-green);
+  border: 1px solid var(--discord-blurple);
   border-radius: var(--radius-sm);
   padding: 14px;
   text-align: center;

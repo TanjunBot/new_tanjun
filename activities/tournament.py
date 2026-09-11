@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-import asyncio
 import logging
 import math
 import random
 import uuid
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from activities.base import BaseGame, Player
-from activities.games.tictactoe import TicTacToeGame
-from activities.games.connect4 import Connect4Game
-from activities.games.rps import RPSGame
 
 logger = logging.getLogger(__name__)
 
@@ -68,21 +64,15 @@ class TournamentMatch:
 
 
 class Tournament:
-    """Manages multi-player voice tournaments with points or knockout modes, showmatch or parallel execution."""
-
-    GAME_CLASSES = {
-        "tictactoe": TicTacToeGame,
-        "connect4": Connect4Game,
-        "rps": RPSGame
-    }
+    """Manages multi-game Tanjun Cup tournaments with flexible game selection per round, points accumulation, and podium celebration."""
 
     def __init__(self, session_id: str, host: Player) -> None:
         self.session_id: str = session_id
         self.host_id: str = host.user_id
-        self.title: str = "Tanjun Voice Cup"
+        self.title: str = "Tanjun Cup"
         self.status: str = "lobby"  # "lobby", "active", "round_end", "finished"
-        self.format: str = "points"  # "points" (Mehrkampf) or "knockout" (K.O.)
-        self.match_style: str = "spectated"  # "spectated" (Live Showmatch) or "parallel" (Gleichzeitig)
+        self.format: str = "points"  # "points" (Mehrkampf) or "knockout"
+        self.match_style: str = "spectated"  # "spectated" (Live Showmatch) or "parallel"
         self.total_rounds: int = 3
         self.current_round: int = 0
         self.game_selection: str = "host_choice"  # "host_choice" or "random"
@@ -93,8 +83,9 @@ class Tournament:
         self.participants: Dict[str, TournamentPlayer] = {}
         self.active_matches: List[TournamentMatch] = []
         self.match_history: List[Dict[str, Any]] = []
-        self.current_match_idx: int = 0  # For spectated mode
-        self.spectated_match_id: Optional[str] = None  # For parallel mode spectating
+        self.current_match_idx: int = 0
+        self.spectated_match_id: Optional[str] = None
+        self.last_round_result: Optional[Dict[str, Any]] = None
 
         # Add initial host participant
         self.add_participant(host)
@@ -123,29 +114,22 @@ class Tournament:
                 self.participants[user_id].connected = False
                 self.participants[user_id].is_eliminated = True
 
-    def create_game_instance(self, game_type: str, p1: TournamentPlayer, p2: TournamentPlayer) -> BaseGame:
-        cls = self.GAME_CLASSES.get(game_type, Connect4Game)
-        host_player = Player(
-            user_id=p1.user_id,
-            username=p1.username,
-            display_name=p1.display_name,
-            avatar_url=p1.avatar_url,
-            is_host=True
-        )
-        game = cls(session_id=str(uuid.uuid4())[:8], host=host_player)
-        guest_player = Player(
-            user_id=p2.user_id,
-            username=p2.username,
-            display_name=p2.display_name,
-            avatar_url=p2.avatar_url,
-            is_host=False
-        )
-        game.add_player(guest_player)
-        return game
+    def get_current_match(self) -> Optional[TournamentMatch]:
+        if not self.active_matches:
+            return None
+        if 0 <= self.current_match_idx < len(self.active_matches):
+            return self.active_matches[self.current_match_idx]
+        return self.active_matches[-1]
 
-    async def start_tournament(self) -> bool:
+    def get_current_spectated_match(self) -> Optional[TournamentMatch]:
+        return self.get_current_match()
+
+    async def start_tournament(self, selected_game: Optional[str] = None) -> bool:
         if len(self.participants) < 2:
             return False
+
+        if selected_game:
+            self.selected_game = selected_game
 
         self.status = "active"
         self.current_round = 0
@@ -158,17 +142,51 @@ class Tournament:
             p.is_eliminated = False
 
         if self.format == "knockout":
-            # Total rounds is log2 of participants
             self.total_rounds = max(1, math.ceil(math.log2(len(self.participants))))
 
-        return await self.start_next_round()
+        return await self.start_next_round(self.selected_game)
 
-    async def start_next_round(self) -> bool:
+    def _create_game_instance(self, game_type: str, p1: TournamentPlayer, p2: Optional[TournamentPlayer]) -> Optional[BaseGame]:
+        if not p2:
+            return None
+        from activities.games.connect4 import Connect4Game
+        from activities.games.tictactoe import TicTacToeGame
+        from activities.games.rps import RPSGame
+
+        game_map = {
+            "connect4": Connect4Game,
+            "tictactoe": TicTacToeGame,
+            "rps": RPSGame
+        }
+        cls = game_map.get(game_type, TicTacToeGame)
+        host_player = Player(
+            user_id=p1.user_id,
+            username=p1.username,
+            display_name=p1.display_name,
+            avatar_url=p1.avatar_url,
+            is_host=True
+        )
+        game = cls(session_id=self.session_id, host=host_player)
+        guest_player = Player(
+            user_id=p2.user_id,
+            username=p2.username,
+            display_name=p2.display_name,
+            avatar_url=p2.avatar_url,
+            is_host=False
+        )
+        game.add_player(guest_player)
+        game.start_game()
+        return game
+
+    async def start_next_round(self, selected_game: Optional[str] = None) -> bool:
+        if selected_game:
+            self.selected_game = selected_game
+
         self.current_round += 1
         self.current_match_idx = 0
         self.active_matches = []
 
-        # Determine eligible players
+        # Eligible participants
         if self.format == "knockout":
             eligible = [p for p in self.participants.values() if not p.is_eliminated and p.connected]
             if len(eligible) <= 1:
@@ -177,12 +195,13 @@ class Tournament:
         else:
             eligible = [p for p in self.participants.values() if p.connected]
 
-        # Shuffle or pair by points
+        # Shuffle for diverse pairings across rounds
         random.shuffle(eligible)
 
-        # Determine round game
+        # Game for this round
         if self.game_selection == "random":
             chosen_game = random.choice(self.games_pool)
+            self.selected_game = chosen_game
         else:
             chosen_game = self.selected_game
 
@@ -192,7 +211,7 @@ class Tournament:
             p1 = eligible[i]
             if i + 1 < len(eligible):
                 p2 = eligible[i + 1]
-                game_inst = self.create_game_instance(chosen_game, p1, p2)
+                game_inst = self._create_game_instance(chosen_game, p1, p2)
                 match = TournamentMatch(
                     match_id=str(uuid.uuid4())[:8],
                     round_index=self.current_round,
@@ -220,43 +239,18 @@ class Tournament:
                 i += 1
 
         self.active_matches = matches
-
-        # Start initial match(es) depending on match_style
-        for idx, match in enumerate(self.active_matches):
-            if match.is_bye:
-                continue
-            if self.match_style == "spectated":
-                if idx == 0:
-                    match.status = "active"
-                    if match.game_instance:
-                        await match.game_instance.handle_action(match.player1.user_id, "start", {"mode": "pvp"})
-                else:
-                    match.status = "pending"
-            else:
-                match.status = "active"
-                if match.game_instance:
-                    await match.game_instance.handle_action(match.player1.user_id, "start", {"mode": "pvp"})
-
         if self.active_matches:
+            self.active_matches[0].status = "active"
             self.spectated_match_id = self.active_matches[0].match_id
 
         self.status = "active"
         return True
 
-    def get_current_spectated_match(self) -> Optional[TournamentMatch]:
-        if not self.active_matches:
-            return None
-
-        if self.match_style == "spectated":
-            if 0 <= self.current_match_idx < len(self.active_matches):
-                return self.active_matches[self.current_match_idx]
-            return self.active_matches[-1]
-        else:
-            # Parallel: user can select which match to spectate
-            for m in self.active_matches:
-                if m.match_id == self.spectated_match_id:
-                    return m
-            return self.active_matches[0]
+    async def resolve_current_match(self, winner: str) -> None:
+        curr_m = self.get_current_match()
+        if not curr_m:
+            return
+        await self._resolve_match(curr_m, winner)
 
     async def _resolve_match(self, match: TournamentMatch, winner: str) -> None:
         match.status = "finished"
@@ -283,13 +277,21 @@ class Tournament:
                 match.player1.is_eliminated = True
 
         # Archive into history
+        winner_name = winner
+        if winner == match.player1.user_id:
+            winner_name = match.player1.display_name
+        elif match.player2 and winner == match.player2.user_id:
+            winner_name = match.player2.display_name
+        elif winner == "draw":
+            winner_name = "draw"
+
         self.match_history.append({
             "match_id": match.match_id,
             "round": match.round_index,
             "game_type": match.game_type,
             "p1": match.player1.display_name,
             "p2": match.player2.display_name if match.player2 else "Freilos (Bye)",
-            "winner": winner
+            "winner": winner_name
         })
 
         # Check if entire round is completed
@@ -306,51 +308,37 @@ class Tournament:
                     self.status = "finished"
                 else:
                     self.status = "round_end"
-        elif self.match_style == "spectated":
-            # Move to next spectated match
+
+    async def advance_to_next_match(self) -> Optional[TournamentMatch]:
+        curr = self.get_current_match()
+        if curr and curr.status == "active":
+            return curr
+        if self.current_match_idx + 1 < len(self.active_matches):
             self.current_match_idx += 1
-            if self.current_match_idx < len(self.active_matches):
-                next_m = self.active_matches[self.current_match_idx]
-                if next_m.is_bye:
-                    await self._resolve_match(next_m, next_m.player1.user_id)
-                elif next_m.game_instance:
-                    next_m.status = "active"
-                    await next_m.game_instance.handle_action(next_m.player1.user_id, "start", {"mode": "pvp"})
+            next_m = self.active_matches[self.current_match_idx]
+            if next_m.is_bye:
+                await self._resolve_match(next_m, next_m.player1.user_id)
+                return await self.advance_to_next_match()
+            next_m.status = "active"
+            self.spectated_match_id = next_m.match_id
+            return next_m
+        return None
 
     async def handle_match_action(self, user_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        match_id = data.get("match_id")
-        target_match: Optional[TournamentMatch] = None
-
-        if match_id:
-            for m in self.active_matches:
-                if m.match_id == match_id:
-                    target_match = m
-                    break
-        else:
-            # Fallback to current spectated match or player's match
-            for m in self.active_matches:
-                if m.player1.user_id == user_id or (m.player2 and m.player2.user_id == user_id):
-                    target_match = m
-                    break
-            if not target_match:
-                target_match = self.get_current_spectated_match()
-
-        if not target_match or not target_match.game_instance:
+        match = self.get_current_match()
+        if not match or not match.game_instance:
             return {"error": "No active match found"}
 
-        if target_match.status != "active":
+        if match.status != "active":
             return {"error": "Match is not active"}
 
-        # Perform action on the game instance
         sub_action = data.get("sub_action", "move")
         sub_data = data.get("sub_data", data)
-        result = await target_match.game_instance.handle_action(user_id, sub_action, sub_data)
+        result = await match.game_instance.handle_action(user_id, sub_action, sub_data)
 
-        # Check if game finished
-        g = target_match.game_instance
-        if g.is_finished:
-            winner = g.winner or "draw"
-            await self._resolve_match(target_match, winner)
+        if match.game_instance.is_finished:
+            winner = match.game_instance.winner or "draw"
+            await self._resolve_match(match, winner)
 
         return {"status": "success", "result": result}
 
@@ -362,8 +350,6 @@ class Tournament:
                 return {"error": "Only tournament host can change settings"}
             if "format" in data:
                 self.format = data["format"]
-            if "match_style" in data:
-                self.match_style = data["match_style"]
             if "total_rounds" in data:
                 self.total_rounds = max(1, min(10, int(data["total_rounds"])))
             if "game_selection" in data:
@@ -383,7 +369,7 @@ class Tournament:
                 return {"error": "Only host can start tournament"}
             if "selected_game" in data:
                 self.selected_game = data["selected_game"]
-            ok = await self.start_tournament()
+            ok = await self.start_tournament(self.selected_game)
             if not ok:
                 return {"error": "Mindestens 2 Teilnehmer werden für ein Turnier benötigt!"}
             return {"status": "tournament_started"}
@@ -393,10 +379,15 @@ class Tournament:
                 return {"error": "Only host can advance round"}
             if self.status != "round_end":
                 return {"error": "Current round is not finished yet"}
-            if "selected_game" in data:
-                self.selected_game = data["selected_game"]
-            await self.start_next_round()
+            selected = data.get("selected_game", self.selected_game)
+            await self.start_next_round(selected)
             return {"status": "next_round_started"}
+
+        if action == "tournament_next_match":
+            if not is_host:
+                return {"error": "Only host can advance match"}
+            await self.advance_to_next_match()
+            return {"status": "next_match_started"}
 
         if action == "tournament_reset_to_lobby":
             if not is_host:
@@ -422,18 +413,12 @@ class Tournament:
             emote = data.get("emote", "🎉")
             p = self.participants.get(user_id)
             name = p.display_name if p else "Zuschauer"
-            current_m = self.get_current_spectated_match()
+            current_m = self.get_current_match()
             if current_m:
                 current_m.cheers.append({"user_id": user_id, "name": name, "emote": emote})
                 if len(current_m.cheers) > 15:
                     current_m.cheers.pop(0)
             return {"status": "cheered"}
-
-        if action == "tournament_switch_spectate":
-            match_id = data.get("match_id")
-            if match_id:
-                self.spectated_match_id = match_id
-            return {"status": "spectate_switched"}
 
         if action == "tournament_match_action":
             return await self.handle_match_action(user_id, action, data)
@@ -441,7 +426,6 @@ class Tournament:
         return {"error": f"Unknown tournament action: {action}"}
 
     def get_leaderboard(self) -> List[Dict[str, Any]]:
-        # Sort by score desc, then wins desc
         sorted_p = sorted(
             self.participants.values(),
             key=lambda p: (p.score, p.wins, -p.losses),
@@ -463,17 +447,34 @@ class Tournament:
             for idx, p in enumerate(sorted_p)
         ]
 
-    def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
-        spectated_match = self.get_current_spectated_match()
-        spectated_state = spectated_match.get_state(for_user_id=for_user_id) if spectated_match else None
+    def get_podium(self) -> List[Dict[str, Any]]:
+        board = self.get_leaderboard()
+        medals = ["🥇", "🥈", "🥉"]
+        podium = []
+        for i, item in enumerate(board[:3]):
+            entry = dict(item)
+            entry["medal"] = medals[i]
+            podium.append(entry)
+        return podium
 
-        # User's own match if parallel
-        user_match_state = None
-        if for_user_id:
-            for m in self.active_matches:
-                if m.player1.user_id == for_user_id or (m.player2 and m.player2.user_id == for_user_id):
-                    user_match_state = m.get_state(for_user_id=for_user_id)
-                    break
+    def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
+        curr_m = self.get_current_match()
+        curr_match_data = None
+        if curr_m:
+            curr_match_data = {
+                "match_id": curr_m.match_id,
+                "round_index": curr_m.round_index,
+                "game_type": curr_m.game_type,
+                "p1_id": curr_m.player1.user_id,
+                "p2_id": curr_m.player2.user_id if curr_m.player2 else None,
+                "p1_name": curr_m.player1.display_name,
+                "p2_name": curr_m.player2.display_name if curr_m.player2 else "Freilos (Bye)",
+                "p1_avatar": curr_m.player1.avatar_url,
+                "p2_avatar": curr_m.player2.avatar_url if curr_m.player2 else None,
+                "status": curr_m.status,
+                "winner": curr_m.winner_id,
+                "cheers": curr_m.cheers[-8:]
+            }
 
         matches_summary = [
             {
@@ -483,7 +484,7 @@ class Tournament:
                 "game_type": m.game_type,
                 "status": m.status,
                 "winner": m.winner_id,
-                "is_active": (m.match_id == self.spectated_match_id)
+                "is_active": (curr_m is not None and m.match_id == curr_m.match_id)
             }
             for m in self.active_matches
         ]
@@ -506,8 +507,8 @@ class Tournament:
             "points_draw": self.points_draw,
             "participants_count": len(self.participants),
             "leaderboard": self.get_leaderboard(),
+            "podium": self.get_podium(),
             "active_matches": matches_summary,
-            "spectated_match": spectated_state,
-            "user_match": user_match_state,
+            "current_match": curr_match_data,
             "match_history": self.match_history[-10:]
         }

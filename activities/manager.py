@@ -56,11 +56,54 @@ class GameSession:
             return None
         return self.tournament.add_participant(player)
 
-    def leave_tournament(self, user_id: str) -> None:
-        if self.tournament:
-            self.tournament.remove_participant(user_id)
-            if len(self.tournament.participants) == 0:
-                self.tournament = None
+    def sync_tournament_match(self) -> None:
+        if not self.tournament or self.tournament.status not in ("active", "round_end"):
+            return
+        curr_m = self.tournament.get_current_match()
+        if not curr_m:
+            return
+
+        # Ensure session game matches current tournament match game type
+        if self.game.game_type != curr_m.game_type:
+            self.switch_game(curr_m.game_type)
+
+        # Collect all known players
+        all_known: Dict[str, Player] = {}
+        for p in self.game.players.values():
+            all_known[p.user_id] = p
+        for p in self.game.spectators.values():
+            all_known[p.user_id] = p
+        for tp in self.tournament.participants.values():
+            if tp.user_id not in all_known:
+                all_known[tp.user_id] = Player(
+                    user_id=tp.user_id,
+                    username=tp.username,
+                    display_name=tp.display_name,
+                    avatar_url=tp.avatar_url,
+                    is_host=tp.is_host
+                )
+
+        p1_id = curr_m.player1.user_id
+        p2_id = curr_m.player2.user_id if curr_m.player2 else None
+
+        new_players: Dict[str, Player] = {}
+        new_spectators: Dict[str, Player] = {}
+
+        for uid, p in all_known.items():
+            if uid == p1_id:
+                p.is_host = True
+                new_players[uid] = p
+            elif p2_id and uid == p2_id:
+                p.is_host = False
+                new_players[uid] = p
+            else:
+                new_spectators[uid] = p
+
+        self.game.players = new_players
+        self.game.spectators = new_spectators
+        self.is_hub = False
+        if not self.game.is_started or self.game.is_finished:
+            self.game.start_game()
 
     def switch_game(self, game_type: str) -> BaseGame:
         if game_type == "tournament":

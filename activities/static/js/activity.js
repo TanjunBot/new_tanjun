@@ -183,10 +183,37 @@ class TanjunActivityClient {
       leaveBtn: document.getElementById("leaveBtn"),
       hubBtn: document.getElementById("hubBtn"),
 
-      // Tournament Views
+      // Tournament Views & Overlays
       tournamentLobbyView: document.getElementById("tournamentLobbyView"),
-      tournamentArenaView: document.getElementById("tournamentArenaView"),
       tournamentPodiumView: document.getElementById("tournamentPodiumView"),
+      tournamentHud: document.getElementById("tournamentHud"),
+      tournamentLeaderboardModal: document.getElementById("tournamentLeaderboardModal"),
+
+      // Tournament HUD Elements
+      tourneyHudCupName: document.getElementById("tourneyHudCupName"),
+      tourneyHudRoundBadge: document.getElementById("tourneyHudRoundBadge"),
+      tourneyHudGameBadge: document.getElementById("tourneyHudGameBadge"),
+      tourneyHudMatchRow: document.getElementById("tourneyHudMatchRow"),
+      tourneyHudMatchText: document.getElementById("tourneyHudMatchText"),
+      tourneyHudUserStats: document.getElementById("tourneyHudUserStats"),
+      tourneyHudUserScore: document.getElementById("tourneyHudUserScore"),
+      tourneyHudLeaderboardBtn: document.getElementById("tourneyHudLeaderboardBtn"),
+      tourneyHudHostBtn: document.getElementById("tourneyHudHostBtn"),
+
+      // Tournament Modal Elements
+      tourneyModalRoundInfo: document.getElementById("tourneyModalRoundInfo"),
+      tourneyModalCloseBtn: document.getElementById("tourneyModalCloseBtn"),
+      tourneyModalCloseBtn2: document.getElementById("tourneyModalCloseBtn2"),
+      tourneyModalLeaderboardList: document.getElementById("tourneyModalLeaderboardList"),
+      tourneyHostControlsBox: document.getElementById("tourneyHostControlsBox"),
+      tourneyRoundEndMsg: document.getElementById("tourneyRoundEndMsg"),
+      tourneyNextGamePills: document.querySelectorAll("#tourneyNextGamePills .diff-pill"),
+      tourneyNextRoundBtn: document.getElementById("tourneyNextRoundBtn"),
+      tourneyNextMatchBtn: document.getElementById("tourneyNextMatchBtn"),
+      tourneyModalHistoryList: document.getElementById("tourneyModalHistoryList"),
+      tourneyEndEarlyBtn: document.getElementById("tourneyEndEarlyBtn"),
+      tourneyCheerBtns: document.querySelectorAll(".tourney-cheer-btn"),
+      tourneyCheerOverlay: document.getElementById("tourneyCheerOverlay"),
 
       // Tournament Lobby Elements
       tourneyBackToHubBtn: document.getElementById("tourneyBackToHubBtn"),
@@ -204,50 +231,6 @@ class TanjunActivityClient {
       tourneyPlayersList: document.getElementById("tourneyPlayersList"),
       tourneyLobbyStatusMsg: document.getElementById("tourneyLobbyStatusMsg"),
       tourneyStartBtn: document.getElementById("tourneyStartBtn"),
-
-      // Tournament Arena Elements
-      tourneyRoundIndicator: document.getElementById("tourneyRoundIndicator"),
-      tourneyGameIndicator: document.getElementById("tourneyGameIndicator"),
-      tourneyModeIndicator: document.getElementById("tourneyModeIndicator"),
-      tourneyLeaderboardToggleBtn: document.getElementById("tourneyLeaderboardToggleBtn"),
-      tourneyMatchSwitcher: document.getElementById("tourneyMatchSwitcher"),
-      tourneyMatchTabs: document.getElementById("tourneyMatchTabs"),
-      tourneyP1Card: document.getElementById("tourneyP1Card"),
-      tourneyP1Avatar: document.getElementById("tourneyP1Avatar"),
-      tourneyP1Name: document.getElementById("tourneyP1Name"),
-      tourneyP1Score: document.getElementById("tourneyP1Score"),
-      tourneyP1Tag: document.getElementById("tourneyP1Tag"),
-      tourneyP2Card: document.getElementById("tourneyP2Card"),
-      tourneyP2Avatar: document.getElementById("tourneyP2Avatar"),
-      tourneyP2Name: document.getElementById("tourneyP2Name"),
-      tourneyP2Score: document.getElementById("tourneyP2Score"),
-      tourneyP2Tag: document.getElementById("tourneyP2Tag"),
-      tourneyStatusBar: document.getElementById("tourneyStatusBar"),
-      tourneyTttBoard: document.getElementById("tourneyTttBoard"),
-      tourneyTttCells: document.querySelectorAll("#tourneyTttBoard .cell"),
-      tourneyC4Board: document.getElementById("tourneyC4Board"),
-      tourneyC4DropRow: document.getElementById("tourneyC4DropRow"),
-      tourneyC4Grid: document.getElementById("tourneyC4Grid"),
-      tourneyRpsBoard: document.getElementById("tourneyRpsBoard"),
-      tourneyRpsRoundBadge: document.getElementById("tourneyRpsRoundBadge"),
-      tourneyRpsP1Pick: document.getElementById("tourneyRpsP1Pick"),
-      tourneyRpsP1Label: document.getElementById("tourneyRpsP1Label"),
-      tourneyRpsP2Pick: document.getElementById("tourneyRpsP2Pick"),
-      tourneyRpsP2Label: document.getElementById("tourneyRpsP2Label"),
-      tourneyRpsRoundResult: document.getElementById("tourneyRpsRoundResult"),
-      tourneyRpsBtns: document.querySelectorAll("#tourneyRpsChoices .rps-btn"),
-      tourneyCheerBtns: document.querySelectorAll(".tourney-cheer-btn"),
-      tourneyCheerOverlay: document.getElementById("tourneyCheerOverlay"),
-      tourneyRoundEndControls: document.getElementById("tourneyRoundEndControls"),
-      tourneyRoundEndMsg: document.getElementById("tourneyRoundEndMsg"),
-      tourneyNextGameSelector: document.getElementById("tourneyNextGameSelector"),
-      tourneyNextGamePills: document.querySelectorAll("#tourneyNextGamePills .diff-pill"),
-      tourneyNextRoundBtn: document.getElementById("tourneyNextRoundBtn"),
-      tourneyLeaderboardDrawer: document.getElementById("tourneyLeaderboardDrawer"),
-      tourneyLeaderboardCloseBtn: document.getElementById("tourneyLeaderboardCloseBtn"),
-      tourneyLiveLeaderboardList: document.getElementById("tourneyLiveLeaderboardList"),
-      tourneyEndEarlyBtn: document.getElementById("tourneyEndEarlyBtn"),
-      tourneyLeaveBtn: document.getElementById("tourneyLeaveBtn"),
 
       // Tournament Podium Elements
       podiumTop3: document.getElementById("podiumTop3"),
@@ -467,18 +450,34 @@ class TanjunActivityClient {
       });
     }
 
-    // Leaderboard Toggle
-    if (this.el.tourneyLeaderboardToggleBtn) {
-      this.el.tourneyLeaderboardToggleBtn.addEventListener("click", () => {
-        if (!this.el.tourneyLeaderboardDrawer) return;
-        const isShown = this.el.tourneyLeaderboardDrawer.style.display === "flex";
-        this.el.tourneyLeaderboardDrawer.style.display = isShown ? "none" : "flex";
+    // HUD Leaderboard & Host Menu Buttons
+    if (this.el.tourneyHudLeaderboardBtn) {
+      this.el.tourneyHudLeaderboardBtn.addEventListener("click", () => {
+        this.openTournamentLeaderboardModal();
+      });
+    }
+    if (this.el.tourneyHudHostBtn) {
+      this.el.tourneyHudHostBtn.addEventListener("click", () => {
+        this.openTournamentLeaderboardModal();
       });
     }
 
-    if (this.el.tourneyLeaderboardCloseBtn) {
-      this.el.tourneyLeaderboardCloseBtn.addEventListener("click", () => {
-        if (this.el.tourneyLeaderboardDrawer) this.el.tourneyLeaderboardDrawer.style.display = "none";
+    // Modal Close Buttons
+    if (this.el.tourneyModalCloseBtn) {
+      this.el.tourneyModalCloseBtn.addEventListener("click", () => {
+        this.closeTournamentLeaderboardModal();
+      });
+    }
+    if (this.el.tourneyModalCloseBtn2) {
+      this.el.tourneyModalCloseBtn2.addEventListener("click", () => {
+        this.closeTournamentLeaderboardModal();
+      });
+    }
+    if (this.el.tournamentLeaderboardModal) {
+      this.el.tournamentLeaderboardModal.addEventListener("click", (e) => {
+        if (e.target === this.el.tournamentLeaderboardModal) {
+          this.closeTournamentLeaderboardModal();
+        }
       });
     }
 
@@ -506,7 +505,18 @@ class TanjunActivityClient {
     if (this.el.tourneyNextRoundBtn) {
       this.el.tourneyNextRoundBtn.addEventListener("click", () => {
         if (!this.isTournamentHost()) return;
-        this.sendAction("tournament_next_round", { selected_game: this.selectedNextRoundGame });
+        const nextGame = this.selectedNextRoundGame || this.selectedTourneyGame || "connect4";
+        this.sendAction("tournament_next_round", { selected_game: nextGame });
+        this.closeTournamentLeaderboardModal();
+      });
+    }
+
+    // Next Match Button
+    if (this.el.tourneyNextMatchBtn) {
+      this.el.tourneyNextMatchBtn.addEventListener("click", () => {
+        if (!this.isTournamentHost()) return;
+        this.sendAction("tournament_next_match");
+        this.closeTournamentLeaderboardModal();
       });
     }
 
@@ -516,6 +526,7 @@ class TanjunActivityClient {
         if (!this.isTournamentHost()) return;
         if (confirm("Möchtest du das Turnier wirklich beenden?")) {
           this.sendAction("tournament_end");
+          this.closeTournamentLeaderboardModal();
         }
       });
     }
@@ -533,22 +544,6 @@ class TanjunActivityClient {
     if (this.el.tourneyPodiumHubBtn) {
       this.el.tourneyPodiumHubBtn.addEventListener("click", () => this.returnToHub());
     }
-
-    // Tournament Board Moves: TTT
-    this.el.tourneyTttCells.forEach(cell => {
-      cell.addEventListener("click", () => {
-        const idx = parseInt(cell.dataset.tourneyTtt, 10);
-        this.makeMoveTournamentTTT(idx);
-      });
-    });
-
-    // Tournament Board Moves: RPS
-    this.el.tourneyRpsBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const choice = btn.dataset.tourneyRps;
-        this.makeMoveTournamentRPS(choice);
-      });
-    });
   }
 
   isInsideDiscord() {
@@ -950,6 +945,8 @@ class TanjunActivityClient {
 
   returnToHub() {
     this.clearAnimationCaches();
+    this.inTournamentView = false;
+    if (this.el.tournamentLeaderboardModal) this.el.tournamentLeaderboardModal.style.display = "none";
     this.sendAction("return_to_hub");
   }
 
@@ -1093,30 +1090,51 @@ class TanjunActivityClient {
     if (this.inTournamentView && tourney && (isParticipant || tourney.host_id === this.user.id)) {
       if (this.el.hubView) this.el.hubView.style.display = "none";
       if (this.el.lobbyView) this.el.lobbyView.style.display = "none";
-      if (this.el.gameView) this.el.gameView.style.display = "none";
 
       if (tourney.status === "lobby") {
+        if (this.el.gameView) this.el.gameView.style.display = "none";
+        if (this.el.tournamentHud) this.el.tournamentHud.style.display = "none";
         if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "block";
-        if (this.el.tournamentArenaView) this.el.tournamentArenaView.style.display = "none";
         if (this.el.tournamentPodiumView) this.el.tournamentPodiumView.style.display = "none";
+        if (this.el.tournamentLeaderboardModal) this.el.tournamentLeaderboardModal.style.display = "none";
         this.renderTournamentLobby(tourney);
+        return;
       } else if (tourney.status === "active" || tourney.status === "round_end") {
         if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "none";
-        if (this.el.tournamentArenaView) this.el.tournamentArenaView.style.display = "flex";
         if (this.el.tournamentPodiumView) this.el.tournamentPodiumView.style.display = "none";
-        this.renderTournamentArena(tourney);
+        if (this.el.tournamentHud) this.el.tournamentHud.style.display = "flex";
+        this.renderTournamentHud(tourney);
+
+        if (this.el.gameView) this.el.gameView.style.display = "block";
+        this.renderGame(state);
+
+        if (this.el.tournamentLeaderboardModal && this.el.tournamentLeaderboardModal.style.display === "flex") {
+          this.renderTournamentLeaderboardModalContent(tourney);
+        }
+
+        if (tourney.status === "round_end" && !this.roundEndModalOpened) {
+          this.openTournamentLeaderboardModal();
+          this.roundEndModalOpened = true;
+        } else if (tourney.status === "active") {
+          this.roundEndModalOpened = false;
+        }
+
+        return;
       } else if (tourney.status === "finished") {
+        if (this.el.tournamentHud) this.el.tournamentHud.style.display = "none";
         if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "none";
-        if (this.el.tournamentArenaView) this.el.tournamentArenaView.style.display = "none";
+        if (this.el.gameView) this.el.gameView.style.display = "none";
+        if (this.el.tournamentLeaderboardModal) this.el.tournamentLeaderboardModal.style.display = "none";
         if (this.el.tournamentPodiumView) this.el.tournamentPodiumView.style.display = "flex";
         this.renderTournamentPodium(tourney);
+        return;
       }
-      return;
     }
 
+    if (this.el.tournamentHud) this.el.tournamentHud.style.display = "none";
     if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "none";
-    if (this.el.tournamentArenaView) this.el.tournamentArenaView.style.display = "none";
     if (this.el.tournamentPodiumView) this.el.tournamentPodiumView.style.display = "none";
+    if (this.el.tournamentLeaderboardModal) this.el.tournamentLeaderboardModal.style.display = "none";
 
     // View Navigation Logic
     if (state.is_hub) {
@@ -1424,6 +1442,12 @@ class TanjunActivityClient {
         this.el.statusBar.style.color = "#949ba4";
       }
     }
+
+    if (this.el.restartBtn) {
+      const tourney = state.tournament;
+      const inTourney = tourney && (tourney.status === "active" || tourney.status === "round_end");
+      this.el.restartBtn.style.display = inTourney ? "none" : "inline-block";
+    }
   }
 
   // ==========================================================================
@@ -1556,339 +1580,195 @@ class TanjunActivityClient {
     }
   }
 
-  getCurrentTournamentMatch() {
-    const tourney = this.gameState?.tournament;
-    if (!tourney) return null;
-    if (tourney.match_style === "parallel") {
-      if (tourney.user_match && tourney.user_match.status === "active") {
-        return tourney.user_match;
-      }
-    }
-    return tourney.spectated_match;
-  }
-
-  renderTournamentArena(tourney) {
+  renderTournamentHud(tourney) {
     if (!tourney) return;
 
-    // Header Badges
-    const isKnockout = tourney.format === "knockout";
-    if (this.el.tourneyRoundIndicator) {
-      this.el.tourneyRoundIndicator.textContent = isKnockout 
-        ? `K.O. Runde ${tourney.current_round}` 
-        : `Runde ${tourney.current_round} / ${tourney.total_rounds}`;
+    if (this.el.tourneyHudCupName) {
+      this.el.tourneyHudCupName.textContent = tourney.title || "Tanjun Voice Cup";
     }
 
-    const gameNames = {
-      connect4: "🔴 Vier Gewinnt",
-      tictactoe: "❌ Tic-Tac-Toe",
-      rps: "✊ Schere-Stein-Papier"
-    };
-    if (this.el.tourneyGameIndicator) {
-      this.el.tourneyGameIndicator.textContent = gameNames[tourney.selected_game] || tourney.selected_game;
-    }
-
-    if (this.el.tourneyModeIndicator) {
-      this.el.tourneyModeIndicator.textContent = tourney.match_style === "spectated" ? "📺 Showmatch" : "⚡ Parallel";
-    }
-
-    // Parallel Match Switcher
-    if (this.el.tourneyMatchSwitcher && this.el.tourneyMatchTabs) {
-      if (tourney.match_style === "parallel" && tourney.active_matches?.length > 1) {
-        this.el.tourneyMatchSwitcher.style.display = "flex";
-        let tabsHtml = "";
-        tourney.active_matches.forEach(m => {
-          const isSelected = (m.match_id === tourney.spectated_match?.match_id);
-          const icon = m.status === "finished" ? "✓" : "⚡";
-          tabsHtml += `
-            <button class="tourney-tab-btn ${isSelected ? 'active' : ''}" data-match-id="${m.match_id}">
-              ${m.p1_name} vs ${m.p2_name} ${icon}
-            </button>
-          `;
-        });
-        this.el.tourneyMatchTabs.innerHTML = tabsHtml;
-        this.el.tourneyMatchTabs.querySelectorAll(".tourney-tab-btn").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const mid = btn.dataset.matchId;
-            this.sendAction("tournament_switch_spectate", { match_id: mid });
-          });
-        });
-      } else {
-        this.el.tourneyMatchSwitcher.style.display = "none";
-      }
-    }
-
-    // Active Duel Stage & Scoreboard
-    const match = this.getCurrentTournamentMatch();
-    if (!match) return;
-
-    const p1 = match.player1;
-    const p2 = match.player2;
-
-    if (this.el.tourneyP1Name) this.el.tourneyP1Name.textContent = p1.display_name;
-    if (this.el.tourneyP1Avatar) this.el.tourneyP1Avatar.src = p1.avatar_url || "https://cdn.discordapp.com/embed/avatars/0.png";
-    if (this.el.tourneyP1Score) this.el.tourneyP1Score.textContent = `${p1.score} Pkt`;
-
-    if (p2) {
-      if (this.el.tourneyP2Name) this.el.tourneyP2Name.textContent = p2.display_name;
-      if (this.el.tourneyP2Avatar) this.el.tourneyP2Avatar.src = p2.avatar_url || "https://cdn.discordapp.com/embed/avatars/1.png";
-      if (this.el.tourneyP2Score) this.el.tourneyP2Score.textContent = `${p2.score} Pkt`;
-    } else {
-      if (this.el.tourneyP2Name) this.el.tourneyP2Name.textContent = "Freilos (Bye)";
-      if (this.el.tourneyP2Avatar) this.el.tourneyP2Avatar.src = "https://cdn.discordapp.com/embed/avatars/2.png";
-      if (this.el.tourneyP2Score) this.el.tourneyP2Score.textContent = "-";
-    }
-
-    // Active Turn Highlight
-    const gameState = match.game_state;
-    if (gameState && gameState.current_turn) {
-      if (gameState.current_turn === p1.user_id) {
-        this.el.tourneyP1Card.classList.add("turn-active");
-        this.el.tourneyP2Card.classList.remove("turn-active");
-      } else if (p2 && gameState.current_turn === p2.user_id) {
-        this.el.tourneyP2Card.classList.add("turn-active");
-        this.el.tourneyP1Card.classList.remove("turn-active");
-      } else {
-        this.el.tourneyP1Card.classList.remove("turn-active");
-        this.el.tourneyP2Card.classList.remove("turn-active");
-      }
-    } else {
-      this.el.tourneyP1Card.classList.remove("turn-active");
-      this.el.tourneyP2Card.classList.remove("turn-active");
-    }
-
-    // Board Rendering
-    const gameType = match.game_type;
-    if (this.el.tourneyTttBoard) this.el.tourneyTttBoard.style.display = (gameType === "tictactoe") ? "grid" : "none";
-    if (this.el.tourneyC4Board) this.el.tourneyC4Board.style.display = (gameType === "connect4") ? "flex" : "none";
-    if (this.el.tourneyRpsBoard) this.el.tourneyRpsBoard.style.display = (gameType === "rps") ? "flex" : "none";
-
-    if (gameType === "tictactoe" && gameState) {
-      const winningLine = gameState.winning_line || [];
-      const isNewMove = (idx) => {
-        return gameState.last_move === idx && (!this.prevTourneyTTTBoard || this.prevTourneyTTTBoard[idx] !== gameState.board[idx]);
-      };
-      (gameState.board || []).forEach((val, idx) => {
-        const cell = this.el.tourneyTttCells[idx];
-        if (cell) {
-          cell.textContent = val;
-          cell.className = "cell";
-          if (val === "X") cell.classList.add("cell-x", "taken");
-          if (val === "O") cell.classList.add("cell-o", "taken");
-          if (winningLine.includes(idx)) cell.classList.add("winner-cell");
-          if (val && isNewMove(idx)) cell.classList.add("anim-pop");
-        }
-      });
-      this.prevTourneyTTTBoard = [...(gameState.board || [])];
-    } else if (gameType === "connect4" && gameState) {
-      const rows = gameState.rows || 6;
-      const cols = gameState.cols || 7;
-      const totalCells = rows * cols;
-
-      if (this.currentTourneyC4Cols !== cols || this.currentTourneyC4Rows !== rows || this.el.tourneyC4Grid.children.length !== totalCells) {
-        this.currentTourneyC4Cols = cols;
-        this.currentTourneyC4Rows = rows;
-        this.prevTourneyC4Board = null;
-        const availableWidth = Math.min(window.innerWidth - 40, 460);
-        const cellSize = Math.floor(Math.min(42, Math.max(26, (availableWidth - (cols * 6) - 20) / cols)));
-
-        this.el.tourneyC4Grid.style.setProperty("--c4-cols", cols);
-        this.el.tourneyC4Grid.style.setProperty("--c4-rows", rows);
-        this.el.tourneyC4Grid.style.setProperty("--c4-cell-size", `${cellSize}px`);
-
-        this.el.tourneyC4DropRow.style.setProperty("--c4-cols", cols);
-        this.el.tourneyC4DropRow.style.setProperty("--c4-cell-size", `${cellSize}px`);
-
-        // Drop buttons
-        this.el.tourneyC4DropRow.innerHTML = "";
-        for (let c = 0; c < cols; c++) {
-          const btn = document.createElement("button");
-          btn.className = "c4-drop-btn";
-          btn.dataset.col = c;
-          btn.textContent = "▼";
-          btn.addEventListener("click", () => this.makeMoveTournamentC4(c));
-          this.el.tourneyC4DropRow.appendChild(btn);
-        }
-
-        // Cells
-        this.el.tourneyC4Grid.innerHTML = "";
-        for (let i = 0; i < totalCells; i++) {
-          const cell = document.createElement("div");
-          cell.className = "c4-cell";
-          cell.dataset.index = i;
-          const col = i % cols;
-          cell.addEventListener("click", () => this.makeMoveTournamentC4(col));
-          this.el.tourneyC4Grid.appendChild(cell);
-        }
-      }
-
-      const winningLine = gameState.winning_line || [];
-      const cells = this.el.tourneyC4Grid.querySelectorAll(".c4-cell");
-      const cellSize = parseInt(getComputedStyle(this.el.tourneyC4Grid).getPropertyValue("--c4-cell-size")) || 40;
-      const isNewMove = (idx) => {
-        return gameState.last_move === idx && (!this.prevTourneyC4Board || this.prevTourneyC4Board[idx] !== gameState.board[idx]);
-      };
-
-      (gameState.board || []).forEach((val, idx) => {
-        const cell = cells[idx];
-        if (cell) {
-          cell.className = "c4-cell";
-          if (val === "R") cell.classList.add("chip-r");
-          if (val === "Y") cell.classList.add("chip-y");
-          if (winningLine.includes(idx)) cell.classList.add("winner-cell");
-
-          if (val && isNewMove(idx)) {
-            const row = Math.floor(idx / cols);
-            const dropDist = (row + 1) * (cellSize + 6) + 16;
-            cell.style.setProperty("--drop-dist", `-${dropDist}px`);
-            cell.style.setProperty("--drop-duration", `${0.26 + row * 0.04}s`);
-            cell.classList.add("anim-drop");
-          }
-        }
-      });
-      this.prevTourneyC4Board = [...(gameState.board || [])];
-    } else if (gameType === "rps" && gameState) {
-      const emojis = { rock: "✊", paper: "✋", scissors: "✌️", lizard: "🦎", spock: "🖖", locked: "🔒", "": "❓" };
-      const choiceNames = { rock: "Stein", paper: "Papier", scissors: "Schere", lizard: "Echse", spock: "Spock" };
-      this.el.tourneyRpsRoundBadge.textContent = `Runde ${gameState.current_round || 1}`;
-
-      const picks = gameState.current_picks || {};
-      let p1Pick = picks[p1.user_id] || "";
-      let p2Pick = p2 ? (picks[p2.user_id] || "") : "";
-
-      const myTourneyPick = (p1.user_id === this.user.id) ? p1Pick : (p2 && p2.user_id === this.user.id ? p2Pick : "");
-      if (!myTourneyPick && this.el.tourneyRpsBtns) {
-        this.el.tourneyRpsBtns.forEach(btn => btn.classList.remove("selected"));
-      }
-
-      const lr = gameState.last_round_result;
-      const isRoundRevealed = !!(lr && (!p1Pick && !p2Pick));
-      if (isRoundRevealed && lr.picks) {
-        p1Pick = lr.picks[p1.user_id] || "";
-        p2Pick = p2 ? (lr.picks[p2.user_id] || "") : "";
-      }
-
-      this.el.tourneyRpsP1Pick.textContent = emojis[p1Pick] || "❓";
-      this.el.tourneyRpsP2Pick.textContent = emojis[p2Pick] || (p2 && picks[p2.user_id] === "locked" ? "🔒" : "❓");
-
-      this.el.tourneyRpsP1Pick.className = "rps-fighter-pick";
-      this.el.tourneyRpsP2Pick.className = "rps-fighter-pick";
-
-      this.el.tourneyRpsP1Label.textContent = p1.display_name;
-      this.el.tourneyRpsP2Label.textContent = p2 ? p2.display_name : "Gegner";
-
-      if (isRoundRevealed && lr) {
-        if (this.prevTourneyRpsRound !== gameState.current_round) {
-          this.el.tourneyRpsP1Pick.classList.add("anim-reveal");
-          this.el.tourneyRpsP2Pick.classList.add("anim-reveal");
-        }
-        const p1ChoiceName = choiceNames[p1Pick] || p1Pick;
-        const p2ChoiceName = choiceNames[p2Pick] || p2Pick;
-        if (lr.winner === "draw") {
-          this.el.tourneyRpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}! (${p1ChoiceName} gegen ${p2ChoiceName})`;
-          this.el.tourneyRpsRoundResult.style.color = "#f0b232";
-        } else {
-          const wonP1 = lr.winner === p1.user_id;
-          const winnerName = wonP1 ? p1.display_name : (p2 ? p2.display_name : "Gegner");
-          const winChoice = wonP1 ? p1ChoiceName : p2ChoiceName;
-          const loseChoice = wonP1 ? p2ChoiceName : p1ChoiceName;
-          this.el.tourneyRpsRoundResult.textContent = `🎉 ${winnerName} gewinnt Runde ${lr.round}! (${winChoice} schlägt ${loseChoice})`;
-          this.el.tourneyRpsRoundResult.style.color = "#23a55a";
-        }
-      } else if (p1Pick && (!p2Pick || p2Pick === "locked")) {
-        this.el.tourneyRpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
-        this.el.tourneyRpsRoundResult.style.color = "#f0b232";
-        this.el.tourneyRpsP2Pick.classList.add("anim-shake");
-      } else {
-        this.el.tourneyRpsRoundResult.textContent = "Wähle deine Geste!";
-        this.el.tourneyRpsRoundResult.style.color = "#949ba4";
-      }
-      this.prevTourneyRpsRound = gameState.current_round;
-    }
-
-    // Status bar text
-    if (match.status === "finished") {
-      if (match.winner_id === "draw") {
-        this.el.tourneyStatusBar.textContent = "🤝 Match endete unentschieden!";
-        this.el.tourneyStatusBar.style.color = "#f0b232";
-      } else {
-        const winnerName = match.winner_id === p1.user_id ? p1.display_name : (p2 ? p2.display_name : "Gegner");
-        this.el.tourneyStatusBar.textContent = `🏆 ${winnerName} gewinnt das Duell!`;
-        this.el.tourneyStatusBar.style.color = "#23a55a";
-      }
-    } else {
-      if (match.is_bye) {
-        this.el.tourneyStatusBar.textContent = `⚡ ${p1.display_name} hat ein Freilos (Bye)!`;
-        this.el.tourneyStatusBar.style.color = "#23a55a";
-      } else if (gameState?.current_turn === this.user.id) {
-        this.el.tourneyStatusBar.textContent = "⚡ Du bist am Zug!";
-        this.el.tourneyStatusBar.style.color = "#5865f2";
-      } else {
-        const isParticipant = (this.user.id === p1.user_id || (p2 && this.user.id === p2.user_id));
-        if (isParticipant) {
-          this.el.tourneyStatusBar.textContent = "⏳ Gegner ist am Zug...";
-          this.el.tourneyStatusBar.style.color = "#94a3b8";
-        } else {
-          this.el.tourneyStatusBar.textContent = `📺 Live-Zuschauer: ${p1.display_name} vs ${p2 ? p2.display_name : "Gegner"}`;
-          this.el.tourneyStatusBar.style.color = "#94a3b8";
-        }
-      }
-    }
-
-    // Cheers animation
-    if (match.cheers && match.cheers.length > 0) {
-      if (match.cheers.length > this.renderedCheerCount) {
-        const newCheers = match.cheers.slice(this.renderedCheerCount);
-        newCheers.forEach(c => this.spawnFloatingCheer(c.name, c.emote));
-        this.renderedCheerCount = match.cheers.length;
-      }
-    } else {
-      this.renderedCheerCount = 0;
-    }
-
-    // Round End Controls
-    if (this.el.tourneyRoundEndControls) {
+    if (this.el.tourneyHudRoundBadge) {
       if (tourney.status === "round_end") {
-        this.el.tourneyRoundEndControls.style.display = "block";
-        const isHost = this.isTournamentHost();
-        if (isHost) {
-          this.el.tourneyNextRoundBtn.style.display = "inline-block";
-          if (this.el.tourneyNextGameSelector) this.el.tourneyNextGameSelector.style.display = "block";
-          this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Wähle das Spiel und starte Runde ${tourney.current_round + 1}:`;
-        } else {
-          this.el.tourneyNextRoundBtn.style.display = "none";
-          if (this.el.tourneyNextGameSelector) this.el.tourneyNextGameSelector.style.display = "none";
-          this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Warte auf den Turnierleiter...`;
-        }
+        this.el.tourneyHudRoundBadge.textContent = `Runde ${tourney.current_round} Ende`;
+        this.el.tourneyHudRoundBadge.classList.add("pulse");
       } else {
-        this.el.tourneyRoundEndControls.style.display = "none";
+        this.el.tourneyHudRoundBadge.textContent = `Runde ${tourney.current_round}/${tourney.total_rounds}`;
+        this.el.tourneyHudRoundBadge.classList.remove("pulse");
       }
     }
 
-    // Leaderboard Drawer Content
-    if (this.el.tourneyLiveLeaderboardList) {
+    if (this.el.tourneyHudGameBadge) {
+      const gameIcons = {
+        connect4: "🔴 Vier Gewinnt",
+        tictactoe: "❌ Tic-Tac-Toe",
+        rps: "✊ Schere-Stein-Papier"
+      };
+      this.el.tourneyHudGameBadge.textContent = gameIcons[tourney.selected_game] || tourney.selected_game;
+    }
+
+    if (this.el.tourneyHudMatchText) {
+      const m = tourney.current_match;
+      if (m) {
+        this.el.tourneyHudMatchText.textContent = `⚔️ ${m.p1_name} vs ${m.p2_name}`;
+      } else {
+        this.el.tourneyHudMatchText.textContent = "⏳ Pause / Nächste Runde";
+      }
+    }
+
+    if (this.el.tourneyHudUserScore) {
+      const myEntry = (tourney.leaderboard || []).find(p => p.user_id === this.user.id);
+      if (myEntry) {
+        const medal = myEntry.rank === 1 ? "🥇" : myEntry.rank === 2 ? "🥈" : myEntry.rank === 3 ? "🥉" : `#${myEntry.rank}`;
+        this.el.tourneyHudUserScore.textContent = `${myEntry.score} Pkt (${medal})`;
+      } else {
+        this.el.tourneyHudUserScore.textContent = "Zuschauer";
+      }
+    }
+
+    if (this.el.tourneyHudHostBtn) {
+      const isHost = this.isTournamentHost();
+      this.el.tourneyHudHostBtn.style.display = isHost ? "inline-block" : "none";
+      if (tourney.status === "round_end" && isHost) {
+        this.el.tourneyHudHostBtn.textContent = "⚡ Nächste Runde wählen";
+        this.el.tourneyHudHostBtn.classList.add("anim-pulse-btn");
+      } else {
+        this.el.tourneyHudHostBtn.textContent = "⚙️ Cup-Menü";
+        this.el.tourneyHudHostBtn.classList.remove("anim-pulse-btn");
+      }
+    }
+  }
+
+  openTournamentLeaderboardModal() {
+    if (!this.el.tournamentLeaderboardModal) return;
+    this.el.tournamentLeaderboardModal.style.display = "flex";
+    const tourney = this.gameState?.tournament;
+    if (tourney) {
+      this.renderTournamentLeaderboardModalContent(tourney);
+    }
+  }
+
+  closeTournamentLeaderboardModal() {
+    if (!this.el.tournamentLeaderboardModal) return;
+    this.el.tournamentLeaderboardModal.style.display = "none";
+  }
+
+  renderTournamentLeaderboardModalContent(tourney) {
+    if (!tourney) return;
+    const isHost = this.isTournamentHost();
+
+    // Round info text
+    if (this.el.tourneyModalRoundInfo) {
+      this.el.tourneyModalRoundInfo.textContent = `Runde ${tourney.current_round} von ${tourney.total_rounds} • ${tourney.format === 'knockout' ? 'K.O.-System' : 'Punkte-Mehrkampf'}`;
+    }
+
+    // Leaderboard table
+    if (this.el.tourneyModalLeaderboardList) {
       const medals = ["🥇", "🥈", "🥉"];
       let lbHtml = "";
       (tourney.leaderboard || []).forEach((p, idx) => {
         const rankDisplay = idx < 3 ? medals[idx] : `#${idx + 1}`;
         const isYou = p.user_id === this.user.id;
         lbHtml += `
-          <div class="tourney-leaderboard-row ${idx === 0 ? 'rank-1' : ''}">
+          <div class="tourney-leaderboard-row ${idx === 0 ? 'rank-1' : ''} ${isYou ? 'current-user-row' : ''}">
             <div class="tourney-leaderboard-meta">
               <span class="tourney-rank-num">${rankDisplay}</span>
               <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
               <span style="font-weight: 700;">${p.display_name}</span>
               ${isYou ? '<span class="lobby-tag-you">Du</span>' : ''}
-              ${p.is_host ? '<span>👑</span>' : ''}
+              ${p.is_host ? '<span title="Turnierleiter">👑</span>' : ''}
               ${p.is_eliminated ? '<span style="font-size:0.7rem; color:#da373c;">(Ausgeschieden)</span>' : ''}
             </div>
             <div class="tourney-leaderboard-scores">
               <span class="tourney-score-points">${p.score} Pkt</span>
-              <span class="tourney-score-record">${p.wins}S - ${p.losses}N</span>
+              <span class="tourney-score-record">${p.wins}S - ${p.draws || 0}U - ${p.losses}N</span>
             </div>
           </div>
         `;
       });
-      this.el.tourneyLiveLeaderboardList.innerHTML = lbHtml;
+      this.el.tourneyModalLeaderboardList.innerHTML = lbHtml;
+    }
+
+    // Host Controls Box
+    if (this.el.tourneyHostControlsBox) {
+      if (isHost) {
+        this.el.tourneyHostControlsBox.style.display = "block";
+        if (this.el.tourneyEndEarlyBtn) this.el.tourneyEndEarlyBtn.style.display = "inline-block";
+
+        if (tourney.status === "round_end") {
+          if (this.el.tourneyRoundEndMsg) {
+            this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Wähle das Spiel und starte Runde ${tourney.current_round + 1}:`;
+            this.el.tourneyRoundEndMsg.style.color = "#23a55a";
+          }
+          if (this.el.tourneyNextRoundBtn) {
+            this.el.tourneyNextRoundBtn.style.display = "inline-block";
+            this.el.tourneyNextRoundBtn.textContent = `▶ Runde ${tourney.current_round + 1} starten`;
+          }
+          if (this.el.tourneyNextMatchBtn) {
+            this.el.tourneyNextMatchBtn.style.display = "none";
+          }
+          const picker = document.querySelector(".tourney-next-game-picker");
+          if (picker) picker.style.display = "block";
+        } else {
+          // In active round
+          const hasMoreMatches = tourney.active_matches && tourney.active_matches.some(m => m.status === "pending" || (!m.is_active && m.status !== "finished"));
+          if (this.el.tourneyRoundEndMsg) {
+            this.el.tourneyRoundEndMsg.textContent = "Runde läuft aktiv...";
+            this.el.tourneyRoundEndMsg.style.color = "#94a3b8";
+          }
+          if (this.el.tourneyNextRoundBtn) {
+            this.el.tourneyNextRoundBtn.style.display = "none";
+          }
+          const picker = document.querySelector(".tourney-next-game-picker");
+          if (picker) picker.style.display = "none";
+
+          if (this.el.tourneyNextMatchBtn) {
+            if (tourney.current_match && tourney.current_match.status === "finished" && hasMoreMatches) {
+              this.el.tourneyNextMatchBtn.style.display = "inline-block";
+              this.el.tourneyNextMatchBtn.textContent = "⚔️ Nächstes Duell aufrufen";
+            } else {
+              this.el.tourneyNextMatchBtn.style.display = "none";
+            }
+          }
+        }
+      } else {
+        this.el.tourneyHostControlsBox.style.display = "none";
+        if (this.el.tourneyEndEarlyBtn) this.el.tourneyEndEarlyBtn.style.display = "none";
+      }
+    }
+
+    // Match history list
+    if (this.el.tourneyModalHistoryList) {
+      const history = tourney.match_history || [];
+      if (history.length === 0) {
+        this.el.tourneyModalHistoryList.innerHTML = `<div style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">Noch keine Duelle gespielt.</div>`;
+      } else {
+        const gameNames = { connect4: "Vier Gewinnt", tictactoe: "Tic-Tac-Toe", rps: "Schere Stein Papier" };
+        let histHtml = "";
+        history.slice(-8).reverse().forEach(h => {
+          let winnerLabel = "🤝 Unentschieden";
+          if (h.winner && h.winner !== "draw") {
+            winnerLabel = `🏆 ${h.winner}`;
+          }
+          histHtml += `
+            <div class="tourney-history-item">
+              <span class="tourney-history-details">Runde ${h.round} (${gameNames[h.game_type] || h.game_type}): <strong>${h.p1}</strong> vs <strong>${h.p2}</strong></span>
+              <span class="tourney-history-winner">${winnerLabel}</span>
+            </div>
+          `;
+        });
+        this.el.tourneyModalHistoryList.innerHTML = histHtml;
+      }
+    }
+
+    // Cheers animation
+    if (tourney.current_match?.cheers && tourney.current_match.cheers.length > 0) {
+      if (tourney.current_match.cheers.length > this.renderedCheerCount) {
+        const newCheers = tourney.current_match.cheers.slice(this.renderedCheerCount);
+        newCheers.forEach(c => this.spawnFloatingCheer(c.name, c.emote));
+        this.renderedCheerCount = tourney.current_match.cheers.length;
+      }
+    } else {
+      this.renderedCheerCount = 0;
     }
   }
 
@@ -1975,42 +1855,6 @@ class TanjunActivityClient {
     if (this.el.tourneyNewCupBtn) {
       this.el.tourneyNewCupBtn.style.display = isHost ? "inline-block" : "none";
     }
-  }
-
-  makeMoveTournamentTTT(cellIndex) {
-    const match = this.getCurrentTournamentMatch();
-    if (!match || match.status !== "active" || match.game_type !== "tictactoe") return;
-    if (match.game_state?.current_turn !== this.user.id) return;
-    if (match.game_state?.board?.[cellIndex] !== "") return;
-    this.sendAction("tournament_match_action", {
-      match_id: match.match_id,
-      sub_action: "move",
-      sub_data: { cell: cellIndex }
-    });
-  }
-
-  makeMoveTournamentC4(col) {
-    const match = this.getCurrentTournamentMatch();
-    if (!match || match.status !== "active" || match.game_type !== "connect4") return;
-    if (match.game_state?.current_turn !== this.user.id) return;
-    this.sendAction("tournament_match_action", {
-      match_id: match.match_id,
-      sub_action: "move",
-      sub_data: { col: col }
-    });
-  }
-
-  makeMoveTournamentRPS(choice) {
-    const match = this.getCurrentTournamentMatch();
-    if (!match || match.status !== "active" || match.game_type !== "rps") return;
-    this.el.tourneyRpsBtns.forEach(btn => {
-      btn.classList.toggle("selected", btn.dataset.tourneyRps === choice);
-    });
-    this.sendAction("tournament_match_action", {
-      match_id: match.match_id,
-      sub_action: "pick",
-      sub_data: { choice: choice }
-    });
   }
 
   spawnFloatingCheer(name, emote) {

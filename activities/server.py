@@ -273,6 +273,8 @@ class ActivityServer:
                         elif action_name.startswith("tournament_"):
                             if session.tournament:
                                 await session.tournament.handle_action(p_id, action_name, action_payload)
+                                if action_name in ("tournament_start", "tournament_next_round", "tournament_next_match"):
+                                    session.sync_tournament_match()
                                 await session.broadcast_state()
                         else:
                             if action_name == "start":
@@ -282,6 +284,10 @@ class ActivityServer:
                             result = await session.game.handle_action(
                                 p_id, action_name, action_payload, broadcast_cb=session.broadcast_state
                             )
+                            # If active in tournament and match just completed, resolve tournament score
+                            if session.tournament and session.tournament.status == "active" and session.game.is_finished:
+                                winner = session.game.winner or "draw"
+                                await session.tournament.resolve_current_match(winner)
                             await session.broadcast_state()
 
                     elif msg_type == "chat":
