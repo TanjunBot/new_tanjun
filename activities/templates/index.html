@@ -282,6 +282,248 @@
         <button id="hubBtn" class="btn-secondary" type="button">🏠 Game Hub</button>
       </div>
     </section>
+
+    <!-- 4. Tournament Lobby Screen -->
+    <section id="tournamentLobbyView" class="lobby-section glass-panel" style="display: none;">
+      <div class="lobby-header-bar">
+        <button id="tourneyBackToHubBtn" class="btn-hub-back" type="button">◀ Zurück zum Hub</button>
+        <span class="lobby-count-badge" style="background-color: var(--discord-yellow); color: #1e1f22; font-weight: 800;">🏆 Voice-Turnier</span>
+      </div>
+
+      <h1 class="lobby-title">🏆 Tanjun Voice Cup</h1>
+      <p class="lobby-subtitle">Veranstalte ein spannendes Turnier mit allen Freunden im Sprachkanal!</p>
+
+      <!-- Host Settings (Readonly for non-host) -->
+      <div class="game-settings-container" id="tourneySettingsContainer">
+        <!-- Format Selection (Points vs KO) -->
+        <div class="settings-group">
+          <div class="difficulty-label">
+            <span>🎮 Turnier-Format</span>
+            <span id="tourneyFormatLabel" class="settings-active-label">Punkte-Mehrkampf (Party)</span>
+          </div>
+          <div class="diff-pills" id="tourneyFormatPills">
+            <div class="diff-pill active" data-tourney-format="points">🎖️ Punkte-Mehrkampf</div>
+            <div class="diff-pill" data-tourney-format="knockout">🥊 K.O.-System</div>
+          </div>
+        </div>
+
+        <!-- Match Execution Style (Showmatch vs Parallel) -->
+        <div class="settings-group">
+          <div class="difficulty-label">
+            <span>📺 Ablauf & Matches</span>
+            <span id="tourneyStyleLabel" class="settings-active-label">Showmatch (Nacheinander)</span>
+          </div>
+          <div class="diff-pills" id="tourneyStylePills">
+            <div class="diff-pill active" data-tourney-style="spectated">📺 Showmatch (Nacheinander)</div>
+            <div class="diff-pill" data-tourney-style="parallel">⚡ Gleichzeitig (Parallel)</div>
+          </div>
+        </div>
+
+        <!-- Game Selection (Pool vs Single vs Random) -->
+        <div class="settings-group">
+          <div class="difficulty-label">
+            <span>🎲 Spielauswahl</span>
+            <span id="tourneyGameLabel" class="settings-active-label">Vier Gewinnt</span>
+          </div>
+          <div class="diff-pills" id="tourneyGamePills">
+            <div class="diff-pill active" data-tourney-game="connect4">🔴 Vier Gewinnt</div>
+            <div class="diff-pill" data-tourney-game="tictactoe">❌ Tic-Tac-Toe</div>
+            <div class="diff-pill" data-tourney-game="rps">✊ Schere-Stein-Papier</div>
+            <div class="diff-pill" data-tourney-game="random">🎲 Zufall je Runde</div>
+          </div>
+        </div>
+
+        <!-- Rounds count (Only relevant for points format) -->
+        <div class="settings-group" id="tourneyRoundsGroup">
+          <div class="difficulty-label">
+            <span>🔄 Rundenanzahl</span>
+            <span id="tourneyRoundsLabel" class="settings-active-label">3 Runden</span>
+          </div>
+          <div class="diff-pills" id="tourneyRoundsPills">
+            <div class="diff-pill" data-tourney-rounds="2">2 Runden</div>
+            <div class="diff-pill active" data-tourney-rounds="3">3 Runden</div>
+            <div class="diff-pill" data-tourney-rounds="5">5 Runden</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connected Participants in Tournament -->
+      <div class="lobby-players-box">
+        <div class="lobby-players-header">
+          <span>Teilnehmer im Turnier</span>
+          <span id="tourneyPlayerCountBadge" class="lobby-count-badge">1/16</span>
+        </div>
+        <div id="tourneyPlayersList" class="lobby-players-list"></div>
+      </div>
+
+      <div id="tourneyLobbyStatusMsg" class="lobby-status-text"></div>
+
+      <button id="tourneyStartBtn" class="btn-primary" type="button">🏆 Turnier Starten</button>
+    </section>
+
+    <!-- 5. Tournament Arena Screen -->
+    <section id="tournamentArenaView" class="glass-panel" style="display: none; flex-direction: column;">
+      <!-- Tournament Header Bar -->
+      <div class="tourney-arena-header">
+        <div class="tourney-arena-meta">
+          <span id="tourneyRoundIndicator" class="tourney-round-pill">Runde 1/3</span>
+          <span id="tourneyGameIndicator" class="tourney-game-pill">🔴 Vier Gewinnt</span>
+          <span id="tourneyModeIndicator" class="tourney-mode-pill">Showmatch</span>
+        </div>
+        <button id="tourneyLeaderboardToggleBtn" class="btn-secondary btn-sm" type="button">📊 Tabelle</button>
+      </div>
+
+      <!-- Parallel Match Switcher (shown in parallel mode) -->
+      <div id="tourneyMatchSwitcher" class="tourney-match-switcher" style="display: none;">
+        <span class="tourney-switcher-title">Matches:</span>
+        <div id="tourneyMatchTabs" class="tourney-match-tabs"></div>
+      </div>
+
+      <!-- Duel Scoreboard / Stage Header -->
+      <div class="scoreboard tourney-scoreboard">
+        <div id="tourneyP1Card" class="player-card">
+          <div class="player-avatar-wrap">
+            <img id="tourneyP1Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="P1">
+            <div id="tourneyP1Tag" class="player-symbol-tag sym-x">P1</div>
+          </div>
+          <div>
+            <div id="tourneyP1Name" class="player-name">Spieler 1</div>
+            <div id="tourneyP1Score" class="player-score">0 Pkt</div>
+          </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div id="tourneyP2Card" class="player-card reverse">
+          <div class="player-avatar-wrap">
+            <img id="tourneyP2Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/1.png" alt="P2">
+            <div id="tourneyP2Tag" class="player-symbol-tag sym-o">P2</div>
+          </div>
+          <div>
+            <div id="tourneyP2Name" class="player-name">Spieler 2</div>
+            <div id="tourneyP2Score" class="player-score">0 Pkt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Status text -->
+      <div id="tourneyStatusBar" class="game-status-bar">
+        Match läuft...
+      </div>
+
+      <!-- Dynamic Tournament Board Stage -->
+      <div id="tourneyBoardStage" class="tourney-board-stage">
+        <!-- Re-used or mounted board elements -->
+        <div id="tourneyTttBoard" class="ttt-board" style="display: none;">
+          <div class="cell" data-tourney-ttt="0"></div>
+          <div class="cell" data-tourney-ttt="1"></div>
+          <div class="cell" data-tourney-ttt="2"></div>
+          <div class="cell" data-tourney-ttt="3"></div>
+          <div class="cell" data-tourney-ttt="4"></div>
+          <div class="cell" data-tourney-ttt="5"></div>
+          <div class="cell" data-tourney-ttt="6"></div>
+          <div class="cell" data-tourney-ttt="7"></div>
+          <div class="cell" data-tourney-ttt="8"></div>
+        </div>
+
+        <div id="tourneyC4Board" class="c4-container" style="display: none;">
+          <div id="tourneyC4DropRow" class="c4-drop-row">
+            <!-- Drop buttons built dynamically -->
+          </div>
+          <div id="tourneyC4Grid" class="c4-grid">
+            <!-- Cells built dynamically -->
+          </div>
+        </div>
+
+        <div id="tourneyRpsBoard" class="rps-container" style="display: none;">
+          <div id="tourneyRpsRoundBadge" class="rps-round-badge">Runde 1</div>
+          <div class="rps-arena">
+            <div class="rps-duel-display">
+              <div class="rps-fighter">
+                <span id="tourneyRpsP1Pick" class="rps-fighter-pick">❓</span>
+                <span id="tourneyRpsP1Label" style="font-size: 0.8rem; font-weight:700;">Spieler 1</span>
+              </div>
+              <span style="font-size: 1.2rem; font-weight: 800; color: var(--text-muted);">VS</span>
+              <div class="rps-fighter">
+                <span id="tourneyRpsP2Pick" class="rps-fighter-pick">❓</span>
+                <span id="tourneyRpsP2Label" style="font-size: 0.8rem; font-weight:700;">Spieler 2</span>
+              </div>
+            </div>
+            <div id="tourneyRpsRoundResult" class="rps-result-text">Wähle deine Geste!</div>
+          </div>
+          <div id="tourneyRpsChoices" class="rps-choices">
+            <button class="rps-btn" data-tourney-rps="rock" type="button"><span class="rps-emoji">✊</span><span class="rps-name">Stein</span></button>
+            <button class="rps-btn" data-tourney-rps="paper" type="button"><span class="rps-emoji">✋</span><span class="rps-name">Papier</span></button>
+            <button class="rps-btn" data-tourney-rps="scissors" type="button"><span class="rps-emoji">✌️</span><span class="rps-name">Schere</span></button>
+            <button class="rps-btn rps-extended" data-tourney-rps="lizard" type="button" style="display: none;"><span class="rps-emoji">🦎</span><span class="rps-name">Echse</span></button>
+            <button class="rps-btn rps-extended" data-tourney-rps="spock" type="button" style="display: none;"><span class="rps-emoji">🖖</span><span class="rps-name">Spock</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spectator Cheer Bar -->
+      <div class="tourney-cheer-bar">
+        <span class="tourney-cheer-label">Jubeln & Anfeuern:</span>
+        <div class="tourney-cheer-buttons">
+          <button class="tourney-cheer-btn" data-tourney-emote="🎉" type="button">🎉</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="🔥" type="button">🔥</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="👏" type="button">👏</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="😱" type="button">😱</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="💀" type="button">💀</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="🏆" type="button">🏆</button>
+        </div>
+      </div>
+
+      <!-- Floating Cheers Overlay Area -->
+      <div id="tourneyCheerOverlay" class="tourney-cheer-overlay"></div>
+
+      <!-- Round End Controls (for Host) -->
+      <div id="tourneyRoundEndControls" class="tourney-round-end-box" style="display: none;">
+        <div id="tourneyRoundEndMsg" class="tourney-round-end-msg">Runde abgeschlossen!</div>
+        <button id="tourneyNextRoundBtn" class="btn-primary" type="button">▶ Nächste Runde starten</button>
+      </div>
+
+      <!-- Live Leaderboard Drawer / Modal -->
+      <div id="tourneyLeaderboardDrawer" class="tourney-drawer" style="display: none;">
+        <div class="tourney-drawer-header">
+          <span class="tourney-drawer-title">📊 Live Rangliste</span>
+          <button id="tourneyLeaderboardCloseBtn" class="btn-icon" type="button">✕</button>
+        </div>
+        <div id="tourneyLiveLeaderboardList" class="tourney-leaderboard-list"></div>
+      </div>
+
+      <!-- Tournament Controls Footer -->
+      <div class="controls-footer">
+        <button id="tourneyEndEarlyBtn" class="btn-secondary" type="button" style="color: var(--discord-red);">Turnier beenden</button>
+        <button id="tourneyLeaveBtn" class="btn-secondary" type="button">🏠 Hub</button>
+      </div>
+    </section>
+
+    <!-- 6. Tournament Podium / Victory Screen -->
+    <section id="tournamentPodiumView" class="glass-panel" style="display: none; flex-direction: column; align-items: center;">
+      <div class="podium-banner">
+        <div class="podium-trophy">🏆</div>
+        <h1 class="podium-title">Turnier Beendet!</h1>
+        <p class="podium-subtitle">Hier sind die glorreichen Sieger des Tanjun Voice Cups:</p>
+      </div>
+
+      <!-- Top 3 Podium Visual -->
+      <div class="podium-container" id="podiumTop3">
+        <!-- Rendered dynamically: 2nd place, 1st place, 3rd place -->
+      </div>
+
+      <!-- Full Final Leaderboard Table -->
+      <div class="podium-table-wrap">
+        <h3 class="podium-table-title">Gesamtrangliste</h3>
+        <div id="tourneyFinalTable" class="tourney-final-table"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="controls-footer" style="width: 100%; margin-top: 20px;">
+        <button id="tourneyNewCupBtn" class="btn-primary" type="button">🔄 Neues Turnier</button>
+        <button id="tourneyPodiumHubBtn" class="btn-secondary" type="button">🏠 Zurück zum Hub</button>
+      </div>
+    </section>
   </main>
 
   <script type="module" src="/static/js/activity.js"></script>

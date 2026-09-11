@@ -209,6 +209,11 @@ class ActivityServer:
                             )
                             session.game.add_player(player)
 
+                        if session.tournament:
+                            current_p = session.game.players.get(user_id)
+                            if current_p:
+                                session.tournament.add_participant(current_p)
+
                         await ws.send_json({
                             "type": "joined",
                             "user_id": user_id,
@@ -230,12 +235,17 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name == "return_to_hub":
                             session.is_hub = True
+                            session.tournament = None
                             if hasattr(session.game, "reset"):
                                 await session.game.reset()
                             await session.broadcast_state()
                         elif action_name == "update_settings":
                             session.lobby_settings.update(action_payload)
                             await session.broadcast_state()
+                        elif action_name.startswith("tournament_"):
+                            if session.tournament:
+                                await session.tournament.handle_action(p_id, action_name, action_payload)
+                                await session.broadcast_state()
                         else:
                             if action_name == "start":
                                 full_payload = dict(session.lobby_settings)
@@ -259,6 +269,8 @@ class ActivityServer:
             if user_id and user_id in session.sockets:
                 del session.sockets[user_id]
                 session.game.remove_player(user_id)
+                if session.tournament:
+                    session.tournament.remove_participant(user_id)
                 await session.broadcast_state()
 
         return ws

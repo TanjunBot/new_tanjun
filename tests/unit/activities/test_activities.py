@@ -238,8 +238,173 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(pick_res["round_result"]["winner"], "user_host")
         self.assertEqual(game.scores["user_host"], 1)
 
+    async def test_tournament_points_format_lifecycle(self):
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="cup_1", host=self.host)
+        self.assertEqual(tourney.status, "lobby")
+        self.assertEqual(len(tourney.participants), 1)
+
+        # 1. Starting with 1 player fails
+        res_fail = await tourney.handle_action("user_host", "tournament_start", {})
+        self.assertIn("error", res_fail)
+
+        # 2. Add players: 3 players total (to verify odd player Bye)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player Two")
+        p3 = Player(user_id="user_p3", username="P3", display_name="Player Three")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        self.assertEqual(len(tourney.participants), 3)
+
+        # 3. Update settings
+        settings_res = await tourney.handle_action("user_host", "tournament_update_settings", {
+            "format": "points",
+            "match_style": "spectated",
+            "selected_game": "tictactoe",
+            "total_rounds": 2,
+            "points_win": 3,
+            "points_draw": 1
+        })
+        self.assertEqual(settings_res["status"], "settings_updated")
+        self.assertEqual(tourney.selected_game, "tictactoe")
+        self.assertEqual(tourney.total_rounds, 2)
+
+        # 4. Start tournament
+        start_res = await tourney.handle_action("user_host", "tournament_start", {})
+        self.assertEqual(start_res["status"], "tournament_started")
+        self.assertEqual(tourney.status, "active")
+        self.assertEqual(tourney.current_round, 1)
+        self.assertEqual(len(tourney.active_matches), 2)
+
+        # One match is a duel, one match is a bye
+        duel_match = next(m for m in tourney.active_matches if not m.is_bye)
+        bye_match = next(m for m in tourney.active_matches if m.is_bye)
+
+        self.assertEqual(bye_match.status, "finished")
+        self.assertEqual(bye_match.player1.score, 1)  # Points for bye
+        self.assertEqual(duel_match.status, "active")
+        self.assertEqual(duel_match.game_type, "tictactoe")
+
+        # 5. Spectator cheering
+        cheer_res = await tourney.handle_action("user_p3", "tournament_cheer", {"emote": "🔥"})
+        self.assertEqual(cheer_res["status"], "cheered")
+
+        # 6. Play the duel match via tournament_match_action
+        p1_id = duel_match.player1.user_id
+        p2_id = duel_match.player2.user_id
+
+        # Make moves: P1 takes 0, 1, 2 for a win
+        await tourney.handle_action(p1_id, "tournament_match_action", {
+            "match_id": duel_match.match_id,
+            "sub_action": "move",
+            "sub_data": {"cell": 0}
+        })
+        await tourney.handle_action(p2_id, "tournament_match_action", {
+            "match_id": duel_match.match_id,
+            "sub_action": "move",
+            "sub_data": {"cell": 3}
+        })
+        await tourney.handle_action(p1_id, "tournament_match_action", {
+            "match_id": duel_match.match_id,
+            "sub_action": "move",
+            "sub_data": {"cell": 1}
+        })
+        await tourney.handle_action(p2_id, "tournament_match_action", {
+            "match_id": duel_match.match_id,
+            "sub_action": "move",
+            "sub_data": {"cell": 4}
+        })
+        m_win = await tourney.handle_action(p1_id, "tournament_match_action", {
+            "match_id": duel_match.match_id,
+            "sub_action": "move",
+            "sub_data": {"cell": 2}
+        })
+        self.assertEqual(duel_match.status, "finished")
+        self.assertEqual(duel_match.winner_id, p1_id)
+        self.assertEqual(duel_match.player1.score, 3)
+
+        # Round 1 finished -> tournament enters round_end
+        self.assertEqual(tourney.status, "round_end")
+
+        # 7. Start round 2
+        next_rnd = await tourney.handle_action("user_host", "tournament_next_round", {})
+        self.assertEqual(next_rnd["status"], "next_round_started")
+        self.assertEqual(tourney.current_round, 2)
+
+        # 8. Check leaderboard
+        lb = tourney.get_leaderboard()
+        self.assertEqual(len(lb), 3)
+        self.assertGreaterEqual(lb[0]["score"], lb[1]["score"])
+
+    async def test_tournament_knockout_lifecycle(self):
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="cup_ko", host=self.host)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player Two")
+        p3 = Player(user_id="user_p3", username="P3", display_name="Player Three")
+        p4 = Player(user_id="user_p4", username="P4", display_name="Player Four")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        tourney.add_participant(p4)
+
+        # Setup knockout mode with parallel execution
+        await tourney.handle_action("user_host", "tournament_update_settings", {
+            "format": "knockout",
+            "match_style": "parallel",
+            "selected_game": "rps"
+        })
+        await tourney.handle_action("user_host", "tournament_start", {})
+        self.assertEqual(tourney.status, "active")
+        self.assertEqual(tourney.format, "knockout")
+        self.assertEqual(len(tourney.active_matches), 2)
+
+        # Resolve match 1: player 1 wins, player 2 eliminated
+        m1 = tourney.active_matches[0]
+        await tourney._resolve_match(m1, m1.player1.user_id)
+        self.assertTrue(m1.player2.is_eliminated)
+
+        # Resolve match 2: player 1 wins, player 2 eliminated
+        m2 = tourney.active_matches[1]
+        await tourney._resolve_match(m2, m2.player1.user_id)
+        self.assertTrue(m2.player2.is_eliminated)
+
+        # Semifinals completed -> status is round_end
+        self.assertEqual(tourney.status, "round_end")
+
+        # Advance to finals (round 2)
+        await tourney.handle_action("user_host", "tournament_next_round", {})
+        self.assertEqual(tourney.current_round, 2)
+        self.assertEqual(len(tourney.active_matches), 1)
+
+        final_match = tourney.active_matches[0]
+        final_winner = final_match.player1.user_id
+        await tourney._resolve_match(final_match, final_winner)
+
+        # Tournament is now finished
+        self.assertEqual(tourney.status, "finished")
+        leaderboard = tourney.get_leaderboard()
+        self.assertEqual(leaderboard[0]["user_id"], final_winner)
+
+    async def test_session_manager_tournament_mode(self):
+        # Create a session and switch into tournament mode
+        session = session_manager.create_session("hub", host=self.host, session_id="test_hub_to_tourney")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+
+        # Switch to tournament
+        session.switch_game("tournament")
+        self.assertIsNotNone(session.tournament)
+        self.assertIn("user_host", session.tournament.participants)
+        self.assertIn("user_guest", session.tournament.participants)
+
+        full_state = session.get_full_state(for_user_id="user_host")
+        self.assertIn("tournament", full_state)
+        self.assertEqual(full_state["tournament"]["status"], "lobby")
+        self.assertEqual(full_state["tournament"]["participants_count"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()
+
 
 

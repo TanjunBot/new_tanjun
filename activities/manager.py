@@ -23,6 +23,7 @@ class GameSession:
         self.session_id: str = session_id
         self.game: BaseGame = game
         self.is_hub: bool = is_hub
+        self.tournament: Any = None
         self.sockets: Dict[str, web.WebSocketResponse] = {}  # user_id -> ws
         self.created_at: float = asyncio.get_event_loop().time()
         self.last_activity: float = self.created_at
@@ -37,7 +38,21 @@ class GameSession:
             "variation": "classic"
         }
 
+    def start_tournament_mode(self) -> Any:
+        from activities.tournament import Tournament
+        self.tournament = Tournament(session_id=self.session_id, host=self.game.host)
+        for pid, player in self.game.players.items():
+            if not player.is_bot:
+                self.tournament.add_participant(player)
+        self.is_hub = False
+        return self.tournament
+
     def switch_game(self, game_type: str) -> BaseGame:
+        if game_type == "tournament":
+            self.start_tournament_mode()
+            return self.game
+
+        self.tournament = None
         cls = session_manager.get_game_class(game_type)
         if not cls:
             raise ValueError(f"Unknown game type: {game_type}")
@@ -57,6 +72,7 @@ class GameSession:
         state["is_hub"] = self.is_hub
         state["available_games"] = session_manager.get_supported_games()
         state["lobby_settings"] = self.lobby_settings
+        state["tournament"] = self.tournament.get_state(for_user_id=for_user_id) if self.tournament else None
         return state
 
     async def broadcast(self, message: Dict[str, Any]) -> None:
@@ -142,6 +158,15 @@ class SessionManager:
                 "min_players": 1,
                 "max_players": 2,
                 "badge": "Action"
+            },
+            {
+                "type": "tournament",
+                "name": "Voice-Turnier",
+                "description": "Episches Turnier für den Sprachkanal! Punkte-Mehrkampf oder K.O.-Modus mit Live-Zuschauern & Jubel.",
+                "icon": "🏆",
+                "min_players": 2,
+                "max_players": 16,
+                "badge": "Turnier / Party"
             }
         ]
 
@@ -156,7 +181,8 @@ class SessionManager:
             )
 
         is_hub = (game_type == "hub")
-        actual_game_type = "tictactoe" if is_hub else game_type
+        is_tournament = (game_type == "tournament")
+        actual_game_type = "tictactoe" if (is_hub or is_tournament) else game_type
 
         cls = self.get_game_class(actual_game_type)
         if not cls:
@@ -164,6 +190,8 @@ class SessionManager:
 
         game_instance = cls(session_id=sid, host=host)
         session = GameSession(session_id=sid, game=game_instance, is_hub=is_hub)
+        if is_tournament:
+            session.start_tournament_mode()
         self._sessions[sid] = session
         return session
 
