@@ -514,6 +514,121 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(final_state["last_round_result"]["picks"]["user_host"], "scissors")
         self.assertIn(final_state["last_round_result"]["picks"]["bot_tanjun"], ["rock", "paper", "scissors"])
 
+    async def test_tournament_mehrkampf_playlist_progression(self):
+        """Verify that Mehrkampf (playlist) mode cycles through disciplines per round."""
+        from activities.tournament import Tournament, TournamentRewards
+
+        session = session_manager.create_session("hub", host=self.host, session_id="test_mehrkampf")
+        tourney: Tournament = session.create_tournament(host=self.host)
+        p2 = Player(user_id="player_bob", username="Bob", display_name="Bob")
+        tourney.add_participant(p2)
+
+        # Configure playlist disciplines: Tic-Tac-Toe -> Connect4 -> RPS
+        tourney.game_selection = "playlist"
+        tourney.disciplines = ["tictactoe", "connect4", "rps"]
+        tourney.total_rounds = 3
+
+        # Round 1: should be tictactoe
+        await tourney.start_tournament()
+        self.assertEqual(tourney.current_round, 1)
+        self.assertEqual(tourney.active_matches[0].game_type, "tictactoe")
+
+        # Complete Round 1: host wins
+        m1 = tourney.active_matches[0]
+        await tourney.resolve_current_match("user_host")
+        self.assertEqual(tourney.status, "round_end")
+
+        # Round 2: should be connect4
+        await tourney.start_next_round()
+        self.assertEqual(tourney.current_round, 2)
+        self.assertEqual(tourney.active_matches[0].game_type, "connect4")
+
+        # Complete Round 2: bob wins
+        await tourney.resolve_current_match("player_bob")
+        self.assertEqual(tourney.status, "round_end")
+
+        # Round 3: should be rps
+        await tourney.start_next_round()
+        self.assertEqual(tourney.current_round, 3)
+        self.assertEqual(tourney.active_matches[0].game_type, "rps")
+
+        # Complete Round 3: host wins
+        await tourney.resolve_current_match("user_host")
+        self.assertEqual(tourney.status, "finished")
+
+        # Final podium check: Host has 6 pts (2 wins), Bob has 3 pts (1 win)
+        podium = tourney.get_podium()
+        self.assertEqual(podium[0]["user_id"], "user_host")
+        self.assertEqual(podium[0]["score"], 6)
+        self.assertEqual(podium[1]["user_id"], "player_bob")
+        self.assertEqual(podium[1]["score"], 3)
+
+    async def test_tournament_rewards_and_finish_callback(self):
+        """Verify rewards data structure and on_finished_callback execution."""
+        from activities.tournament import Tournament, TournamentRewards
+
+        tourney = Tournament(session_id="test_rew_cup", host=self.host)
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        tourney.add_participant(p2)
+
+        tourney.rewards = TournamentRewards(
+            guild_id="123456789",
+            channel_id="987654321",
+            xp_1st=1000,
+            xp_2nd=500,
+            can_grant_xp=True,
+            can_grant_role=True,
+            role_id="112233"
+        )
+        tourney.total_rounds = 1
+
+        callback_called = []
+        async def mock_finish_callback(t):
+            callback_called.append(t.title)
+
+        tourney.on_finished_callback = mock_finish_callback
+
+        await tourney.start_tournament("connect4")
+        m1 = tourney.active_matches[0]
+        await tourney._resolve_match(m1, "user_host")
+
+        self.assertEqual(tourney.status, "finished")
+        self.assertEqual(len(callback_called), 1)
+        self.assertEqual(callback_called[0], "Tanjun Cup")
+        self.assertTrue(tourney.rewards.can_grant_xp)
+        self.assertEqual(tourney.rewards.xp_1st, 1000)
+
+    async def test_tournament_match_transition_state(self):
+        """Verify that when multiple matches exist, transition_info is populated and advance clears it."""
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="test_transition", host=self.host)
+        p2 = Player(user_id="p2", username="P2", display_name="P2")
+        p3 = Player(user_id="p3", username="P3", display_name="P3")
+        p4 = Player(user_id="p4", username="P4", display_name="P4")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        tourney.add_participant(p4)
+
+        # 4 participants -> 2 matches in round 1
+        await tourney.start_tournament("connect4")
+        self.assertEqual(len(tourney.active_matches), 2)
+        self.assertIsNone(tourney.transition_info)
+
+        # Match 1 completes -> transition_info is set for Match 2
+        m1 = tourney.active_matches[0]
+        await tourney.resolve_current_match(m1.player1.user_id)
+        self.assertEqual(tourney.status, "active")
+        self.assertIsNotNone(tourney.transition_info)
+        self.assertTrue(tourney.transition_info["active"])
+        self.assertEqual(tourney.transition_info["seconds_remaining"], 5)
+
+        # Advance to match 2 -> transition_info cleared, match 2 is active
+        m2 = await tourney.advance_to_next_match()
+        self.assertIsNotNone(m2)
+        self.assertEqual(m2.status, "active")
+        self.assertIsNone(tourney.transition_info)
+
 
 if __name__ == "__main__":
     unittest.main()

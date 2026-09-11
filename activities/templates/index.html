@@ -53,6 +53,21 @@
       </div>
     </div>
 
+    <!-- Match Transition Overlay / Countdown Banner -->
+    <div id="tourneyMatchTransitionBanner" class="tourney-transition-banner glass-panel" style="display: none;">
+      <div class="tourney-transition-left">
+        <span class="tourney-transition-icon">⚔️</span>
+        <div class="tourney-transition-info">
+          <div class="tourney-transition-title" id="tourneyTransitionTitle">Duell beendet!</div>
+          <div class="tourney-transition-subtitle" id="tourneyTransitionSubtitle">Nächstes Match: Spieler 1 vs Spieler 2</div>
+        </div>
+      </div>
+      <div class="tourney-transition-right">
+        <span class="tourney-countdown-badge" id="tourneyTransitionCountdown">5s</span>
+        <button id="tourneyTransitionSkipBtn" class="btn-primary btn-sm" type="button" style="display: none;">▶ Jetzt starten</button>
+      </div>
+    </div>
+
     <!-- 1. Game Hub Screen -->
     <section id="hubView" class="hub-section glass-panel">
       <div class="hub-badge">🎮 Tanjun Game Hub</div>
@@ -369,11 +384,12 @@
         <!-- Game Selection (Pool vs Single vs Random) -->
         <div class="settings-group">
           <div class="difficulty-label">
-            <span>🎲 Spielauswahl</span>
-            <span id="tourneyGameLabel" class="settings-active-label">Vier Gewinnt</span>
+            <span>🎲 Disziplinen & Spiele</span>
+            <span id="tourneyGameLabel" class="settings-active-label">🎖️ Mehrkampf (Alle Spiele)</span>
           </div>
           <div class="diff-pills" id="tourneyGamePills">
-            <div class="diff-pill active" data-tourney-game="connect4">🔴 Vier Gewinnt</div>
+            <div class="diff-pill active" data-tourney-game="playlist">🎖️ Mehrkampf (Alle Spiele)</div>
+            <div class="diff-pill" data-tourney-game="connect4">🔴 Vier Gewinnt</div>
             <div class="diff-pill" data-tourney-game="tictactoe">❌ Tic-Tac-Toe</div>
             <div class="diff-pill" data-tourney-game="rps">✊ Schere-Stein-Papier</div>
             <div class="diff-pill" data-tourney-game="random">🎲 Zufall je Runde</div>
@@ -391,6 +407,15 @@
             <div class="diff-pill active" data-tourney-rounds="3">3 Runden</div>
             <div class="diff-pill" data-tourney-rounds="5">5 Runden</div>
           </div>
+        </div>
+
+        <!-- Rewards Status Box -->
+        <div id="tourneyRewardsBox" class="tourney-rewards-box" style="display: none;">
+          <div class="tourney-rewards-header">
+            <span>🎁 Server-Belohnungen für Sieger</span>
+            <span id="tourneyRewardsBadge" class="tourney-rewards-badge">Aktiv</span>
+          </div>
+          <div id="tourneyRewardsContent" class="tourney-rewards-content"></div>
         </div>
       </div>
 
@@ -478,6 +503,12 @@
         <div class="podium-trophy">🏆</div>
         <h1 class="podium-title">Turnier Beendet!</h1>
         <p class="podium-subtitle">Hier sind die glorreichen Sieger des Tanjun Voice Cups:</p>
+      </div>
+
+      <!-- Rewards Celebration Banner on Podium -->
+      <div id="podiumRewardsBanner" class="podium-rewards-banner glass-panel" style="display: none;">
+        <span class="podium-rewards-icon">🎁</span>
+        <div id="podiumRewardsText" class="podium-rewards-text">Belohnungen vergeben!</div>
       </div>
 
       <!-- Top 3 Podium Visual -->

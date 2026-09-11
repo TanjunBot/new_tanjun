@@ -27,6 +27,7 @@ class GameSession:
         self.sockets: Dict[str, web.WebSocketResponse] = {}  # user_id -> ws
         self.created_at: float = asyncio.get_event_loop().time()
         self.last_activity: float = self.created_at
+        self._transition_task: Optional[asyncio.Task] = None
         self.lobby_settings: Dict[str, Any] = {
             "mode": "pvp",
             "first_turn": "host",
@@ -37,6 +38,36 @@ class GameSession:
             "target_wins": 3,
             "variation": "classic"
         }
+
+    def schedule_match_transition(self, delay: float = 5.0) -> None:
+        if self._transition_task and not self._transition_task.done():
+            self._transition_task.cancel()
+        self._transition_task = asyncio.create_task(self._run_match_transition(delay))
+
+    async def _run_match_transition(self, delay: float = 5.0) -> None:
+        try:
+            for remaining in range(int(delay), 0, -1):
+                if not self.tournament or self.tournament.status != "active":
+                    return
+                if self.tournament.transition_info:
+                    self.tournament.transition_info["seconds_remaining"] = remaining
+                await self.broadcast_state()
+                await asyncio.sleep(1.0)
+
+            if self.tournament and self.tournament.status == "active":
+                next_m = await self.tournament.advance_to_next_match()
+                if next_m:
+                    self.sync_tournament_match()
+                await self.broadcast_state()
+        except asyncio.CancelledError:
+            pass
+        except Exception as e:
+            logger.error("Error running match transition: %s", e)
+
+    def cancel_match_transition(self) -> None:
+        if self._transition_task and not self._transition_task.done():
+            self._transition_task.cancel()
+            self._transition_task = None
 
     def create_tournament(self, host: Player) -> Any:
         from activities.tournament import Tournament
@@ -102,8 +133,7 @@ class GameSession:
         self.game.players = new_players
         self.game.spectators = new_spectators
         self.is_hub = False
-        if not self.game.is_started or self.game.is_finished:
-            self.game.start_game()
+        self.game.start_game()
 
     def switch_game(self, game_type: str) -> BaseGame:
         if game_type == "tournament":

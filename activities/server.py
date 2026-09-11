@@ -272,8 +272,10 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name.startswith("tournament_"):
                             if session.tournament:
+                                if action_name in ("tournament_next_match", "tournament_advance_match"):
+                                    session.cancel_match_transition()
                                 await session.tournament.handle_action(p_id, action_name, action_payload)
-                                if action_name in ("tournament_start", "tournament_next_round", "tournament_next_match"):
+                                if action_name in ("tournament_start", "tournament_next_round", "tournament_next_match", "tournament_advance_match"):
                                     session.sync_tournament_match()
                                 await session.broadcast_state()
                         else:
@@ -288,6 +290,10 @@ class ActivityServer:
                             if session.tournament and session.tournament.status == "active" and session.game.is_finished:
                                 winner = session.game.winner or "draw"
                                 await session.tournament.resolve_current_match(winner)
+                                if session.tournament.transition_info:
+                                    session.schedule_match_transition(delay=5.0)
+                                elif session.tournament.status == "round_end":
+                                    session.sync_tournament_match()
                             await session.broadcast_state()
 
                     elif msg_type == "chat":

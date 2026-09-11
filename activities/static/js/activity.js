@@ -232,8 +232,22 @@ class TanjunActivityClient {
       tourneyLobbyStatusMsg: document.getElementById("tourneyLobbyStatusMsg"),
       tourneyStartBtn: document.getElementById("tourneyStartBtn"),
 
+      // Match Transition Banner Elements
+      tourneyMatchTransitionBanner: document.getElementById("tourneyMatchTransitionBanner"),
+      tourneyTransitionTitle: document.getElementById("tourneyTransitionTitle"),
+      tourneyTransitionSubtitle: document.getElementById("tourneyTransitionSubtitle"),
+      tourneyTransitionCountdown: document.getElementById("tourneyTransitionCountdown"),
+      tourneyTransitionSkipBtn: document.getElementById("tourneyTransitionSkipBtn"),
+
+      // Rewards Box Elements
+      tourneyRewardsBox: document.getElementById("tourneyRewardsBox"),
+      tourneyRewardsBadge: document.getElementById("tourneyRewardsBadge"),
+      tourneyRewardsContent: document.getElementById("tourneyRewardsContent"),
+
       // Tournament Podium Elements
       podiumTop3: document.getElementById("podiumTop3"),
+      podiumRewardsBanner: document.getElementById("podiumRewardsBanner"),
+      podiumRewardsText: document.getElementById("podiumRewardsText"),
       tourneyFinalTable: document.getElementById("tourneyFinalTable"),
       tourneyNewCupBtn: document.getElementById("tourneyNewCupBtn"),
       tourneyPodiumHubBtn: document.getElementById("tourneyPodiumHubBtn")
@@ -418,8 +432,10 @@ class TanjunActivityClient {
         if (!this.isTournamentHost()) return;
         this.el.tourneyGamePills.forEach(p => p.classList.remove("active"));
         pill.classList.add("active");
-        const val = pill.dataset.tourneyGame || "connect4";
-        if (val === "random") {
+        const val = pill.dataset.tourneyGame || "playlist";
+        if (val === "playlist") {
+          this.selectedTourneyGameSelection = "playlist";
+        } else if (val === "random") {
           this.selectedTourneyGameSelection = "random";
         } else {
           this.selectedTourneyGameSelection = "host_choice";
@@ -447,6 +463,14 @@ class TanjunActivityClient {
       this.el.tourneyStartBtn.addEventListener("click", () => {
         if (!this.isTournamentHost()) return;
         this.sendAction("tournament_start", { selected_game: this.selectedTourneyGame });
+      });
+    }
+
+    // Match Transition Skip Button
+    if (this.el.tourneyTransitionSkipBtn) {
+      this.el.tourneyTransitionSkipBtn.addEventListener("click", () => {
+        if (!this.isTournamentHost()) return;
+        this.sendAction("tournament_advance_match");
       });
     }
 
@@ -1105,6 +1129,33 @@ class TanjunActivityClient {
         if (this.el.tournamentHud) this.el.tournamentHud.style.display = "flex";
         this.renderTournamentHud(tourney);
 
+        // Render Match Transition Countdown Banner
+        if (tourney.transition_info && tourney.transition_info.active) {
+          if (this.el.tourneyMatchTransitionBanner) {
+            this.el.tourneyMatchTransitionBanner.style.display = "flex";
+            const info = tourney.transition_info;
+            const gameNames = { connect4: "Vier Gewinnt", tictactoe: "Tic-Tac-Toe", rps: "Schere-Stein-Papier" };
+            const nextGameStr = gameNames[info.next_game] || info.next_game || "";
+            if (this.el.tourneyTransitionTitle) {
+              const prevW = info.prev_winner === "draw" ? "Unentschieden" : (info.prev_winner ? `Sieger: ${info.prev_winner}` : "Duell beendet");
+              this.el.tourneyTransitionTitle.textContent = `🎉 ${prevW}!`;
+            }
+            if (this.el.tourneyTransitionSubtitle) {
+              this.el.tourneyTransitionSubtitle.textContent = `Nächstes Duell: ${info.next_p1} vs ${info.next_p2} (${nextGameStr})`;
+            }
+            if (this.el.tourneyTransitionCountdown) {
+              this.el.tourneyTransitionCountdown.textContent = `${info.seconds_remaining || 5}s`;
+            }
+            if (this.el.tourneyTransitionSkipBtn) {
+              this.el.tourneyTransitionSkipBtn.style.display = this.isTournamentHost() ? "inline-block" : "none";
+            }
+          }
+        } else {
+          if (this.el.tourneyMatchTransitionBanner) {
+            this.el.tourneyMatchTransitionBanner.style.display = "none";
+          }
+        }
+
         if (this.el.gameView) this.el.gameView.style.display = "block";
         this.renderGame(state);
 
@@ -1121,6 +1172,7 @@ class TanjunActivityClient {
 
         return;
       } else if (tourney.status === "finished") {
+        if (this.el.tourneyMatchTransitionBanner) this.el.tourneyMatchTransitionBanner.style.display = "none";
         if (this.el.tournamentHud) this.el.tournamentHud.style.display = "none";
         if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "none";
         if (this.el.gameView) this.el.gameView.style.display = "none";
@@ -1131,6 +1183,7 @@ class TanjunActivityClient {
       }
     }
 
+    if (this.el.tourneyMatchTransitionBanner) this.el.tourneyMatchTransitionBanner.style.display = "none";
     if (this.el.tournamentHud) this.el.tournamentHud.style.display = "none";
     if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "none";
     if (this.el.tournamentPodiumView) this.el.tournamentPodiumView.style.display = "none";
@@ -1480,7 +1533,7 @@ class TanjunActivityClient {
     this.selectedTourneyFormat = tourney.format || "points";
     this.selectedTourneyStyle = tourney.match_style || "spectated";
     this.selectedTourneyGame = tourney.selected_game || "connect4";
-    this.selectedTourneyGameSelection = tourney.game_selection || "host_choice";
+    this.selectedTourneyGameSelection = tourney.game_selection || "playlist";
     this.selectedTourneyRounds = tourney.total_rounds || 3;
 
     // Update Pills
@@ -1499,7 +1552,7 @@ class TanjunActivityClient {
     });
 
     this.el.tourneyGamePills.forEach(p => {
-      const key = this.selectedTourneyGameSelection === "random" ? "random" : this.selectedTourneyGame;
+      const key = this.selectedTourneyGameSelection === "playlist" ? "playlist" : (this.selectedTourneyGameSelection === "random" ? "random" : this.selectedTourneyGame);
       const active = p.dataset.tourneyGame === key;
       p.classList.toggle("active", active);
       p.classList.toggle("disabled", !isHost);
@@ -1515,6 +1568,38 @@ class TanjunActivityClient {
       p.classList.toggle("disabled", !isHost);
       if (active && this.el.tourneyRoundsLabel) this.el.tourneyRoundsLabel.textContent = p.textContent;
     });
+
+    // Render Rewards Box
+    if (this.el.tourneyRewardsBox && this.el.tourneyRewardsContent) {
+      const rew = tourney.rewards;
+      if (rew && (rew.can_grant_xp || rew.can_grant_role)) {
+        this.el.tourneyRewardsBox.style.display = "block";
+        if (this.el.tourneyRewardsBadge) {
+          this.el.tourneyRewardsBadge.textContent = "Server-Event Aktiv";
+          this.el.tourneyRewardsBadge.className = "tourney-rewards-badge active";
+        }
+        let rewHtml = `<div class="tourney-rewards-list">`;
+        if (rew.can_grant_xp) {
+          if (rew.xp_1st > 0) rewHtml += `<div class="tourney-reward-pill">🥇 +${rew.xp_1st.toLocaleString()} XP</div>`;
+          if (rew.xp_2nd > 0) rewHtml += `<div class="tourney-reward-pill">🥈 +${rew.xp_2nd.toLocaleString()} XP</div>`;
+          if (rew.xp_3rd > 0) rewHtml += `<div class="tourney-reward-pill">🥉 +${rew.xp_3rd.toLocaleString()} XP</div>`;
+        }
+        if (rew.can_grant_role && (rew.role_name || rew.role_id)) {
+          rewHtml += `<div class="tourney-reward-pill role-pill">👑 Rolle: @${rew.role_name || "Champion"}</div>`;
+        }
+        rewHtml += `</div>`;
+        this.el.tourneyRewardsContent.innerHTML = rewHtml;
+      } else if (rew && rew.guild_id) {
+        this.el.tourneyRewardsBox.style.display = "block";
+        if (this.el.tourneyRewardsBadge) {
+          this.el.tourneyRewardsBadge.textContent = "Fun-Modus";
+          this.el.tourneyRewardsBadge.className = "tourney-rewards-badge";
+        }
+        this.el.tourneyRewardsContent.innerHTML = `<span style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">Turnier um Ruhm & Ehre (Keine Server-Belohnungen konfiguriert).</span>`;
+      } else {
+        this.el.tourneyRewardsBox.style.display = "none";
+      }
+    }
 
     // Render Participant List
     if (this.el.tourneyPlayersList) {
@@ -1603,7 +1688,12 @@ class TanjunActivityClient {
         tictactoe: "❌ Tic-Tac-Toe",
         rps: "✊ Schere-Stein-Papier"
       };
-      this.el.tourneyHudGameBadge.textContent = gameIcons[tourney.selected_game] || tourney.selected_game;
+      const gameLabel = gameIcons[tourney.selected_game] || tourney.selected_game;
+      if (tourney.game_selection === "playlist") {
+        this.el.tourneyHudGameBadge.textContent = `🎖️ ${gameLabel}`;
+      } else {
+        this.el.tourneyHudGameBadge.textContent = gameLabel;
+      }
     }
 
     if (this.el.tourneyHudMatchText) {
@@ -1776,6 +1866,26 @@ class TanjunActivityClient {
     if (!tourney) return;
     const isHost = this.isTournamentHost();
     const leaderboard = tourney.leaderboard || [];
+
+    // Render Podium Rewards Banner
+    if (this.el.podiumRewardsBanner) {
+      const rew = tourney.rewards;
+      if (rew && (rew.can_grant_xp || rew.can_grant_role)) {
+        this.el.podiumRewardsBanner.style.display = "flex";
+        let rewParts = [];
+        if (rew.can_grant_xp && (rew.xp_1st > 0)) {
+          rewParts.push(`Level-XP vergeben (🥇 +${rew.xp_1st.toLocaleString()} XP)`);
+        }
+        if (rew.can_grant_role && (rew.role_name || rew.role_id)) {
+          rewParts.push(`Sieger-Rolle verliehen (@${rew.role_name || "Champion"})`);
+        }
+        if (this.el.podiumRewardsText) {
+          this.el.podiumRewardsText.innerHTML = `<strong>Server-Belohnungen:</strong> ${rewParts.join(" & ")} im Discord-Server gutgeschrieben!`;
+        }
+      } else {
+        this.el.podiumRewardsBanner.style.display = "none";
+      }
+    }
 
     // Top 3 Podium
     if (this.el.podiumTop3) {

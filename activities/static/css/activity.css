@@ -1732,3 +1732,143 @@ body {
   max-height: 180px;
   overflow-y: auto;
 }
+
+/* ── Tournament Rewards Box in Lobby ── */
+.tourney-rewards-box {
+  background: linear-gradient(135deg, rgba(254, 231, 92, 0.08) 0%, rgba(88, 101, 242, 0.08) 100%);
+  border: 1px solid rgba(254, 231, 92, 0.25);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+.tourney-rewards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-header);
+  margin-bottom: 8px;
+}
+
+.tourney-rewards-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background-color: var(--bg-secondary);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.tourney-rewards-badge.active {
+  background-color: rgba(35, 165, 90, 0.2);
+  color: #23a55a;
+  border: 1px solid rgba(35, 165, 90, 0.4);
+}
+
+.tourney-rewards-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tourney-reward-pill {
+  font-size: 0.78rem;
+  font-weight: 700;
+  background-color: rgba(254, 231, 92, 0.15);
+  border: 1px solid rgba(254, 231, 92, 0.4);
+  color: #fee75c;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tourney-reward-pill.role-pill {
+  background-color: rgba(88, 101, 242, 0.15);
+  border-color: rgba(88, 101, 242, 0.4);
+  color: #8591f4;
+}
+
+/* ── Match Transition Banner ── */
+.tourney-transition-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, rgba(88, 101, 242, 0.2) 0%, rgba(244, 127, 255, 0.15) 100%);
+  border: 1px solid rgba(88, 101, 242, 0.4);
+  border-radius: var(--radius-md);
+  animation: slideInDown 0.3s ease-out;
+}
+
+.tourney-transition-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tourney-transition-icon {
+  font-size: 1.6rem;
+  animation: pulse 1.2s infinite;
+}
+
+.tourney-transition-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-header);
+}
+
+.tourney-transition-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.tourney-transition-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tourney-countdown-badge {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #fee75c;
+  background-color: rgba(254, 231, 92, 0.15);
+  border: 1px solid rgba(254, 231, 92, 0.4);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  min-width: 42px;
+  text-align: center;
+  animation: pulse 1s infinite;
+}
+
+/* ── Podium Rewards Celebration Banner ── */
+.podium-rewards-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(35, 165, 90, 0.2) 0%, rgba(254, 231, 92, 0.15) 100%);
+  border: 1px solid rgba(35, 165, 90, 0.4);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.podium-rewards-icon {
+  font-size: 1.5rem;
+}
+
+.podium-rewards-text {
+  font-size: 0.82rem;
+  color: var(--text-normal);
+  line-height: 1.35;
+}
+

@@ -1,15 +1,29 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import math
 import random
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from activities.base import BaseGame, Player
 
 logger = logging.getLogger(__name__)
+
+
+class TournamentRewards(BaseModel):
+    guild_id: Optional[str] = None
+    channel_id: Optional[str] = None
+    xp_1st: int = 0
+    xp_2nd: int = 0
+    xp_3rd: int = 0
+    role_id: Optional[str] = None
+    role_name: Optional[str] = None
+    can_grant_xp: bool = False
+    can_grant_role: bool = False
+    rewards_granted: bool = False
 
 
 class TournamentPlayer(BaseModel):
@@ -75,9 +89,13 @@ class Tournament:
         self.match_style: str = "spectated"  # "spectated" (Live Showmatch) or "parallel"
         self.total_rounds: int = 3
         self.current_round: int = 0
-        self.game_selection: str = "host_choice"  # "host_choice" or "random"
-        self.selected_game: str = "connect4"
-        self.games_pool: List[str] = ["connect4", "tictactoe", "rps"]
+        self.game_selection: str = "playlist"  # "playlist" (Mehrkampf), "host_choice", "random", "single"
+        self.selected_game: str = "tictactoe"
+        self.games_pool: List[str] = ["tictactoe", "connect4", "rps"]
+        self.disciplines: List[str] = ["tictactoe", "connect4", "rps"]
+        self.rewards: TournamentRewards = TournamentRewards()
+        self.on_finished_callback: Optional[Callable[[Tournament], Any]] = None
+        self.transition_info: Optional[Dict[str, Any]] = None
         self.points_win: int = 3
         self.points_draw: int = 1
         self.participants: Dict[str, TournamentPlayer] = {}
@@ -199,7 +217,15 @@ class Tournament:
         random.shuffle(eligible)
 
         # Game for this round
-        if self.game_selection == "random":
+        if self.game_selection == "playlist" or self.selected_game == "playlist":
+            if selected_game and selected_game in self.games_pool:
+                chosen_game = selected_game
+                self.selected_game = selected_game
+            else:
+                disc_idx = (self.current_round - 1) % len(self.disciplines)
+                chosen_game = self.disciplines[disc_idx]
+                self.selected_game = chosen_game
+        elif self.game_selection == "random" or self.selected_game == "random":
             chosen_game = random.choice(self.games_pool)
             self.selected_game = chosen_game
         else:
@@ -297,6 +323,7 @@ class Tournament:
         # Check if entire round is completed
         all_finished = all(m.status == "finished" for m in self.active_matches)
         if all_finished:
+            self.transition_info = None
             if self.format == "knockout":
                 remaining = [p for p in self.participants.values() if not p.is_eliminated]
                 if len(remaining) <= 1:
@@ -308,8 +335,33 @@ class Tournament:
                     self.status = "finished"
                 else:
                     self.status = "round_end"
+            if self.status == "finished":
+                await self._trigger_tournament_finished()
+        else:
+            next_idx = self.current_match_idx + 1
+            if next_idx < len(self.active_matches):
+                next_m = self.active_matches[next_idx]
+                self.transition_info = {
+                    "active": True,
+                    "seconds_remaining": 5,
+                    "prev_winner": winner_name,
+                    "next_match_id": next_m.match_id,
+                    "next_p1": next_m.player1.display_name,
+                    "next_p2": next_m.player2.display_name if next_m.player2 else "Freilos (Bye)",
+                    "next_game": next_m.game_type
+                }
+
+    async def _trigger_tournament_finished(self) -> None:
+        if self.on_finished_callback:
+            try:
+                res = self.on_finished_callback(self)
+                if asyncio.iscoroutine(res):
+                    await res
+            except Exception as e:
+                logger.error("Error executing tournament on_finished_callback: %s", e)
 
     async def advance_to_next_match(self) -> Optional[TournamentMatch]:
+        self.transition_info = None
         curr = self.get_current_match()
         if curr and curr.status == "active":
             return curr
@@ -354,6 +406,10 @@ class Tournament:
                 self.total_rounds = max(1, min(10, int(data["total_rounds"])))
             if "game_selection" in data:
                 self.game_selection = data["game_selection"]
+            if "disciplines" in data and isinstance(data["disciplines"], list):
+                valid_discs = [d for d in data["disciplines"] if d in self.games_pool]
+                if valid_discs:
+                    self.disciplines = valid_discs
             if "selected_game" in data:
                 self.selected_game = data["selected_game"]
             if "points_win" in data:
@@ -383,7 +439,7 @@ class Tournament:
             await self.start_next_round(selected)
             return {"status": "next_round_started"}
 
-        if action == "tournament_next_match":
+        if action in ("tournament_next_match", "tournament_advance_match"):
             if not is_host:
                 return {"error": "Only host can advance match"}
             await self.advance_to_next_match()
@@ -503,6 +559,9 @@ class Tournament:
             "game_selection": self.game_selection,
             "selected_game": self.selected_game,
             "games_pool": self.games_pool,
+            "disciplines": self.disciplines,
+            "rewards": self.rewards.model_dump(),
+            "transition_info": self.transition_info,
             "points_win": self.points_win,
             "points_draw": self.points_draw,
             "participants_count": len(self.participants),
