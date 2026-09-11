@@ -213,11 +213,6 @@ class ActivityServer:
                             )
                             session.game.add_player(player)
 
-                        if session.tournament:
-                            current_p = session.game.players.get(user_id)
-                            if current_p:
-                                session.tournament.add_participant(current_p)
-
                         await ws.send_json({
                             "type": "joined",
                             "user_id": user_id,
@@ -239,12 +234,41 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name == "return_to_hub":
                             session.is_hub = True
-                            session.tournament = None
                             if hasattr(session.game, "reset"):
                                 await session.game.reset()
                             await session.broadcast_state()
                         elif action_name == "update_settings":
                             session.lobby_settings.update(action_payload)
+                            await session.broadcast_state()
+                        elif action_name in ("create_tournament", "tournament_create"):
+                            current_p = session.game.players.get(p_id) or Player(
+                                user_id=p_id,
+                                username=action_payload.get("username", "Host"),
+                                display_name=action_payload.get("display_name", "Host"),
+                                avatar_url=action_payload.get("avatar_url"),
+                                is_host=True
+                            )
+                            session.create_tournament(host=current_p)
+                            session.tournament.add_participant(current_p)
+                            await session.broadcast_state()
+                        elif action_name == "tournament_join":
+                            current_p = session.game.players.get(p_id) or Player(
+                                user_id=p_id,
+                                username=action_payload.get("username", "Player"),
+                                display_name=action_payload.get("display_name", "Player"),
+                                avatar_url=action_payload.get("avatar_url"),
+                                is_host=False
+                            )
+                            if session.tournament:
+                                session.tournament.add_participant(current_p)
+                            await session.broadcast_state()
+                        elif action_name == "tournament_leave":
+                            if session.tournament:
+                                session.leave_tournament(p_id)
+                            await session.broadcast_state()
+                        elif action_name == "tournament_destroy":
+                            if session.tournament and session.tournament.host_id == p_id:
+                                session.tournament = None
                             await session.broadcast_state()
                         elif action_name.startswith("tournament_"):
                             if session.tournament:

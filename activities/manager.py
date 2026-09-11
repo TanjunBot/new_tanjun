@@ -38,21 +38,35 @@ class GameSession:
             "variation": "classic"
         }
 
+    def create_tournament(self, host: Player) -> Any:
+        from activities.tournament import Tournament
+        self.tournament = Tournament(session_id=self.session_id, host=host)
+        return self.tournament
+
     def start_tournament_mode(self) -> Any:
         from activities.tournament import Tournament
         self.tournament = Tournament(session_id=self.session_id, host=self.game.host)
         for pid, player in self.game.players.items():
             if not player.is_bot:
                 self.tournament.add_participant(player)
-        self.is_hub = False
         return self.tournament
+
+    def join_tournament(self, player: Player) -> Any:
+        if not self.tournament:
+            return None
+        return self.tournament.add_participant(player)
+
+    def leave_tournament(self, user_id: str) -> None:
+        if self.tournament:
+            self.tournament.remove_participant(user_id)
+            if len(self.tournament.participants) == 0:
+                self.tournament = None
 
     def switch_game(self, game_type: str) -> BaseGame:
         if game_type == "tournament":
             self.start_tournament_mode()
             return self.game
 
-        self.tournament = None
         cls = session_manager.get_game_class(game_type)
         if not cls:
             raise ValueError(f"Unknown game type: {game_type}")

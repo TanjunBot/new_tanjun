@@ -402,6 +402,66 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(full_state["tournament"]["status"], "lobby")
         self.assertEqual(full_state["tournament"]["participants_count"], 2)
 
+    async def test_tournament_as_option_and_multi_game_switching(self):
+        # 1. Session is in Hub
+        session = session_manager.create_session("hub", host=self.host, session_id="tourney_opt_test")
+        self.assertTrue(session.is_hub)
+        self.assertIsNone(session.tournament)
+
+        # 2. Host creates tournament as an option
+        session.create_tournament(host=self.host)
+        self.assertIsNotNone(session.tournament)
+        self.assertEqual(session.tournament.status, "lobby")
+
+        # 3. Guest joins tournament
+        guest = Player(user_id="guest_p", username="Guest", display_name="Guest")
+        session.join_tournament(guest)
+        self.assertEqual(len(session.tournament.participants), 2)
+
+        # 4. Host starts Round 1 with Connect 4
+        await session.tournament.handle_action("user_host", "tournament_start", {"selected_game": "connect4"})
+        self.assertEqual(session.tournament.status, "active")
+        self.assertEqual(session.tournament.current_round, 1)
+        self.assertEqual(len(session.tournament.active_matches), 1)
+        self.assertEqual(session.tournament.active_matches[0].game_type, "connect4")
+
+        # Complete Round 1: host wins
+        m1 = session.tournament.active_matches[0]
+        await session.tournament._resolve_match(m1, "user_host")
+        self.assertEqual(session.tournament.status, "round_end")
+        self.assertEqual(session.tournament.participants["user_host"].score, 3)
+        self.assertEqual(session.tournament.participants["guest_p"].score, 0)
+
+        # 5. Tournament Master switches to Tic-Tac-Toe for Round 2!
+        await session.tournament.handle_action("user_host", "tournament_next_round", {"selected_game": "tictactoe"})
+        self.assertEqual(session.tournament.status, "active")
+        self.assertEqual(session.tournament.current_round, 2)
+        self.assertEqual(session.tournament.active_matches[0].game_type, "tictactoe")
+
+        # Complete Round 2: guest wins Tic-Tac-Toe
+        m2 = session.tournament.active_matches[0]
+        await session.tournament._resolve_match(m2, "guest_p")
+        self.assertEqual(session.tournament.status, "round_end")
+
+        # 6. Verify scores accumulated across different games!
+        self.assertEqual(session.tournament.participants["user_host"].score, 3)
+        self.assertEqual(session.tournament.participants["guest_p"].score, 3)
+
+        # 7. Tournament Master switches to RPS for Round 3!
+        await session.tournament.handle_action("user_host", "tournament_next_round", {"selected_game": "rps"})
+        self.assertEqual(session.tournament.status, "active")
+        self.assertEqual(session.tournament.current_round, 3)
+        self.assertEqual(session.tournament.active_matches[0].game_type, "rps")
+
+        # Complete Round 3: draw
+        m3 = session.tournament.active_matches[0]
+        await session.tournament._resolve_match(m3, "draw")
+        self.assertEqual(session.tournament.status, "finished")
+
+        # Points from RPS draw (1 pt each) added to previous scores:
+        self.assertEqual(session.tournament.participants["user_host"].score, 4)
+        self.assertEqual(session.tournament.participants["guest_p"].score, 4)
+
 
 if __name__ == "__main__":
     unittest.main()

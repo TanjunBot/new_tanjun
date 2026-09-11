@@ -381,6 +381,8 @@ class Tournament:
         if action == "tournament_start":
             if not is_host:
                 return {"error": "Only host can start tournament"}
+            if "selected_game" in data:
+                self.selected_game = data["selected_game"]
             ok = await self.start_tournament()
             if not ok:
                 return {"error": "Mindestens 2 Teilnehmer werden für ein Turnier benötigt!"}
@@ -489,6 +491,8 @@ class Tournament:
         return {
             "session_id": self.session_id,
             "host_id": self.host_id,
+            "host_name": self.participants.get(self.host_id).display_name if self.host_id in self.participants else "Host",
+            "is_participant": (for_user_id in self.participants) if for_user_id else False,
             "title": self.title,
             "status": self.status,
             "format": self.format,

@@ -43,15 +43,11 @@ class TanjunActivityClient {
     this.prevRpsFinished = null;
     this.prevTourneyRpsRound = null;
 
+    this.inTournamentView = false;
+    this.selectedNextRoundGame = "connect4";
+
     // Available games list (fallback if not yet received from WS)
     this.availableGames = [
-      {
-        type: "tictactoe",
-        name: "Tic-Tac-Toe",
-        description: "Klassisches 3x3 Duell. Wer zuerst drei Symbole in einer Reihe hat, gewinnt!",
-        icon: "❌⭕",
-        badge: "Klassiker"
-      },
       {
         type: "connect4",
         name: "Vier Gewinnt",
@@ -60,18 +56,18 @@ class TanjunActivityClient {
         badge: "Taktik"
       },
       {
+        type: "tictactoe",
+        name: "Tic-Tac-Toe",
+        description: "Klassisches 3x3 Duell. Wer zuerst drei Symbole in einer Reihe hat, gewinnt!",
+        icon: "❌⭕",
+        badge: "Klassiker"
+      },
+      {
         type: "rps",
         name: "Schere Stein Papier",
         description: "Schnelles Duell mit verdeckter Wahl im Best-of-5 Modus.",
         icon: "✊✋✌️",
         badge: "Action"
-      },
-      {
-        type: "tournament",
-        name: "Voice-Turnier",
-        description: "Episches Turnier für den Sprachkanal! Punkte-Mehrkampf oder K.O.-Modus mit Live-Zuschauern & Jubel.",
-        icon: "🏆",
-        badge: "Turnier / Party"
       }
     ];
 
@@ -112,6 +108,11 @@ class TanjunActivityClient {
       hubPlayersList: document.getElementById("hubPlayersList"),
       hubPlayerCount: document.getElementById("hubPlayerCount"),
       hubStatusMsg: document.getElementById("hubStatusMsg"),
+      hubTourneyBanner: document.getElementById("hubTourneyBanner"),
+      hubTourneyTitle: document.getElementById("hubTourneyTitle"),
+      hubTourneyDesc: document.getElementById("hubTourneyDesc"),
+      hubTourneyStatusBadge: document.getElementById("hubTourneyStatusBadge"),
+      hubTourneyBtn: document.getElementById("hubTourneyBtn"),
 
       // Lobby Elements
       backToHubBtn: document.getElementById("backToHubBtn"),
@@ -239,6 +240,8 @@ class TanjunActivityClient {
       tourneyCheerOverlay: document.getElementById("tourneyCheerOverlay"),
       tourneyRoundEndControls: document.getElementById("tourneyRoundEndControls"),
       tourneyRoundEndMsg: document.getElementById("tourneyRoundEndMsg"),
+      tourneyNextGameSelector: document.getElementById("tourneyNextGameSelector"),
+      tourneyNextGamePills: document.querySelectorAll("#tourneyNextGamePills .diff-pill"),
       tourneyNextRoundBtn: document.getElementById("tourneyNextRoundBtn"),
       tourneyLeaderboardDrawer: document.getElementById("tourneyLeaderboardDrawer"),
       tourneyLeaderboardCloseBtn: document.getElementById("tourneyLeaderboardCloseBtn"),
@@ -368,6 +371,32 @@ class TanjunActivityClient {
     this.el.hubBtn.addEventListener("click", () => this.returnToHub());
     this.el.backToHubBtn.addEventListener("click", () => this.returnToHub());
 
+    // Hub Tournament Banner Action
+    if (this.el.hubTourneyBtn) {
+      this.el.hubTourneyBtn.addEventListener("click", () => {
+        const tourney = this.gameState?.tournament;
+        if (!tourney || tourney.status === "finished") {
+          this.inTournamentView = true;
+          this.sendAction("create_tournament", {
+            username: this.user.username,
+            display_name: this.user.displayName,
+            avatar_url: this.user.avatarUrl
+          });
+        } else {
+          const isParticipant = tourney.is_participant || (tourney.leaderboard && tourney.leaderboard.some(p => p.user_id === this.user.id));
+          if (!isParticipant) {
+            this.sendAction("tournament_join", {
+              username: this.user.username,
+              display_name: this.user.displayName,
+              avatar_url: this.user.avatarUrl
+            });
+          }
+          this.inTournamentView = true;
+          this.handleStateUpdate(this.gameState);
+        }
+      });
+    }
+
     // ── Tournament Event Listeners ─────────────────────────────
     if (this.el.tourneyBackToHubBtn) {
       this.el.tourneyBackToHubBtn.addEventListener("click", () => this.returnToHub());
@@ -434,7 +463,7 @@ class TanjunActivityClient {
     if (this.el.tourneyStartBtn) {
       this.el.tourneyStartBtn.addEventListener("click", () => {
         if (!this.isTournamentHost()) return;
-        this.sendAction("tournament_start");
+        this.sendAction("tournament_start", { selected_game: this.selectedTourneyGame });
       });
     }
 
@@ -461,11 +490,23 @@ class TanjunActivityClient {
       });
     });
 
+    // Next Round Game Selector (Master Choice)
+    if (this.el.tourneyNextGamePills) {
+      this.el.tourneyNextGamePills.forEach(pill => {
+        pill.addEventListener("click", () => {
+          if (!this.isTournamentHost()) return;
+          this.el.tourneyNextGamePills.forEach(p => p.classList.remove("active"));
+          pill.classList.add("active");
+          this.selectedNextRoundGame = pill.dataset.tourneyNextGame || "connect4";
+        });
+      });
+    }
+
     // Next Round Button
     if (this.el.tourneyNextRoundBtn) {
       this.el.tourneyNextRoundBtn.addEventListener("click", () => {
         if (!this.isTournamentHost()) return;
-        this.sendAction("tournament_next_round");
+        this.sendAction("tournament_next_round", { selected_game: this.selectedNextRoundGame });
       });
     }
 
@@ -1012,13 +1053,48 @@ class TanjunActivityClient {
     if (!state) return;
     this.gameState = state;
 
-    // ── Tournament States ──────────────────────────────────────
-    if (state.tournament) {
+    const tourney = state.tournament;
+    const isParticipant = tourney && (tourney.is_participant || (tourney.leaderboard && tourney.leaderboard.some(p => p.user_id === this.user.id)));
+    const isTourneyActive = tourney && tourney.status !== "finished";
+
+    // ── Update Hub Tournament Banner (Option) ──────────────────
+    if (this.el.hubTourneyBanner) {
+      if (!isTourneyActive) {
+        this.el.hubTourneyBanner.classList.remove("active-tourney");
+        if (this.el.hubTourneyStatusBadge) {
+          this.el.hubTourneyStatusBadge.textContent = "Bereit";
+          this.el.hubTourneyStatusBadge.className = "tourney-status-pill";
+        }
+        if (this.el.hubTourneyTitle) this.el.hubTourneyTitle.textContent = "Tanjun Voice Cup";
+        if (this.el.hubTourneyDesc) this.el.hubTourneyDesc.textContent = "Veranstalte ein Turnier über mehrere, unterschiedliche Spiele mit automatischer Spielzuteilung & Gesamtrangliste!";
+        if (this.el.hubTourneyBtn) this.el.hubTourneyBtn.textContent = "🏆 Turnier starten";
+      } else {
+        this.el.hubTourneyBanner.classList.add("active-tourney");
+        if (this.el.hubTourneyStatusBadge) {
+          this.el.hubTourneyStatusBadge.textContent = tourney.status === "lobby" ? "Offene Lobby" : `Runde ${tourney.current_round}/${tourney.total_rounds}`;
+          this.el.hubTourneyStatusBadge.className = "tourney-status-pill live";
+        }
+        if (this.el.hubTourneyTitle) this.el.hubTourneyTitle.textContent = tourney.title || "Tanjun Voice Cup";
+        const hostName = tourney.host_name || "Host";
+        const pCount = tourney.participants_count || 1;
+        if (this.el.hubTourneyDesc) this.el.hubTourneyDesc.textContent = `Turnierleiter: ${hostName} • ${pCount} Teilnehmer • Format: ${tourney.format === "knockout" ? "K.O." : "Mehrkampf"}`;
+        if (this.el.hubTourneyBtn) {
+          this.el.hubTourneyBtn.textContent = isParticipant ? "▶ Zurück zum Turnier" : "🎟️ Turnier beitreten";
+        }
+      }
+    }
+
+    // Automatically transition joined participants into active tournament rounds
+    if (tourney && isParticipant && (tourney.status === "active" || tourney.status === "round_end")) {
+      this.inTournamentView = true;
+    }
+
+    // ── Route to Tournament Screens if User is Active in Tournament ──
+    if (this.inTournamentView && tourney && (isParticipant || tourney.host_id === this.user.id)) {
       if (this.el.hubView) this.el.hubView.style.display = "none";
       if (this.el.lobbyView) this.el.lobbyView.style.display = "none";
       if (this.el.gameView) this.el.gameView.style.display = "none";
 
-      const tourney = state.tournament;
       if (tourney.status === "lobby") {
         if (this.el.tournamentLobbyView) this.el.tournamentLobbyView.style.display = "block";
         if (this.el.tournamentArenaView) this.el.tournamentArenaView.style.display = "none";
@@ -1738,9 +1814,11 @@ class TanjunActivityClient {
         const isHost = this.isTournamentHost();
         if (isHost) {
           this.el.tourneyNextRoundBtn.style.display = "inline-block";
-          this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Klicke hier, um Runde ${tourney.current_round + 1} zu starten.`;
+          if (this.el.tourneyNextGameSelector) this.el.tourneyNextGameSelector.style.display = "block";
+          this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Wähle das Spiel und starte Runde ${tourney.current_round + 1}:`;
         } else {
           this.el.tourneyNextRoundBtn.style.display = "none";
+          if (this.el.tourneyNextGameSelector) this.el.tourneyNextGameSelector.style.display = "none";
           this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Warte auf den Turnierleiter...`;
         }
       } else {
