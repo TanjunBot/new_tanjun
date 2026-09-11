@@ -19,6 +19,7 @@ class TicTacToeGame(BaseGame):
         self.winning_line: Optional[List[int]] = None
         self.scores: Dict[str, int] = {}
         self.bot_player: Optional[Player] = None
+        self.last_move: Optional[int] = None
 
     @property
     def game_type(self) -> str:
@@ -79,6 +80,7 @@ class TicTacToeGame(BaseGame):
             bot_move = self._bot_calculate_move()
             if bot_move != -1:
                 self.board[bot_move] = self.player_symbols.get("bot_tanjun", "O")
+                self.last_move = bot_move
                 self.current_turn = p_ids[0]
 
         return True
@@ -208,6 +210,7 @@ class TicTacToeGame(BaseGame):
             if not sym:
                 return {"error": "Unknown player symbol"}
             self.board[cell] = sym
+            self.last_move = cell
 
             # Check winner
             winner_sym, line = self.check_winner()
@@ -227,11 +230,12 @@ class TicTacToeGame(BaseGame):
 
                 # If next player is bot, schedule/execute bot move
                 if next_player == "bot_tanjun" and not self.is_finished:
-                    await asyncio.sleep(0.4)  # Natural thinking pause
+                    await asyncio.sleep(0.55)  # Natural thinking pause
                     bot_move = self._bot_calculate_move()
                     if bot_move != -1:
                         bot_sym = self.player_symbols.get("bot_tanjun", "O")
                         self.board[bot_move] = bot_sym
+                        self.last_move = bot_move
                         b_winner, b_line = self.check_winner()
                         if b_winner:
                             self.is_finished = True
@@ -251,6 +255,7 @@ class TicTacToeGame(BaseGame):
             self.is_finished = False
             self.winning_line = None
             self.winner = None
+            self.last_move = None
             p_ids = list(self.players.keys())
             if len(p_ids) >= 2:
                 self.current_turn = p_ids[0] if random.random() > 0.5 else p_ids[1]
@@ -259,6 +264,7 @@ class TicTacToeGame(BaseGame):
                     if bot_move != -1:
                         bot_sym = self.player_symbols.get("bot_tanjun", "O")
                         self.board[bot_move] = bot_sym
+                        self.last_move = bot_move
                         self.current_turn = p_ids[0] if p_ids[1] == "bot_tanjun" else p_ids[1]
             return {"status": "restarted", "state": self.get_state()}
 
@@ -268,6 +274,7 @@ class TicTacToeGame(BaseGame):
             self.is_finished = False
             self.winner = None
             self.winning_line = None
+            self.last_move = None
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
@@ -281,6 +288,7 @@ class TicTacToeGame(BaseGame):
         self.is_finished = False
         self.winner = None
         self.winning_line = None
+        self.last_move = None
         self.scores = {pid: 0 for pid in self.players}
 
     def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
@@ -294,6 +302,7 @@ class TicTacToeGame(BaseGame):
             "winner": self.winner,
             "winning_line": self.winning_line,
             "board": self.board,
+            "last_move": self.last_move,
             "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,
             "player_symbols": self.player_symbols,

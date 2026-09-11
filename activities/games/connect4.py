@@ -33,6 +33,7 @@ class Connect4Game(BaseGame):
         self.winning_line: Optional[List[int]] = None
         self.scores: Dict[str, int] = {}
         self.bot_player: Optional[Player] = None
+        self.last_move: Optional[int] = None
 
     @property
     def game_type(self) -> str:
@@ -93,7 +94,9 @@ class Connect4Game(BaseGame):
             if bot_col != -1:
                 r = self._get_lowest_empty_row(bot_col)
                 if r != -1:
-                    self.board[r * self.cols + bot_col] = self.player_symbols.get("bot_tanjun", "Y")
+                    bot_idx = r * self.cols + bot_col
+                    self.board[bot_idx] = self.player_symbols.get("bot_tanjun", "Y")
+                    self.last_move = bot_idx
                     self.current_turn = p_ids[0]
 
         return True
@@ -240,6 +243,7 @@ class Connect4Game(BaseGame):
                 return {"error": "Unknown player"}
 
             self.board[idx] = sym
+            self.last_move = idx
 
             winner_sym, line = self.check_winner()
             if winner_sym:
@@ -256,7 +260,7 @@ class Connect4Game(BaseGame):
                 self.current_turn = next_player
 
                 if next_player == "bot_tanjun" and not self.is_finished:
-                    await asyncio.sleep(0.35)
+                    await asyncio.sleep(0.55)
                     bot_col = self._bot_calculate_move()
                     if bot_col != -1:
                         bot_row = self._get_lowest_empty_row(bot_col)
@@ -264,6 +268,7 @@ class Connect4Game(BaseGame):
                             bot_idx = bot_row * self.cols + bot_col
                             bot_sym = self.player_symbols.get("bot_tanjun", "Y")
                             self.board[bot_idx] = bot_sym
+                            self.last_move = bot_idx
                             b_winner, b_line = self.check_winner()
                             if b_winner:
                                 self.is_finished = True
@@ -283,6 +288,7 @@ class Connect4Game(BaseGame):
             self.is_finished = False
             self.winning_line = None
             self.winner = None
+            self.last_move = None
             p_ids = list(self.players.keys())
             if len(p_ids) >= 2:
                 if self.first_turn_rule == "random":
@@ -297,7 +303,9 @@ class Connect4Game(BaseGame):
                     if bot_col != -1:
                         bot_row = self._get_lowest_empty_row(bot_col)
                         if bot_row != -1:
-                            self.board[bot_row * self.cols + bot_col] = self.player_symbols.get("bot_tanjun", "Y")
+                            bot_idx = bot_row * self.cols + bot_col
+                            self.board[bot_idx] = self.player_symbols.get("bot_tanjun", "Y")
+                            self.last_move = bot_idx
                             self.current_turn = p_ids[0] if p_ids[1] == "bot_tanjun" else p_ids[1]
             return {"status": "restarted", "state": self.get_state()}
 
@@ -307,6 +315,7 @@ class Connect4Game(BaseGame):
             self.is_finished = False
             self.winner = None
             self.winning_line = None
+            self.last_move = None
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
@@ -320,6 +329,7 @@ class Connect4Game(BaseGame):
         self.is_finished = False
         self.winner = None
         self.winning_line = None
+        self.last_move = None
         self.scores = {pid: 0 for pid in self.players}
 
     def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
@@ -335,6 +345,7 @@ class Connect4Game(BaseGame):
             "board": self.board,
             "rows": self.rows,
             "cols": self.cols,
+            "last_move": self.last_move,
             "connect_target": self.connect_target,
             "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,

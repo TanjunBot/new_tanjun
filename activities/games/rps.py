@@ -176,8 +176,9 @@ class RPSGame(BaseGame):
             round_completed = False
             round_result = None
 
-            # If vs bot, bot picks immediately
+            # If vs bot, bot has a natural thinking pause before evaluating
             if self.game_mode == "bot" and "bot_tanjun" in self.players:
+                await asyncio.sleep(0.55)
                 bot_choice = self._bot_pick(player_id)
                 self.current_picks["bot_tanjun"] = bot_choice
                 round_result = self._evaluate_round()

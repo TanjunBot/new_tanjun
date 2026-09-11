@@ -34,6 +34,15 @@ class TanjunActivityClient {
     this.currentTourneyC4Rows = 0;
     this.currentTourneyC4Cols = 0;
 
+    // Previous board trackers for drop, pop, and shake animations
+    this.prevTTTBoard = null;
+    this.prevC4Board = null;
+    this.prevTourneyTTTBoard = null;
+    this.prevTourneyC4Board = null;
+    this.prevRpsRound = null;
+    this.prevRpsFinished = null;
+    this.prevTourneyRpsRound = null;
+
     // Available games list (fallback if not yet received from WS)
     this.availableGames = [
       {
@@ -878,15 +887,28 @@ class TanjunActivityClient {
     this.sendAction("pick", { choice: choice });
   }
 
+  clearAnimationCaches() {
+    this.prevTTTBoard = null;
+    this.prevC4Board = null;
+    this.prevTourneyTTTBoard = null;
+    this.prevTourneyC4Board = null;
+    this.prevRpsRound = null;
+    this.prevRpsFinished = null;
+    this.prevTourneyRpsRound = null;
+  }
+
   restartGame() {
+    this.clearAnimationCaches();
     this.sendAction("restart");
   }
 
   returnToLobby() {
+    this.clearAnimationCaches();
     this.sendAction("lobby");
   }
 
   returnToHub() {
+    this.clearAnimationCaches();
     this.sendAction("return_to_hub");
   }
 
@@ -1128,6 +1150,10 @@ class TanjunActivityClient {
     // ── Render Tic-Tac-Toe ──
     if (gameType === "tictactoe") {
       const winningLine = state.winning_line || [];
+      const isNewMove = (idx) => {
+        return state.last_move === idx && (!this.prevTTTBoard || this.prevTTTBoard[idx] !== state.board[idx]);
+      };
+
       state.board.forEach((val, idx) => {
         const cell = this.el.tttCells[idx];
         cell.textContent = val;
@@ -1135,7 +1161,9 @@ class TanjunActivityClient {
         if (val === "X") cell.classList.add("cell-x", "taken");
         if (val === "O") cell.classList.add("cell-o", "taken");
         if (winningLine.includes(idx)) cell.classList.add("winner-cell");
+        if (val && isNewMove(idx)) cell.classList.add("anim-pop");
       });
+      this.prevTTTBoard = [...state.board];
     }
 
     // ── Render Connect 4 (Dynamic Grid) ──
@@ -1147,6 +1175,7 @@ class TanjunActivityClient {
       if (this.currentC4Cols !== cols || this.currentC4Rows !== rows || this.el.c4Grid.children.length !== totalCells) {
         this.currentC4Cols = cols;
         this.currentC4Rows = rows;
+        this.prevC4Board = null;
 
         // Dynamic responsive cell size
         const availableWidth = Math.min(window.innerWidth - 40, 460);
@@ -1183,6 +1212,11 @@ class TanjunActivityClient {
 
       const winningLine = state.winning_line || [];
       const cells = this.el.c4Grid.querySelectorAll(".c4-cell");
+      const cellSize = parseInt(getComputedStyle(this.el.c4Grid).getPropertyValue("--c4-cell-size")) || 40;
+      const isNewMove = (idx) => {
+        return state.last_move === idx && (!this.prevC4Board || this.prevC4Board[idx] !== state.board[idx]);
+      };
+
       state.board.forEach((val, idx) => {
         const cell = cells[idx];
         if (cell) {
@@ -1190,8 +1224,17 @@ class TanjunActivityClient {
           if (val === "R") cell.classList.add("chip-r");
           if (val === "Y") cell.classList.add("chip-y");
           if (winningLine.includes(idx)) cell.classList.add("winner-cell");
+
+          if (val && isNewMove(idx)) {
+            const row = Math.floor(idx / cols);
+            const dropDist = (row + 1) * (cellSize + 6) + 16;
+            cell.style.setProperty("--drop-dist", `-${dropDist}px`);
+            cell.style.setProperty("--drop-duration", `${0.26 + row * 0.04}s`);
+            cell.classList.add("anim-drop");
+          }
         }
       });
+      this.prevC4Board = [...state.board];
     }
 
     // ── Render Rock-Paper-Scissors ──
@@ -1214,51 +1257,74 @@ class TanjunActivityClient {
       this.el.rpsP1Pick.textContent = emojis[myPick] || "❓";
       this.el.rpsP2Pick.textContent = emojis[otherPick] || "❓";
 
+      this.el.rpsP1Pick.className = "rps-fighter-pick";
+      this.el.rpsP2Pick.className = "rps-fighter-pick";
+
       this.el.rpsP1Label.textContent = this.user.displayName;
       this.el.rpsP2Label.textContent = p1.user_id === this.user.id ? (p2.display_name || p2.username) : (p1.display_name || p1.username);
 
       if (state.last_round_result) {
         const lr = state.last_round_result;
+        if (this.prevRpsRound !== state.current_round || this.prevRpsFinished !== state.is_finished) {
+          this.el.rpsP1Pick.classList.add("anim-reveal");
+          this.el.rpsP2Pick.classList.add("anim-reveal");
+        }
         if (lr.winner === "draw") {
           this.el.rpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}!`;
-          this.el.rpsRoundResult.style.color = "#ffb703";
+          this.el.rpsRoundResult.style.color = "#f0b232";
         } else {
           const wName = lr.winner === this.user.id ? "Du hast" : "Gegner hat";
           this.el.rpsRoundResult.textContent = `🎉 ${wName} Runde ${lr.round} gewonnen!`;
-          this.el.rpsRoundResult.style.color = lr.winner === this.user.id ? "#00f2fe" : "#ff4b4b";
+          this.el.rpsRoundResult.style.color = lr.winner === this.user.id ? "#23a55a" : "#da373c";
         }
       } else if (myPick && !otherPick) {
         this.el.rpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
-        this.el.rpsRoundResult.style.color = "#ffb703";
+        this.el.rpsRoundResult.style.color = "#f0b232";
+        this.el.rpsP2Pick.classList.add("anim-shake");
       } else {
         this.el.rpsRoundResult.textContent = isLizardSpock ? "Wähle deine Geste (5 zur Auswahl)!" : "Wähle deine Geste!";
-        this.el.rpsRoundResult.style.color = "#94a3b8";
+        this.el.rpsRoundResult.style.color = "#949ba4";
       }
+
+      this.prevRpsRound = state.current_round;
+      this.prevRpsFinished = state.is_finished;
     }
 
     // ── In-game Status Bar Text ──
     if (state.is_finished) {
       if (state.winner === "draw") {
         this.el.statusBar.textContent = "🤝 Unentschieden! Großartiges Match.";
-        this.el.statusBar.style.color = "#ffb703";
+        this.el.statusBar.style.color = "#f0b232";
       } else {
         const winnerObj = players.find(p => p.user_id === state.winner);
         const name = winnerObj ? (winnerObj.display_name || winnerObj.username) : state.winner;
         this.el.statusBar.textContent = `🎉 ${name} gewinnt das Match!`;
-        this.el.statusBar.style.color = "#00f2fe";
+        this.el.statusBar.style.color = "#23a55a";
       }
     } else if (state.is_started) {
       if (gameType === "rps") {
         this.el.statusBar.textContent = "⚡ Wähle Stein, Papier oder Schere!";
-        this.el.statusBar.style.color = "#00f2fe";
+        this.el.statusBar.style.color = "#5865f2";
       } else if (state.current_turn === this.user.id) {
         this.el.statusBar.textContent = "⚡ Du bist am Zug! Setze deinen Zug.";
-        this.el.statusBar.style.color = "#00f2fe";
+        this.el.statusBar.style.color = "#5865f2";
+      } else if (state.current_turn === "bot_tanjun") {
+        this.el.statusBar.innerHTML = `
+          <span class="bot-thinking-status">
+            <span>🤖 Tanjun AI überlegt</span>
+            <span class="typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </span>
+          </span>
+        `;
+        this.el.statusBar.style.color = "#5865f2";
       } else {
         const currObj = players.find(p => p.user_id === state.current_turn);
         const name = currObj ? (currObj.display_name || currObj.username) : "Gegner";
         this.el.statusBar.textContent = `⏳ ${name} überlegt...`;
-        this.el.statusBar.style.color = "#94a3b8";
+        this.el.statusBar.style.color = "#949ba4";
       }
     }
   }
@@ -1501,6 +1567,9 @@ class TanjunActivityClient {
 
     if (gameType === "tictactoe" && gameState) {
       const winningLine = gameState.winning_line || [];
+      const isNewMove = (idx) => {
+        return gameState.last_move === idx && (!this.prevTourneyTTTBoard || this.prevTourneyTTTBoard[idx] !== gameState.board[idx]);
+      };
       (gameState.board || []).forEach((val, idx) => {
         const cell = this.el.tourneyTttCells[idx];
         if (cell) {
@@ -1509,8 +1578,10 @@ class TanjunActivityClient {
           if (val === "X") cell.classList.add("cell-x", "taken");
           if (val === "O") cell.classList.add("cell-o", "taken");
           if (winningLine.includes(idx)) cell.classList.add("winner-cell");
+          if (val && isNewMove(idx)) cell.classList.add("anim-pop");
         }
       });
+      this.prevTourneyTTTBoard = [...(gameState.board || [])];
     } else if (gameType === "connect4" && gameState) {
       const rows = gameState.rows || 6;
       const cols = gameState.cols || 7;
@@ -1519,6 +1590,7 @@ class TanjunActivityClient {
       if (this.currentTourneyC4Cols !== cols || this.currentTourneyC4Rows !== rows || this.el.tourneyC4Grid.children.length !== totalCells) {
         this.currentTourneyC4Cols = cols;
         this.currentTourneyC4Rows = rows;
+        this.prevTourneyC4Board = null;
         const availableWidth = Math.min(window.innerWidth - 40, 460);
         const cellSize = Math.floor(Math.min(42, Math.max(26, (availableWidth - (cols * 6) - 20) / cols)));
 
@@ -1554,6 +1626,11 @@ class TanjunActivityClient {
 
       const winningLine = gameState.winning_line || [];
       const cells = this.el.tourneyC4Grid.querySelectorAll(".c4-cell");
+      const cellSize = parseInt(getComputedStyle(this.el.tourneyC4Grid).getPropertyValue("--c4-cell-size")) || 40;
+      const isNewMove = (idx) => {
+        return gameState.last_move === idx && (!this.prevTourneyC4Board || this.prevTourneyC4Board[idx] !== gameState.board[idx]);
+      };
+
       (gameState.board || []).forEach((val, idx) => {
         const cell = cells[idx];
         if (cell) {
@@ -1561,8 +1638,17 @@ class TanjunActivityClient {
           if (val === "R") cell.classList.add("chip-r");
           if (val === "Y") cell.classList.add("chip-y");
           if (winningLine.includes(idx)) cell.classList.add("winner-cell");
+
+          if (val && isNewMove(idx)) {
+            const row = Math.floor(idx / cols);
+            const dropDist = (row + 1) * (cellSize + 6) + 16;
+            cell.style.setProperty("--drop-dist", `-${dropDist}px`);
+            cell.style.setProperty("--drop-duration", `${0.26 + row * 0.04}s`);
+            cell.classList.add("anim-drop");
+          }
         }
       });
+      this.prevTourneyC4Board = [...(gameState.board || [])];
     } else if (gameType === "rps" && gameState) {
       const emojis = { rock: "✊", paper: "✋", scissors: "✌️", lizard: "🦎", spock: "🖖", locked: "🔒", "": "❓" };
       this.el.tourneyRpsRoundBadge.textContent = `Runde ${gameState.current_round || 1}`;
@@ -1574,11 +1660,18 @@ class TanjunActivityClient {
       this.el.tourneyRpsP1Pick.textContent = emojis[myPick] || "❓";
       this.el.tourneyRpsP2Pick.textContent = emojis[otherPick] || "❓";
 
+      this.el.tourneyRpsP1Pick.className = "rps-fighter-pick";
+      this.el.tourneyRpsP2Pick.className = "rps-fighter-pick";
+
       this.el.tourneyRpsP1Label.textContent = p1.display_name;
       this.el.tourneyRpsP2Label.textContent = p2 ? p2.display_name : "Gegner";
 
       if (gameState.last_round_result) {
         const lr = gameState.last_round_result;
+        if (this.prevTourneyRpsRound !== gameState.current_round) {
+          this.el.tourneyRpsP1Pick.classList.add("anim-reveal");
+          this.el.tourneyRpsP2Pick.classList.add("anim-reveal");
+        }
         if (lr.winner === "draw") {
           this.el.tourneyRpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}!`;
           this.el.tourneyRpsRoundResult.style.color = "#ffb703";
@@ -1587,10 +1680,15 @@ class TanjunActivityClient {
           this.el.tourneyRpsRoundResult.textContent = `🎉 ${wName} hat die Runde gewonnen!`;
           this.el.tourneyRpsRoundResult.style.color = "#23a55a";
         }
+      } else if (myPick && !otherPick) {
+        this.el.tourneyRpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
+        this.el.tourneyRpsRoundResult.style.color = "#ffb703";
+        this.el.tourneyRpsP2Pick.classList.add("anim-shake");
       } else {
         this.el.tourneyRpsRoundResult.textContent = "Wähle deine Geste!";
         this.el.tourneyRpsRoundResult.style.color = "#94a3b8";
       }
+      this.prevTourneyRpsRound = gameState.current_round;
     }
 
     // Status bar text
