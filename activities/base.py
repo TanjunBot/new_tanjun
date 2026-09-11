@@ -58,6 +58,10 @@ class BaseGame(abc.ABC):
         pass
 
     def add_player(self, player: Player) -> bool:
+        if player.user_id in self.players:
+            self.players[player.user_id] = player
+            self.players[player.user_id].connected = True
+            return True
         if len(self.players) >= self.max_players or self.is_started:
             self.spectators[player.user_id] = player
             return False
@@ -65,7 +69,15 @@ class BaseGame(abc.ABC):
         return True
 
     def remove_player(self, user_id: str) -> None:
-        if user_id in self.players:
-            self.players[user_id].connected = False
+        if not self.is_started:
+            # In lobby before game started: remove non-host players so slot is freed
+            if user_id in self.players and user_id != self.host.user_id:
+                del self.players[user_id]
+            elif user_id in self.players:
+                self.players[user_id].connected = False
+        else:
+            # During an active match, mark as disconnected for reconnects
+            if user_id in self.players:
+                self.players[user_id].connected = False
         if user_id in self.spectators:
             del self.spectators[user_id]

@@ -41,14 +41,14 @@ class TicTacToeGame(BaseGame):
         )
         self.players["bot_tanjun"] = self.bot_player
 
-    def start_game(self) -> None:
+    def start_game(self) -> bool:
         p_ids = list(self.players.keys())
         if len(p_ids) == 1 and self.game_mode == "bot":
             self.setup_bot(self.difficulty)
             p_ids = list(self.players.keys())
 
         if len(p_ids) < 2:
-            return
+            return False
 
         self.board = [""] * 9
         self.is_started = True
@@ -67,6 +67,7 @@ class TicTacToeGame(BaseGame):
 
         # X always starts
         self.current_turn = p_ids[0]
+        return True
 
     def check_winner(self, b: Optional[List[str]] = None) -> tuple[Optional[str], Optional[List[int]]]:
         board = b or self.board
@@ -165,7 +166,17 @@ class TicTacToeGame(BaseGame):
             self.difficulty = diff
             if mode == "bot":
                 self.setup_bot(diff)
-            self.start_game()
+            elif "bot_tanjun" in self.players:
+                del self.players["bot_tanjun"]
+                self.bot_player = None
+
+            started = self.start_game()
+            if not started:
+                return {
+                    "error": "Mindestens 2 Spieler werden für PvP benötigt.",
+                    "status": "waiting_for_players",
+                    "state": self.get_state()
+                }
             return {"status": "started", "state": self.get_state()}
 
         if action == "move":
@@ -178,7 +189,9 @@ class TicTacToeGame(BaseGame):
             if cell is None or not (0 <= cell <= 8) or self.board[cell] != "":
                 return {"error": "Invalid cell move"}
 
-            sym = self.player_symbols[player_id]
+            sym = self.player_symbols.get(player_id)
+            if not sym:
+                return {"error": "Unknown player symbol"}
             self.board[cell] = sym
 
             # Check winner
@@ -202,7 +215,7 @@ class TicTacToeGame(BaseGame):
                     await asyncio.sleep(0.4)  # Natural thinking pause
                     bot_move = self._bot_calculate_move()
                     if bot_move != -1:
-                        bot_sym = self.player_symbols["bot_tanjun"]
+                        bot_sym = self.player_symbols.get("bot_tanjun", "O")
                         self.board[bot_move] = bot_sym
                         b_winner, b_line = self.check_winner()
                         if b_winner:
@@ -224,11 +237,26 @@ class TicTacToeGame(BaseGame):
             self.winning_line = None
             self.winner = None
             p_ids = list(self.players.keys())
-            # Alternate who starts
             if len(p_ids) >= 2:
-                # Swap symbols for fun or keep host as X
                 self.current_turn = p_ids[0] if random.random() > 0.5 else p_ids[1]
+                if self.current_turn == "bot_tanjun":
+                    bot_move = self._bot_calculate_move()
+                    if bot_move != -1:
+                        bot_sym = self.player_symbols.get("bot_tanjun", "O")
+                        self.board[bot_move] = bot_sym
+                        self.current_turn = p_ids[0] if p_ids[1] == "bot_tanjun" else p_ids[1]
             return {"status": "restarted", "state": self.get_state()}
+
+        if action == "lobby":
+            self.board = [""] * 9
+            self.is_started = False
+            self.is_finished = False
+            self.winner = None
+            self.winning_line = None
+            if "bot_tanjun" in self.players:
+                del self.players["bot_tanjun"]
+                self.bot_player = None
+            return {"status": "lobby", "state": self.get_state()}
 
         return {"error": f"Unknown action: {action}"}
 

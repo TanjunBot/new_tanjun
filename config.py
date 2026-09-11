@@ -96,6 +96,7 @@ class Settings(BaseSettings, cli_parse_args=False):
     activity_server_port: int = Field(default=8080, alias="ACTIVITY_SERVER_PORT")
     activity_server_host: str = Field(default="0.0.0.0", alias="ACTIVITY_SERVER_HOST")
     activity_public_url: str = Field(default="https://activity.entcheneric.com", alias="ACTIVITY_PUBLIC_URL")
+    discord_client_secret: SecretStr = Field(default=SecretStr(""), alias="DISCORD_CLIENT_SECRET")
 
     # ── Activity ──────────────────────────────────────────────────────────────
     activity: str = "Tanjun {version}"
@@ -174,6 +175,7 @@ BOTSTATUS_API_TOKEN: str = settings.botstatus_api_token.get_secret_value()
 activity_server_port: int = settings.activity_server_port
 activity_server_host: str = settings.activity_server_host
 activity_public_url: str = settings.activity_public_url
+discord_client_secret: str = settings.discord_client_secret.get_secret_value()
 
 # ── Emoji identifiers for calculator ─────────────────────────────────────────
 

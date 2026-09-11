@@ -30,7 +30,9 @@ class ActivityServer:
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "*"
         # Discord Activity iframe support
-        response.headers["Content-Security-Policy"] = "frame-ancestors https://*.discord.com https://discord.com;"
+        response.headers["Content-Security-Policy"] = (
+            "frame-ancestors 'self' https://*.discord.com https://discord.com https://*.discordsays.com https://discordsays.com;"
+        )
         if "X-Frame-Options" in response.headers:
             del response.headers["X-Frame-Options"]
         return response
@@ -41,6 +43,7 @@ class ActivityServer:
         self.app.router.add_get("/", self.handle_index)
         self.app.router.add_get("/activity", self.handle_activity)
         self.app.router.add_get("/api/config", self.handle_api_config)
+        self.app.router.add_post("/api/token", self.handle_api_token)
         self.app.router.add_get("/api/games", self.handle_api_games)
         self.app.router.add_post("/api/sessions", self.handle_create_session)
         self.app.router.add_get("/api/sessions/{session_id}", self.handle_get_session)
@@ -56,10 +59,44 @@ class ActivityServer:
         return await self.handle_index(request)
 
     async def handle_api_config(self, request: web.Request) -> web.Response:
+        import config
+        has_client_secret = bool(getattr(config, "discord_client_secret", ""))
         return web.json_response({
             "client_id": applicationId,
+            "has_client_secret": has_client_secret,
             "supported_games": session_manager.get_supported_games()
         })
+
+    async def handle_api_token(self, request: web.Request) -> web.Response:
+        try:
+            body = await request.json()
+            code = body.get("code")
+        except Exception:
+            return web.json_response({"error": "Invalid JSON"}, status=400)
+
+        import config
+        client_id = applicationId
+        client_secret = getattr(config, "discord_client_secret", "") or ""
+
+        if not client_secret:
+            return web.json_response({"error": "client_secret not configured"}, status=501)
+
+        data = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "authorization_code",
+            "code": code,
+        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        import aiohttp
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post("https://discord.com/api/v10/oauth2/token", data=data, headers=headers) as resp:
+                    resp_json = await resp.json()
+                    return web.json_response(resp_json, status=resp.status)
+        except Exception as e:
+            return web.json_response({"error": str(e)}, status=500)
 
     async def handle_api_games(self, request: web.Request) -> web.Response:
         return web.json_response({
@@ -158,10 +195,10 @@ class ActivityServer:
                                 avatar_url=avatar_url,
                                 is_host=True
                             )
-                            # Remove placeholder from players list and set real host
-                            session.game.players = [p for p in session.game.players if p.user_id != PLACEHOLDER_HOST_ID]
+                            # Remove placeholder from players dict and set real host
+                            session.game.players.pop(PLACEHOLDER_HOST_ID, None)
                             session.game.host = real_host
-                            session.game.players.insert(0, real_host)
+                            session.game.players[user_id] = real_host
                         else:
                             player = Player(
                                 user_id=user_id,

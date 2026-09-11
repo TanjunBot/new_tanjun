@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg-primary: #0f111a;
   --bg-secondary: #1a1d2d;
   --bg-card: rgba(30, 34, 53, 0.7);
@@ -208,6 +208,98 @@ body {
   background: var(--accent-cyan);
   color: #0c0e17;
   font-weight: 700;
+}
+
+/* Lobby Players Box */
+.lobby-players-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.lobby-players-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.lobby-count-badge {
+  font-size: 0.75rem;
+  background: rgba(0, 242, 254, 0.15);
+  color: var(--accent-cyan);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+}
+
+.lobby-players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.lobby-player-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lobby-player-avatar-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.lobby-tag-host {
+  font-size: 0.7rem;
+  color: #ffb703;
+  background: rgba(255, 183, 3, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.lobby-tag-you {
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  background: rgba(0, 242, 254, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.lobby-status-text {
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+  min-height: 1.2rem;
+  margin-bottom: 14px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
 }
 
 .btn-primary {

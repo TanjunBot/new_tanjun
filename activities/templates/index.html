@@ -1,11 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Tanjun Games - Discord Activity</title>
-  <!-- Discord Embedded App SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.1.0/output/index.js"></script>
+  <!-- Activity styles & fonts -->
   <link rel="stylesheet" href="/static/css/activity.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,6 +54,25 @@
           <div class="diff-pill" data-diff="5">5 (Unbesiegbar)</div>
         </div>
       </div>
+
+      <!-- Connected Players in Lobby -->
+      <div id="lobbyPlayersBox" class="lobby-players-box">
+        <div class="lobby-players-header">
+          <span>Lobby-Teilnehmer</span>
+          <span id="playerCountBadge" class="lobby-count-badge">1/2</span>
+        </div>
+        <div id="lobbyPlayersList" class="lobby-players-list">
+          <div class="lobby-player-row">
+            <div class="lobby-player-meta">
+              <img class="lobby-player-avatar-small" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="P">
+              <span>Du</span>
+            </div>
+            <span class="lobby-tag-host">Host 👑</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="lobbyStatusMsg" class="lobby-status-text"></div>
 
       <button id="startBtn" class="btn-primary" type="button">Spiel Starten</button>
     </section>
@@ -111,11 +129,11 @@
       <!-- Footer Buttons -->
       <div class="controls-footer">
         <button id="restartBtn" class="btn-secondary" type="button">🔄 Neue Runde</button>
-        <button id="leaveBtn" class="btn-secondary" type="button">🚪 Lobby verlassen</button>
+        <button id="leaveBtn" class="btn-secondary" type="button">🚪 Zurück zur Lobby</button>
       </div>
     </section>
   </main>
 
-  <script src="/static/js/activity.js"></script>
+  <script type="module" src="/static/js/activity.js"></script>
 </body>
 </html>
