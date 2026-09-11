@@ -35,6 +35,10 @@ class ActivityServer:
         )
         if "X-Frame-Options" in response.headers:
             del response.headers["X-Frame-Options"]
+        if request.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
         return response
 
     def _setup_routes(self) -> None:
