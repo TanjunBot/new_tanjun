@@ -26,6 +26,16 @@ class GameSession:
         self.sockets: Dict[str, web.WebSocketResponse] = {}  # user_id -> ws
         self.created_at: float = asyncio.get_event_loop().time()
         self.last_activity: float = self.created_at
+        self.lobby_settings: Dict[str, Any] = {
+            "mode": "pvp",
+            "first_turn": "host",
+            "difficulty": 3,
+            "rows": 6,
+            "cols": 7,
+            "connect": 4,
+            "target_wins": 3,
+            "variation": "classic"
+        }
 
     def switch_game(self, game_type: str) -> BaseGame:
         cls = session_manager.get_game_class(game_type)
@@ -46,6 +56,7 @@ class GameSession:
         state = self.game.get_state(for_user_id=for_user_id)
         state["is_hub"] = self.is_hub
         state["available_games"] = session_manager.get_supported_games()
+        state["lobby_settings"] = self.lobby_settings
         return state
 
     async def broadcast(self, message: Dict[str, Any]) -> None:

@@ -233,7 +233,14 @@ class ActivityServer:
                             if hasattr(session.game, "reset"):
                                 await session.game.reset()
                             await session.broadcast_state()
+                        elif action_name == "update_settings":
+                            session.lobby_settings.update(action_payload)
+                            await session.broadcast_state()
                         else:
+                            if action_name == "start":
+                                full_payload = dict(session.lobby_settings)
+                                full_payload.update(action_payload)
+                                action_payload = full_payload
                             result = await session.game.handle_action(p_id, action_name, action_payload)
                             await session.broadcast_state()
 

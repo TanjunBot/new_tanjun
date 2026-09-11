@@ -7,19 +7,30 @@ from activities.base import BaseGame, Player
 
 
 class RPSGame(BaseGame):
-    """Rock-Paper-Scissors (Schere Stein Papier) with hidden picks, best-of series, PvP & Bot AI."""
+    """Rock-Paper-Scissors (Schere Stein Papier) with hidden picks, series modes, variants, PvP & Bot AI."""
 
-    CHOICES = ["rock", "paper", "scissors"]
-    WIN_MAP = {
-        "rock": "scissors",
-        "scissors": "paper",
-        "paper": "rock"
+    CLASSIC_CHOICES = ["rock", "paper", "scissors"]
+    EXTENDED_CHOICES = ["rock", "paper", "scissors", "lizard", "spock"]
+
+    CLASSIC_WIN_MAP: Dict[str, List[str]] = {
+        "rock": ["scissors"],
+        "paper": ["rock"],
+        "scissors": ["paper"]
+    }
+
+    EXTENDED_WIN_MAP: Dict[str, List[str]] = {
+        "rock": ["scissors", "lizard"],
+        "paper": ["rock", "spock"],
+        "scissors": ["paper", "lizard"],
+        "lizard": ["spock", "paper"],
+        "spock": ["scissors", "rock"]
     }
 
     def __init__(self, session_id: str, host: Player, difficulty: int = 3) -> None:
         super().__init__(session_id=session_id, host=host, max_players=2)
         self.difficulty: int = difficulty
         self.target_wins: int = 3  # Best of 5 (first to 3)
+        self.variation: str = "classic"  # "classic" or "lizard_spock"
         self.current_round: int = 1
         self.scores: Dict[str, int] = {}
         self.current_picks: Dict[str, str] = {}  # user_id -> choice
@@ -34,6 +45,14 @@ class RPSGame(BaseGame):
     @property
     def display_name(self) -> str:
         return "Schere Stein Papier"
+
+    @property
+    def choices(self) -> List[str]:
+        return self.EXTENDED_CHOICES if self.variation == "lizard_spock" else self.CLASSIC_CHOICES
+
+    @property
+    def win_map(self) -> Dict[str, List[str]]:
+        return self.EXTENDED_WIN_MAP if self.variation == "lizard_spock" else self.CLASSIC_WIN_MAP
 
     def setup_bot(self, difficulty: int = 3) -> None:
         self.difficulty = max(1, min(5, difficulty))
@@ -69,20 +88,21 @@ class RPSGame(BaseGame):
         return True
 
     def _bot_pick(self, human_id: str) -> str:
+        available = self.choices
         # Pattern-based AI or random depending on difficulty
-        if self.difficulty >= 4 and self.round_history:
-            # Predict human might switch or repeat
+        if self.difficulty >= 3 and self.round_history:
             last_human_pick = None
             for r in reversed(self.round_history):
                 if human_id in r.get("picks", {}):
                     last_human_pick = r["picks"][human_id]
                     break
-            if last_human_pick and random.random() < 0.6:
-                # Counter what would beat the last pick
-                counter = {"rock": "paper", "paper": "scissors", "scissors": "rock"}
-                return counter.get(last_human_pick, random.choice(self.CHOICES))
+            if last_human_pick and random.random() < 0.65:
+                # Find moves that beat the last human pick
+                beating_moves = [move for move, beats in self.win_map.items() if last_human_pick in beats]
+                if beating_moves:
+                    return random.choice(beating_moves)
 
-        return random.choice(self.CHOICES)
+        return random.choice(available)
 
     def _evaluate_round(self) -> Dict[str, Any]:
         p_ids = list(self.players.keys())
@@ -93,7 +113,7 @@ class RPSGame(BaseGame):
         round_winner: Optional[str] = None
         if c1 == c2:
             round_winner = "draw"
-        elif self.WIN_MAP.get(c1) == c2:
+        elif c2 in self.win_map.get(c1, []):
             round_winner = p1_id
             self.scores[p1_id] = self.scores.get(p1_id, 0) + 1
         else:
@@ -127,6 +147,7 @@ class RPSGame(BaseGame):
             self.game_mode = mode
             self.difficulty = int(data.get("difficulty", 3))
             self.target_wins = int(data.get("target_wins", 3))
+            self.variation = data.get("variation", "classic")
             if mode == "bot":
                 self.setup_bot(self.difficulty)
             elif "bot_tanjun" in self.players:
@@ -147,7 +168,7 @@ class RPSGame(BaseGame):
                 return {"error": "Game is not active"}
 
             choice = data.get("choice")
-            if choice not in self.CHOICES:
+            if choice not in self.choices:
                 return {"error": f"Invalid choice: {choice}"}
 
             self.current_picks[player_id] = choice
@@ -179,7 +200,8 @@ class RPSGame(BaseGame):
             return await self.handle_action(player_id, "start", {
                 "mode": self.game_mode,
                 "difficulty": self.difficulty,
-                "target_wins": self.target_wins
+                "target_wins": self.target_wins,
+                "variation": self.variation
             })
 
         if action == "lobby":
@@ -188,7 +210,6 @@ class RPSGame(BaseGame):
             self.winner = None
             self.current_picks = {}
             self.last_round_result = None
-            self.round_history = []
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
@@ -200,19 +221,20 @@ class RPSGame(BaseGame):
         self.is_started = False
         self.is_finished = False
         self.winner = None
+        self.current_round = 1
         self.current_picks = {}
         self.last_round_result = None
         self.round_history = []
         self.scores = {pid: 0 for pid in self.players}
 
     def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
-        # Mask choices until round is evaluated: each player only sees IF others picked, not WHAT
-        masked_picks = {}
-        for uid, choice in self.current_picks.items():
-            if uid == for_user_id or self.last_round_result is not None:
-                masked_picks[uid] = choice
+        # Mask opponents' choices until round evaluation
+        visible_picks: Dict[str, str] = {}
+        for pid, choice in self.current_picks.items():
+            if for_user_id is None or pid == for_user_id:
+                visible_picks[pid] = choice
             else:
-                masked_picks[uid] = "locked"
+                visible_picks[pid] = "locked"
 
         return {
             "session_id": self.session_id,
@@ -220,11 +242,13 @@ class RPSGame(BaseGame):
             "game_mode": self.game_mode,
             "difficulty": self.difficulty,
             "target_wins": self.target_wins,
+            "variation": self.variation,
+            "available_choices": self.choices,
             "current_round": self.current_round,
             "is_started": self.is_started,
             "is_finished": self.is_finished,
             "winner": self.winner,
-            "current_picks": masked_picks,
+            "current_picks": visible_picks,
             "last_round_result": self.last_round_result,
             "round_history": self.round_history,
             "scores": self.scores,

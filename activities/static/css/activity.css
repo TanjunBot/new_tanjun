@@ -187,27 +187,66 @@ body {
   justify-content: space-between;
 }
 
+/* ── Game Settings Container ────────────────────────── */
+.game-settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.settings-group {
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.settings-active-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
 .diff-pills {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .diff-pill {
-  flex: 1;
-  padding: 8px;
-  font-size: 0.8rem;
+  flex: 1 1 auto;
+  min-width: 64px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
   text-align: center;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  user-select: none;
+}
+
+.diff-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 242, 254, 0.3);
 }
 
 .diff-pill.active {
   background: var(--accent-cyan);
   color: #0c0e17;
   font-weight: 700;
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.diff-pill.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Lobby Players Box */
@@ -646,9 +685,10 @@ body {
 
 .c4-drop-row {
   display: grid;
-  grid-template-columns: repeat(7, 42px);
+  grid-template-columns: repeat(var(--c4-cols, 7), var(--c4-cell-size, 40px));
   gap: 6px;
   margin-bottom: 4px;
+  justify-content: center;
 }
 
 .c4-drop-btn {
@@ -660,6 +700,7 @@ body {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.15s;
+  width: var(--c4-cell-size, 40px);
 }
 
 .c4-drop-btn:hover {
@@ -670,28 +711,20 @@ body {
 
 .c4-grid {
   display: grid;
-  grid-template-columns: repeat(7, 42px);
-  grid-template-rows: repeat(6, 42px);
+  grid-template-columns: repeat(var(--c4-cols, 7), var(--c4-cell-size, 40px));
+  grid-template-rows: repeat(var(--c4-rows, 6), var(--c4-cell-size, 40px));
   gap: 6px;
   background: #0d1b2a;
   padding: 10px;
   border-radius: var(--radius-md);
   border: 2px solid #1b263b;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-@media (max-width: 420px) {
-  .c4-drop-row, .c4-grid {
-    grid-template-columns: repeat(7, 34px);
-    gap: 4px;
-  }
-  .c4-grid {
-    grid-template-rows: repeat(6, 34px);
-    padding: 6px;
-  }
+  justify-content: center;
 }
 
 .c4-cell {
+  width: var(--c4-cell-size, 40px);
+  height: var(--c4-cell-size, 40px);
   background: #1e293b;
   border-radius: 50%;
   cursor: pointer;

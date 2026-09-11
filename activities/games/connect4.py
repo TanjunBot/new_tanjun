@@ -7,14 +7,26 @@ from activities.base import BaseGame, Player
 
 
 class Connect4Game(BaseGame):
-    """Connect 4 (Vier Gewinnt) implementation with 7x6 grid, PvP & Bot AI."""
+    """Connect 4 (Vier Gewinnt) with dynamic grid size, custom connect targets, PvP & Bot AI."""
 
-    ROWS = 6
-    COLS = 7
+    DEFAULT_ROWS = 6
+    DEFAULT_COLS = 7
 
-    def __init__(self, session_id: str, host: Player, difficulty: int = 3) -> None:
+    def __init__(
+        self,
+        session_id: str,
+        host: Player,
+        difficulty: int = 3,
+        rows: int = 6,
+        cols: int = 7,
+        connect_target: int = 4
+    ) -> None:
         super().__init__(session_id=session_id, host=host, max_players=2)
-        self.board: List[str] = [""] * (self.ROWS * self.COLS)
+        self.rows: int = rows
+        self.cols: int = cols
+        self.connect_target: int = connect_target
+        self.first_turn_rule: str = "host"
+        self.board: List[str] = [""] * (self.rows * self.cols)
         self.difficulty: int = difficulty
         self.current_turn: Optional[str] = None
         self.player_symbols: Dict[str, str] = {}  # user_id -> "R" (Red) or "Y" (Yellow)
@@ -53,7 +65,7 @@ class Connect4Game(BaseGame):
         if len(p_ids) < 2:
             return False
 
-        self.board = [""] * (self.ROWS * self.COLS)
+        self.board = [""] * (self.rows * self.cols)
         self.is_started = True
         self.is_finished = False
         self.winner = None
@@ -67,52 +79,69 @@ class Connect4Game(BaseGame):
             if pid not in self.scores:
                 self.scores[pid] = 0
 
-        self.current_turn = p_ids[0]
+        # Decide who starts
+        if self.first_turn_rule == "random":
+            self.current_turn = random.choice(p_ids)
+        elif self.first_turn_rule == "guest" and len(p_ids) > 1:
+            self.current_turn = p_ids[1]
+        else:
+            self.current_turn = p_ids[0]
+
+        # If bot plays first, make move
+        if self.current_turn == "bot_tanjun":
+            bot_col = self._bot_calculate_move()
+            if bot_col != -1:
+                r = self._get_lowest_empty_row(bot_col)
+                if r != -1:
+                    self.board[r * self.cols + bot_col] = self.player_symbols.get("bot_tanjun", "Y")
+                    self.current_turn = p_ids[0]
+
         return True
 
     def _get_lowest_empty_row(self, col: int, board: Optional[List[str]] = None) -> int:
         b = board if board is not None else self.board
-        for row in range(self.ROWS - 1, -1, -1):
-            if b[row * self.COLS + col] == "":
+        for row in range(self.rows - 1, -1, -1):
+            if b[row * self.cols + col] == "":
                 return row
         return -1
 
     def check_winner(self, b: Optional[List[str]] = None) -> Tuple[Optional[str], Optional[List[int]]]:
         board = b if b is not None else self.board
+        k = self.connect_target
 
         # Horizontal check
-        for r in range(self.ROWS):
-            for c in range(self.COLS - 3):
-                idx = r * self.COLS + c
+        for r in range(self.rows):
+            for c in range(self.cols - k + 1):
+                idx = r * self.cols + c
                 s = board[idx]
-                if s and s == board[idx + 1] == board[idx + 2] == board[idx + 3]:
-                    return s, [idx, idx + 1, idx + 2, idx + 3]
+                if s and all(board[idx + i] == s for i in range(1, k)):
+                    return s, [idx + i for i in range(k)]
 
         # Vertical check
-        for r in range(self.ROWS - 3):
-            for c in range(self.COLS):
-                idx = r * self.COLS + c
+        for r in range(self.rows - k + 1):
+            for c in range(self.cols):
+                idx = r * self.cols + c
                 s = board[idx]
-                if s and s == board[idx + self.COLS] == board[idx + 2 * self.COLS] == board[idx + 3 * self.COLS]:
-                    return s, [idx, idx + self.COLS, idx + 2 * self.COLS, idx + 3 * self.COLS]
+                if s and all(board[idx + i * self.cols] == s for i in range(1, k)):
+                    return s, [idx + i * self.cols for i in range(k)]
 
         # Diagonal (top-left to bottom-right \)
-        for r in range(self.ROWS - 3):
-            for c in range(self.COLS - 3):
-                idx = r * self.COLS + c
+        step_diag1 = self.cols + 1
+        for r in range(self.rows - k + 1):
+            for c in range(self.cols - k + 1):
+                idx = r * self.cols + c
                 s = board[idx]
-                step = self.COLS + 1
-                if s and s == board[idx + step] == board[idx + 2 * step] == board[idx + 3 * step]:
-                    return s, [idx, idx + step, idx + 2 * step, idx + 3 * step]
+                if s and all(board[idx + i * step_diag1] == s for i in range(1, k)):
+                    return s, [idx + i * step_diag1 for i in range(k)]
 
         # Diagonal (bottom-left to top-right /)
-        for r in range(3, self.ROWS):
-            for c in range(self.COLS - 3):
-                idx = r * self.COLS + c
+        step_diag2 = self.cols - 1
+        for r in range(k - 1, self.rows):
+            for c in range(self.cols - k + 1):
+                idx = r * self.cols + c
                 s = board[idx]
-                step = self.COLS - 1
-                if s and s == board[idx - step] == board[idx - 2 * step] == board[idx - 3 * step]:
-                    return s, [idx, idx - step, idx - 2 * step, idx - 3 * step]
+                if s and all(board[idx - i * step_diag2] == s for i in range(1, k)):
+                    return s, [idx - i * step_diag2 for i in range(k)]
 
         if all(cell != "" for cell in board):
             return "draw", None
@@ -120,7 +149,7 @@ class Connect4Game(BaseGame):
         return None, None
 
     def _bot_calculate_move(self) -> int:
-        valid_cols = [c for c in range(self.COLS) if self._get_lowest_empty_row(c) != -1]
+        valid_cols = [c for c in range(self.cols) if self._get_lowest_empty_row(c) != -1]
         if not valid_cols:
             return -1
 
@@ -135,7 +164,7 @@ class Connect4Game(BaseGame):
         # 1. Check if bot can win immediately
         for c in valid_cols:
             r = self._get_lowest_empty_row(c)
-            idx = r * self.COLS + c
+            idx = r * self.cols + c
             self.board[idx] = bot_sym
             w, _ = self.check_winner()
             self.board[idx] = ""
@@ -145,7 +174,7 @@ class Connect4Game(BaseGame):
         # 2. Check if human can win on next turn and block
         for c in valid_cols:
             r = self._get_lowest_empty_row(c)
-            idx = r * self.COLS + c
+            idx = r * self.cols + c
             self.board[idx] = human_sym
             w, _ = self.check_winner()
             self.board[idx] = ""
@@ -153,7 +182,8 @@ class Connect4Game(BaseGame):
                 return c
 
         # 3. Prefer center column or inner columns
-        preference_order = [3, 2, 4, 1, 5, 0, 6]
+        center = self.cols // 2
+        preference_order = sorted(range(self.cols), key=lambda col: abs(col - center))
         for pref in preference_order:
             if pref in valid_cols and random.random() < 0.7:
                 return pref
@@ -166,6 +196,15 @@ class Connect4Game(BaseGame):
             self.game_mode = mode
             diff = int(data.get("difficulty", 3))
             self.difficulty = diff
+
+            # Configurable grid and rules
+            rows = int(data.get("rows", self.DEFAULT_ROWS))
+            cols = int(data.get("cols", self.DEFAULT_COLS))
+            self.rows = max(5, min(9, rows))
+            self.cols = max(6, min(10, cols))
+            self.connect_target = max(3, min(5, int(data.get("connect", 4))))
+            self.first_turn_rule = data.get("first_turn", "host")
+
             if mode == "bot":
                 self.setup_bot(diff)
             elif "bot_tanjun" in self.players:
@@ -188,14 +227,14 @@ class Connect4Game(BaseGame):
                 return {"error": "Not your turn"}
 
             col = data.get("col") if "col" in data else data.get("column")
-            if col is None or not (0 <= col < self.COLS):
+            if col is None or not (0 <= col < self.cols):
                 return {"error": "Invalid column"}
 
             row = self._get_lowest_empty_row(col)
             if row == -1:
                 return {"error": "Column is full"}
 
-            idx = row * self.COLS + col
+            idx = row * self.cols + col
             sym = self.player_symbols.get(player_id)
             if not sym:
                 return {"error": "Unknown player"}
@@ -217,12 +256,12 @@ class Connect4Game(BaseGame):
                 self.current_turn = next_player
 
                 if next_player == "bot_tanjun" and not self.is_finished:
-                    await asyncio.sleep(0.4)
+                    await asyncio.sleep(0.35)
                     bot_col = self._bot_calculate_move()
                     if bot_col != -1:
                         bot_row = self._get_lowest_empty_row(bot_col)
                         if bot_row != -1:
-                            bot_idx = bot_row * self.COLS + bot_col
+                            bot_idx = bot_row * self.cols + bot_col
                             bot_sym = self.player_symbols.get("bot_tanjun", "Y")
                             self.board[bot_idx] = bot_sym
                             b_winner, b_line = self.check_winner()
@@ -240,24 +279,30 @@ class Connect4Game(BaseGame):
             return {"status": "moved", "state": self.get_state()}
 
         if action == "restart":
-            self.board = [""] * (self.ROWS * self.COLS)
+            self.board = [""] * (self.rows * self.cols)
             self.is_finished = False
             self.winning_line = None
             self.winner = None
             p_ids = list(self.players.keys())
             if len(p_ids) >= 2:
-                self.current_turn = p_ids[0] if random.random() > 0.5 else p_ids[1]
+                if self.first_turn_rule == "random":
+                    self.current_turn = random.choice(p_ids)
+                elif self.first_turn_rule == "guest":
+                    self.current_turn = p_ids[1]
+                else:
+                    self.current_turn = p_ids[0]
+
                 if self.current_turn == "bot_tanjun":
                     bot_col = self._bot_calculate_move()
                     if bot_col != -1:
                         bot_row = self._get_lowest_empty_row(bot_col)
                         if bot_row != -1:
-                            self.board[bot_row * self.COLS + bot_col] = self.player_symbols.get("bot_tanjun", "Y")
+                            self.board[bot_row * self.cols + bot_col] = self.player_symbols.get("bot_tanjun", "Y")
                             self.current_turn = p_ids[0] if p_ids[1] == "bot_tanjun" else p_ids[1]
             return {"status": "restarted", "state": self.get_state()}
 
         if action == "lobby":
-            self.board = [""] * (self.ROWS * self.COLS)
+            self.board = [""] * (self.rows * self.cols)
             self.is_started = False
             self.is_finished = False
             self.winner = None
@@ -270,7 +315,7 @@ class Connect4Game(BaseGame):
         return {"error": f"Unknown action: {action}"}
 
     async def reset(self) -> None:
-        self.board = [""] * (self.ROWS * self.COLS)
+        self.board = [""] * (self.rows * self.cols)
         self.is_started = False
         self.is_finished = False
         self.winner = None
@@ -288,8 +333,10 @@ class Connect4Game(BaseGame):
             "winner": self.winner,
             "winning_line": self.winning_line,
             "board": self.board,
-            "rows": self.ROWS,
-            "cols": self.COLS,
+            "rows": self.rows,
+            "cols": self.cols,
+            "connect_target": self.connect_target,
+            "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,
             "player_symbols": self.player_symbols,
             "scores": self.scores,

@@ -13,6 +13,7 @@ class TicTacToeGame(BaseGame):
         super().__init__(session_id=session_id, host=host, max_players=2)
         self.board: List[str] = [""] * 9
         self.difficulty: int = difficulty  # 1 (easy) to 5 (unbeatable)
+        self.first_turn_rule: str = "host"
         self.current_turn: Optional[str] = None  # player user_id
         self.player_symbols: Dict[str, str] = {}  # user_id -> "X" or "O"
         self.winning_line: Optional[List[int]] = None
@@ -65,8 +66,21 @@ class TicTacToeGame(BaseGame):
             if pid not in self.scores:
                 self.scores[pid] = 0
 
-        # X always starts
-        self.current_turn = p_ids[0]
+        # Decide first turn
+        if self.first_turn_rule == "random":
+            self.current_turn = random.choice(p_ids)
+        elif self.first_turn_rule == "guest" and len(p_ids) > 1:
+            self.current_turn = p_ids[1]
+        else:
+            self.current_turn = p_ids[0]
+
+        # If bot plays first, bot makes move
+        if self.current_turn == "bot_tanjun":
+            bot_move = self._bot_calculate_move()
+            if bot_move != -1:
+                self.board[bot_move] = self.player_symbols.get("bot_tanjun", "O")
+                self.current_turn = p_ids[0]
+
         return True
 
     def check_winner(self, b: Optional[List[str]] = None) -> tuple[Optional[str], Optional[List[int]]]:
@@ -164,6 +178,7 @@ class TicTacToeGame(BaseGame):
             self.game_mode = mode
             diff = int(data.get("difficulty", 3))
             self.difficulty = diff
+            self.first_turn_rule = data.get("first_turn", "host")
             if mode == "bot":
                 self.setup_bot(diff)
             elif "bot_tanjun" in self.players:
@@ -279,6 +294,7 @@ class TicTacToeGame(BaseGame):
             "winner": self.winner,
             "winning_line": self.winning_line,
             "board": self.board,
+            "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,
             "player_symbols": self.player_symbols,
             "scores": self.scores,

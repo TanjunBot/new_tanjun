@@ -67,32 +67,83 @@
         </button>
       </div>
 
-      <!-- Difficulty Container for Bot Mode -->
-      <div id="diffContainer" class="difficulty-container">
-        <div class="difficulty-label">
-          <span>Bot Schwierigkeit</span>
-          <span>Stufe 1 bis 5</span>
-        </div>
-        <div class="diff-pills">
-          <div class="diff-pill" data-diff="1">1 (Leicht)</div>
-          <div class="diff-pill" data-diff="2">2</div>
-          <div class="diff-pill active" data-diff="3">3 (Normal)</div>
-          <div class="diff-pill" data-diff="4">4</div>
-          <div class="diff-pill" data-diff="5">5 (Unbesiegbar)</div>
-        </div>
-      </div>
+      <!-- Game Settings Container -->
+      <div id="gameSettingsContainer" class="game-settings-container">
 
-      <!-- Rounds Container for RPS Mode -->
-      <div id="rpsRoundsContainer" class="difficulty-container" style="display: none;">
-        <div class="difficulty-label">
-          <span>Runden zum Sieg</span>
-          <span>Best-of Serie</span>
+        <!-- Connect 4 Specific Settings -->
+        <div id="c4Settings" class="settings-group" style="display: none;">
+          <div class="difficulty-label">
+            <span>⚙️ Spielfeld-Größe</span>
+            <span id="c4SizeLabel" class="settings-active-label">Standard (7×6)</span>
+          </div>
+          <div class="diff-pills" id="c4SizePills">
+            <div class="diff-pill" data-c4-rows="5" data-c4-cols="6">Kompakt (6×5)</div>
+            <div class="diff-pill active" data-c4-rows="6" data-c4-cols="7">Standard (7×6)</div>
+            <div class="diff-pill" data-c4-rows="7" data-c4-cols="8">Groß (8×7)</div>
+            <div class="diff-pill" data-c4-rows="7" data-c4-cols="9">Riesig (9×7)</div>
+          </div>
+
+          <div class="difficulty-label" style="margin-top: 12px;">
+            <span>🎯 Reihenlänge zum Sieg</span>
+            <span id="c4ConnectLabel" class="settings-active-label">4 in einer Reihe</span>
+          </div>
+          <div class="diff-pills" id="c4ConnectPills">
+            <div class="diff-pill active" data-c4-connect="4">4 in einer Reihe (Standard)</div>
+            <div class="diff-pill" data-c4-connect="5">5 in einer Reihe (Taktik)</div>
+          </div>
         </div>
-        <div class="diff-pills">
-          <div class="diff-pill" data-rounds="1">1 Sieg</div>
-          <div class="diff-pill" data-rounds="2">Best of 3 (2 Siege)</div>
-          <div class="diff-pill active" data-rounds="3">Best of 5 (3 Siege)</div>
+
+        <!-- RPS Specific Settings -->
+        <div id="rpsSettings" class="settings-group" style="display: none;">
+          <div class="difficulty-label">
+            <span>🏆 Runden zum Sieg</span>
+            <span id="rpsRoundsLabel" class="settings-active-label">Best of 5 (3 Siege)</span>
+          </div>
+          <div class="diff-pills" id="rpsRoundsPills">
+            <div class="diff-pill" data-rps-rounds="1">1 Sieg (Sudden Death)</div>
+            <div class="diff-pill" data-rps-rounds="2">Best of 3 (2 Siege)</div>
+            <div class="diff-pill active" data-rps-rounds="3">Best of 5 (3 Siege)</div>
+            <div class="diff-pill" data-rps-rounds="4">Best of 7 (4 Siege)</div>
+          </div>
+
+          <div class="difficulty-label" style="margin-top: 12px;">
+            <span>✨ Gesten-Variante</span>
+            <span id="rpsVarLabel" class="settings-active-label">Klassisch (3 Gesten)</span>
+          </div>
+          <div class="diff-pills" id="rpsVarPills">
+            <div class="diff-pill active" data-rps-var="classic">✊✋✌️ Klassisch (3)</div>
+            <div class="diff-pill" data-rps-var="lizard_spock">✊✋✌️🦎🖖 Echse & Spock (5)</div>
+          </div>
         </div>
+
+        <!-- Turn Order Setting (Connect 4 & Tic-Tac-Toe) -->
+        <div id="turnOrderContainer" class="settings-group">
+          <div class="difficulty-label">
+            <span>🎲 Erster Zug</span>
+            <span id="firstTurnLabel" class="settings-active-label">Host beginnt</span>
+          </div>
+          <div class="diff-pills" id="firstTurnPills">
+            <div class="diff-pill active" data-first-turn="host">👑 Host</div>
+            <div class="diff-pill" data-first-turn="random">🎲 Zufall</div>
+            <div class="diff-pill" data-first-turn="guest">🎯 Gegner</div>
+          </div>
+        </div>
+
+        <!-- Difficulty Container for Bot Mode -->
+        <div id="diffContainer" class="difficulty-container settings-group">
+          <div class="difficulty-label">
+            <span>🤖 Bot Schwierigkeit</span>
+            <span id="diffLabel" class="settings-active-label">Stufe 3 (Normal)</span>
+          </div>
+          <div class="diff-pills" id="botDiffPills">
+            <div class="diff-pill" data-diff="1">1 (Leicht)</div>
+            <div class="diff-pill" data-diff="2">2</div>
+            <div class="diff-pill active" data-diff="3">3 (Normal)</div>
+            <div class="diff-pill" data-diff="4">4</div>
+            <div class="diff-pill" data-diff="5">5 (Meister)</div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Connected Players in Lobby -->
@@ -196,7 +247,7 @@
             <div id="rpsRoundResult" class="rps-result-text">Wähle deine Geste!</div>
           </div>
 
-          <div class="rps-choices">
+          <div id="rpsChoices" class="rps-choices">
             <button class="rps-btn" data-choice="rock" type="button">
               <span class="rps-emoji">✊</span>
               <span class="rps-name">Stein</span>
@@ -208,6 +259,14 @@
             <button class="rps-btn" data-choice="scissors" type="button">
               <span class="rps-emoji">✌️</span>
               <span class="rps-name">Schere</span>
+            </button>
+            <button class="rps-btn rps-extended" data-choice="lizard" type="button" style="display: none;">
+              <span class="rps-emoji">🦎</span>
+              <span class="rps-name">Echse</span>
+            </button>
+            <button class="rps-btn rps-extended" data-choice="spock" type="button" style="display: none;">
+              <span class="rps-emoji">🖖</span>
+              <span class="rps-name">Spock</span>
             </button>
           </div>
         </div>

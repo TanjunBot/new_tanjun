@@ -184,7 +184,62 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIn("user_host", switched_game2.players)
         self.assertIn("user_guest", switched_game2.players)
 
+    async def test_connect4_custom_grid_size(self):
+        session = session_manager.create_session("connect4", host=self.host, session_id="test_c4_custom")
+        game: Connect4Game = session.game
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        game.add_player(p2)
+
+        # Start with 8x7 grid, 5 in a row to win, and guest starts
+        start_res = await game.handle_action("user_host", "start", {
+            "mode": "pvp",
+            "rows": 7,
+            "cols": 8,
+            "connect": 5,
+            "first_turn": "guest"
+        })
+        self.assertEqual(start_res["status"], "started")
+        state = game.get_state()
+        self.assertEqual(state["rows"], 7)
+        self.assertEqual(state["cols"], 8)
+        self.assertEqual(state["connect_target"], 5)
+        self.assertEqual(state["current_turn"], "user_guest")
+        self.assertEqual(len(state["board"]), 7 * 8)
+
+        # Guest drops in col 7 (rightmost column)
+        move_res = await game.handle_action("user_guest", "move", {"col": 7})
+        self.assertEqual(move_res["status"], "moved")
+        # Lowest row in 7-row board is row 6: index 6 * 8 + 7 = 55
+        self.assertEqual(move_res["state"]["board"][55], "Y")
+        self.assertEqual(move_res["state"]["current_turn"], "user_host")
+
+    async def test_rps_lizard_spock_variation(self):
+        session = session_manager.create_session("rps", host=self.host, session_id="test_rps_ls")
+        game: RPSGame = session.game
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        game.add_player(p2)
+
+        start_res = await game.handle_action("user_host", "start", {
+            "mode": "pvp",
+            "variation": "lizard_spock",
+            "target_wins": 3
+        })
+        self.assertEqual(start_res["status"], "started")
+        state = game.get_state()
+        self.assertEqual(state["variation"], "lizard_spock")
+        self.assertEqual(len(state["available_choices"]), 5)
+        self.assertIn("lizard", state["available_choices"])
+        self.assertIn("spock", state["available_choices"])
+
+        # Spock vaporizes Rock -> Host plays Spock, Guest plays Rock
+        await game.handle_action("user_host", "pick", {"choice": "spock"})
+        pick_res = await game.handle_action("user_guest", "pick", {"choice": "rock"})
+        self.assertTrue(pick_res["round_completed"])
+        self.assertEqual(pick_res["round_result"]["winner"], "user_host")
+        self.assertEqual(game.scores["user_host"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()
+
 

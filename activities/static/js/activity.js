@@ -16,6 +16,13 @@ class TanjunActivityClient {
     this.selectedMode = "bot"; // "bot" or "pvp"
     this.selectedDifficulty = 3;
     this.selectedTargetWins = 3;
+    this.selectedFirstTurn = "host"; // "host", "random", "guest"
+    this.selectedC4Rows = 6;
+    this.selectedC4Cols = 7;
+    this.selectedC4Connect = 4;
+    this.selectedRpsVariation = "classic";
+    this.currentC4Cols = 0;
+    this.currentC4Rows = 0;
     this.reconnectTimer = null;
 
     // Available games list (fallback if not yet received from WS)
@@ -88,10 +95,27 @@ class TanjunActivityClient {
       lobbyGameSubtitle: document.getElementById("lobbyGameSubtitle"),
       modeBotBtn: document.getElementById("modeBotBtn"),
       modePvpBtn: document.getElementById("modePvpBtn"),
+
+      // Game Settings Elements
+      gameSettingsContainer: document.getElementById("gameSettingsContainer"),
+      c4Settings: document.getElementById("c4Settings"),
+      c4SizeLabel: document.getElementById("c4SizeLabel"),
+      c4SizePills: document.querySelectorAll("#c4SizePills .diff-pill"),
+      c4ConnectLabel: document.getElementById("c4ConnectLabel"),
+      c4ConnectPills: document.querySelectorAll("#c4ConnectPills .diff-pill"),
+      rpsSettings: document.getElementById("rpsSettings"),
+      rpsRoundsLabel: document.getElementById("rpsRoundsLabel"),
+      rpsRoundsPills: document.querySelectorAll("#rpsRoundsPills .diff-pill"),
+      rpsVarLabel: document.getElementById("rpsVarLabel"),
+      rpsVarPills: document.querySelectorAll("#rpsVarPills .diff-pill"),
+      turnOrderContainer: document.getElementById("turnOrderContainer"),
+      firstTurnLabel: document.getElementById("firstTurnLabel"),
+      firstTurnPills: document.querySelectorAll("#firstTurnPills .diff-pill"),
       diffContainer: document.getElementById("diffContainer"),
-      diffPills: document.querySelectorAll(".diff-pill"),
-      rpsRoundsContainer: document.getElementById("rpsRoundsContainer"),
-      roundPills: document.querySelectorAll("#rpsRoundsContainer .diff-pill"),
+      diffLabel: document.getElementById("diffLabel"),
+      botDiffPills: document.querySelectorAll("#botDiffPills .diff-pill"),
+      rpsExtendedBtns: document.querySelectorAll(".rps-extended"),
+
       lobbyPlayersBox: document.getElementById("lobbyPlayersBox"),
       lobbyPlayersList: document.getElementById("lobbyPlayersList"),
       playerCountBadge: document.getElementById("playerCountBadge"),
@@ -133,18 +157,6 @@ class TanjunActivityClient {
       leaveBtn: document.getElementById("leaveBtn"),
       hubBtn: document.getElementById("hubBtn")
     };
-
-    // Initialize 42 Connect 4 cells dynamically if empty
-    if (this.el.c4Grid && this.el.c4Grid.children.length === 0) {
-      for (let i = 0; i < 42; i++) {
-        const cell = document.createElement("div");
-        cell.className = "c4-cell";
-        cell.dataset.index = i;
-        const col = i % 7;
-        cell.addEventListener("click", () => this.makeMoveConnect4(col));
-        this.el.c4Grid.appendChild(cell);
-      }
-    }
   }
 
   setupEventListeners() {
@@ -152,21 +164,77 @@ class TanjunActivityClient {
     this.el.modeBotBtn.addEventListener("click", () => this.setMode("bot"));
     this.el.modePvpBtn.addEventListener("click", () => this.setMode("pvp"));
 
-    // Difficulty selection
-    this.el.diffPills.forEach(pill => {
+    // Connect 4 Grid Size
+    this.el.c4SizePills.forEach(pill => {
       pill.addEventListener("click", () => {
-        this.el.diffPills.forEach(p => p.classList.remove("active"));
+        if (!this.isHost()) return;
+        this.el.c4SizePills.forEach(p => p.classList.remove("active"));
         pill.classList.add("active");
-        this.selectedDifficulty = parseInt(pill.dataset.diff, 10);
+        this.selectedC4Rows = parseInt(pill.dataset.c4Rows, 10) || 6;
+        this.selectedC4Cols = parseInt(pill.dataset.c4Cols, 10) || 7;
+        if (this.el.c4SizeLabel) this.el.c4SizeLabel.textContent = pill.textContent;
+        this.broadcastSettings();
       });
     });
 
-    // Rounds selection for RPS
-    this.el.roundPills.forEach(pill => {
+    // Connect 4 Target in a Row
+    this.el.c4ConnectPills.forEach(pill => {
       pill.addEventListener("click", () => {
-        this.el.roundPills.forEach(p => p.classList.remove("active"));
+        if (!this.isHost()) return;
+        this.el.c4ConnectPills.forEach(p => p.classList.remove("active"));
         pill.classList.add("active");
-        this.selectedTargetWins = parseInt(pill.dataset.rounds, 10);
+        this.selectedC4Connect = parseInt(pill.dataset.c4Connect, 10) || 4;
+        if (this.el.c4ConnectLabel) this.el.c4ConnectLabel.textContent = pill.textContent;
+        this.broadcastSettings();
+      });
+    });
+
+    // RPS Rounds
+    this.el.rpsRoundsPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        if (!this.isHost()) return;
+        this.el.rpsRoundsPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.selectedRpsRounds = parseInt(pill.dataset.rpsRounds, 10) || 3;
+        if (this.el.rpsRoundsLabel) this.el.rpsRoundsLabel.textContent = pill.textContent;
+        this.broadcastSettings();
+      });
+    });
+
+    // RPS Variation (Classic vs Lizard & Spock)
+    this.el.rpsVarPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        if (!this.isHost()) return;
+        this.el.rpsVarPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.selectedRpsVariation = pill.dataset.rpsVar || "classic";
+        if (this.el.rpsVarLabel) this.el.rpsVarLabel.textContent = pill.textContent;
+        this.broadcastSettings();
+      });
+    });
+
+    // Turn Order
+    this.el.firstTurnPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        if (!this.isHost()) return;
+        this.el.firstTurnPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.selectedFirstTurn = pill.dataset.firstTurn || "host";
+        if (this.el.firstTurnLabel) this.el.firstTurnLabel.textContent = pill.textContent;
+        this.broadcastSettings();
+      });
+    });
+
+    // Bot Difficulty
+    this.el.botDiffPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        if (!this.isHost()) return;
+        this.el.botDiffPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.selectedDifficulty = parseInt(pill.dataset.diff, 10) || 3;
+        const diffNames = { 1: "1 (Leicht)", 2: "2", 3: "3 (Normal)", 4: "4", 5: "5 (Meister)" };
+        if (this.el.diffLabel) this.el.diffLabel.textContent = diffNames[this.selectedDifficulty] || `Stufe ${this.selectedDifficulty}`;
+        this.broadcastSettings();
       });
     });
 
@@ -384,19 +452,93 @@ class TanjunActivityClient {
     }
   }
 
-  setMode(mode) {
-    this.selectedMode = mode;
-    if (mode === "bot") {
-      this.el.modeBotBtn.classList.add("active");
-      this.el.modePvpBtn.classList.remove("active");
-      if (this.gameState?.game_type !== "rps") {
-        this.el.diffContainer.style.display = "block";
+  isHost() {
+    const players = this.gameState?.players || [this.user];
+    return !this.gameState || players[0]?.user_id === this.user.id;
+  }
+
+  broadcastSettings() {
+    if (!this.isHost()) return;
+    this.sendAction("update_settings", {
+      mode: this.selectedMode,
+      difficulty: this.selectedDifficulty,
+      first_turn: this.selectedFirstTurn,
+      rows: this.selectedC4Rows,
+      cols: this.selectedC4Cols,
+      connect: this.selectedC4Connect,
+      target_wins: this.selectedRpsRounds,
+      variation: this.selectedRpsVariation
+    });
+  }
+
+  applyLobbySettings(s) {
+    if (!s) return;
+    if (s.mode) {
+      this.selectedMode = s.mode;
+      this.el.modeBotBtn.classList.toggle("active", s.mode === "bot");
+      this.el.modePvpBtn.classList.toggle("active", s.mode === "pvp");
+      if (this.el.diffContainer) {
+        this.el.diffContainer.style.display = s.mode === "bot" ? "block" : "none";
       }
-    } else {
-      this.el.modePvpBtn.classList.add("active");
-      this.el.modeBotBtn.classList.remove("active");
-      this.el.diffContainer.style.display = "none";
     }
+    if (s.difficulty) {
+      this.selectedDifficulty = s.difficulty;
+      this.el.botDiffPills.forEach(p => p.classList.toggle("active", parseInt(p.dataset.diff, 10) === s.difficulty));
+      const diffNames = { 1: "1 (Leicht)", 2: "2", 3: "3 (Normal)", 4: "4", 5: "5 (Meister)" };
+      if (this.el.diffLabel) this.el.diffLabel.textContent = diffNames[s.difficulty] || `Stufe ${s.difficulty}`;
+    }
+    if (s.first_turn) {
+      this.selectedFirstTurn = s.first_turn;
+      this.el.firstTurnPills.forEach(p => {
+        const isActive = p.dataset.firstTurn === s.first_turn;
+        p.classList.toggle("active", isActive);
+        if (isActive && this.el.firstTurnLabel) this.el.firstTurnLabel.textContent = p.textContent;
+      });
+    }
+    if (s.rows && s.cols) {
+      this.selectedC4Rows = s.rows;
+      this.selectedC4Cols = s.cols;
+      this.el.c4SizePills.forEach(p => {
+        const isActive = parseInt(p.dataset.c4Rows, 10) === s.rows && parseInt(p.dataset.c4Cols, 10) === s.cols;
+        p.classList.toggle("active", isActive);
+        if (isActive && this.el.c4SizeLabel) this.el.c4SizeLabel.textContent = p.textContent;
+      });
+    }
+    if (s.connect) {
+      this.selectedC4Connect = s.connect;
+      this.el.c4ConnectPills.forEach(p => {
+        const isActive = parseInt(p.dataset.c4Connect, 10) === s.connect;
+        p.classList.toggle("active", isActive);
+        if (isActive && this.el.c4ConnectLabel) this.el.c4ConnectLabel.textContent = p.textContent;
+      });
+    }
+    if (s.target_wins) {
+      this.selectedRpsRounds = s.target_wins;
+      this.el.rpsRoundsPills.forEach(p => {
+        const isActive = parseInt(p.dataset.rpsRounds, 10) === s.target_wins;
+        p.classList.toggle("active", isActive);
+        if (isActive && this.el.rpsRoundsLabel) this.el.rpsRoundsLabel.textContent = p.textContent;
+      });
+    }
+    if (s.variation) {
+      this.selectedRpsVariation = s.variation;
+      this.el.rpsVarPills.forEach(p => {
+        const isActive = p.dataset.rpsVar === s.variation;
+        p.classList.toggle("active", isActive);
+        if (isActive && this.el.rpsVarLabel) this.el.rpsVarLabel.textContent = p.textContent;
+      });
+    }
+  }
+
+  setMode(mode) {
+    if (!this.isHost()) return;
+    this.selectedMode = mode;
+    this.el.modeBotBtn.classList.toggle("active", mode === "bot");
+    this.el.modePvpBtn.classList.toggle("active", mode === "pvp");
+    if (this.el.diffContainer) {
+      this.el.diffContainer.style.display = mode === "bot" ? "block" : "none";
+    }
+    this.broadcastSettings();
     this.updateLobbyControls();
   }
 
@@ -419,7 +561,12 @@ class TanjunActivityClient {
       this.sendAction("start", {
         mode: this.selectedMode,
         difficulty: this.selectedDifficulty,
-        target_wins: this.selectedTargetWins
+        first_turn: this.selectedFirstTurn,
+        rows: this.selectedC4Rows,
+        cols: this.selectedC4Cols,
+        connect: this.selectedC4Connect,
+        target_wins: this.selectedRpsRounds,
+        variation: this.selectedRpsVariation
       });
     }
   }
@@ -517,8 +664,14 @@ class TanjunActivityClient {
 
   updateLobbyControls() {
     const players = this.gameState?.players || [this.user];
-    const isHost = !this.gameState || players[0]?.user_id === this.user.id;
+    const isHost = this.isHost();
     const humanPlayers = players.filter(p => !p.is_bot);
+
+    // Disable settings interactions for guests
+    const allPills = document.querySelectorAll(".game-settings-container .diff-pill");
+    allPills.forEach(p => p.classList.toggle("disabled", !isHost));
+    if (this.el.modeBotBtn) this.el.modeBotBtn.classList.toggle("disabled", !isHost);
+    if (this.el.modePvpBtn) this.el.modePvpBtn.classList.toggle("disabled", !isHost);
 
     if (this.el.startBtn) {
       if (!isHost) {
@@ -631,14 +784,23 @@ class TanjunActivityClient {
       this.el.selectedGameBadge.textContent = title;
       this.el.lobbyGameTitle.textContent = title;
 
-      if (gameType === "rps") {
-        this.el.diffContainer.style.display = "none";
-        this.el.rpsRoundsContainer.style.display = "block";
-      } else {
-        this.el.rpsRoundsContainer.style.display = "none";
-        if (this.selectedMode === "bot") {
-          this.el.diffContainer.style.display = "block";
-        }
+      // Sync settings from server if available (e.g. for guest)
+      if (state.lobby_settings) {
+        this.applyLobbySettings(state.lobby_settings);
+      }
+
+      // Settings visibility per game
+      if (this.el.c4Settings) {
+        this.el.c4Settings.style.display = gameType === "connect4" ? "block" : "none";
+      }
+      if (this.el.rpsSettings) {
+        this.el.rpsSettings.style.display = gameType === "rps" ? "block" : "none";
+      }
+      if (this.el.turnOrderContainer) {
+        this.el.turnOrderContainer.style.display = (gameType === "connect4" || gameType === "tictactoe") ? "block" : "none";
+      }
+      if (this.el.diffContainer) {
+        this.el.diffContainer.style.display = this.selectedMode === "bot" ? "block" : "none";
       }
 
       this.renderLobbyPlayers();
@@ -718,8 +880,49 @@ class TanjunActivityClient {
       });
     }
 
-    // ── Render Connect 4 ──
+    // ── Render Connect 4 (Dynamic Grid) ──
     if (gameType === "connect4") {
+      const rows = state.rows || 6;
+      const cols = state.cols || 7;
+      const totalCells = rows * cols;
+
+      if (this.currentC4Cols !== cols || this.currentC4Rows !== rows || this.el.c4Grid.children.length !== totalCells) {
+        this.currentC4Cols = cols;
+        this.currentC4Rows = rows;
+
+        // Dynamic responsive cell size
+        const availableWidth = Math.min(window.innerWidth - 40, 460);
+        const cellSize = Math.floor(Math.min(42, Math.max(26, (availableWidth - (cols * 6) - 20) / cols)));
+        this.el.c4Grid.style.setProperty("--c4-cols", cols);
+        this.el.c4Grid.style.setProperty("--c4-rows", rows);
+        this.el.c4Grid.style.setProperty("--c4-cell-size", `${cellSize}px`);
+
+        this.el.c4DropRow.style.setProperty("--c4-cols", cols);
+        this.el.c4DropRow.style.setProperty("--c4-cell-size", `${cellSize}px`);
+
+        // Rebuild drop row buttons
+        this.el.c4DropRow.innerHTML = "";
+        for (let c = 0; c < cols; c++) {
+          const btn = document.createElement("button");
+          btn.className = "c4-drop-btn";
+          btn.dataset.col = c;
+          btn.textContent = "▼";
+          btn.addEventListener("click", () => this.makeMoveConnect4(c));
+          this.el.c4DropRow.appendChild(btn);
+        }
+
+        // Rebuild cells
+        this.el.c4Grid.innerHTML = "";
+        for (let i = 0; i < totalCells; i++) {
+          const cell = document.createElement("div");
+          cell.className = "c4-cell";
+          cell.dataset.index = i;
+          const col = i % cols;
+          cell.addEventListener("click", () => this.makeMoveConnect4(col));
+          this.el.c4Grid.appendChild(cell);
+        }
+      }
+
       const winningLine = state.winning_line || [];
       const cells = this.el.c4Grid.querySelectorAll(".c4-cell");
       state.board.forEach((val, idx) => {
@@ -735,7 +938,14 @@ class TanjunActivityClient {
 
     // ── Render Rock-Paper-Scissors ──
     if (gameType === "rps") {
-      const emojis = { rock: "✊", paper: "✋", scissors: "✌️", locked: "🔒", "": "❓" };
+      const isLizardSpock = state.variation === "lizard_spock";
+      if (this.el.rpsExtendedBtns) {
+        this.el.rpsExtendedBtns.forEach(btn => {
+          btn.style.display = isLizardSpock ? "flex" : "none";
+        });
+      }
+
+      const emojis = { rock: "✊", paper: "✋", scissors: "✌️", lizard: "🦎", spock: "🖖", locked: "🔒", "": "❓" };
       this.el.rpsRoundBadge.textContent = `Runde ${state.current_round} (Ziel: ${state.target_wins} Siege)`;
 
       const picks = state.current_picks || {};
@@ -763,7 +973,7 @@ class TanjunActivityClient {
         this.el.rpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
         this.el.rpsRoundResult.style.color = "#ffb703";
       } else {
-        this.el.rpsRoundResult.textContent = "Wähle deine Geste!";
+        this.el.rpsRoundResult.textContent = isLizardSpock ? "Wähle deine Geste (5 zur Auswahl)!" : "Wähle deine Geste!";
         this.el.rpsRoundResult.style.color = "#94a3b8";
       }
     }
