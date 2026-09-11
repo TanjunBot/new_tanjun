@@ -279,7 +279,9 @@ class ActivityServer:
                                 full_payload = dict(session.lobby_settings)
                                 full_payload.update(action_payload)
                                 action_payload = full_payload
-                            result = await session.game.handle_action(p_id, action_name, action_payload)
+                            result = await session.game.handle_action(
+                                p_id, action_name, action_payload, broadcast_cb=session.broadcast_state
+                            )
                             await session.broadcast_state()
 
                     elif msg_type == "chat":

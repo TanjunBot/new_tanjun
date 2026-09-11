@@ -1323,15 +1323,29 @@ class TanjunActivityClient {
       }
 
       const emojis = { rock: "✊", paper: "✋", scissors: "✌️", lizard: "🦎", spock: "🖖", locked: "🔒", "": "❓" };
+      const choiceNames = { rock: "Stein", paper: "Papier", scissors: "Schere", lizard: "Echse", spock: "Spock" };
       this.el.rpsRoundBadge.textContent = `Runde ${state.current_round} (Ziel: ${state.target_wins} Siege)`;
 
       const picks = state.current_picks || {};
-      const myPick = picks[this.user.id] || "";
       const otherId = p1.user_id === this.user.id ? p2.user_id : p1.user_id;
-      const otherPick = picks[otherId] || "";
+
+      let myPick = picks[this.user.id] || "";
+      let otherPick = picks[otherId] || "";
+
+      if (!myPick && this.el.rpsBtns) {
+        this.el.rpsBtns.forEach(btn => btn.classList.remove("selected"));
+      }
+
+      // If a round finished and new picks haven't begun, show the revealed gestures from last_round_result!
+      const lr = state.last_round_result;
+      const isRoundRevealed = !!(lr && (!myPick && !otherPick));
+      if (isRoundRevealed && lr.picks) {
+        myPick = lr.picks[this.user.id] || "";
+        otherPick = lr.picks[otherId] || "";
+      }
 
       this.el.rpsP1Pick.textContent = emojis[myPick] || "❓";
-      this.el.rpsP2Pick.textContent = emojis[otherPick] || "❓";
+      this.el.rpsP2Pick.textContent = emojis[otherPick] || (picks[otherId] === "locked" ? "🔒" : "❓");
 
       this.el.rpsP1Pick.className = "rps-fighter-pick";
       this.el.rpsP2Pick.className = "rps-fighter-pick";
@@ -1339,24 +1353,31 @@ class TanjunActivityClient {
       this.el.rpsP1Label.textContent = this.user.displayName;
       this.el.rpsP2Label.textContent = p1.user_id === this.user.id ? (p2.display_name || p2.username) : (p1.display_name || p1.username);
 
-      if (state.last_round_result) {
-        const lr = state.last_round_result;
+      if (isRoundRevealed && lr) {
         if (this.prevRpsRound !== state.current_round || this.prevRpsFinished !== state.is_finished) {
           this.el.rpsP1Pick.classList.add("anim-reveal");
           this.el.rpsP2Pick.classList.add("anim-reveal");
         }
+        const myChoiceName = choiceNames[myPick] || myPick;
+        const otherChoiceName = choiceNames[otherPick] || otherPick;
         if (lr.winner === "draw") {
-          this.el.rpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}!`;
+          this.el.rpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}! (${myChoiceName} gegen ${otherChoiceName})`;
           this.el.rpsRoundResult.style.color = "#f0b232";
         } else {
-          const wName = lr.winner === this.user.id ? "Du hast" : "Gegner hat";
-          this.el.rpsRoundResult.textContent = `🎉 ${wName} Runde ${lr.round} gewonnen!`;
-          this.el.rpsRoundResult.style.color = lr.winner === this.user.id ? "#23a55a" : "#da373c";
+          const won = lr.winner === this.user.id;
+          const wName = won ? "Du hast" : "Gegner hat";
+          const winnerPick = won ? myChoiceName : otherChoiceName;
+          const loserPick = won ? otherChoiceName : myChoiceName;
+          this.el.rpsRoundResult.textContent = `🎉 ${wName} Runde ${lr.round} gewonnen! (${winnerPick} schlägt ${loserPick})`;
+          this.el.rpsRoundResult.style.color = won ? "#23a55a" : "#da373c";
         }
-      } else if (myPick && !otherPick) {
+      } else if (myPick && (!otherPick || otherPick === "locked")) {
         this.el.rpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
         this.el.rpsRoundResult.style.color = "#f0b232";
         this.el.rpsP2Pick.classList.add("anim-shake");
+      } else if (!myPick && otherPick === "locked") {
+        this.el.rpsRoundResult.textContent = "Gegner hat gewählt! Wähle deine Geste.";
+        this.el.rpsRoundResult.style.color = "#5865f2";
       } else {
         this.el.rpsRoundResult.textContent = isLizardSpock ? "Wähle deine Geste (5 zur Auswahl)!" : "Wähle deine Geste!";
         this.el.rpsRoundResult.style.color = "#949ba4";
@@ -1727,14 +1748,27 @@ class TanjunActivityClient {
       this.prevTourneyC4Board = [...(gameState.board || [])];
     } else if (gameType === "rps" && gameState) {
       const emojis = { rock: "✊", paper: "✋", scissors: "✌️", lizard: "🦎", spock: "🖖", locked: "🔒", "": "❓" };
+      const choiceNames = { rock: "Stein", paper: "Papier", scissors: "Schere", lizard: "Echse", spock: "Spock" };
       this.el.tourneyRpsRoundBadge.textContent = `Runde ${gameState.current_round || 1}`;
 
       const picks = gameState.current_picks || {};
-      const myPick = picks[p1.user_id] || "";
-      const otherPick = p2 ? (picks[p2.user_id] || "") : "";
+      let p1Pick = picks[p1.user_id] || "";
+      let p2Pick = p2 ? (picks[p2.user_id] || "") : "";
 
-      this.el.tourneyRpsP1Pick.textContent = emojis[myPick] || "❓";
-      this.el.tourneyRpsP2Pick.textContent = emojis[otherPick] || "❓";
+      const myTourneyPick = (p1.user_id === this.user.id) ? p1Pick : (p2 && p2.user_id === this.user.id ? p2Pick : "");
+      if (!myTourneyPick && this.el.tourneyRpsBtns) {
+        this.el.tourneyRpsBtns.forEach(btn => btn.classList.remove("selected"));
+      }
+
+      const lr = gameState.last_round_result;
+      const isRoundRevealed = !!(lr && (!p1Pick && !p2Pick));
+      if (isRoundRevealed && lr.picks) {
+        p1Pick = lr.picks[p1.user_id] || "";
+        p2Pick = p2 ? (lr.picks[p2.user_id] || "") : "";
+      }
+
+      this.el.tourneyRpsP1Pick.textContent = emojis[p1Pick] || "❓";
+      this.el.tourneyRpsP2Pick.textContent = emojis[p2Pick] || (p2 && picks[p2.user_id] === "locked" ? "🔒" : "❓");
 
       this.el.tourneyRpsP1Pick.className = "rps-fighter-pick";
       this.el.tourneyRpsP2Pick.className = "rps-fighter-pick";
@@ -1742,27 +1776,31 @@ class TanjunActivityClient {
       this.el.tourneyRpsP1Label.textContent = p1.display_name;
       this.el.tourneyRpsP2Label.textContent = p2 ? p2.display_name : "Gegner";
 
-      if (gameState.last_round_result) {
-        const lr = gameState.last_round_result;
+      if (isRoundRevealed && lr) {
         if (this.prevTourneyRpsRound !== gameState.current_round) {
           this.el.tourneyRpsP1Pick.classList.add("anim-reveal");
           this.el.tourneyRpsP2Pick.classList.add("anim-reveal");
         }
+        const p1ChoiceName = choiceNames[p1Pick] || p1Pick;
+        const p2ChoiceName = choiceNames[p2Pick] || p2Pick;
         if (lr.winner === "draw") {
-          this.el.tourneyRpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}!`;
-          this.el.tourneyRpsRoundResult.style.color = "#ffb703";
+          this.el.tourneyRpsRoundResult.textContent = `Gleichstand in Runde ${lr.round}! (${p1ChoiceName} gegen ${p2ChoiceName})`;
+          this.el.tourneyRpsRoundResult.style.color = "#f0b232";
         } else {
-          const wName = lr.winner === p1.user_id ? p1.display_name : (p2 ? p2.display_name : "Gegner");
-          this.el.tourneyRpsRoundResult.textContent = `🎉 ${wName} hat die Runde gewonnen!`;
+          const wonP1 = lr.winner === p1.user_id;
+          const winnerName = wonP1 ? p1.display_name : (p2 ? p2.display_name : "Gegner");
+          const winChoice = wonP1 ? p1ChoiceName : p2ChoiceName;
+          const loseChoice = wonP1 ? p2ChoiceName : p1ChoiceName;
+          this.el.tourneyRpsRoundResult.textContent = `🎉 ${winnerName} gewinnt Runde ${lr.round}! (${winChoice} schlägt ${loseChoice})`;
           this.el.tourneyRpsRoundResult.style.color = "#23a55a";
         }
-      } else if (myPick && !otherPick) {
+      } else if (p1Pick && (!p2Pick || p2Pick === "locked")) {
         this.el.tourneyRpsRoundResult.textContent = "Wahl eingeloggt! Warte auf Gegner...";
-        this.el.tourneyRpsRoundResult.style.color = "#ffb703";
+        this.el.tourneyRpsRoundResult.style.color = "#f0b232";
         this.el.tourneyRpsP2Pick.classList.add("anim-shake");
       } else {
         this.el.tourneyRpsRoundResult.textContent = "Wähle deine Geste!";
-        this.el.tourneyRpsRoundResult.style.color = "#94a3b8";
+        this.el.tourneyRpsRoundResult.style.color = "#949ba4";
       }
       this.prevTourneyRpsRound = gameState.current_round;
     }

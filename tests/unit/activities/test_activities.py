@@ -462,6 +462,58 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(session.tournament.participants["user_host"].score, 4)
         self.assertEqual(session.tournament.participants["guest_p"].score, 4)
 
+    async def test_bot_intermediate_broadcast_and_rps_picks(self):
+        # 1. Connect4: intermediate broadcast transmits player's move before bot moves
+        s_c4 = session_manager.create_session("connect4", host=self.host, session_id="test_c4_bcast")
+        c4_game: Connect4Game = s_c4.game
+        await c4_game.handle_action("user_host", "start", {"mode": "bot", "difficulty": 3})
+
+        broadcast_states = []
+        async def mock_broadcast():
+            broadcast_states.append(c4_game.get_state())
+
+        await c4_game.handle_action("user_host", "move", {"col": 3}, broadcast_cb=mock_broadcast)
+        # Intermediate broadcast occurred before bot move:
+        self.assertEqual(len(broadcast_states), 1)
+        # Player's move at bottom of col 3 (row 5 * 7 + 3 = 38)
+        self.assertEqual(broadcast_states[0]["last_move"], 38)
+        self.assertEqual(broadcast_states[0]["board"][38], "R")
+        self.assertEqual(broadcast_states[0]["current_turn"], "bot_tanjun")
+
+        # 2. TicTacToe: intermediate broadcast transmits player's move before bot moves
+        s_ttt = session_manager.create_session("tictactoe", host=self.host, session_id="test_ttt_bcast")
+        ttt_game: TicTacToeGame = s_ttt.game
+        await ttt_game.handle_action("user_host", "start", {"mode": "bot", "difficulty": 3})
+
+        ttt_bcasts = []
+        async def mock_ttt_broadcast():
+            ttt_bcasts.append(ttt_game.get_state())
+
+        await ttt_game.handle_action("user_host", "move", {"cell": 4}, broadcast_cb=mock_ttt_broadcast)
+        self.assertEqual(len(ttt_bcasts), 1)
+        self.assertEqual(ttt_bcasts[0]["last_move"], 4)
+        self.assertEqual(ttt_bcasts[0]["board"][4], "X")
+        self.assertEqual(ttt_bcasts[0]["current_turn"], "bot_tanjun")
+
+        # 3. RPS: intermediate broadcast records player pick, then round result contains both revealed picks
+        s_rps = session_manager.create_session("rps", host=self.host, session_id="test_rps_bcast")
+        rps_game: RPSGame = s_rps.game
+        await rps_game.handle_action("user_host", "start", {"mode": "bot", "target_wins": 3})
+
+        rps_bcasts = []
+        async def mock_rps_broadcast():
+            rps_bcasts.append(rps_game.get_state("user_host"))
+
+        res = await rps_game.handle_action("user_host", "pick", {"choice": "scissors"}, broadcast_cb=mock_rps_broadcast)
+        self.assertEqual(len(rps_bcasts), 1)
+        self.assertEqual(rps_bcasts[0]["current_picks"]["user_host"], "scissors")
+
+        # Final state contains last_round_result with revealed picks
+        final_state = rps_game.get_state("user_host")
+        self.assertIsNotNone(final_state["last_round_result"])
+        self.assertEqual(final_state["last_round_result"]["picks"]["user_host"], "scissors")
+        self.assertIn(final_state["last_round_result"]["picks"]["bot_tanjun"], ["rock", "paper", "scissors"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -193,7 +193,13 @@ class Connect4Game(BaseGame):
 
         return random.choice(valid_cols)
 
-    async def handle_action(self, player_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_action(
+        self,
+        player_id: str,
+        action: str,
+        data: Dict[str, Any],
+        broadcast_cb: Optional[Any] = None
+    ) -> Dict[str, Any]:
         if action == "start":
             mode = data.get("mode", "pvp")
             self.game_mode = mode
@@ -260,6 +266,8 @@ class Connect4Game(BaseGame):
                 self.current_turn = next_player
 
                 if next_player == "bot_tanjun" and not self.is_finished:
+                    if broadcast_cb:
+                        await broadcast_cb()
                     await asyncio.sleep(0.55)
                     bot_col = self._bot_calculate_move()
                     if bot_col != -1:

@@ -48,7 +48,13 @@ class BaseGame(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def handle_action(self, player_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_action(
+        self,
+        player_id: str,
+        action: str,
+        data: Dict[str, Any],
+        broadcast_cb: Optional[Any] = None
+    ) -> Dict[str, Any]:
         """Process an incoming player action. Return a dict with results/events."""
         pass
 

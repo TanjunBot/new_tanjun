@@ -141,7 +141,13 @@ class RPSGame(BaseGame):
 
         return result
 
-    async def handle_action(self, player_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_action(
+        self,
+        player_id: str,
+        action: str,
+        data: Dict[str, Any],
+        broadcast_cb: Optional[Any] = None
+    ) -> Dict[str, Any]:
         if action == "start":
             mode = data.get("mode", "pvp")
             self.game_mode = mode
@@ -178,6 +184,8 @@ class RPSGame(BaseGame):
 
             # If vs bot, bot has a natural thinking pause before evaluating
             if self.game_mode == "bot" and "bot_tanjun" in self.players:
+                if broadcast_cb:
+                    await broadcast_cb()
                 await asyncio.sleep(0.55)
                 bot_choice = self._bot_pick(player_id)
                 self.current_picks["bot_tanjun"] = bot_choice
