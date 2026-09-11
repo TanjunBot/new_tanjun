@@ -35,7 +35,10 @@ class ActivityCommands(app_commands.Group):
     )
     @app_commands.choices(
         game=[
-            app_commands.Choice(name="Tic-Tac-Toe (Multiplayer & Bot)", value="tictactoe")
+            app_commands.Choice(name="Tanjun Game Hub (Lobby & alle Spiele)", value="hub"),
+            app_commands.Choice(name="Tic-Tac-Toe (3x3)", value="tictactoe"),
+            app_commands.Choice(name="Vier Gewinnt (7x6)", value="connect4"),
+            app_commands.Choice(name="Schere Stein Papier (Best of 5)", value="rps"),
         ]
     )
     async def launch_activity(

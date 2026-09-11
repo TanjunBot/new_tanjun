@@ -4,25 +4,49 @@ import asyncio
 import json
 import logging
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Optional, Set
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set
 
 if TYPE_CHECKING:
     from aiohttp import web
 from activities.base import BaseGame, Player
 from activities.games.tictactoe import TicTacToeGame
+from activities.games.connect4 import Connect4Game
+from activities.games.rps import RPSGame
 
 logger = logging.getLogger(__name__)
 
 
 class GameSession:
-    """Manages an active game instance and its connected WebSockets."""
+    """Manages an active game instance, its connected WebSockets, and Hub navigation."""
 
-    def __init__(self, session_id: str, game: BaseGame) -> None:
+    def __init__(self, session_id: str, game: BaseGame, is_hub: bool = False) -> None:
         self.session_id: str = session_id
         self.game: BaseGame = game
+        self.is_hub: bool = is_hub
         self.sockets: Dict[str, web.WebSocketResponse] = {}  # user_id -> ws
         self.created_at: float = asyncio.get_event_loop().time()
         self.last_activity: float = self.created_at
+
+    def switch_game(self, game_type: str) -> BaseGame:
+        cls = session_manager.get_game_class(game_type)
+        if not cls:
+            raise ValueError(f"Unknown game type: {game_type}")
+
+        # Preserve players and host across games
+        new_game = cls(session_id=self.session_id, host=self.game.host)
+        for pid, player in self.game.players.items():
+            if not player.is_bot:
+                new_game.players[pid] = player
+        new_game.spectators = dict(self.game.spectators)
+        self.game = new_game
+        self.is_hub = False
+        return new_game
+
+    def get_full_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
+        state = self.game.get_state(for_user_id=for_user_id)
+        state["is_hub"] = self.is_hub
+        state["available_games"] = session_manager.get_supported_games()
+        return state
 
     async def broadcast(self, message: Dict[str, Any]) -> None:
         payload = json.dumps(message)
@@ -42,11 +66,24 @@ class GameSession:
                 del self.sockets[uid]
 
     async def broadcast_state(self) -> None:
-        state = self.game.get_state()
-        await self.broadcast({
-            "type": "state_update",
-            "state": state
-        })
+        dead_sockets: list[str] = []
+        for user_id, ws in list(self.sockets.items()):
+            if ws.closed:
+                dead_sockets.append(user_id)
+                continue
+            try:
+                state = self.get_full_state(for_user_id=user_id)
+                await ws.send_json({
+                    "type": "state_update",
+                    "state": state
+                })
+            except Exception as e:
+                logger.warning("Error broadcasting state to user %s: %s", user_id, e)
+                dead_sockets.append(user_id)
+
+        for uid in dead_sockets:
+            if uid in self.sockets:
+                del self.sockets[uid]
 
 
 class SessionManager:
@@ -55,25 +92,67 @@ class SessionManager:
     def __init__(self) -> None:
         self._sessions: Dict[str, GameSession] = {}
         self._game_registry: Dict[str, type[BaseGame]] = {
-            "tictactoe": TicTacToeGame
+            "tictactoe": TicTacToeGame,
+            "connect4": Connect4Game,
+            "rps": RPSGame
         }
 
     def register_game(self, game_type: str, game_cls: type[BaseGame]) -> None:
         self._game_registry[game_type] = game_cls
 
-    def get_supported_games(self) -> list[Dict[str, str]]:
+    def get_game_class(self, game_type: str) -> Optional[type[BaseGame]]:
+        return self._game_registry.get(game_type)
+
+    def get_supported_games(self) -> list[Dict[str, Any]]:
         return [
-            {"type": "tictactoe", "name": "Tic Tac Toe", "min_players": 1, "max_players": 2, "icon": "grid"}
+            {
+                "type": "tictactoe",
+                "name": "Tic-Tac-Toe",
+                "description": "Klassisches 3x3 Duell. Wer zuerst drei Symbole in einer Reihe hat, gewinnt!",
+                "icon": "❌⭕",
+                "min_players": 1,
+                "max_players": 2,
+                "badge": "Klassiker"
+            },
+            {
+                "type": "connect4",
+                "name": "Vier Gewinnt",
+                "description": "Taktisches 7x6 Raster. Wirf deine Chips ein und bilde eine 4er-Reihe!",
+                "icon": "🔴🟡",
+                "min_players": 1,
+                "max_players": 2,
+                "badge": "Taktik"
+            },
+            {
+                "type": "rps",
+                "name": "Schere Stein Papier",
+                "description": "Schnelles Duell mit verdeckter Wahl im Best-of-5 Modus.",
+                "icon": "✊✋✌️",
+                "min_players": 1,
+                "max_players": 2,
+                "badge": "Action"
+            }
         ]
 
-    def create_session(self, game_type: str, host: Player, session_id: Optional[str] = None) -> GameSession:
+    def create_session(self, game_type: str = "hub", host: Optional[Player] = None, session_id: Optional[str] = None) -> GameSession:
         sid = session_id or str(uuid.uuid4())[:8]
-        cls = self._game_registry.get(game_type)
+        if host is None:
+            host = Player(
+                user_id="guest_host",
+                username="Host",
+                display_name="Host",
+                is_host=True
+            )
+
+        is_hub = (game_type == "hub")
+        actual_game_type = "tictactoe" if is_hub else game_type
+
+        cls = self.get_game_class(actual_game_type)
         if not cls:
-            raise ValueError(f"Unknown game type: {game_type}")
+            raise ValueError(f"Unknown game type: {actual_game_type}")
 
         game_instance = cls(session_id=sid, host=host)
-        session = GameSession(session_id=sid, game=game_instance)
+        session = GameSession(session_id=sid, game=game_instance, is_hub=is_hub)
         self._sessions[sid] = session
         return session
 

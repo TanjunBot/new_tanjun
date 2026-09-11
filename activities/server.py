@@ -109,7 +109,7 @@ class ActivityServer:
         except Exception:
             return web.json_response({"error": "Invalid JSON"}, status=400)
 
-        game_type = body.get("game_type", "tictactoe")
+        game_type = body.get("game_type", "hub")
         user_id = body.get("user_id", "guest_1")
         username = body.get("username", "Player")
         display_name = body.get("display_name", username)
@@ -131,7 +131,7 @@ class ActivityServer:
         return web.json_response({
             "session_id": session.session_id,
             "game_type": game_type,
-            "state": session.game.get_state()
+            "state": session.get_full_state()
         })
 
     async def handle_get_session(self, request: web.Request) -> web.Response:
@@ -141,21 +141,21 @@ class ActivityServer:
             return web.json_response({"error": "Session not found"}, status=404)
         return web.json_response({
             "session_id": session.session_id,
-            "state": session.game.get_state()
+            "state": session.get_full_state()
         })
 
     async def handle_ws(self, request: web.Request) -> web.WebSocketResponse:
         session_id = request.match_info.get("session_id", "")
         session = session_manager.get_session(session_id)
         if not session:
-            # If launched directly through Discord instance_id or direct link, auto-create session
+            # If launched directly through Discord instance_id or direct link, auto-create Hub session
             default_host = Player(
                 user_id="discord_player",
                 username="Player",
                 display_name="Player",
                 is_host=True
             )
-            session = session_manager.create_session("tictactoe", host=default_host, session_id=session_id)
+            session = session_manager.create_session("hub", host=default_host, session_id=session_id)
 
         ws = web.WebSocketResponse(heartbeat=30.0)
         await ws.prepare(request)
@@ -212,7 +212,7 @@ class ActivityServer:
                         await ws.send_json({
                             "type": "joined",
                             "user_id": user_id,
-                            "state": session.game.get_state(user_id)
+                            "state": session.get_full_state(for_user_id=user_id)
                         })
                         await session.broadcast_state()
 
@@ -221,8 +221,21 @@ class ActivityServer:
                         action_name = data.get("action", "")
                         action_payload = data.get("data", {})
 
-                        result = await session.game.handle_action(p_id, action_name, action_payload)
-                        await session.broadcast_state()
+                        if action_name == "select_game":
+                            game_type = action_payload.get("game_type", "tictactoe")
+                            try:
+                                session.switch_game(game_type)
+                            except Exception as e:
+                                pass
+                            await session.broadcast_state()
+                        elif action_name == "return_to_hub":
+                            session.is_hub = True
+                            if hasattr(session.game, "reset"):
+                                await session.game.reset()
+                            await session.broadcast_state()
+                        else:
+                            result = await session.game.handle_action(p_id, action_name, action_payload)
+                            await session.broadcast_state()
 
                     elif msg_type == "chat":
                         await session.broadcast({

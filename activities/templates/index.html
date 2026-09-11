@@ -25,10 +25,36 @@
   </header>
 
   <main class="game-container">
-    <!-- Lobby / Mode Selection Screen -->
-    <section id="lobbyView" class="lobby-section glass-panel">
-      <h1 class="lobby-title">Tic-Tac-Toe Arena</h1>
-      <p class="lobby-subtitle">Wähle deinen Spielmodus und trete gegen Freunde oder den Tanjun Bot an!</p>
+    <!-- 1. Game Hub Screen -->
+    <section id="hubView" class="hub-section glass-panel">
+      <div class="hub-badge">🎮 Tanjun Game Hub</div>
+      <h1 class="hub-title">Wähle ein Spiel</h1>
+      <p class="hub-subtitle">Spiele direkt in Discord mit Freunden im Sprachkanal oder gegen KI!</p>
+
+      <div class="games-grid" id="gamesGrid">
+        <!-- Dynamically rendered or fallback cards -->
+      </div>
+
+      <!-- Connected Players in Hub -->
+      <div class="lobby-players-box" style="margin-top: 20px;">
+        <div class="lobby-players-header">
+          <span>Teilnehmer im Hub</span>
+          <span id="hubPlayerCount" class="lobby-count-badge">1/2</span>
+        </div>
+        <div id="hubPlayersList" class="lobby-players-list"></div>
+      </div>
+      <div id="hubStatusMsg" class="lobby-status-text"></div>
+    </section>
+
+    <!-- 2. Game Lobby / Settings Screen -->
+    <section id="lobbyView" class="lobby-section glass-panel" style="display: none;">
+      <div class="lobby-header-bar">
+        <button id="backToHubBtn" class="btn-hub-back" type="button">◀ Zurück zum Hub</button>
+        <span id="selectedGameBadge" class="lobby-count-badge">Tic-Tac-Toe</span>
+      </div>
+
+      <h1 id="lobbyGameTitle" class="lobby-title">Tic-Tac-Toe</h1>
+      <p id="lobbyGameSubtitle" class="lobby-subtitle">Wähle deinen Spielmodus und trete gegen Freunde oder die KI an!</p>
 
       <div class="mode-selector">
         <button id="modeBotBtn" class="mode-btn active" type="button">
@@ -41,6 +67,7 @@
         </button>
       </div>
 
+      <!-- Difficulty Container for Bot Mode -->
       <div id="diffContainer" class="difficulty-container">
         <div class="difficulty-label">
           <span>Bot Schwierigkeit</span>
@@ -55,21 +82,26 @@
         </div>
       </div>
 
+      <!-- Rounds Container for RPS Mode -->
+      <div id="rpsRoundsContainer" class="difficulty-container" style="display: none;">
+        <div class="difficulty-label">
+          <span>Runden zum Sieg</span>
+          <span>Best-of Serie</span>
+        </div>
+        <div class="diff-pills">
+          <div class="diff-pill" data-rounds="1">1 Sieg</div>
+          <div class="diff-pill" data-rounds="2">Best of 3 (2 Siege)</div>
+          <div class="diff-pill active" data-rounds="3">Best of 5 (3 Siege)</div>
+        </div>
+      </div>
+
       <!-- Connected Players in Lobby -->
       <div id="lobbyPlayersBox" class="lobby-players-box">
         <div class="lobby-players-header">
           <span>Lobby-Teilnehmer</span>
           <span id="playerCountBadge" class="lobby-count-badge">1/2</span>
         </div>
-        <div id="lobbyPlayersList" class="lobby-players-list">
-          <div class="lobby-player-row">
-            <div class="lobby-player-meta">
-              <img class="lobby-player-avatar-small" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="P">
-              <span>Du</span>
-            </div>
-            <span class="lobby-tag-host">Host 👑</span>
-          </div>
-        </div>
+        <div id="lobbyPlayersList" class="lobby-players-list"></div>
       </div>
 
       <div id="lobbyStatusMsg" class="lobby-status-text"></div>
@@ -77,14 +109,14 @@
       <button id="startBtn" class="btn-primary" type="button">Spiel Starten</button>
     </section>
 
-    <!-- Active Game Screen -->
+    <!-- 3. Active Game Screen -->
     <section id="gameView" class="glass-panel" style="display: none; flex-direction: column;">
       <!-- Scoreboard -->
       <div class="scoreboard">
         <div id="p1Card" class="player-card">
           <div class="player-avatar-wrap">
             <img id="p1Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="P1">
-            <div class="player-symbol-tag sym-x">X</div>
+            <div id="p1Tag" class="player-symbol-tag sym-x">X</div>
           </div>
           <div>
             <div id="p1Name" class="player-name">Spieler 1</div>
@@ -97,7 +129,7 @@
         <div id="p2Card" class="player-card reverse">
           <div class="player-avatar-wrap">
             <img id="p2Avatar" class="player-avatar-img" src="https://cdn.discordapp.com/embed/avatars/1.png" alt="P2">
-            <div class="player-symbol-tag sym-o">O</div>
+            <div id="p2Tag" class="player-symbol-tag sym-o">O</div>
           </div>
           <div>
             <div id="p2Name" class="player-name">Tanjun AI</div>
@@ -111,8 +143,8 @@
         Du bist am Zug!
       </div>
 
-      <!-- Tic Tac Toe Grid -->
-      <div class="board-container">
+      <!-- Board 1: Tic Tac Toe Grid -->
+      <div id="tttBoardContainer" class="board-container">
         <div id="tttBoard" class="ttt-board">
           <div class="cell" data-index="0"></div>
           <div class="cell" data-index="1"></div>
@@ -126,10 +158,66 @@
         </div>
       </div>
 
+      <!-- Board 2: Connect 4 Grid -->
+      <div id="c4BoardContainer" class="board-container" style="display: none;">
+        <div class="c4-container">
+          <div id="c4DropRow" class="c4-drop-row">
+            <button class="c4-drop-btn" data-col="0">▼</button>
+            <button class="c4-drop-btn" data-col="1">▼</button>
+            <button class="c4-drop-btn" data-col="2">▼</button>
+            <button class="c4-drop-btn" data-col="3">▼</button>
+            <button class="c4-drop-btn" data-col="4">▼</button>
+            <button class="c4-drop-btn" data-col="5">▼</button>
+            <button class="c4-drop-btn" data-col="6">▼</button>
+          </div>
+          <div id="c4Grid" class="c4-grid">
+            <!-- 42 cells rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Board 3: Rock-Paper-Scissors -->
+      <div id="rpsBoardContainer" class="board-container" style="display: none;">
+        <div class="rps-container">
+          <div id="rpsRoundBadge" class="rps-round-badge">Runde 1</div>
+
+          <div id="rpsDuelArena" class="rps-arena">
+            <div class="rps-duel-display">
+              <div class="rps-fighter">
+                <span id="rpsP1Pick" class="rps-fighter-pick">❓</span>
+                <span id="rpsP1Label" style="font-size: 0.8rem; font-weight:700;">Du</span>
+              </div>
+              <span style="font-size: 1.2rem; font-weight: 800; color: var(--text-muted);">VS</span>
+              <div class="rps-fighter">
+                <span id="rpsP2Pick" class="rps-fighter-pick">❓</span>
+                <span id="rpsP2Label" style="font-size: 0.8rem; font-weight:700;">Gegner</span>
+              </div>
+            </div>
+            <div id="rpsRoundResult" class="rps-result-text">Wähle deine Geste!</div>
+          </div>
+
+          <div class="rps-choices">
+            <button class="rps-btn" data-choice="rock" type="button">
+              <span class="rps-emoji">✊</span>
+              <span class="rps-name">Stein</span>
+            </button>
+            <button class="rps-btn" data-choice="paper" type="button">
+              <span class="rps-emoji">✋</span>
+              <span class="rps-name">Papier</span>
+            </button>
+            <button class="rps-btn" data-choice="scissors" type="button">
+              <span class="rps-emoji">✌️</span>
+              <span class="rps-name">Schere</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Footer Buttons -->
       <div class="controls-footer">
         <button id="restartBtn" class="btn-secondary" type="button">🔄 Neue Runde</button>
-        <button id="leaveBtn" class="btn-secondary" type="button">🚪 Zurück zur Lobby</button>
+        <button id="leaveBtn" class="btn-secondary" type="button">📋 Spiellobby</button>
+        <button id="hubBtn" class="btn-secondary" type="button">🏠 Game Hub</button>
       </div>
     </section>
   </main>
