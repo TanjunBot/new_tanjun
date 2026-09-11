@@ -1,20 +1,47 @@
+/* ==========================================================================
+   Tanjun Games - Discord Native Dark Theme Stylesheet
+   Clean, simple, official Discord-styled UI for Discord Activities
+   ========================================================================== */
+
 :root {
-  --bg-primary: #0f111a;
-  --bg-secondary: #1a1d2d;
-  --bg-card: rgba(30, 34, 53, 0.7);
-  --accent-cyan: #00f2fe;
-  --accent-purple: #4facfe;
-  --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  --accent-gold: #ffb703;
-  --accent-danger: #fb8500;
-  --neon-glow: 0 0 20px rgba(0, 242, 254, 0.4);
-  --neon-glow-magenta: 0 0 20px rgba(255, 0, 128, 0.4);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --radius-lg: 16px;
-  --radius-md: 10px;
+  /* Discord Dark Theme Core Palette */
+  --bg-app: #313338;
+  --bg-secondary: #2b2d31;
+  --bg-tertiary: #1e1f22;
+  --bg-floating: #232428;
+  --bg-hover: #35373c;
+  --bg-active: #3b3e45;
+  --border-subtle: #3f4147;
+  --border-faint: rgba(255, 255, 255, 0.07);
+
+  /* Discord Brand & Accent Colors */
+  --discord-blurple: #5865f2;
+  --discord-blurple-hover: #4752c4;
+  --discord-blurple-active: #3c45a5;
+  --discord-green: #23a55a;
+  --discord-green-hover: #1f9250;
+  --discord-red: #da373c;
+  --discord-red-hover: #ba2f34;
+  --discord-yellow: #f0b232;
+  --discord-yellow-hover: #d89f28;
+
+  /* Typography */
+  --text-header: #f2f3f5;
+  --text-normal: #dbdee1;
+  --text-muted: #949ba4;
+  --text-interactive: #b5bac1;
+
+  /* Border Radii (Discord Standard) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
   --radius-full: 9999px;
-  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Font Family */
+  --font-discord: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --shadow-low: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --shadow-med: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -24,36 +51,38 @@
 }
 
 body {
-  font-family: var(--font-family);
-  background: radial-gradient(circle at top center, #1b2038 0%, #0c0e17 100%);
-  color: var(--text-main);
+  font-family: var(--font-discord);
+  background-color: var(--bg-app);
+  color: var(--text-normal);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 16px;
+  padding: 14px;
   overflow-x: hidden;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism containers */
+/* ── Panels & Cards (Discord Style) ─────────────────────────── */
 .glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-low);
 }
 
+/* ── Header Bar ────────────────────────────────────────────── */
 .header {
   width: 100%;
-  max-width: 580px;
+  max-width: 540px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
-  margin-bottom: 16px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background-color: var(--bg-secondary);
 }
 
 .brand {
@@ -63,199 +92,347 @@ body {
 }
 
 .brand-icon {
-  width: 34px;
-  height: 34px;
-  background: var(--accent-gradient);
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  background-color: var(--discord-blurple);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  color: #0c0e17;
-  box-shadow: var(--neon-glow);
+  font-size: 0.95rem;
+  color: #ffffff;
 }
 
 .brand-title {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  background: linear-gradient(90deg, #fff, #94a3b8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-header);
 }
 
 .user-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
   padding: 4px 10px 4px 6px;
   border-radius: var(--radius-full);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-header);
+}
+
+.user-avatar-wrap-header {
+  position: relative;
+  display: flex;
+}
+
+.user-status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--discord-green);
+  border: 1.5px solid var(--bg-tertiary);
 }
 
 .user-avatar {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #334155;
+  background: var(--bg-hover);
   object-fit: cover;
 }
 
-/* Main game wrapper */
+/* ── Main Container ────────────────────────────────────────── */
 .game-container {
   width: 100%;
-  max-width: 580px;
+  max-width: 540px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* Lobby Section */
-.lobby-section {
-  padding: 24px;
+/* ── 1. Game Hub View ──────────────────────────────────────── */
+.hub-section {
+  padding: 20px;
   text-align: center;
 }
 
-.lobby-title {
-  font-size: 1.6rem;
-  font-weight: 800;
+.hub-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--discord-blurple);
+  background-color: rgba(88, 101, 242, 0.12);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
   margin-bottom: 8px;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+}
+
+.hub-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-header);
+  margin-bottom: 4px;
+}
+
+.hub-subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 18px;
+}
+
+.games-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-hub-card {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.game-hub-card:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--discord-blurple);
+}
+
+.game-card-icon {
+  font-size: 1.8rem;
+  min-width: 44px;
+  height: 44px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.game-card-body {
+  flex: 1;
+}
+
+.game-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.game-card-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-header);
+}
+
+.game-card-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(88, 101, 242, 0.15);
+  color: #8591f5;
+}
+
+.game-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.game-card-arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: transform 0.15s, color 0.15s;
+}
+
+.game-hub-card:hover .game-card-arrow {
+  color: var(--text-header);
+  transform: translateX(3px);
+}
+
+/* ── 2. Lobby View ─────────────────────────────────────────── */
+.lobby-section {
+  padding: 20px;
+  text-align: center;
+}
+
+.lobby-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.btn-hub-back {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-normal);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-hub-back:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-header);
+}
+
+.lobby-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-header);
+  margin-bottom: 4px;
 }
 
 .lobby-subtitle {
   color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 24px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
 }
 
+/* Mode Selector */
 .mode-selector {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .mode-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 16px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  padding: 12px 10px;
   border-radius: var(--radius-md);
-  color: var(--text-main);
+  color: var(--text-normal);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 6px;
+  transition: all 0.15s;
 }
 
 .mode-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  background-color: var(--bg-hover);
 }
 
 .mode-btn.active {
-  background: rgba(0, 242, 254, 0.12);
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.3);
+  background-color: rgba(88, 101, 242, 0.15);
+  border-color: var(--discord-blurple);
+  color: var(--text-header);
 }
 
 .mode-icon {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
 }
 
 .mode-label {
   font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.difficulty-container {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.difficulty-label {
   font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
 }
 
-/* ── Game Settings Container ────────────────────────── */
+/* Settings Container */
 .game-settings-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   text-align: left;
 }
 
 .settings-group {
-  background: rgba(0, 0, 0, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 10px 12px;
+}
+
+.difficulty-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .settings-active-label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--accent-cyan);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--discord-blurple);
+  text-transform: none;
 }
 
 .diff-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 6px;
 }
 
 .diff-pill {
   flex: 1 1 auto;
-  min-width: 64px;
-  padding: 7px 10px;
+  min-width: 60px;
+  padding: 6px 10px;
   font-size: 0.78rem;
+  font-weight: 500;
   text-align: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-normal);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   user-select: none;
 }
 
 .diff-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(0, 242, 254, 0.3);
+  background-color: var(--bg-hover);
+  color: var(--text-header);
 }
 
 .diff-pill.active {
-  background: var(--accent-cyan);
-  color: #0c0e17;
-  font-weight: 700;
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+  background-color: var(--discord-blurple);
+  color: #ffffff;
+  border-color: var(--discord-blurple);
+  font-weight: 600;
 }
 
 .diff-pill.disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-/* Lobby Players Box */
+/* Connected Players Box */
 .lobby-players-box {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
   text-align: left;
 }
 
@@ -263,16 +440,18 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
 }
 
 .lobby-count-badge {
-  font-size: 0.75rem;
-  background: rgba(0, 242, 254, 0.15);
-  color: var(--accent-cyan);
+  font-size: 0.72rem;
+  background-color: rgba(88, 101, 242, 0.15);
+  color: #8591f5;
   padding: 2px 8px;
   border-radius: var(--radius-full);
   font-weight: 700;
@@ -281,97 +460,100 @@ body {
 .lobby-players-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lobby-player-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.03);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
 }
 
 .lobby-player-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lobby-player-avatar-small {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   object-fit: cover;
+  background-color: var(--bg-hover);
 }
 
 .lobby-tag-host {
-  font-size: 0.7rem;
-  color: #ffb703;
-  background: rgba(255, 183, 3, 0.15);
+  font-size: 0.68rem;
+  color: var(--discord-yellow);
+  background-color: rgba(240, 178, 50, 0.15);
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   font-weight: 700;
 }
 
 .lobby-tag-you {
-  font-size: 0.7rem;
-  color: var(--accent-cyan);
-  background: rgba(0, 242, 254, 0.15);
+  font-size: 0.68rem;
+  color: var(--discord-blurple);
+  background-color: rgba(88, 101, 242, 0.15);
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   font-weight: 700;
 }
 
 .lobby-status-text {
-  font-size: 0.85rem;
-  color: var(--accent-cyan);
+  font-size: 0.82rem;
+  color: var(--discord-blurple);
   min-height: 1.2rem;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   text-align: center;
   font-weight: 600;
+}
+
+/* Discord Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--discord-green);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-primary:hover {
+  background-color: var(--discord-green-hover);
 }
 
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
-  filter: none;
+  background-color: #4e5058;
 }
 
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: var(--radius-md);
-  background: var(--accent-gradient);
-  color: #0b0f19;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: var(--neon-glow);
-  transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-  filter: brightness(1.1);
-  transform: scale(1.02);
-}
-
-/* Scoreboard */
+/* ── 3. Active Game Screen ─────────────────────────────────── */
 .scoreboard {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 12px 16px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .player-card {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
 }
 
@@ -385,71 +567,72 @@ body {
 }
 
 .player-avatar-img {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid transparent;
   object-fit: cover;
-  transition: border-color 0.3s;
+  transition: border-color 0.2s;
+  background-color: var(--bg-hover);
 }
 
 .turn-active .player-avatar-img {
-  border-color: var(--accent-cyan);
-  box-shadow: var(--neon-glow);
+  border-color: var(--discord-blurple);
 }
 
 .player-symbol-tag {
   position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 20px;
-  height: 20px;
+  bottom: -3px;
+  right: -3px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  border: 2px solid var(--bg-secondary);
 }
 
 .sym-x {
-  background: #ff007a;
-  box-shadow: var(--neon-glow-magenta);
+  background-color: var(--discord-red);
 }
 
 .sym-o {
-  background: #00f2fe;
-  box-shadow: var(--neon-glow);
+  background-color: var(--discord-blurple);
 }
 
 .player-name {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  color: var(--text-header);
 }
 
 .player-score {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
 .vs-badge {
   font-weight: 800;
   color: var(--text-muted);
-  font-size: 0.9rem;
-  padding: 0 12px;
+  font-size: 0.8rem;
+  padding: 0 10px;
 }
 
-/* Game Status Info */
 .game-status-bar {
   text-align: center;
-  padding: 10px;
+  padding: 8px 12px;
   font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--accent-cyan);
+  font-size: 0.875rem;
+  color: var(--text-header);
+  background-color: rgba(88, 101, 242, 0.1);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Tic Tac Toe Board */
+/* ── Boards Container ──────────────────────────────────────── */
 .board-container {
   display: flex;
   justify-content: center;
@@ -457,256 +640,89 @@ body {
   padding: 16px;
 }
 
+/* ── Tic-Tac-Toe Grid ──────────────────────────────────────── */
 .ttt-board {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
-  gap: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 12px;
-  border-radius: var(--radius-lg);
+  grid-template-columns: repeat(3, 90px);
+  grid-template-rows: repeat(3, 90px);
+  gap: 8px;
+  background-color: var(--bg-tertiary);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 440px) {
   .ttt-board {
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(3, 80px);
-    gap: 8px;
+    grid-template-columns: repeat(3, 76px);
+    grid-template-rows: repeat(3, 76px);
+    gap: 6px;
   }
 }
 
 .cell {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.8rem;
-  font-weight: 900;
+  font-size: 2.5rem;
+  font-weight: 800;
   cursor: pointer;
   user-select: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.15s;
 }
 
 .cell:hover:not(.taken) {
-  background: rgba(255, 255, 255, 0.12);
-  transform: scale(1.05);
+  background-color: var(--bg-hover);
 }
 
 .cell.cell-x {
-  color: #ff007a;
-  text-shadow: 0 0 15px rgba(255, 0, 122, 0.6);
+  color: var(--discord-red);
 }
 
 .cell.cell-o {
-  color: #00f2fe;
-  text-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+  color: var(--discord-blurple);
 }
 
 .cell.winner-cell {
-  animation: pulse-win 1s infinite alternate;
-  background: rgba(0, 242, 254, 0.2);
-  border-color: var(--accent-cyan);
+  background-color: rgba(88, 101, 242, 0.25);
+  border-color: var(--discord-blurple);
 }
 
-@keyframes pulse-win {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.08);
-  }
-}
-
-/* Action Controls footer */
-.controls-footer {
-  display: flex;
-  gap: 10px;
-  padding: 16px;
-  flex-wrap: wrap;
-}
-
-.btn-secondary {
-  flex: 1;
-  min-width: 120px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-main);
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-
-/* ── Game Hub View ────────────────────────────────────────── */
-.hub-section {
-  padding: 24px;
-  text-align: center;
-}
-
-.hub-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--accent-cyan);
-  background: rgba(0, 242, 254, 0.12);
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-  margin-bottom: 12px;
-}
-
-.hub-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin-bottom: 6px;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hub-subtitle {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 24px;
-}
-
-.games-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.game-hub-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.game-hub-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--accent-cyan);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.2);
-}
-
-.game-card-icon {
-  font-size: 2.2rem;
-  min-width: 50px;
-  height: 50px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.game-card-body {
-  flex: 1;
-}
-
-.game-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.game-card-title {
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: #fff;
-}
-
-.game-card-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  background: rgba(0, 242, 254, 0.15);
-  color: var(--accent-cyan);
-}
-
-.game-card-desc {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.3;
-}
-
-/* Back button in Lobby */
-.lobby-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.btn-hub-back {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-muted);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-hub-back:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* ── Connect 4 Styles ─────────────────────────────────────── */
+/* ── Connect 4 Grid (Dynamic) ──────────────────────────────── */
 .c4-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .c4-drop-row {
   display: grid;
   grid-template-columns: repeat(var(--c4-cols, 7), var(--c4-cell-size, 40px));
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   justify-content: center;
 }
 
 .c4-drop-btn {
-  background: rgba(0, 242, 254, 0.1);
-  border: 1px solid rgba(0, 242, 254, 0.3);
-  color: var(--accent-cyan);
-  border-radius: 6px;
-  padding: 6px 0;
-  font-size: 0.9rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  padding: 4px 0;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.15s;
   width: var(--c4-cell-size, 40px);
 }
 
 .c4-drop-btn:hover {
-  background: var(--accent-cyan);
-  color: #0c0e17;
-  transform: translateY(-2px);
+  background-color: var(--discord-blurple);
+  color: #ffffff;
+  border-color: var(--discord-blurple);
 }
 
 .c4-grid {
@@ -714,106 +730,60 @@ body {
   grid-template-columns: repeat(var(--c4-cols, 7), var(--c4-cell-size, 40px));
   grid-template-rows: repeat(var(--c4-rows, 6), var(--c4-cell-size, 40px));
   gap: 6px;
-  background: #0d1b2a;
+  background-color: #1e1f22;
   padding: 10px;
   border-radius: var(--radius-md);
-  border: 2px solid #1b263b;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--border-subtle);
+  box-shadow: var(--shadow-med);
   justify-content: center;
 }
 
 .c4-cell {
   width: var(--c4-cell-size, 40px);
   height: var(--c4-cell-size, 40px);
-  background: #1e293b;
+  background-color: #313338;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.15s;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .c4-cell.chip-r {
-  background: radial-gradient(circle at 35% 35%, #ff4b4b, #b7002e);
-  box-shadow: 0 0 12px rgba(255, 75, 75, 0.6);
+  background: radial-gradient(circle at 35% 35%, #ed4245, #ba2f34);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .c4-cell.chip-y {
-  background: radial-gradient(circle at 35% 35%, #ffd166, #d48b00);
-  box-shadow: 0 0 12px rgba(255, 209, 102, 0.6);
+  background: radial-gradient(circle at 35% 35%, #fee75c, #d89f28);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .c4-cell.winner-cell {
-  animation: pulse-win 0.8s infinite alternate;
-  border: 2px solid #fff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
-/* ── Rock-Paper-Scissors Styles ───────────────────────────── */
+/* ── Rock-Paper-Scissors ───────────────────────────────────── */
 .rps-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
-  padding: 10px;
+  padding: 6px;
 }
 
 .rps-round-badge {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-muted);
 }
 
-.rps-choices {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  width: 100%;
-}
-
-.rps-btn {
-  flex: 1;
-  max-width: 110px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 16px 8px;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.rps-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--accent-cyan);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
-}
-
-.rps-btn.selected {
-  background: rgba(0, 242, 254, 0.2);
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
-  transform: scale(1.05);
-}
-
-.rps-emoji {
-  font-size: 2.5rem;
-}
-
-.rps-name {
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
 .rps-arena {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 14px;
   width: 100%;
   text-align: center;
 }
@@ -822,27 +792,121 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin: 12px 0;
+  margin: 10px 0;
 }
 
 .rps-fighter {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .rps-fighter-pick {
-  font-size: 3rem;
-  height: 60px;
+  font-size: 2.6rem;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .rps-result-text {
-  font-size: 1.1rem;
-  font-weight: 800;
-  min-height: 1.6rem;
-  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  min-height: 1.5rem;
+  margin-top: 6px;
+  color: var(--text-header);
+}
+
+.rps-choices {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.rps-btn {
+  flex: 1 1 auto;
+  min-width: 80px;
+  max-width: 105px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 6px;
+  color: var(--text-header);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.rps-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--discord-blurple);
+}
+
+.rps-btn.selected {
+  background-color: rgba(88, 101, 242, 0.2);
+  border-color: var(--discord-blurple);
+}
+
+.rps-emoji {
+  font-size: 2rem;
+}
+
+.rps-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-normal);
+}
+
+/* ── Footer Action Controls ────────────────────────────────── */
+.controls-footer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--bg-tertiary);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  flex: 1;
+  min-width: 110px;
+  padding: 8px 12px;
+  background-color: #4e5058;
+  border: none;
+  color: #ffffff;
+  border-radius: var(--radius-xs);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-secondary:hover {
+  background-color: #6d6f78;
+}
+
+/* ── Scrollbars & Utilities ────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1a1b1e;
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #111214;
 }

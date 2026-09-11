@@ -694,6 +694,39 @@ class TanjunActivityClient {
     }
   }
 
+  renderHubGames() {
+    if (!this.el.gamesGrid) return;
+    const games = this.gameState?.available_games || this.availableGames || [];
+    let html = "";
+    games.forEach(g => {
+      html += `
+        <div class="game-hub-card" data-game="${g.type}">
+          <div class="game-card-icon">${g.icon || '🎮'}</div>
+          <div class="game-card-body">
+            <div class="game-card-top">
+              <span class="game-card-title">${g.name}</span>
+              <span class="game-card-tag">${g.badge || 'Spiel'}</span>
+            </div>
+            <div class="game-card-desc">${g.description}</div>
+          </div>
+          <div class="game-card-arrow">▶</div>
+        </div>
+      `;
+    });
+    this.el.gamesGrid.innerHTML = html;
+
+    this.el.gamesGrid.querySelectorAll(".game-hub-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const gameType = card.dataset.game;
+        this.selectGame(gameType);
+      });
+    });
+  }
+
+  selectGame(gameType) {
+    this.sendAction("select_game", { game_type: gameType });
+  }
+
   renderHubPlayers() {
     if (!this.el.hubPlayersList) return;
     const players = (this.gameState?.players || []).filter(p => !p.is_bot);
