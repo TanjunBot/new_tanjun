@@ -286,6 +286,7 @@ class GameSession:
                 state = self.game.get_state(for_user_id=for_user_id)
         else:
             state = self.game.get_state(for_user_id=for_user_id)
+        state["session_id"] = self.session_id
         state["is_hub"] = self.is_hub
         state["available_games"] = session_manager.get_supported_games()
         state["lobby_settings"] = self.lobby_settings
@@ -335,11 +336,22 @@ class SessionManager:
 
     def __init__(self) -> None:
         self._sessions: Dict[str, GameSession] = {}
+        self._channel_aliases: Dict[str, str] = {}  # channel_id -> session_id
         self._game_registry: Dict[str, type[BaseGame]] = {
             "tictactoe": TicTacToeGame,
             "connect4": Connect4Game,
             "rps": RPSGame
         }
+
+    def register_channel_alias(self, channel_id: str, session_id: str) -> None:
+        """Link a Discord voice channel ID to a game session ID."""
+        self._channel_aliases[channel_id] = session_id
+
+    def get_session_by_channel(self, channel_id: str) -> Optional[GameSession]:
+        sid = self._channel_aliases.get(channel_id)
+        if sid:
+            return self.get_session(sid)
+        return None
 
     def register_game(self, game_type: str, game_cls: type[BaseGame]) -> None:
         self._game_registry[game_type] = game_cls
@@ -413,11 +425,20 @@ class SessionManager:
         return session
 
     def get_session(self, session_id: str) -> Optional[GameSession]:
-        return self._sessions.get(session_id)
+        if session_id in self._sessions:
+            return self._sessions[session_id]
+        if session_id in self._channel_aliases:
+            target_sid = self._channel_aliases[session_id]
+            return self._sessions.get(target_sid)
+        return None
 
     def remove_session(self, session_id: str) -> None:
         if session_id in self._sessions:
             del self._sessions[session_id]
+        # Clean up any alias pointing to this session
+        to_del = [cid for cid, sid in self._channel_aliases.items() if sid == session_id]
+        for cid in to_del:
+            del self._channel_aliases[cid]
 
     async def cleanup_idle_sessions(self, max_idle_seconds: float = 3600) -> None:
         now = asyncio.get_event_loop().time()

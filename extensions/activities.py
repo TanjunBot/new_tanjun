@@ -69,6 +69,9 @@ class ActivityCommands(app_commands.Group):
                 if isinstance(vc, (discord.VoiceChannel, discord.StageChannel)):
                     target_voice_channel = vc
 
+        if target_voice_channel is not None:
+            session_manager.register_channel_alias(str(target_voice_channel.id), session.session_id)
+
         # Base URL from config or fallback
         base_url = config.activity_public_url.rstrip("/") if config.activity_public_url else f"http://localhost:{config.activity_server_port}"
         query_params = {
@@ -297,6 +300,9 @@ class ActivityCommands(app_commands.Group):
                 vc = interaction.user.voice.channel
                 if isinstance(vc, (discord.VoiceChannel, discord.StageChannel)):
                     target_voice_channel = vc
+
+        if target_voice_channel is not None:
+            session_manager.register_channel_alias(str(target_voice_channel.id), session.session_id)
 
         base_url = config.activity_public_url.rstrip("/") if config.activity_public_url else f"http://localhost:{config.activity_server_port}"
         query_params = {

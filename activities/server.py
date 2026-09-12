@@ -1,7 +1,14 @@
 import asyncio
 import json
 import logging
-from aiohttp import web
+try:
+    from aiohttp import web
+    _middleware_decorator = web.middleware
+except ImportError:
+    web = None
+    def _middleware_decorator(f):
+        return f
+
 from activities.base import Player
 from activities.manager import session_manager
 from config import activity_server_host, activity_server_port, applicationId
@@ -19,13 +26,16 @@ class ActivityServer:
     def __init__(self, host: str = activity_server_host, port: int = activity_server_port) -> None:
         self.host = host
         self.port = port
-        self.app = web.Application()
+        if web is not None:
+            self.app = web.Application()
+            self._setup_routes()
+        else:
+            self.app = None
         self.runner = None
         self.site = None
         self._cleanup_task: asyncio.Task | None = None
-        self._setup_routes()
 
-    @web.middleware
+    @_middleware_decorator
     async def cors_middleware(self, request, handler):
         if request.method == "OPTIONS":
             response = web.Response(status=200)
@@ -67,14 +77,19 @@ class ActivityServer:
     async def handle_activity(self, request: web.Request) -> web.Response:
         return await self.handle_index(request)
 
-    async def handle_api_config(self, request: web.Request) -> web.Response:
+    def get_config_dict(self) -> dict:
         import config
-        has_client_secret = bool(getattr(config, "discord_client_secret", ""))
-        return web.json_response({
+        secret_obj = getattr(config, "discord_client_secret", None)
+        client_secret = secret_obj.get_secret_value() if hasattr(secret_obj, "get_secret_value") else str(secret_obj or "")
+        has_client_secret = bool(client_secret and client_secret.strip())
+        return {
             "client_id": applicationId,
             "has_client_secret": has_client_secret,
             "supported_games": session_manager.get_supported_games()
-        })
+        }
+
+    async def handle_api_config(self, request: web.Request) -> web.Response:
+        return web.json_response(self.get_config_dict())
 
     async def handle_api_token(self, request: web.Request) -> web.Response:
         try:
@@ -85,14 +100,15 @@ class ActivityServer:
 
         import config
         client_id = applicationId
-        client_secret = getattr(config, "discord_client_secret", "") or ""
+        secret_obj = getattr(config, "discord_client_secret", None)
+        client_secret = secret_obj.get_secret_value() if hasattr(secret_obj, "get_secret_value") else str(secret_obj or "")
 
-        if not client_secret:
+        if not client_secret or not client_secret.strip():
             return web.json_response({"error": "client_secret not configured"}, status=501)
 
         data = {
             "client_id": client_id,
-            "client_secret": client_secret,
+            "client_secret": client_secret.strip(),
             "grant_type": "authorization_code",
             "code": code,
         }
@@ -157,6 +173,12 @@ class ActivityServer:
         session_id = request.match_info.get("session_id", "")
         session = session_manager.get_session(session_id)
         if not session:
+            channel_id = request.query.get("channel_id")
+            if channel_id:
+                session = session_manager.get_session_by_channel(channel_id)
+                if session and session_id:
+                    session_manager.register_channel_alias(session_id, session.session_id)
+        if not session:
             # If launched directly through Discord instance_id or direct link, auto-create Hub session
             default_host = Player(
                 user_id="discord_player",
@@ -195,8 +217,13 @@ class ActivityServer:
                         # If the session was auto-created with a placeholder host,
                         # promote the first real user to host instead of adding them as player 2.
                         PLACEHOLDER_HOST_IDS = {"discord_player", "guest_host", "guest_1"}
-                        is_placeholder = session.game.host.user_id in PLACEHOLDER_HOST_IDS or (
-                            len(session.game.players) <= 1 and any(pid in PLACEHOLDER_HOST_IDS for pid in session.game.players)
+                        is_placeholder = (
+                            session.game.host.user_id in PLACEHOLDER_HOST_IDS
+                            or session.game.host.user_id.startswith("host_")
+                            or (
+                                len(session.game.players) <= 1
+                                and any(pid in PLACEHOLDER_HOST_IDS or pid.startswith("host_") for pid in session.game.players)
+                            )
                         )
                         if is_placeholder:
                             old_placeholder_id = session.game.host.user_id
@@ -227,6 +254,9 @@ class ActivityServer:
                             session.cancel_disconnect_forfeit(user_id)
                             if session.tournament:
                                 session.tournament.add_participant(player)
+                                user_m = session.tournament.get_match_for_user(user_id)
+                                if user_m and user_m.game_instance and user_id in user_m.game_instance.players:
+                                    user_m.game_instance.players[user_id].connected = True
 
                         await ws.send_json({
                             "type": "joined",
@@ -322,17 +352,24 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name == "update_profile":
                             new_name = str(action_payload.get("display_name", "")).strip()
+                            new_avatar = action_payload.get("avatar_url")
                             if new_name:
                                 new_name = new_name[:32]
                                 if p_id in session.game.players:
                                     session.game.players[p_id].display_name = new_name
                                     session.game.players[p_id].username = new_name
+                                    if new_avatar:
+                                        session.game.players[p_id].avatar_url = new_avatar
                                 if p_id in session.game.spectators:
                                     session.game.spectators[p_id].display_name = new_name
                                     session.game.spectators[p_id].username = new_name
+                                    if new_avatar:
+                                        session.game.spectators[p_id].avatar_url = new_avatar
                                 if session.tournament and p_id in session.tournament.participants:
                                     session.tournament.participants[p_id].display_name = new_name
                                     session.tournament.participants[p_id].username = new_name
+                                    if new_avatar:
+                                        session.tournament.participants[p_id].avatar_url = new_avatar
                                 await session.broadcast_state()
                         elif action_name.startswith("tournament_"):
                             if session.tournament:
@@ -395,6 +432,9 @@ class ActivityServer:
                 session.game.remove_player(user_id)
                 if session.tournament:
                     session.tournament.remove_participant(user_id, voluntary=False)
+                    user_m = session.tournament.get_match_for_user(user_id)
+                    if user_m and user_m.game_instance and user_id in user_m.game_instance.players:
+                        user_m.game_instance.players[user_id].connected = False
                 session.schedule_disconnect_forfeit(user_id, delay=30.0)
                 await session.broadcast_state()
 

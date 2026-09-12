@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import collections
 import logging
 import math
 import random
 import uuid
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 from activities.base import BaseGame, Player
@@ -243,6 +244,62 @@ class Tournament:
         game.start_game()
         return game
 
+    def _pair_eligible(
+        self, eligible: List[TournamentParticipant]
+    ) -> Tuple[List[Tuple[TournamentParticipant, TournamentParticipant]], Optional[TournamentParticipant]]:
+        """Pair participants for a round, avoiding duplicate matchups in points format and giving fair Byes."""
+        if not eligible:
+            return [], None
+
+        remaining = list(eligible)
+        bye_participant: Optional[TournamentParticipant] = None
+
+        # If odd number of participants, award Bye to player with fewest previous Byes
+        if len(remaining) % 2 == 1:
+            bye_counts: Dict[str, int] = {p.user_id: 0 for p in remaining}
+            for hist in self.match_history:
+                if hist.get("is_bye"):
+                    p1_id = hist.get("p1_id")
+                    if p1_id in bye_counts:
+                        bye_counts[p1_id] += 1
+            min_byes = min(bye_counts.values())
+            bye_candidates = [p for p in remaining if bye_counts[p.user_id] == min_byes]
+            bye_participant = random.choice(bye_candidates)
+            remaining.remove(bye_participant)
+
+        if self.format == "knockout" or len(remaining) <= 2:
+            random.shuffle(remaining)
+            pairs: List[Tuple[TournamentParticipant, TournamentParticipant]] = []
+            for k in range(0, len(remaining), 2):
+                pairs.append((remaining[k], remaining[k + 1]))
+            return pairs, bye_participant
+
+        # In points mode: minimize repeat matchups using match_history
+        pair_counts: Dict[frozenset[str], int] = collections.defaultdict(int)
+        for hist in self.match_history:
+            p1_id = hist.get("p1_id")
+            p2_id = hist.get("p2_id")
+            if p1_id and p2_id:
+                pair_counts[frozenset([p1_id, p2_id])] += 1
+
+        random.shuffle(remaining)
+        pairs = []
+        while len(remaining) >= 2:
+            p1 = remaining.pop(0)
+            best_idx = 0
+            best_encounters = float("inf")
+            for idx, cand in enumerate(remaining):
+                enc = pair_counts[frozenset([p1.user_id, cand.user_id])]
+                if enc < best_encounters:
+                    best_encounters = enc
+                    best_idx = idx
+                    if enc == 0:
+                        break
+            p2 = remaining.pop(best_idx)
+            pairs.append((p1, p2))
+
+        return pairs, bye_participant
+
     async def start_next_round(self, selected_game: Optional[str] = None) -> bool:
         if selected_game:
             self.selected_game = selected_game
@@ -258,9 +315,6 @@ class Tournament:
             await self._trigger_tournament_finished()
             return True
 
-        # Shuffle for diverse pairings across rounds
-        random.shuffle(eligible)
-
         # Game for this round
         if selected_game and selected_game in self.games_pool:
             chosen_game = selected_game
@@ -275,50 +329,51 @@ class Tournament:
         else:
             chosen_game = self.selected_game if self.selected_game in self.games_pool else "connect4"
 
+        # Pair eligible participants
+        pairs, bye_p = self._pair_eligible(eligible)
+
         matches: List[TournamentMatch] = []
-        i = 0
-        while i < len(eligible):
-            p1 = eligible[i]
-            if i + 1 < len(eligible):
-                p2 = eligible[i + 1]
-                game_inst = self._create_game_instance(chosen_game, p1, p2)
-                match = TournamentMatch(
-                    match_id=str(uuid.uuid4())[:8],
-                    round_index=self.current_round,
-                    game_type=chosen_game,
-                    player1=p1,
-                    player2=p2,
-                    game_instance=game_inst
-                )
-                matches.append(match)
-                i += 2
+        for p1, p2 in pairs:
+            game_inst = self._create_game_instance(chosen_game, p1, p2)
+            match = TournamentMatch(
+                match_id=str(uuid.uuid4())[:8],
+                round_index=self.current_round,
+                game_type=chosen_game,
+                player1=p1,
+                player2=p2,
+                game_instance=game_inst
+            )
+            matches.append(match)
+
+        if bye_p:
+            match = TournamentMatch(
+                match_id=str(uuid.uuid4())[:8],
+                round_index=self.current_round,
+                game_type=chosen_game,
+                player1=bye_p,
+                player2=None,
+                game_instance=None
+            )
+            match.status = "finished"
+            match.winner_id = bye_p.user_id
+            match.is_bye = True
+            if self.format == "knockout":
+                bye_p.wins += 1
+                bye_p.score += self.points_win
             else:
-                # Odd player receives Bye
-                match = TournamentMatch(
-                    match_id=str(uuid.uuid4())[:8],
-                    round_index=self.current_round,
-                    game_type=chosen_game,
-                    player1=p1,
-                    player2=None,
-                    game_instance=None
-                )
-                match.status = "finished"
-                match.winner_id = p1.user_id
-                if self.format == "knockout":
-                    p1.wins += 1
-                    p1.score += self.points_win
-                else:
-                    p1.score += self.points_draw
-                matches.append(match)
-                self.match_history.append({
-                    "match_id": match.match_id,
-                    "round": match.round_index,
-                    "game_type": match.game_type,
-                    "p1": match.player1.display_name,
-                    "p2": "Freilos (Bye)",
-                    "winner": match.player1.display_name
-                })
-                i += 1
+                bye_p.score += self.points_draw
+            matches.append(match)
+            self.match_history.append({
+                "match_id": match.match_id,
+                "round": match.round_index,
+                "game_type": match.game_type,
+                "p1": bye_p.display_name,
+                "p2": "Freilos (Bye)",
+                "winner": bye_p.display_name,
+                "p1_id": bye_p.user_id,
+                "p2_id": None,
+                "is_bye": True
+            })
 
         self.active_matches = matches
         if self.match_style == "parallel":
@@ -400,7 +455,10 @@ class Tournament:
             "game_type": match.game_type,
             "p1": match.player1.display_name,
             "p2": match.player2.display_name if match.player2 else "Freilos (Bye)",
-            "winner": winner_name
+            "winner": winner_name,
+            "p1_id": match.player1.user_id,
+            "p2_id": match.player2.user_id if match.player2 else None,
+            "is_bye": match.is_bye
         })
 
         # Check if entire round is completed

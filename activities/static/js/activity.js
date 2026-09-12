@@ -841,6 +841,36 @@ class TanjunActivityClient {
     this.closeNicknameModal();
   }
 
+  setUserProfile(discordUser) {
+    if (!discordUser) return;
+    this.user.id = String(discordUser.id);
+    this.user.username = discordUser.username || this.user.username;
+    this.user.displayName = discordUser.global_name || discordUser.nickname || discordUser.username || this.user.displayName;
+    this.user.display_name = this.user.displayName;
+    if (discordUser.avatar) {
+      this.user.avatarUrl = `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png?size=128`;
+      this.user.avatar_url = this.user.avatarUrl;
+    }
+    sessionStorage.setItem("tanjun_activity_user_id", this.user.id);
+    sessionStorage.setItem("tanjun_activity_user_name", this.user.displayName);
+    localStorage.setItem("tanjun_activity_user_name", this.user.displayName);
+    if (this.user.avatarUrl) {
+      sessionStorage.setItem("tanjun_activity_user_avatar", this.user.avatarUrl);
+    }
+    if (this.el && this.el.usernameDisplay) {
+      this.el.usernameDisplay.textContent = this.user.displayName;
+    }
+    if (this.el && this.el.userAvatar && this.user.avatarUrl) {
+      this.el.userAvatar.src = this.user.avatarUrl;
+    }
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.sendAction("update_profile", {
+        display_name: this.user.displayName,
+        avatar_url: this.user.avatarUrl
+      });
+    }
+  }
+
   isInsideDiscord() {
     try {
       return (
@@ -873,11 +903,12 @@ class TanjunActivityClient {
               )
             ]);
 
-            if (this.discordSdk.instanceId) {
+            if (!paramSession && this.discordSdk.instanceId) {
               this.sessionId = this.discordSdk.instanceId;
             }
 
-            // Optional OAuth token exchange
+            let oauthSuccess = false;
+            // Optional OAuth token exchange if client secret is configured on backend
             if (config.has_client_secret) {
               try {
                 const authCode = await this.discordSdk.commands.authorize({
@@ -901,22 +932,33 @@ class TanjunActivityClient {
                         access_token: tokenData.access_token
                       });
                       if (auth && auth.user) {
-                        this.user.id = auth.user.id;
-                        this.user.username = auth.user.username;
-                        this.user.displayName = auth.user.global_name || auth.user.username;
-                        this.user.display_name = this.user.displayName;
-                        if (auth.user.avatar) {
-                          this.user.avatarUrl = `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=128`;
-                          this.user.avatar_url = this.user.avatarUrl;
-                        }
-                        sessionStorage.setItem("tanjun_activity_user_id", this.user.id);
-                        sessionStorage.setItem("tanjun_activity_user_name", this.user.displayName);
+                        this.setUserProfile(auth.user);
+                        oauthSuccess = true;
                       }
                     }
                   }
                 }
               } catch (authErr) {
                 console.info("[Discord Activity] OAuth optional step skipped:", authErr);
+              }
+            }
+
+            // Fallback when OAuth is disabled or skipped: fetch user from instance participants via Discord RPC
+            if (!oauthSuccess && this.discordSdk.commands && this.discordSdk.commands.getInstanceConnectedParticipants) {
+              try {
+                const participantsRes = await this.discordSdk.commands.getInstanceConnectedParticipants();
+                const participants = participantsRes && participantsRes.participants ? participantsRes.participants : [];
+                if (participants.length > 0) {
+                  const nonBot = participants.filter(p => !p.bot);
+                  const candidate = nonBot.length === 1 
+                    ? nonBot[0] 
+                    : (nonBot.find(p => p.id === this.user.id) || nonBot[0]);
+                  if (candidate) {
+                    this.setUserProfile(candidate);
+                  }
+                }
+              } catch (partErr) {
+                console.info("[Discord Activity] getInstanceConnectedParticipants fallback skipped:", partErr);
               }
             }
           }
@@ -1188,7 +1230,10 @@ class TanjunActivityClient {
     }
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws/${this.sessionId}`;
+    const urlParams = new URLSearchParams(window.location.search);
+    const channelId = urlParams.get("channel_id") || (this.discordSdk ? this.discordSdk.channelId : null);
+    const channelQuery = channelId ? `?channel_id=${encodeURIComponent(channelId)}` : "";
+    const wsUrl = `${protocol}//${window.location.host}/ws/${this.sessionId}${channelQuery}`;
 
     try {
       this.ws = new WebSocket(wsUrl);
@@ -1400,6 +1445,9 @@ class TanjunActivityClient {
   handleStateUpdate(state) {
     if (!state) return;
     this.gameState = state;
+    if (state.session_id) {
+      this.sessionId = state.session_id;
+    }
 
     const tourney = state.tournament;
     const isParticipant = tourney && (tourney.is_participant || (tourney.leaderboard && tourney.leaderboard.some(p => p.user_id === this.user.id)));
@@ -1949,7 +1997,12 @@ class TanjunActivityClient {
 
   isTournamentHost() {
     if (this.gameState?.tournament) {
-      return this.gameState.tournament.host_id === this.user.id;
+      if (this.gameState.tournament.host_id === this.user.id) return true;
+      const participants = this.gameState.tournament.participants || {};
+      const participantKeys = Object.keys(participants);
+      if (participantKeys.length <= 1 && (!this.gameState.tournament.host_id || participantKeys.includes(this.user.id))) {
+        return true;
+      }
     }
     return this.isHost();
   }

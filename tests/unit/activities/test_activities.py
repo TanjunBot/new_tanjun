@@ -1407,6 +1407,140 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         state_spec_m1 = session.get_full_state(for_user_id="user_spec")
         self.assertEqual(state_spec_m1["players"][0]["user_id"], m1.player1.user_id)
 
+    async def test_channel_alias_registration_and_lookup(self):
+        """Verify that voice channel ID aliases correctly route to the associated game session."""
+        session = session_manager.create_session("hub", host=self.host, session_id="session_target_123")
+        voice_channel_id = "1234567890123456"
+
+        # Register channel alias
+        session_manager.register_channel_alias(voice_channel_id, session.session_id)
+
+        # Lookup by channel
+        resolved_by_channel = session_manager.get_session_by_channel(voice_channel_id)
+        self.assertIsNotNone(resolved_by_channel)
+        self.assertEqual(resolved_by_channel.session_id, "session_target_123")
+
+        # Lookup by get_session directly with channel ID (alias fallback)
+        resolved_by_alias = session_manager.get_session(voice_channel_id)
+        self.assertIsNotNone(resolved_by_alias)
+        self.assertEqual(resolved_by_alias.session_id, "session_target_123")
+
+        # Clean up session and verify alias is removed
+        session_manager.remove_session(session.session_id)
+        self.assertIsNone(session_manager.get_session(voice_channel_id))
+        self.assertIsNone(session_manager.get_session_by_channel(voice_channel_id))
+
+    async def test_points_tournament_fair_pairings_minimize_duplicates(self):
+        """Verify that in points tournament, pairings across rounds minimize repeat encounters."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_fair_pairs")
+        tourney = session.tournament
+        tourney.format = "points"
+        tourney.total_rounds = 3
+
+        p2 = Player(user_id="p2", username="Player2", display_name="Player 2")
+        p3 = Player(user_id="p3", username="Player3", display_name="Player 3")
+        p4 = Player(user_id="p4", username="Player4", display_name="Player 4")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        tourney.add_participant(p4)
+
+        # Round 1
+        await tourney.start_tournament("tictactoe")
+        self.assertEqual(len(tourney.active_matches), 2)
+        for m in tourney.active_matches:
+            await tourney._resolve_match(m, m.player1.user_id)
+
+        # Round 2
+        await tourney.start_next_round()
+        self.assertEqual(len(tourney.active_matches), 2)
+        for m in tourney.active_matches:
+            await tourney._resolve_match(m, m.player1.user_id)
+
+        # Round 3
+        await tourney.start_next_round()
+        self.assertEqual(len(tourney.active_matches), 2)
+        for m in tourney.active_matches:
+            await tourney._resolve_match(m, m.player1.user_id)
+
+        # With 4 players and 3 rounds, each pair (A vs B, A vs C, A vs D, etc.) can be completely unique
+        encounters = set()
+        for m in tourney.match_history:
+            if m.get("p1_id") and m.get("p2_id"):
+                pair = frozenset([m["p1_id"], m["p2_id"]])
+                self.assertNotIn(pair, encounters, f"Pair {pair} was matched more than once in a 4-player 3-round tournament!")
+                encounters.add(pair)
+        self.assertEqual(len(encounters), 6)  # Exactly 6 unique pairs (4 choose 2)
+
+    async def test_odd_players_tournament_fair_byes(self):
+        """Verify that an odd number of players gives Byes fairly without starving any player."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_byes")
+        tourney = session.tournament
+        tourney.format = "points"
+        tourney.total_rounds = 3
+
+        p2 = Player(user_id="p2", username="Player2", display_name="Player 2")
+        p3 = Player(user_id="p3", username="Player3", display_name="Player 3")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+
+        # 3 players total. Over 3 rounds, each player must receive exactly 1 Bye!
+        byes_received = []
+
+        # Round 1
+        await tourney.start_tournament("tictactoe")
+        bye_m1 = next(m for m in tourney.active_matches if m.is_bye)
+        byes_received.append(bye_m1.player1.user_id)
+        # Finish active matches
+        for m in tourney.active_matches:
+            if not m.is_bye:
+                await tourney._resolve_match(m, m.player1.user_id)
+
+        # Round 2
+        await tourney.start_next_round()
+        bye_m2 = next(m for m in tourney.active_matches if m.is_bye)
+        byes_received.append(bye_m2.player1.user_id)
+        for m in tourney.active_matches:
+            if not m.is_bye:
+                await tourney._resolve_match(m, m.player1.user_id)
+
+        # Round 3
+        await tourney.start_next_round()
+        bye_m3 = next(m for m in tourney.active_matches if m.is_bye)
+        byes_received.append(bye_m3.player1.user_id)
+
+        # All 3 byes must have gone to different players!
+        self.assertEqual(len(set(byes_received)), 3)
+        self.assertIn("user_host", byes_received)
+        self.assertIn("p2", byes_received)
+        self.assertIn("p3", byes_received)
+
+    async def test_api_config_secret_handling(self):
+        """Verify that get_config_dict correctly reports has_client_secret even with SecretStr empty values."""
+        from pydantic import SecretStr
+        import config
+        from activities.server import ActivityServer
+
+        server = ActivityServer()
+
+        orig_secret = getattr(config, "discord_client_secret", None)
+        try:
+            # Case 1: empty SecretStr
+            config.discord_client_secret = SecretStr("")
+            cfg1 = server.get_config_dict()
+            self.assertFalse(cfg1["has_client_secret"])
+
+            # Case 2: whitespace SecretStr
+            config.discord_client_secret = SecretStr("   ")
+            cfg2 = server.get_config_dict()
+            self.assertFalse(cfg2["has_client_secret"])
+
+            # Case 3: valid SecretStr
+            config.discord_client_secret = SecretStr("my_valid_secret")
+            cfg3 = server.get_config_dict()
+            self.assertTrue(cfg3["has_client_secret"])
+        finally:
+            config.discord_client_secret = orig_secret
+
 
 if __name__ == "__main__":
     unittest.main()
