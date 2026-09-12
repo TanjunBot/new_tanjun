@@ -320,8 +320,9 @@ class Tournament:
             chosen_game = selected_game
             self.selected_game = selected_game
         elif self.game_selection == "playlist" or self.selected_game == "playlist":
-            disc_idx = (self.current_round - 1) % len(self.disciplines)
-            chosen_game = self.disciplines[disc_idx]
+            disciplines = self.disciplines or ["tictactoe", "connect4", "rps"]
+            disc_idx = (self.current_round - 1) % len(disciplines)
+            chosen_game = disciplines[disc_idx]
             self.selected_game = chosen_game
         elif self.game_selection == "random" or self.selected_game == "random":
             chosen_game = random.choice(self.games_pool)
@@ -712,7 +713,14 @@ class Tournament:
     def get_leaderboard(self) -> List[Dict[str, Any]]:
         sorted_p = sorted(
             self.participants.values(),
-            key=lambda p: (not p.is_eliminated if self.format == "knockout" else True, p.score, p.wins, -p.losses),
+            key=lambda p: (
+                1 if (not p.is_eliminated if self.format == "knockout" else True) else 0,
+                p.score,
+                p.wins,
+                -p.losses,
+                p.draws,
+                p.user_id
+            ),
             reverse=True
         )
         return [

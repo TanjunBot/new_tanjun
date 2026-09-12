@@ -65,3 +65,39 @@ async def test_concurrent_tictactoe_moves_are_serialized():
         game.handle_action("host", "move", {"cell": 1}),
     )
     assert sorted(result.get("status") for result in (first, second)) == ["error", "moved"]
+
+
+@pytest.mark.asyncio
+async def test_games_handle_opponent_disconnect_without_index_error():
+    # 1. TicTacToe
+    host, guest = players()
+    ttt = TicTacToeGame("s1", host)
+    ttt.add_player(guest)
+    await ttt.handle_action("host", "start", {})
+    # Guest leaves/is removed from players mid-game
+    del ttt.players["guest"]
+    res_ttt = await ttt.handle_action("host", "move", {"cell": 4})
+    assert res_ttt["status"] == "moved"
+    assert ttt.is_finished is True
+    assert ttt.winner == "host"
+
+    # 2. Connect4
+    host, guest = players()
+    c4 = Connect4Game("s2", host)
+    c4.add_player(guest)
+    await c4.handle_action("host", "start", {})
+    del c4.players["guest"]
+    res_c4 = await c4.handle_action("host", "move", {"col": 3})
+    assert res_c4["status"] == "moved"
+    assert c4.is_finished is True
+    assert c4.winner == "host"
+
+    # 3. RPS
+    host, guest = players()
+    rps = RPSGame("s3", host)
+    rps.add_player(guest)
+    await rps.handle_action("host", "start", {})
+    del rps.players["guest"]
+    res_rps = rps._evaluate_round()
+    assert res_rps["winner"] == "host"
+    assert rps.is_finished is True

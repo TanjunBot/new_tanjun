@@ -107,6 +107,18 @@ class RPSGame(BaseGame):
 
     def _evaluate_round(self) -> Dict[str, Any]:
         p_ids = list(self.players.keys())[:2]
+        if len(p_ids) < 2:
+            single_id = p_ids[0] if p_ids else None
+            self.is_finished = True
+            self.winner = single_id
+            result = {
+                "round": self.current_round,
+                "picks": dict(self.current_picks),
+                "winner": single_id
+            }
+            self.round_history.append(result)
+            self.last_round_result = result
+            return result
         p1_id, p2_id = p_ids[0], p_ids[1]
         c1 = self.current_picks.get(p1_id, "")
         c2 = self.current_picks.get(p2_id, "")

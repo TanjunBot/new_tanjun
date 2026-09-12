@@ -246,6 +246,10 @@ class TicTacToeGame(BaseGame):
             else:
                 # Toggle turn
                 p_ids = list(self.players.keys())
+                if len(p_ids) < 2:
+                    self.is_finished = True
+                    self.winner = player_id
+                    return {"status": "moved", "state": self.get_state()}
                 next_player = p_ids[1] if self.current_turn == p_ids[0] else p_ids[0]
                 self.current_turn = next_player
 
