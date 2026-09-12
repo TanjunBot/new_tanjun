@@ -17,6 +17,7 @@ from commands.giveaway.start import (
     StartTimeModal,
     VoiceRequirementModal,
 )
+from services.giveaway_service import GiveawayCreationError
 from tests.helpers.discord import make_text_channel
 from tests.integration.commands.admin.conftest import make_view_interaction
 
@@ -226,6 +227,21 @@ async def test_builder_confirm_creates_giveaway(mock_service, mock_send, admin_c
         await view.confirm(interaction, _button("confirm"))
     mock_service.create.assert_awaited_once()
     mock_send.assert_awaited_once()
+
+
+@patch("commands.giveaway.start.sendGiveaway", new_callable=AsyncMock)
+@patch("commands.giveaway.start.giveaway_service")
+async def test_builder_confirm_reports_database_failure(mock_service, mock_send, admin_command_info):
+    mock_service.create = AsyncMock(side_effect=GiveawayCreationError("db unavailable"))
+    view = _builder(admin_command_info)
+    interaction = make_view_interaction(user=admin_command_info.user)
+    interaction.response.edit_message = AsyncMock()
+    with patch("commands.giveaway.start.utility.relativeTimeStrToDate") as rel:
+        rel.return_value = datetime.datetime.now() - datetime.timedelta(hours=1)
+        await view.confirm(interaction, _button("confirm"))
+    mock_send.assert_not_awaited()
+    interaction.response.edit_message.assert_awaited_once()
+    assert interaction.response.edit_message.await_args.kwargs["embed"] is None
 
 
 async def test_start_time_modal_submit(admin_command_info):

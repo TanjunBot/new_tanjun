@@ -12,6 +12,10 @@ async def set_slowmode(command_info: utility.CommandInfo, seconds: int, channel:
         await command_info.reply(embed=embed)
         return
     assert command_info.guild is not None
+    if isinstance(command_info.user, discord.Member) and not channel.permissions_for(command_info.user).manage_channels:
+        embed = utility.tanjunEmbed(title=locale.commands.admin.slowmode.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.slowmode.missingPermission.description(command_info.locale))
+        await command_info.reply(embed=embed)
+        return
     if not channel.permissions_for(command_info.guild.me).manage_channels:
         embed = utility.tanjunEmbed(title=locale.commands.admin.slowmode.missingPermissionBot.title(str(command_info.locale)), description=locale.commands.admin.slowmode.missingPermissionBot.description(command_info.locale))
         await command_info.reply(embed=embed)

@@ -1,7 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from commands.admin.slowmode import set_slowmode
 from tests.helpers.discord import (
+    make_permissions,
     make_text_channel,
 )
 
@@ -49,3 +52,15 @@ async def test_set_slowmode_guild_present(admin_command_info):
     assert admin_command_info.guild is not None
     channel = make_text_channel(guild=admin_command_info.guild)
     await set_slowmode(admin_command_info, seconds=1, channel=channel)
+
+
+async def test_set_slowmode_rejects_user_without_target_permission(admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild)
+    user_permissions = make_permissions(manage_channels=False)
+    bot_permissions = make_permissions(manage_channels=True)
+    channel.permissions_for = MagicMock(
+        side_effect=lambda member: user_permissions if member is admin_command_info.user else bot_permissions
+    )
+    await set_slowmode(admin_command_info, seconds=1, channel=channel)
+    channel.edit.assert_not_awaited()
+    admin_command_info.reply.assert_awaited_once()

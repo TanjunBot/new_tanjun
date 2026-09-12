@@ -1,12 +1,16 @@
 from locale_keys import locale
+from collections.abc import Mapping
 import io
 import json
 import logging
 from datetime import datetime, timedelta
+from urllib.parse import urlsplit
 import aiohttp
 import discord
 import utility
 from services.scheduled_message_service import Attachment, ScheduledMessageService, ScheduleMessageParams
+
+MAX_SCHEDULED_ATTACHMENT_BYTES = 10 * 1024 * 1024
 
 async def schedule_message(command_info: utility.CommandInfo, content: str, send_in: str, channel: discord.TextChannel | None=None, repeat: str | None=None, repeat_amount: int | None=None, attachments: list[discord.Attachment] | None=None) -> None:
     if command_info.channel is None:
@@ -88,7 +92,7 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                     continue
                 target = user.dm_channel if user.dm_channel else await user.create_dm()
             if isinstance(target, (discord.CategoryChannel, discord.ForumChannel)):
-                return
+                continue
             files: list[discord.File] = []
             if msg.attachments:
                 try:
@@ -98,11 +102,22 @@ async def send_scheduled_messages(client: discord.Client) -> None:
                         for att_data in attachment_data:
                             url = att_data.get('url', '')
                             filename = att_data.get('filename', 'file')
-                            async with session.get(url) as resp:
+                            if urlsplit(url).scheme not in {"http", "https"}:
+                                continue
+                            async with session.get(url, allow_redirects=False) as resp:
                                 if resp.status == 200:
-                                    file_bytes = await resp.read()
-                                    files.append(discord.File(io.BytesIO(file_bytes), filename=filename))
-                except (json.JSONDecodeError, Exception):
+                                    headers = getattr(resp, "headers", {})
+                                    content_length = headers.get("Content-Length") if isinstance(headers, Mapping) else None
+                                    try:
+                                        content_length_value = int(content_length) if content_length is not None else None
+                                    except (TypeError, ValueError):
+                                        content_length_value = None
+                                    if content_length_value is not None and content_length_value > MAX_SCHEDULED_ATTACHMENT_BYTES:
+                                        continue
+                                    file_bytes = await resp.read(MAX_SCHEDULED_ATTACHMENT_BYTES + 1)
+                                    if len(file_bytes) <= MAX_SCHEDULED_ATTACHMENT_BYTES:
+                                        files.append(discord.File(io.BytesIO(file_bytes), filename=filename))
+                except (json.JSONDecodeError, ValueError, aiohttp.ClientError):
                     logging.exception('Failed to parse attachments for scheduled message %s', message_id)
             embed = utility.tanjunEmbed(description=content)
             send_kwargs: dict = {'content': content, 'embed': embed}

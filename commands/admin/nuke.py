@@ -48,6 +48,10 @@ async def nuke_channel(command_info: utility.CommandInfo, channel: discord.TextC
         return
     if channel is None:
         channel = command_info.channel
+    if isinstance(command_info.user, discord.Member) and not channel.permissions_for(command_info.user).manage_channels:
+        embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.nuke.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.nuke.missingPermission.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     if not channel.guild.me.guild_permissions.manage_channels:
         embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.nuke.missingPermissionBot.title(str(command_info.locale)), description=locale.commands.admin.nuke.missingPermissionBot.description(command_info.locale))
         await command_info.reply(embed=embed)

@@ -4,7 +4,7 @@ import discord
 from discord import ui
 import utility
 from commands.giveaway.utility import generateGiveawayEmbed, sendGiveaway
-from services.giveaway_service import GiveawayCreateParams, giveaway_service
+from services.giveaway_service import GiveawayCreateParams, GiveawayCreationError, giveaway_service
 
 class GiveawayBuilderButton(ui.Button):
 
@@ -591,7 +591,22 @@ class GiveawayBuilder(ui.View):
         voice_requirement = self.giveaway_data['voice_requirement']
         channel_requirements = self.giveaway_data['channel_requirements']
         target_channel = self.giveaway_data['target_channel']
-        giveaway_id = await giveaway_service.create(GiveawayCreateParams(guild_id=str(self.command_info.guild.id), title=title, description=description, winners=winners, with_button=with_button, custom_name=custom_name, sponsor=sponsor, price=price, message=message, end_time=end_time, start_time=start_time, new_message_requirement=new_message_requirement, day_requirement=day_requirement, role_requirement=role_requirement, voice_requirement=voice_requirement, channel_requirements=channel_requirements, channel_id=str(target_channel.id)))
+        try:
+            giveaway_id = await giveaway_service.create(GiveawayCreateParams(guild_id=str(self.command_info.guild.id), title=title, description=description, winners=winners, with_button=with_button, custom_name=custom_name, sponsor=sponsor, price=price, message=message, end_time=end_time, start_time=start_time, new_message_requirement=new_message_requirement, day_requirement=day_requirement, role_requirement=role_requirement, voice_requirement=voice_requirement, channel_requirements=channel_requirements, channel_id=str(target_channel.id)))
+        except GiveawayCreationError:
+            await interaction.response.edit_message(
+                content="The giveaway could not be created. Please try again later.",
+                embed=None,
+                view=ui.View(),
+            )
+            return
+        if giveaway_id is None:
+            await interaction.response.edit_message(
+                content="The giveaway could not be created. Please try again later.",
+                embed=None,
+                view=ui.View(),
+            )
+            return
         self.giveaway_data['id'] = giveaway_id
         embed = utility.tanjunEmbed(title=locale.commands.giveaway.builder.success.title(self.command_info.locale), description=locale.commands.giveaway.builder.success.description(self.command_info.locale))
         await interaction.response.edit_message(content=None, embed=embed, view=ui.View())

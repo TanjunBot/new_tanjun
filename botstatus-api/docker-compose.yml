@@ -13,8 +13,8 @@ services:
       - BOTSTATUS_PORT=8000
       - BOTSTATUS_TIMEOUT_SECONDS=90
       - BOTSTATUS_DEFAULT_BOT_ID=832297321793323028
-      # Optional: set an API key for write endpoints
-      # - BOTSTATUS_API_KEY=your_secret_api_key
+      # Required: set a secret API key for heartbeat ingestion.
+      - BOTSTATUS_API_KEY=${BOTSTATUS_API_KEY:?BOTSTATUS_API_KEY must be set}
       # Optional: forward to Uptime Kuma push URL
       # - BOTSTATUS_UPTIME_KUMA_PUSH_URL=https://status.tanjun.bot/api/push/TOKEN
     volumes:

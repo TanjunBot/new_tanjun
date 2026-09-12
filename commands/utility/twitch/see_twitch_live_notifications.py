@@ -78,7 +78,7 @@ async def seeTwitchLiveNotifications(command_info: CommandInfo) -> None:
                 view = TwitchLiveNotification(self.current_page, self.notifications, self.command_info)
                 await interaction.response.edit_message(embed=embed, view=view)
             else:
-                await interaction.response.edit_message(embed=embed, view=view)
+                await interaction.response.edit_message(embed=embed, view=None)
     view = TwitchLiveNotification(0, notifications, command_info)
     notification = parse_twitch_notification_message(notifications[0].notification_message, command_info.locale, notifications[0].twitch_name)
     if len(notifications) > 1:

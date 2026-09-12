@@ -38,6 +38,12 @@ async def test_create_emoji_bad_status(mock_session_cls, emoji_command_info):
     emoji_command_info.reply.assert_awaited_once()
 
 
+async def test_create_emoji_rejects_unsupported_url(emoji_command_info):
+    await create_emoji(emoji_command_info, name="test", image_url="file:///etc/passwd")
+    emoji_command_info.reply.assert_awaited_once()
+    emoji_command_info.guild.create_custom_emoji.assert_not_awaited()
+
+
 @patch("commands.admin.createemoji.aiohttp.ClientSession")
 async def test_create_emoji_client_error(mock_session_cls, emoji_command_info):
     mock_session_cls.return_value = make_aiohttp_session(side_effect=aiohttp.ClientError("fail"))

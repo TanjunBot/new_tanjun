@@ -53,6 +53,20 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIn("user_guest", game.players)
         self.assertNotIn("user_guest", game.spectators)
 
+    async def test_session_manager_rejects_duplicate_ids(self):
+        session_manager.create_session("hub", host=self.host, session_id="duplicate_session")
+        with self.assertRaises(ValueError):
+            session_manager.create_session("hub", host=self.host, session_id="duplicate_session")
+
+    async def test_session_manager_enforces_session_limit(self):
+        previous_limit = session_manager.max_sessions
+        session_manager.max_sessions = len(session_manager._sessions)
+        try:
+            with self.assertRaises(ValueError):
+                session_manager.create_session("hub", host=self.host, session_id="limit_session")
+        finally:
+            session_manager.max_sessions = previous_limit
+
     async def test_bot_mode(self):
         session = session_manager.create_session("tictactoe", host=self.host, session_id="test_bot")
         game: TicTacToeGame = session.game
@@ -1544,6 +1558,3 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
-

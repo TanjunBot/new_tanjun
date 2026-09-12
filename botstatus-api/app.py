@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+import hmac
 import json
 import logging
 import os
@@ -22,7 +23,7 @@ from typing import Any
 from fastapi import FastAPI, Header, HTTPException, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO").upper(),
@@ -32,27 +33,25 @@ logger = logging.getLogger("botstatus-api")
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="BOTSTATUS_")
+
     host: str = "0.0.0.0"
     port: int = 8000
     timeout_seconds: int = 90  # Mark bot as offline if no ping for 90s
-    api_key: str = ""  # Optional API key for POST / heartbeat
+    api_key: str = ""  # Required for POST / heartbeat
     default_bot_id: str = "832297321793323028"  # Tanjun bot ID
     state_file: str = "data/state.json"
     uptime_kuma_push_url: str = ""
-
-    class Config:
-        env_prefix = "BOTSTATUS_"
-
 
 settings = Settings()
 
 
 class HeartbeatPayload(BaseModel):
-    id: str = Field(..., description="Discord application / bot user ID")
+    id: str = Field(..., pattern=r"^[0-9]{15,20}$", description="Discord application / bot user ID")
     status: str = Field(default="alive", description="Status string, e.g. alive / online")
     latency: float | str | None = Field(default=None, description="Discord WebSocket latency in seconds")
     latency_ms: int | None = Field(default=None, description="Discord WebSocket latency in milliseconds")
-    guild_count: int | None = Field(default=None, description="Number of connected Discord guilds")
+    guild_count: int | None = Field(default=None, ge=0, description="Number of connected Discord guilds")
     version: str | None = Field(default=None, description="Bot version")
     extra: dict[str, Any] | None = Field(default=None, description="Extra metadata")
 
@@ -178,7 +177,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -186,10 +185,18 @@ app.add_middleware(
 
 def verify_auth(authorization: str | None = Header(None)) -> None:
     if not settings.api_key:
-        return
-    expected = f"Bearer {settings.api_key}" if not settings.api_key.startswith("Bearer ") else settings.api_key
-    if not authorization or (authorization != expected and authorization != settings.api_key):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Heartbeat authentication is not configured",
+        )
+    expected = settings.api_key.removeprefix("Bearer ").strip()
+    provided = authorization.removeprefix("Bearer ").strip() if authorization else ""
+    if not hmac.compare_digest(provided, expected):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
+
+
+def _escape_prometheus_label(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
 
 
 # ── Heartbeat Ingest ─────────────────────────────────────────────────────────
@@ -305,21 +312,21 @@ async def metrics() -> Response:
     ]
     for b in manager.get_all():
         val = 1 if b.status == "online" else 0
-        lines.append(f'bot_online{{bot_id="{b.id}"}} {val}')
+        lines.append(f'bot_online{{bot_id="{_escape_prometheus_label(b.id)}"}} {val}')
 
     lines.extend([
         "# HELP bot_latency_ms Bot WebSocket latency in milliseconds",
         "# TYPE bot_latency_ms gauge",
     ])
     for b in manager.get_all():
-        lines.append(f'bot_latency_ms{{bot_id="{b.id}"}} {b.latency_ms}')
+        lines.append(f'bot_latency_ms{{bot_id="{_escape_prometheus_label(b.id)}"}} {b.latency_ms}')
 
     lines.extend([
         "# HELP bot_seconds_since_last_ping Seconds since last heartbeat was received",
         "# TYPE bot_seconds_since_last_ping gauge",
     ])
     for b in manager.get_all():
-        lines.append(f'bot_seconds_since_last_ping{{bot_id="{b.id}"}} {b.seconds_since_last_ping}')
+        lines.append(f'bot_seconds_since_last_ping{{bot_id="{_escape_prometheus_label(b.id)}"}} {b.seconds_since_last_ping}')
 
     if any(b.guild_count is not None for b in manager.get_all()):
         lines.extend([
@@ -328,7 +335,7 @@ async def metrics() -> Response:
         ])
         for b in manager.get_all():
             if b.guild_count is not None:
-                lines.append(f'bot_guild_count{{bot_id="{b.id}"}} {b.guild_count}')
+                lines.append(f'bot_guild_count{{bot_id="{_escape_prometheus_label(b.id)}"}} {b.guild_count}')
 
     content = "\n".join(lines) + "\n"
     return Response(content=content, media_type="text/plain; version=0.0.4")

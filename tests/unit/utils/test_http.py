@@ -33,6 +33,31 @@ def _mock_session(get_response=None, post_response=None):
 
 class TestGetGif:
     @pytest.mark.asyncio
+    async def test_ignores_malformed_results(self):
+        giphy_data = {
+            "data": [
+                {"images": {}},
+                {"images": {"downsized_medium": {"url": "https://giphy.com/valid.gif"}}},
+                "not-a-result",
+            ]
+        }
+        mock_session = _mock_session(get_response=_mock_response(200, giphy_data))
+
+        with patch("utils.http.aiohttp.ClientSession", return_value=mock_session):
+            urls = await getGif("cat", amount=2)
+
+        assert urls == ["https://giphy.com/valid.gif"]
+        mock_session.get.assert_called_once()
+        assert mock_session.get.call_args.kwargs["params"]["q"] == "cat"
+
+    @pytest.mark.asyncio
+    async def test_rejects_non_positive_amount_and_limit(self):
+        with patch("utils.http.aiohttp.ClientSession") as session_cls:
+            assert await getGif("cat", amount=0) == []
+            assert await getGif("cat", limit=0) == []
+        session_cls.assert_not_called()
+
+    @pytest.mark.asyncio
     async def test_returns_urls_on_success(self):
         giphy_data = {"data": [{"images": {"downsized_medium": {"url": f"https://giphy.com/{i}.gif"}}} for i in range(3)]}
         mock_resp = _mock_response(200, giphy_data)
@@ -72,6 +97,16 @@ class TestUploadImageToImgbb:
 
         assert result["success"] is True
 
+    @pytest.mark.asyncio
+    async def test_upload_returns_empty_dict_for_failed_or_malformed_response(self):
+        for response in (
+            _mock_response(500, {"error": "failed"}),
+            _mock_response(200, ["not", "an", "object"]),
+        ):
+            mock_session = _mock_session(post_response=response)
+            with patch("utils.http.aiohttp.ClientSession", return_value=mock_session):
+                assert await upload_image_to_imgbb(b"fake_image", "png") == {}
+
 
 class TestUploadToTanjunLogs:
     @pytest.mark.asyncio
@@ -83,6 +118,9 @@ class TestUploadToTanjunLogs:
             url = await upload_to_tanjun_logs("<html>test</html>")
 
         assert url == "https://mock.bytebin.url/abc123"
+        request = mock_session.post.call_args
+        assert request.kwargs["headers"]["Authorization"].startswith("Basic ")
+        assert request.args[0] == "https://mock.bytebin.url/post"
 
     @pytest.mark.asyncio
     async def test_missing_key_returns_none(self):

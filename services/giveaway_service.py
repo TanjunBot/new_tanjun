@@ -70,6 +70,10 @@ class GiveawayUpdateParams(BaseModel):
     channel_id: str
 
 
+class GiveawayCreationError(RuntimeError):
+    """Raised when the giveaway and its requirements cannot be committed."""
+
+
 # ------------------------------------------------------------------ #
 # Service class
 # ------------------------------------------------------------------ #
@@ -133,9 +137,8 @@ class GiveawayService:
                     role_req_query = "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                     role_req_params = [(role_id, giveaway_id) for role_id in params.role_requirement]
                     await cursor.executemany(role_req_query, role_req_params)
-        except Exception as e:
-            print(f"Error creating giveaway: {e}")
-            return None
+        except Exception as exc:
+            raise GiveawayCreationError("Could not create giveaway") from exc
 
         return giveaway_id
 

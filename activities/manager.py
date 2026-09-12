@@ -335,6 +335,7 @@ class SessionManager:
     """Central registry and lifecycle manager for all game sessions."""
 
     def __init__(self) -> None:
+        self.max_sessions = 1000
         self._sessions: Dict[str, GameSession] = {}
         self._channel_aliases: Dict[str, str] = {}  # channel_id -> session_id
         self._game_registry: Dict[str, type[BaseGame]] = {
@@ -401,6 +402,10 @@ class SessionManager:
 
     def create_session(self, game_type: str = "hub", host: Optional[Player] = None, session_id: Optional[str] = None) -> GameSession:
         sid = session_id or str(uuid.uuid4())[:8]
+        if sid in self._sessions:
+            raise ValueError("Session already exists")
+        if len(self._sessions) >= self.max_sessions:
+            raise ValueError("Session limit reached")
         if host is None:
             host = Player(
                 user_id="guest_host",

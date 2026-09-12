@@ -84,7 +84,7 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> 
     report_id = parts[1]
     reporter_id = parts[2] if len(parts) > 2 else ''
     note = parts[3] if len(parts) > 3 else None
-    if isinstance(interaction.user, discord.User) or not interaction.channel or (not interaction.guild):
+    if not isinstance(interaction.user, discord.Member) or not interaction.channel or (not interaction.guild):
         return
     if not interaction.channel.permissions_for(interaction.user).manage_messages:
         embed = tanjunEmbed(title=locale.commands.utility.report.no_permission.title(str(interaction.locale)), description=locale.commands.utility.report.no_permission.description(str(interaction.locale)))

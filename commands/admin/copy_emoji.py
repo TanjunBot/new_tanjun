@@ -7,6 +7,8 @@ from aiohttp import ClientTimeout
 import utility
 from utility import EmbedColor
 
+MAX_EMOJI_IMAGE_BYTES = 10 * 1024 * 1024
+
 async def copy_emoji(command_info: utility.CommandInfo, emoji: str) -> None:
     if isinstance(command_info.user, discord.Member) and isinstance(command_info.channel, discord.abc.GuildChannel) and (not command_info.channel.permissions_for(command_info.user).manage_emojis):
         embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.copyEmoji.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.copyEmoji.missingPermission.description(command_info.locale))
@@ -40,11 +42,26 @@ async def copy_emoji(command_info: utility.CommandInfo, emoji: str) -> None:
                 continue
             emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{('gif' if animated else 'png')}"
             try:
-                async with aiohttp.ClientSession() as session, session.get(emoji_url, timeout=ClientTimeout(total=10)) as resp:
+                async with aiohttp.ClientSession() as session, session.get(
+                    emoji_url,
+                    allow_redirects=False,
+                    timeout=ClientTimeout(total=10),
+                ) as resp:
                     if resp.status != 200:
                         failed_emojis.append(match.group(0))
                         continue
-                    emoji_bytes = await resp.read()
+                    content_length = resp.headers.get("Content-Length")
+                    try:
+                        content_length_value = int(content_length) if content_length is not None else None
+                    except (TypeError, ValueError):
+                        content_length_value = None
+                    if content_length_value is not None and content_length_value > MAX_EMOJI_IMAGE_BYTES:
+                        failed_emojis.append(match.group(0))
+                        continue
+                    emoji_bytes = await resp.read(MAX_EMOJI_IMAGE_BYTES + 1)
+                    if len(emoji_bytes) > MAX_EMOJI_IMAGE_BYTES:
+                        failed_emojis.append(match.group(0))
+                        continue
                 new_emoji = await command_info.guild.create_custom_emoji(name=name, image=emoji_bytes, reason=locale.commands.admin.copyEmoji.reason(str(command_info.locale)))
                 successful_emojis.append(str(new_emoji))
                 if animated:

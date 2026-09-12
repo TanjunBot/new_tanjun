@@ -9,7 +9,8 @@ async def addTwitchLiveNotification(command_info: CommandInfo, twitch_name: str,
         embed = tanjunEmbed(title=locale.commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.title(command_info.locale), description=locale.commands.utility.twitch.addTwitchLiveNotification.error.missingPermissions.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
-    if not channel.permissions_for(command_info.guild.me).send_messages and (not channel.permissions_for(command_info.guild.me).embed_links):
+    bot_permissions = channel.permissions_for(command_info.guild.me)
+    if not bot_permissions.send_messages or not bot_permissions.embed_links:
         embed = tanjunEmbed(title=locale.commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.title(command_info.locale), description=locale.commands.utility.twitch.addTwitchLiveNotification.error.missingBotPermissions.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
