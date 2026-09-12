@@ -221,6 +221,14 @@ class TestSyncHelpers:
         mock_repo.create_issue.assert_called_once()
         assert "Alice" in mock_repo.create_issue.call_args[1]["body"]
 
+    def test_sync_create_feedback_issue_skips_without_token(self):
+        from utils.github import _sync_create_feedback_issue
+
+        with patch("utils.github.GithubAuthToken", ""), patch("utils.github.Github") as mock_github:
+            _sync_create_feedback_issue("Nice feature", "Alice")
+
+        mock_github.assert_not_called()
+
 
 class TestMissingLocalizationCleanup:
     @pytest.mark.asyncio

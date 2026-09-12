@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -222,3 +223,14 @@ class TestHealthCheckManagerPeriodic:
         assert manager._running is False
         assert manager._periodic_task is None
         task.cancel.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_async_stop_waits_for_periodic_task(self, manager: HealthCheckManager):
+        manager._running = True
+        task = asyncio.create_task(asyncio.sleep(3600))
+        manager._periodic_task = task
+
+        await manager.stop_periodic_checks_async()
+
+        assert task.done()
+        assert manager._periodic_task is None

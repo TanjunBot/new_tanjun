@@ -144,3 +144,10 @@ class HealthCheckManager:
             self._periodic_task.cancel()
             self._periodic_task = None
         logger.info('Periodic health checks stopped')
+
+    async def stop_periodic_checks_async(self) -> None:
+        """Stop periodic checks and wait for the worker to finish."""
+        task = self._periodic_task
+        self.stop_periodic_checks()
+        if task is not None:
+            await asyncio.gather(task, return_exceptions=True)

@@ -119,6 +119,12 @@ class GameSession:
             self._transition_task.cancel()
             self._transition_task = None
 
+    def close(self) -> None:
+        """Cancel all delayed work owned by this session."""
+        for user_id in list(self._disconnect_tasks):
+            self.cancel_disconnect_forfeit(user_id)
+        self.cancel_match_transition()
+
     def create_tournament(self, host: Player) -> Any:
         from activities.tournament import Tournament
         self.tournament = Tournament(session_id=self.session_id, host=host)
@@ -438,8 +444,9 @@ class SessionManager:
         return None
 
     def remove_session(self, session_id: str) -> None:
-        if session_id in self._sessions:
-            del self._sessions[session_id]
+        session = self._sessions.pop(session_id, None)
+        if session is not None:
+            session.close()
         # Clean up any alias pointing to this session
         to_del = [cid for cid, sid in self._channel_aliases.items() if sid == session_id]
         for cid in to_del:

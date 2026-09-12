@@ -68,10 +68,12 @@ def test_main_runs_wait_migrate_and_exec(entrypoint) -> None:
         patch("utils.db_migration.ensure_database_schema") as ensure,
         patch.object(entrypoint.os, "chdir"),
         patch.object(entrypoint.os, "execvp") as execvp,
+        patch.object(entrypoint, "_clear_stale_markers") as clear_markers,
         patch.object(entrypoint, "_mark_startup_in_progress") as mark_startup,
     ):
         entrypoint.main()
 
+    clear_markers.assert_called_once()
     mark_startup.assert_called_once()
     wait_db.assert_called_once()
     ensure.assert_called_once()
@@ -84,3 +86,17 @@ def test_mark_startup_in_progress_creates_marker(entrypoint, tmp_path, monkeypat
     monkeypatch.setenv("BOT_STARTUP_FILE", str(marker))
     entrypoint._mark_startup_in_progress()
     assert marker.is_file()
+
+
+def test_clear_stale_markers_removes_startup_and_ready_files(entrypoint, tmp_path, monkeypatch) -> None:
+    startup = tmp_path / "startup"
+    ready = tmp_path / "ready"
+    startup.touch()
+    ready.touch()
+    monkeypatch.setenv("BOT_STARTUP_FILE", str(startup))
+    monkeypatch.setenv("BOT_READY_FILE", str(ready))
+
+    entrypoint._clear_stale_markers()
+
+    assert not startup.exists()
+    assert not ready.exists()

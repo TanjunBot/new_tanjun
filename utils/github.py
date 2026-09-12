@@ -133,7 +133,7 @@ def _sync_create_bot_exception_issue(exc: BaseException, *, source: str, context
     environment = sentry_environment or 'unknown'
     body = f'## Bot Exception Report\n\n**Fingerprint:** `{fingerprint}`\n**Source:** `{source}`\n**Exception:** `{exc_name}: {exc_message}`\n**Version:** `{version}`\n**Environment:** `{environment}`\n\n### Context\n{_format_context(context)}\n\n### Traceback\n```\n{tb}\n```\n'
     try:
-        g = Github(GithubAuthToken)
+        g = Github(GithubAuthToken, timeout=10)
         if _open_bot_exception_issue_exists(g, fingerprint, exc_name, source):
             return
         repo = g.get_repo(_REPO)
@@ -194,7 +194,7 @@ def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
         return
     title = _missing_localization_issue_title(locale, key)
     try:
-        g = Github(GithubAuthToken)
+        g = Github(GithubAuthToken, timeout=10)
         if _missing_localization_issue_exists(g, locale, key):
             return
         repo = g.get_repo(_REPO)
@@ -212,7 +212,7 @@ def _sync_close_missing_localization_issues(issue_numbers: list[int]) -> int:
     if not GithubAuthToken:
         return 0
     closed = 0
-    g = Github(GithubAuthToken)
+    g = Github(GithubAuthToken, timeout=10)
     repo = g.get_repo(_REPO)
     for issue_number in issue_numbers:
         try:
@@ -228,7 +228,9 @@ async def addFeedback(content: str, author: str) -> None:
     await run_blocking(_sync_create_feedback_issue, content, author)
 
 def _sync_create_feedback_issue(content: str, author: str) -> None:
-    g = Github(GithubAuthToken)
+    if not GithubAuthToken:
+        return
+    g = Github(GithubAuthToken, timeout=10)
     repo = g.get_repo(_REPO)
     label = repo.get_label('Feedback')
     repo.create_issue(title='Feedback', body=f'# {author} has given Feedback:\n{content}', labels=[label])

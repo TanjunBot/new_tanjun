@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 import logging
 import re
@@ -194,7 +195,14 @@ class ActivityServer:
                 display_name="Player",
                 is_host=True
             )
-            session = session_manager.create_session("hub", host=default_host, session_id=session_id)
+            try:
+                session = session_manager.create_session("hub", host=default_host, session_id=session_id)
+            except ValueError:
+                # A concurrent websocket may have created this session between
+                # the lookup above and the create call.
+                session = session_manager.get_session(session_id)
+                if not session:
+                    raise
 
         ws = web.WebSocketResponse(heartbeat=30.0)
         await ws.prepare(request)
@@ -209,12 +217,18 @@ class ActivityServer:
                     session.last_activity = asyncio.get_event_loop().time()
                     try:
                         data = json.loads(msg.data)
-                    except json.JSONDecodeError:
+                    except (TypeError, json.JSONDecodeError):
+                        continue
+                    if not isinstance(data, dict):
+                        await ws.send_json({"type": "error", "error": "Message must be a JSON object"})
                         continue
 
                     msg_type = data.get("type")
 
                     if msg_type == "join":
+                        if user_id is not None:
+                            await ws.send_json({"type": "error", "error": "This websocket is already joined"})
+                            continue
                         user_id = str(data.get("user_id", "")).strip()[:MAX_ACTIVITY_ID_LENGTH]
                         if not user_id:
                             await ws.send_json({"type": "error", "error": "A user_id is required to join"})
@@ -223,6 +237,8 @@ class ActivityServer:
                         display_name = str(data.get("display_name", username)).strip()[:32] or username
                         avatar_url = data.get("avatar_url")
 
+                        # Replacing a stale connection is supported, but its
+                        # finally block must not remove this live connection.
                         session.sockets[user_id] = ws
 
                         # If the session was auto-created with a placeholder host,
@@ -249,6 +265,7 @@ class ActivityServer:
                             session.game.players.pop(old_placeholder_id, None)
                             session.game.host = real_host
                             session.game.players[user_id] = real_host
+                            session.cancel_disconnect_forfeit(user_id)
                             if session.tournament:
                                 session.tournament.participants.pop(old_placeholder_id, None)
                                 session.tournament.host_id = user_id
@@ -445,7 +462,9 @@ class ActivityServer:
                     pass
 
         finally:
-            if user_id and user_id in session.sockets:
+            # A reconnect may have replaced this websocket.  Only the current
+            # socket for the identity is allowed to remove the player.
+            if user_id and session.sockets.get(user_id) is ws:
                 del session.sockets[user_id]
                 session.game.remove_player(user_id)
                 if session.tournament:
@@ -459,6 +478,8 @@ class ActivityServer:
         return ws
 
     async def start(self) -> None:
+        if self.runner is not None:
+            return
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
         self.site = web.TCPSite(self.runner, self.host, self.port)
@@ -470,9 +491,12 @@ class ActivityServer:
             print(f"[Activities] Warning: Could not bind Activity server to {self.host}:{self.port}: {exc}")
 
     async def stop(self) -> None:
-        if self._cleanup_task and not self._cleanup_task.done():
-            self._cleanup_task.cancel()
-            self._cleanup_task = None
+        cleanup_task = self._cleanup_task
+        self._cleanup_task = None
+        if cleanup_task and not cleanup_task.done():
+            cleanup_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await cleanup_task
         if self.runner:
             await self.runner.cleanup()
             self.runner = None

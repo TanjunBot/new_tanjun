@@ -16,6 +16,7 @@ from utils.exception_reporter import handle_asyncio_exception, install_exception
 install_exception_reporter()
 
 import asyncio
+import inspect
 import os
 import sys
 import tempfile
@@ -156,6 +157,7 @@ make_add_command_idempotent(bot.tree)
 
 _startup_sync_lock = asyncio.Lock()
 _startup_sync_done = False
+_startup_sync_task: asyncio.Task[None] | None = None
 
 
 def _bot_ready_path() -> Path:
@@ -191,6 +193,7 @@ async def _run_startup_command_sync() -> None:
 
 @bot.event
 async def on_ready() -> None:
+    global _startup_sync_task
     _clear_startup_marker()
     ready_path = _bot_ready_path()
     ready_path.parent.mkdir(parents=True, exist_ok=True)
@@ -200,7 +203,10 @@ async def on_ready() -> None:
         print(f"Logged in as {user} (ID: {user.id})")
     await bot.change_presence(activity=discord.Game(name=config.activity.format(version=config.version)))
     if sync_commands_on_startup and is_primary_sync_shard(bot):
-        bot.loop.create_task(_run_startup_command_sync())
+        if _startup_sync_task is None or _startup_sync_task.done():
+            _startup_sync_task = bot.loop.create_task(
+                _run_startup_command_sync(), name="startup-command-sync"
+            )
 
 
 async def _load_all_extensions(bot: commands.AutoShardedBot) -> None:
@@ -406,11 +412,17 @@ async def main() -> None:
         print("FATAL: Critical health checks failed. Bot cannot start.")
         return
 
-    # Start periodic health checks
-    asyncio.create_task(health_manager.start_periodic_checks(interval=300))
+    # Start periodic health checks and keep ownership of the task through shutdown.
+    await health_manager.start_periodic_checks(interval=300)
 
-    # Step 6: Start the bot
-    await bot.start(config.token)  # type: ignore[arg-type]
+    # Step 6: Start the bot. Discord returns when the bot is closed; stop
+    # periodic work before returning so no health checks outlive the bot.
+    try:
+        await bot.start(config.token)  # type: ignore[arg-type]
+    finally:
+        stop_result = health_manager.stop_periodic_checks_async()
+        if inspect.isawaitable(stop_result):
+            await stop_result
 
 
 if __name__ == "__main__":

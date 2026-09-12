@@ -21,6 +21,11 @@ async def test_missing_permission(restricted_command_info):
     assert_reply_embed(restricted_command_info)
 
 
+async def test_no_guild_replies(no_guild_command_info):
+    await command_fn(no_guild_command_info, _make_category())
+    assert_reply_embed(no_guild_command_info)
+
+
 @patch("commands.logs.blacklist_category.blacklist_category.is_log_entity_blacklisted", new_callable=AsyncMock)
 @patch("commands.logs.blacklist_category.blacklist_category.add_log_blacklist", new_callable=AsyncMock)
 async def test_success(mock_add, mock_is, admin_command_info):

@@ -29,7 +29,7 @@ async def ping_server(client: Client) -> None:
         try:
             async with (
                 aiohttp.ClientSession() as session,
-                session.get(push_url, timeout=ClientTimeout(total=10)) as response,
+                session.get(push_url, allow_redirects=False, timeout=ClientTimeout(total=10)) as response,
             ):
                 if response.status == 200:
                     logger.debug("Uptime Kuma push succeeded")
@@ -56,7 +56,7 @@ async def ping_server(client: Client) -> None:
         try:
             async with (
                 aiohttp.ClientSession() as session,
-                session.post(botstatus_url, json=payload, headers=headers, timeout=ClientTimeout(total=10)) as response,
+                session.post(botstatus_url, json=payload, headers=headers, allow_redirects=False, timeout=ClientTimeout(total=10)) as response,
             ):
                 if response.status in (200, 201, 204):
                     logger.debug("Botstatus API push succeeded")

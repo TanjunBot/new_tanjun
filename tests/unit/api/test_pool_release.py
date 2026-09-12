@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from unittest.mock import MagicMock
 
 import pytest
@@ -33,6 +34,19 @@ class TestPoolRelease:
         async with transaction():
             pass
 
+        pool.release.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_transaction_rolls_back_on_cancellation(self):
+        pool, conn, _cursor = make_mock_pool()
+        pool.release = MagicMock()
+        set_bot(MagicMock(_pool=pool))
+
+        with pytest.raises(asyncio.CancelledError):
+            async with transaction():
+                raise asyncio.CancelledError
+
+        conn.rollback.assert_awaited_once()
         pool.release.assert_called_once()
 
     @pytest.mark.asyncio

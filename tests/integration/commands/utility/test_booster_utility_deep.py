@@ -36,6 +36,13 @@ async def test_delete_booster_channel_no_permission(admin_command_info):
     admin_command_info.reply.assert_awaited_once()
 
 
+async def test_delete_booster_channel_rejects_non_member(admin_command_info):
+    admin_command_info.user = MagicMock()
+    admin_command_info.channel.permissions_for = MagicMock(return_value=make_permissions(administrator=True))
+    await deleteBoosterChannel(admin_command_info)
+    admin_command_info.reply.assert_awaited_once()
+
+
 @patch("commands.utility.delete_booster_channel.booster_service.get", new_callable=AsyncMock, return_value=None)
 async def test_delete_booster_channel_not_configured(mock_get, admin_command_info):
     perms = make_permissions(administrator=True)
@@ -71,6 +78,13 @@ async def test_delete_booster_role_no_permission(admin_command_info):
     admin_command_info.user = member
     perms = make_permissions(administrator=False)
     admin_command_info.channel.permissions_for = MagicMock(return_value=perms)
+    await deleteBoosterRole(admin_command_info)
+    admin_command_info.reply.assert_awaited_once()
+
+
+async def test_delete_booster_role_rejects_non_member(admin_command_info):
+    admin_command_info.user = MagicMock()
+    admin_command_info.channel.permissions_for = MagicMock(return_value=make_permissions(administrator=True))
     await deleteBoosterRole(admin_command_info)
     admin_command_info.reply.assert_awaited_once()
 

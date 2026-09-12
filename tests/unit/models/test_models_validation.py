@@ -14,9 +14,13 @@ from models import (
     CountingModesConfigModel,
     GiveawayChannelRequirementModel,
     GiveawayModel,
+    ChannelOverwriteModel,
     LevelConfig,
     LevelRolesGroupModel,
     LogEnableModel,
+    ReportEvidenceModel,
+    ReportModel,
+    ReportModActionModel,
     TwitchUserModel,
     UserLevelInfoModel,
     WarnConfigModel,
@@ -92,6 +96,22 @@ class TestGiveawayModelValidation:
     def test_from_row_wrong_column_count(self):
         with pytest.raises(ValueError):
             GiveawayModel.from_row((1, GUILD_ID))
+
+    def test_id_must_be_positive(self):
+        with pytest.raises(ValidationError):
+            GiveawayModel(
+                giveaway_id=0,
+                guild_id=GUILD_ID,
+                title="t",
+                winners=1,
+                with_button=True,
+                end_time=None,
+                started=False,
+                ended=False,
+                send_failed=False,
+                message_id=MESSAGE_ID,
+                created_at=None,
+            )
 
 
 class TestGiveawayChannelRequirementValidation:
@@ -271,6 +291,55 @@ class TestTwitchUserModel:
         model = TwitchUserModel.from_api_response(data)
         assert model.broadcaster_type == "partner"
         assert model.view_count == 1000
+
+    def test_from_api_response_rejects_negative_view_count(self):
+        with pytest.raises(ValidationError):
+            TwitchUserModel.from_api_response(
+                {"id": "1", "login": "a", "display_name": "A", "view_count": -1}
+            )
+
+
+class TestReportModelValidation:
+    def test_status_is_an_explicit_enum(self):
+        with pytest.raises(ValidationError):
+            ReportModel(
+                id=1,
+                guild_id=GUILD_ID,
+                user_id=USER_ID,
+                reporter_id=USER_ID,
+                created_at=1,
+                status="unknown",
+                status_updated_at=None,
+            )
+
+    def test_filename_rejects_path_components_and_control_characters(self):
+        base = dict(id=1, guild_id=GUILD_ID, report_id=1, url="https://example.test/evidence")
+        with pytest.raises(ValidationError):
+            ReportEvidenceModel(**base, filename="../evidence.txt")
+        with pytest.raises(ValidationError):
+            ReportEvidenceModel(**base, filename="evidence\n.txt")
+
+    def test_action_type_is_an_explicit_enum(self):
+        with pytest.raises(ValidationError):
+            ReportModActionModel(
+                id=1,
+                guild_id=GUILD_ID,
+                report_id=1,
+                action_type="delete_everything",
+                target_id=USER_ID,
+                performed_by=USER_ID,
+                created_at=1,
+            )
+
+
+class TestChannelOverwriteModelValidation:
+    def test_malformed_json_is_reported_as_value_error(self):
+        with pytest.raises(ValueError, match="invalid JSON"):
+            ChannelOverwriteModel.from_row((ROLE_ID, "{"))
+
+    def test_json_payload_must_be_an_object(self):
+        with pytest.raises(ValueError, match="JSON object"):
+            ChannelOverwriteModel.from_row((ROLE_ID, "[]"))
 
 
 class TestModelIterRows:
