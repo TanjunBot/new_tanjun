@@ -265,12 +265,13 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name in ("forfeit", "surrender"):
                             if session.tournament and session.tournament.status == "active":
+                                user_m = session.tournament.get_match_for_user(p_id) or session.tournament.get_current_match()
                                 forfeited_winner = session.leave_tournament(p_id)
-                                if forfeited_winner:
-                                    await session.tournament.resolve_current_match(forfeited_winner)
-                                    if session.tournament.transition_info:
+                                if forfeited_winner and user_m:
+                                    await session.tournament._resolve_match(user_m, forfeited_winner)
+                                    if session.tournament.transition_info and session.tournament.match_style == "spectated":
                                         session.schedule_match_transition(delay=5.0)
-                                    elif session.tournament.status == "round_end":
+                                    elif session.tournament.status in ("round_end", "finished"):
                                         session.sync_tournament_match()
                             elif session.game and session.game.is_started and not session.game.is_finished:
                                 if p_id in session.game.players:
@@ -305,12 +306,13 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name == "tournament_leave":
                             if session.tournament:
+                                user_m = session.tournament.get_match_for_user(p_id) or session.tournament.get_current_match()
                                 forfeited_winner = session.leave_tournament(p_id)
-                                if forfeited_winner:
-                                    await session.tournament.resolve_current_match(forfeited_winner)
-                                    if session.tournament.transition_info:
+                                if forfeited_winner and user_m:
+                                    await session.tournament._resolve_match(user_m, forfeited_winner)
+                                    if session.tournament.transition_info and session.tournament.match_style == "spectated":
                                         session.schedule_match_transition(delay=5.0)
-                                    elif session.tournament.status == "round_end":
+                                    elif session.tournament.status in ("round_end", "finished"):
                                         session.sync_tournament_match()
                                 session.migrate_host_if_needed(p_id)
                             await session.broadcast_state()

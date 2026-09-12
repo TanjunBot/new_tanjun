@@ -47,19 +47,19 @@ class GameSession:
             try:
                 await asyncio.sleep(delay)
                 if self.tournament and self.tournament.status == "active":
-                    curr_m = self.tournament.get_current_match()
-                    if curr_m and curr_m.status == "active":
-                        p1_id = curr_m.player1.user_id
-                        p2_id = curr_m.player2.user_id if curr_m.player2 else None
+                    user_m = self.tournament.get_match_for_user(user_id) or self.tournament.get_current_match()
+                    if user_m and user_m.status == "active":
+                        p1_id = user_m.player1.user_id
+                        p2_id = user_m.player2.user_id if user_m.player2 else None
                         if user_id in (p1_id, p2_id):
                             winner = p2_id if user_id == p1_id and p2_id else p1_id
                             logger.info("[Activities] Player %s timed out after disconnect. Forfeiting to %s", user_id, winner)
                             if self.tournament.format == "knockout" and user_id in self.tournament.participants:
                                 self.tournament.participants[user_id].is_eliminated = True
-                            await self.tournament.resolve_current_match(winner)
-                            if self.tournament.transition_info:
+                            await self.tournament._resolve_match(user_m, winner)
+                            if self.tournament.transition_info and self.tournament.match_style == "spectated":
                                 self.schedule_match_transition(delay=5.0)
-                            elif self.tournament.status == "round_end":
+                            elif self.tournament.status in ("round_end", "finished"):
                                 self.sync_tournament_match()
                             await self.broadcast_state()
                 elif self.game and self.game.is_started and not self.game.is_finished and self.game.game_mode == "pvp":

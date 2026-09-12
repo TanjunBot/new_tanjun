@@ -145,13 +145,13 @@ class Tournament:
         if voluntary:
             tp.is_eliminated = True
 
-        # If user is in the currently active match and voluntarily left, forfeit match to opponent
-        curr_m = self.get_current_match()
-        if voluntary and curr_m and curr_m.status == "active":
-            if curr_m.player1.user_id == user_id:
-                return curr_m.player2.user_id if curr_m.player2 else "draw"
-            elif curr_m.player2 and curr_m.player2.user_id == user_id:
-                return curr_m.player1.user_id
+        # If user is in an active match and voluntarily left, forfeit match to opponent
+        user_m = self.get_match_for_user(user_id) or self.get_current_match()
+        if voluntary and user_m and user_m.status == "active":
+            if user_m.player1.user_id == user_id:
+                return user_m.player2.user_id if user_m.player2 else "draw"
+            elif user_m.player2 and user_m.player2.user_id == user_id:
+                return user_m.player1.user_id
 
         return None
 
@@ -412,18 +412,26 @@ class Tournament:
             if self.status == "finished":
                 await self._trigger_tournament_finished()
         else:
-            next_idx = self.current_match_idx + 1
-            if next_idx < len(self.active_matches):
-                next_m = self.active_matches[next_idx]
-                self.transition_info = {
-                    "active": True,
-                    "seconds_remaining": 5,
-                    "prev_winner": winner_name,
-                    "next_match_id": next_m.match_id,
-                    "next_p1": next_m.player1.display_name,
-                    "next_p2": next_m.player2.display_name if next_m.player2 else "Freilos (Bye)",
-                    "next_game": next_m.game_type
-                }
+            if self.match_style != "parallel":
+                next_idx = self.current_match_idx + 1
+                if next_idx < len(self.active_matches):
+                    next_m = self.active_matches[next_idx]
+                    self.transition_info = {
+                        "active": True,
+                        "seconds_remaining": 5,
+                        "prev_winner": winner_name,
+                        "next_match_id": next_m.match_id,
+                        "next_p1": next_m.player1.display_name,
+                        "next_p2": next_m.player2.display_name if next_m.player2 else "Freilos (Bye)",
+                        "next_game": next_m.game_type
+                    }
+            else:
+                self.transition_info = None
+                if self.spectated_match_id == match.match_id:
+                    next_active = next((m for m in self.active_matches if m.status == "active"), None)
+                    if next_active:
+                        self.spectated_match_id = next_active.match_id
+                        self.current_match_idx = self.active_matches.index(next_active)
 
     async def _trigger_tournament_finished(self) -> None:
         if self._finished_triggered:

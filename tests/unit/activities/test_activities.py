@@ -1286,6 +1286,52 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIsNotNone(tourney_game)
         self.assertEqual(tourney_game["max_players"], 64)
 
+    async def test_tournament_parallel_forfeit_and_disconnect(self):
+        """Verify that a disconnect/forfeit in match 1 of a parallel round resolves match 1 and does not break match 0."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_parallel_forfeit")
+        tourney = session.tournament
+        tourney.match_style = "parallel"
+        p2 = Player(user_id="user_p2", username="Player2", display_name="Player 2")
+        p3 = Player(user_id="user_p3", username="Player3", display_name="Player 3")
+        p4 = Player(user_id="user_p4", username="Player4", display_name="Player 4")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        tourney.add_participant(p4)
+
+        await tourney.handle_action("user_host", "tournament_start", {"selected_game": "tictactoe"})
+        self.assertEqual(len(tourney.active_matches), 2)
+        self.assertEqual(tourney.active_matches[0].status, "active")
+        self.assertEqual(tourney.active_matches[1].status, "active")
+
+        # Identify which match player 3 is in
+        m_p3 = tourney.get_match_for_user("user_p3")
+        self.assertIsNotNone(m_p3)
+        p3_opponent_id = m_p3.player2.user_id if m_p3.player1.user_id == "user_p3" else m_p3.player1.user_id
+
+        # Schedule disconnect forfeit with a small delay
+        session.schedule_disconnect_forfeit("user_p3", delay=0.01)
+        await asyncio.sleep(0.05)
+
+        # Match for player 3 should be finished and awarded to opponent
+        self.assertEqual(m_p3.status, "finished")
+        self.assertEqual(m_p3.winner_id, p3_opponent_id)
+
+        # The other match must still be active!
+        other_m = next(m for m in tourney.active_matches if m != m_p3)
+        self.assertEqual(other_m.status, "active")
+        self.assertEqual(tourney.status, "active")
+
+        # Now voluntary forfeit the other match
+        other_player = other_m.player1.user_id
+        other_opponent = other_m.player2.user_id
+        winner = session.leave_tournament(other_player)
+        self.assertEqual(winner, other_opponent)
+        await tourney._resolve_match(other_m, winner)
+        self.assertEqual(other_m.status, "finished")
+
+        # Now that both matches finished, round ends
+        self.assertIn(tourney.status, ("round_end", "finished"))
+
 
 if __name__ == "__main__":
     unittest.main()
