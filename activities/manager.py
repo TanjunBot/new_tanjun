@@ -270,7 +270,14 @@ class GameSession:
         return new_game
 
     def get_full_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
-        state = self.game.get_state(for_user_id=for_user_id)
+        if self.tournament and self.tournament.status in ("active", "round_end"):
+            user_match = self.tournament.get_match_for_user(for_user_id) if for_user_id else None
+            if user_match and user_match.game_instance and self.tournament.match_style == "parallel":
+                state = user_match.game_instance.get_state(for_user_id=for_user_id)
+            else:
+                state = self.game.get_state(for_user_id=for_user_id)
+        else:
+            state = self.game.get_state(for_user_id=for_user_id)
         state["is_hub"] = self.is_hub
         state["available_games"] = session_manager.get_supported_games()
         state["lobby_settings"] = self.lobby_settings
@@ -367,7 +374,7 @@ class SessionManager:
                 "description": "Episches Turnier für den Sprachkanal! Punkte-Mehrkampf oder K.O.-Modus mit Live-Zuschauern & Jubel.",
                 "icon": "🏆",
                 "min_players": 2,
-                "max_players": 16,
+                "max_players": 64,
                 "badge": "Turnier / Party"
             }
         ]

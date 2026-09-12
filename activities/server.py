@@ -318,6 +318,20 @@ class ActivityServer:
                             if session.tournament and session.tournament.host_id == p_id:
                                 session.tournament = None
                             await session.broadcast_state()
+                        elif action_name == "update_profile":
+                            new_name = str(action_payload.get("display_name", "")).strip()
+                            if new_name:
+                                new_name = new_name[:32]
+                                if p_id in session.game.players:
+                                    session.game.players[p_id].display_name = new_name
+                                    session.game.players[p_id].username = new_name
+                                if p_id in session.game.spectators:
+                                    session.game.spectators[p_id].display_name = new_name
+                                    session.game.spectators[p_id].username = new_name
+                                if session.tournament and p_id in session.tournament.participants:
+                                    session.tournament.participants[p_id].display_name = new_name
+                                    session.tournament.participants[p_id].username = new_name
+                                await session.broadcast_state()
                         elif action_name.startswith("tournament_"):
                             if session.tournament:
                                 if action_name in ("tournament_next_match", "tournament_advance_match"):
@@ -327,6 +341,22 @@ class ActivityServer:
                                     session.sync_tournament_match()
                                 await session.broadcast_state()
                         else:
+                            if session.tournament and session.tournament.status == "active":
+                                user_m = session.tournament.get_match_for_user(p_id)
+                                if user_m and user_m.game_instance and user_m.status == "active":
+                                    result = await user_m.game_instance.handle_action(
+                                        p_id, action_name, action_payload, broadcast_cb=session.broadcast_state
+                                    )
+                                    if user_m.game_instance.is_finished:
+                                        winner = user_m.game_instance.winner or "draw"
+                                        await session.tournament._resolve_match(user_m, winner)
+                                        if session.tournament.transition_info and session.tournament.match_style == "spectated":
+                                            session.schedule_match_transition(delay=5.0)
+                                        elif session.tournament.status in ("round_end", "finished"):
+                                            session.sync_tournament_match()
+                                    await session.broadcast_state()
+                                    continue
+
                             if action_name == "start":
                                 if not is_host:
                                     continue

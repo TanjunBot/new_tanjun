@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 from typing import Any, Optional, cast
+import urllib.parse
 
 import discord
 from discord import app_commands
@@ -70,7 +71,14 @@ class ActivityCommands(app_commands.Group):
 
         # Base URL from config or fallback
         base_url = config.activity_public_url.rstrip("/") if config.activity_public_url else f"http://localhost:{config.activity_server_port}"
-        web_game_url = f"{base_url}/activity?session={session.session_id}"
+        query_params = {
+            "session": session.session_id,
+            "uid": str(interaction.user.id),
+            "name": interaction.user.display_name,
+        }
+        if interaction.user.display_avatar:
+            query_params["avatar"] = str(interaction.user.display_avatar.url)
+        web_game_url = f"{base_url}/activity?{urllib.parse.urlencode(query_params)}"
 
         # Create standard Discord Activity Voice Channel Invite
         invite_url: Optional[str] = None
@@ -96,7 +104,7 @@ class ActivityCommands(app_commands.Group):
             f"**{interaction.user.mention}** hat ein Multiplayer-Spiel gestartet!\n\n"
             f"🔹 **Spiel:** {game.name}\n"
             f"🔹 **Sitzungs-ID:** `{session.session_id}`\n"
-            f"🔹 **Multiplayer:** Bis zu 16 Spieler (Turnier) bzw. 2 Spieler\n"
+            f"🔹 **Multiplayer:** Bis zu 64 Spieler (Turnier) bzw. 2 Spieler\n"
         )
 
         if target_voice_channel is not None:
@@ -291,7 +299,14 @@ class ActivityCommands(app_commands.Group):
                     target_voice_channel = vc
 
         base_url = config.activity_public_url.rstrip("/") if config.activity_public_url else f"http://localhost:{config.activity_server_port}"
-        web_game_url = f"{base_url}/activity?session={session.session_id}"
+        query_params = {
+            "session": session.session_id,
+            "uid": str(interaction.user.id),
+            "name": interaction.user.display_name,
+        }
+        if interaction.user.display_avatar:
+            query_params["avatar"] = str(interaction.user.display_avatar.url)
+        web_game_url = f"{base_url}/activity?{urllib.parse.urlencode(query_params)}"
 
         # Create Discord embedded activity invite
         invite_url: Optional[str] = None

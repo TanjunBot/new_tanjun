@@ -221,28 +221,52 @@ class TanjunActivityClient {
   }
 
   initUser() {
-    let storedUserId = sessionStorage.getItem("tanjun_activity_user_id");
-    let storedUserName = sessionStorage.getItem("tanjun_activity_user_name");
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlUid = urlParams.get("uid");
+    const urlName = urlParams.get("name") || urlParams.get("uname");
+    const urlAvatar = urlParams.get("avatar");
+
+    let storedUserId = urlUid || sessionStorage.getItem("tanjun_activity_user_id");
+    let storedUserName = urlName || sessionStorage.getItem("tanjun_activity_user_name") || localStorage.getItem("tanjun_activity_user_name");
+    let storedUserAvatar = urlAvatar || sessionStorage.getItem("tanjun_activity_user_avatar");
+
     if (!storedUserId) {
       storedUserId = "guest_" + Math.floor(1000 + Math.random() * 9000);
       storedUserName = "Gast " + storedUserId.replace("guest_", "");
-      sessionStorage.setItem("tanjun_activity_user_id", storedUserId);
-      sessionStorage.setItem("tanjun_activity_user_name", storedUserName);
     }
+    if (!storedUserName) {
+      storedUserName = "Gast " + (storedUserId.startsWith("guest_") ? storedUserId.replace("guest_", "") : "1");
+    }
+
+    sessionStorage.setItem("tanjun_activity_user_id", storedUserId);
+    sessionStorage.setItem("tanjun_activity_user_name", storedUserName);
+    localStorage.setItem("tanjun_activity_user_name", storedUserName);
+    if (storedUserAvatar) {
+      sessionStorage.setItem("tanjun_activity_user_avatar", storedUserAvatar);
+    }
+
     this.user = {
       id: storedUserId,
       username: storedUserName,
       displayName: storedUserName,
       display_name: storedUserName,
-      avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
-      avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png"
+      avatarUrl: storedUserAvatar || "https://cdn.discordapp.com/embed/avatars/0.png",
+      avatar_url: storedUserAvatar || "https://cdn.discordapp.com/embed/avatars/0.png"
     };
   }
 
   initElements() {
     this.el = {
+      userBadge: document.getElementById("userBadge"),
       usernameDisplay: document.getElementById("usernameDisplay"),
       userAvatar: document.getElementById("userAvatar"),
+
+      // Nickname Modal Elements
+      nicknameModal: document.getElementById("nicknameModal"),
+      nicknameInput: document.getElementById("nicknameInput"),
+      nicknameModalCloseBtn: document.getElementById("nicknameModalCloseBtn"),
+      nicknameModalCancelBtn: document.getElementById("nicknameModalCancelBtn"),
+      nicknameModalSaveBtn: document.getElementById("nicknameModalSaveBtn"),
 
       // Views
       hubView: document.getElementById("hubView"),
@@ -357,6 +381,7 @@ class TanjunActivityClient {
       tourneyNextGamePills: document.querySelectorAll("#tourneyNextGamePills .diff-pill"),
       tourneyNextRoundBtn: document.getElementById("tourneyNextRoundBtn"),
       tourneyNextMatchBtn: document.getElementById("tourneyNextMatchBtn"),
+      tourneyEndFromRoundBtn: document.getElementById("tourneyEndFromRoundBtn"),
       tourneyModalHistoryList: document.getElementById("tourneyModalHistoryList"),
       tourneyEndEarlyBtn: document.getElementById("tourneyEndEarlyBtn"),
       tourneyCheerBtns: document.querySelectorAll(".tourney-cheer-btn"),
@@ -716,7 +741,16 @@ class TanjunActivityClient {
       this.el.tourneyEndEarlyBtn.addEventListener("click", () => {
         if (!this.isTournamentHost()) return;
         if (confirm("Möchtest du das Turnier wirklich beenden?")) {
-          this.sendAction("tournament_end");
+          this.sendAction("tournament_finish");
+          this.closeTournamentLeaderboardModal();
+        }
+      });
+    }
+    if (this.el.tourneyEndFromRoundBtn) {
+      this.el.tourneyEndFromRoundBtn.addEventListener("click", () => {
+        if (!this.isTournamentHost()) return;
+        if (confirm("Möchtest du das Turnier jetzt abschließen und die Siegerehrung starten?")) {
+          this.sendAction("tournament_finish");
           this.closeTournamentLeaderboardModal();
         }
       });
@@ -735,6 +769,69 @@ class TanjunActivityClient {
     if (this.el.tourneyPodiumHubBtn) {
       this.el.tourneyPodiumHubBtn.addEventListener("click", () => this.returnToHub());
     }
+
+    // Nickname Modal Listeners
+    if (this.el.userBadge) {
+      this.el.userBadge.addEventListener("click", () => this.openNicknameModal());
+    }
+    if (this.el.nicknameModalCloseBtn) {
+      this.el.nicknameModalCloseBtn.addEventListener("click", () => this.closeNicknameModal());
+    }
+    if (this.el.nicknameModalCancelBtn) {
+      this.el.nicknameModalCancelBtn.addEventListener("click", () => this.closeNicknameModal());
+    }
+    if (this.el.nicknameModalSaveBtn) {
+      this.el.nicknameModalSaveBtn.addEventListener("click", () => this.saveNickname());
+    }
+    if (this.el.nicknameInput) {
+      this.el.nicknameInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          this.saveNickname();
+        } else if (e.key === "Escape") {
+          this.closeNicknameModal();
+        }
+      });
+    }
+  }
+
+  openNicknameModal() {
+    if (!this.el.nicknameModal) return;
+    if (this.el.nicknameInput) {
+      this.el.nicknameInput.value = this.user.displayName || this.user.username || "";
+    }
+    this.el.nicknameModal.style.display = "flex";
+    setTimeout(() => {
+      if (this.el.nicknameInput) {
+        this.el.nicknameInput.focus();
+        this.el.nicknameInput.select();
+      }
+    }, 50);
+  }
+
+  closeNicknameModal() {
+    if (this.el.nicknameModal) {
+      this.el.nicknameModal.style.display = "none";
+    }
+  }
+
+  saveNickname() {
+    if (!this.el.nicknameInput) return;
+    const newName = this.el.nicknameInput.value.trim();
+    if (newName) {
+      this.user.username = newName;
+      this.user.displayName = newName;
+      this.user.display_name = newName;
+      sessionStorage.setItem("tanjun_activity_user_name", newName);
+      localStorage.setItem("tanjun_activity_user_name", newName);
+      if (this.el.usernameDisplay) {
+        this.el.usernameDisplay.textContent = newName;
+      }
+      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        this.sendAction("update_profile", { display_name: newName });
+      }
+    }
+    this.closeNicknameModal();
   }
 
   isInsideDiscord() {
@@ -842,7 +939,8 @@ class TanjunActivityClient {
   renderHubGames() {
     if (!this.el.gamesGrid) return;
 
-    const games = this.gameState?.available_games || this.availableGames;
+    const allGames = this.gameState?.available_games || this.availableGames;
+    const games = allGames.filter(g => g.type !== "tournament");
     const isHost = this.isHost();
 
     let html = "";
@@ -1853,7 +1951,7 @@ class TanjunActivityClient {
       const players = tourney.leaderboard || [];
       const count = tourney.participants_count || players.length;
       if (this.el.tourneyPlayerCountBadge) {
-        this.el.tourneyPlayerCountBadge.textContent = `${count}/16`;
+        this.el.tourneyPlayerCountBadge.textContent = `${count} ${count === 1 ? 'Spieler' : 'Spieler'}`;
       }
 
       let html = "";
@@ -1998,7 +2096,7 @@ class TanjunActivityClient {
 
     // Round info text
     if (this.el.tourneyModalRoundInfo) {
-      this.el.tourneyModalRoundInfo.textContent = `Runde ${tourney.current_round} von ${tourney.total_rounds} • ${tourney.format === 'knockout' ? 'K.O.-System' : 'Punkte-Mehrkampf'}`;
+      this.el.tourneyModalRoundInfo.textContent = `Runde ${tourney.current_round} • ${tourney.format === 'knockout' ? 'K.O.-System' : 'Punkte-Mehrkampf'}`;
     }
 
     // Leaderboard table
@@ -2036,7 +2134,7 @@ class TanjunActivityClient {
 
         if (tourney.status === "round_end") {
           if (this.el.tourneyRoundEndMsg) {
-            this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Wähle das Spiel und starte Runde ${tourney.current_round + 1}:`;
+            this.el.tourneyRoundEndMsg.textContent = `Runde ${tourney.current_round} beendet! Wähle das Spiel für die nächste Runde:`;
             this.el.tourneyRoundEndMsg.style.color = "#23a55a";
           }
           if (this.el.tourneyNextRoundBtn) {
@@ -2046,8 +2144,17 @@ class TanjunActivityClient {
           if (this.el.tourneyNextMatchBtn) {
             this.el.tourneyNextMatchBtn.style.display = "none";
           }
+          if (this.el.tourneyEndFromRoundBtn) {
+            this.el.tourneyEndFromRoundBtn.style.display = "inline-block";
+          }
           const picker = document.querySelector(".tourney-next-game-picker");
           if (picker) picker.style.display = "block";
+          if (this.el.tourneyNextGamePills) {
+            const activeGame = this.selectedNextRoundGame || "connect4";
+            this.el.tourneyNextGamePills.forEach(p => {
+              p.classList.toggle("active", p.dataset.tourneyNextGame === activeGame);
+            });
+          }
         } else {
           // In active round
           const hasMoreMatches = tourney.active_matches && tourney.active_matches.some(m => m.status === "pending" || (!m.is_active && m.status !== "finished"));
@@ -2057,6 +2164,9 @@ class TanjunActivityClient {
           }
           if (this.el.tourneyNextRoundBtn) {
             this.el.tourneyNextRoundBtn.style.display = "none";
+          }
+          if (this.el.tourneyEndFromRoundBtn) {
+            this.el.tourneyEndFromRoundBtn.style.display = "none";
           }
           const picker = document.querySelector(".tourney-next-game-picker");
           if (picker) picker.style.display = "none";
@@ -2073,6 +2183,7 @@ class TanjunActivityClient {
       } else {
         this.el.tourneyHostControlsBox.style.display = "none";
         if (this.el.tourneyEndEarlyBtn) this.el.tourneyEndEarlyBtn.style.display = "none";
+        if (this.el.tourneyEndFromRoundBtn) this.el.tourneyEndFromRoundBtn.style.display = "none";
       }
     }
 

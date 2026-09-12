@@ -167,6 +167,14 @@ class Tournament:
             return self.active_matches[self.current_match_idx]
         return self.active_matches[-1]
 
+    def get_match_for_user(self, user_id: str) -> Optional[TournamentMatch]:
+        for m in self.active_matches:
+            if m.player1.user_id == user_id:
+                return m
+            if m.player2 and m.player2.user_id == user_id:
+                return m
+        return None
+
     def get_current_spectated_match(self) -> Optional[TournamentMatch]:
         return self.get_current_match()
 
@@ -244,19 +252,18 @@ class Tournament:
         random.shuffle(eligible)
 
         # Game for this round
-        if self.game_selection == "playlist" or self.selected_game == "playlist":
-            if selected_game and selected_game in self.games_pool:
-                chosen_game = selected_game
-                self.selected_game = selected_game
-            else:
-                disc_idx = (self.current_round - 1) % len(self.disciplines)
-                chosen_game = self.disciplines[disc_idx]
-                self.selected_game = chosen_game
+        if selected_game and selected_game in self.games_pool:
+            chosen_game = selected_game
+            self.selected_game = selected_game
+        elif self.game_selection == "playlist" or self.selected_game == "playlist":
+            disc_idx = (self.current_round - 1) % len(self.disciplines)
+            chosen_game = self.disciplines[disc_idx]
+            self.selected_game = chosen_game
         elif self.game_selection == "random" or self.selected_game == "random":
             chosen_game = random.choice(self.games_pool)
             self.selected_game = chosen_game
         else:
-            chosen_game = self.selected_game
+            chosen_game = self.selected_game if self.selected_game in self.games_pool else "connect4"
 
         matches: List[TournamentMatch] = []
         i = 0
@@ -304,18 +311,37 @@ class Tournament:
                 i += 1
 
         self.active_matches = matches
-        first_playable = next((m for m in self.active_matches if m.status != "finished" and not m.is_bye), None)
-        if first_playable:
-            first_playable.status = "active"
-            self.spectated_match_id = first_playable.match_id
-            self.current_match_idx = self.active_matches.index(first_playable)
-            self.status = "active"
-        elif self.active_matches:
-            self.spectated_match_id = None
-            self.current_match_idx = 0
-            self.status = "round_end"
+        if self.match_style == "parallel":
+            has_active = False
+            for m in self.active_matches:
+                if m.status != "finished" and not m.is_bye:
+                    m.status = "active"
+                    has_active = True
+            if has_active:
+                self.status = "active"
+                first_active = next((m for m in self.active_matches if m.status == "active"), None)
+                if first_active:
+                    self.spectated_match_id = first_active.match_id
+                    self.current_match_idx = self.active_matches.index(first_active)
+            elif self.active_matches:
+                self.spectated_match_id = None
+                self.current_match_idx = 0
+                self.status = "round_end"
+            else:
+                self.status = "finished"
         else:
-            self.status = "finished"
+            first_playable = next((m for m in self.active_matches if m.status != "finished" and not m.is_bye), None)
+            if first_playable:
+                first_playable.status = "active"
+                self.spectated_match_id = first_playable.match_id
+                self.current_match_idx = self.active_matches.index(first_playable)
+                self.status = "active"
+            elif self.active_matches:
+                self.spectated_match_id = None
+                self.current_match_idx = 0
+                self.status = "round_end"
+            else:
+                self.status = "finished"
 
         return True
 
@@ -444,7 +470,7 @@ class Tournament:
         return None
 
     async def handle_match_action(self, user_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        match = self.get_current_match()
+        match = self.get_match_for_user(user_id) or self.get_current_match()
         if not match or not match.game_instance:
             return {"error": "No active match found"}
 
@@ -469,8 +495,11 @@ class Tournament:
                 return {"error": "Only tournament host can change settings"}
             if "format" in data:
                 self.format = data["format"]
+            if "match_style" in data:
+                if data["match_style"] in ("spectated", "parallel"):
+                    self.match_style = data["match_style"]
             if "total_rounds" in data:
-                self.total_rounds = max(1, min(10, int(data["total_rounds"])))
+                self.total_rounds = max(1, min(50, int(data["total_rounds"])))
             if "game_selection" in data:
                 self.game_selection = data["game_selection"]
             if "disciplines" in data and isinstance(data["disciplines"], list):
@@ -500,11 +529,25 @@ class Tournament:
         if action == "tournament_next_round":
             if not is_host:
                 return {"error": "Only host can advance round"}
-            if self.status != "round_end":
+            if self.status not in ("round_end", "finished"):
                 return {"error": "Current round is not finished yet"}
-            selected = data.get("selected_game", self.selected_game)
+            selected = data.get("selected_game") or self.selected_game
+            self.selected_game = selected
+            if self.current_round >= self.total_rounds:
+                self.total_rounds = self.current_round + 1
+            self.status = "active"
+            self._finished_triggered = False
             await self.start_next_round(selected)
             return {"status": "next_round_started"}
+
+        if action == "tournament_add_round":
+            if not is_host:
+                return {"error": "Only host can add rounds"}
+            self.total_rounds = max(self.total_rounds, self.current_round) + 1
+            if self.status == "finished":
+                self.status = "round_end"
+                self._finished_triggered = False
+            return {"status": "round_added", "total_rounds": self.total_rounds}
 
         if action in ("tournament_next_match", "tournament_advance_match"):
             if not is_host:
@@ -529,7 +572,7 @@ class Tournament:
                 p.is_eliminated = False
             return {"status": "reset_to_lobby"}
 
-        if action == "tournament_end":
+        if action in ("tournament_end", "tournament_finish"):
             if not is_host:
                 return {"error": "Only host can end tournament"}
             self.status = "finished"
@@ -586,7 +629,7 @@ class Tournament:
         return podium
 
     def get_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
-        curr_m = self.get_current_match()
+        curr_m = (self.get_match_for_user(for_user_id) if (for_user_id and self.match_style == "parallel") else None) or self.get_current_match()
         curr_match_data = None
         if curr_m:
             curr_match_data = {
