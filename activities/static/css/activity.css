@@ -1945,3 +1945,24 @@ body {
   animation: pulse 1.5s infinite;
 }
 
+/* ── Clickable User Badge & Nickname Edit ── */
+.clickable-user-badge {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-user-badge:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.02);
+}
+
+.clickable-user-badge:hover .user-edit-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.user-edit-icon {
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+

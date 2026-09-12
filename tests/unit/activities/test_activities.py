@@ -1218,6 +1218,74 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(len(curr_m.cheers) > 0)
         self.assertEqual(curr_m.cheers[-1]["emote"], "AAAAAAAA")
 
+    async def test_tournament_match_style_settings_update(self):
+        """Verify that match_style setting (spectated vs parallel) updates and persists."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_style_upd")
+        tourney = session.tournament
+        self.assertEqual(tourney.match_style, "spectated")
+
+        # Host updates match_style to parallel
+        res = await tourney.handle_action("user_host", "tournament_update_settings", {"match_style": "parallel"})
+        self.assertEqual(res["status"], "settings_updated")
+        self.assertEqual(tourney.match_style, "parallel")
+
+        # State reflects parallel
+        state = tourney.get_state()
+        self.assertEqual(state["match_style"], "parallel")
+
+        # Host switches back to spectated
+        await tourney.handle_action("user_host", "tournament_update_settings", {"match_style": "spectated"})
+        self.assertEqual(tourney.match_style, "spectated")
+
+    async def test_tournament_dynamic_game_selection_and_expansion(self):
+        """Verify that next round game can be chosen dynamically and tournament can be expanded."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_dynamic_cup")
+        tourney = session.tournament
+        p2 = Player(user_id="user_p2", username="Player2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        # Start with 1 planned round of Tic-Tac-Toe
+        tourney.total_rounds = 1
+        await tourney.handle_action("user_host", "tournament_start", {"selected_game": "tictactoe"})
+        self.assertEqual(tourney.current_round, 1)
+        self.assertEqual(tourney.active_matches[0].game_type, "tictactoe")
+
+        # Finish round 1
+        m1 = tourney.active_matches[0]
+        await tourney._resolve_match(m1, "user_host")
+        self.assertEqual(tourney.status, "finished")
+
+        # Host dynamically continues and expands to round 2 with Connect 4!
+        res = await tourney.handle_action("user_host", "tournament_next_round", {"selected_game": "connect4"})
+        self.assertEqual(res["status"], "next_round_started")
+        self.assertEqual(tourney.current_round, 2)
+        self.assertEqual(tourney.total_rounds, 2)
+        self.assertEqual(tourney.status, "active")
+        self.assertEqual(tourney.active_matches[0].game_type, "connect4")
+
+        # Finish round 2
+        m2 = tourney.active_matches[0]
+        await tourney._resolve_match(m2, "user_p2")
+        self.assertEqual(tourney.status, "finished")
+
+        # Host dynamically adds a round before starting it
+        add_res = await tourney.handle_action("user_host", "tournament_add_round", {})
+        self.assertEqual(add_res["status"], "round_added")
+        self.assertEqual(tourney.total_rounds, 3)
+        self.assertEqual(tourney.status, "round_end")
+
+        # Host starts round 3 with RPS
+        await tourney.handle_action("user_host", "tournament_next_round", {"selected_game": "rps"})
+        self.assertEqual(tourney.current_round, 3)
+        self.assertEqual(tourney.active_matches[0].game_type, "rps")
+
+    async def test_tournament_max_players_limit_raised(self):
+        """Verify tournament max_players is configured for large groups (64)."""
+        games = session_manager.get_supported_games()
+        tourney_game = next((g for g in games if g["type"] == "tournament"), None)
+        self.assertIsNotNone(tourney_game)
+        self.assertEqual(tourney_game["max_players"], 64)
+
 
 if __name__ == "__main__":
     unittest.main()
