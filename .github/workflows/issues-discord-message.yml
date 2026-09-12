@@ -2,6 +2,10 @@ name: Issue closed - Notify Discord
 on:
   issues:
     types: [closed]
+
+permissions:
+  contents: read
+
 jobs:
   notify_discord:
     runs-on: ubuntu-latest
@@ -17,6 +21,10 @@ jobs:
           TIMESTAMP: ${{ github.event.issue.closed_at }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL is not configured; skipping notification."
+            exit 0
+          fi
           JSON_PAYLOAD=$(jq -n \
             --arg color "5763719" \
             --arg username "Tanjun Issue Tracker" \
@@ -41,4 +49,6 @@ jobs:
             "username": $username,
             "attachments": []
           }')
-          curl -X POST -H 'Content-Type: application/json' -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_URL"
+          curl --fail --silent --show-error --max-time 30 \
+            -X POST -H 'Content-Type: application/json' \
+            -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_URL"

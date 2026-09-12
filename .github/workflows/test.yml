@@ -5,6 +5,13 @@ on:
     branches: [main, development]
   pull_request:
 
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   unit-and-mock:
     runs-on: ubuntu-latest

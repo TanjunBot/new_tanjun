@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tanjun_5.0"
 dynamic = ["version"]
-description = "The Officila Tanjun Discord Bot!"
+description = "The Official Tanjun Discord Bot!"
 readme = "README.md"
 requires-python = ">=3.11"
 

@@ -1,7 +1,16 @@
 name: Ruff Lint & Format
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main, development]
+  pull_request:
+
+concurrency:
+  group: ruff-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   lint_and_format:
