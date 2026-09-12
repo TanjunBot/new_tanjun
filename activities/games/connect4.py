@@ -97,7 +97,7 @@ class Connect4Game(BaseGame):
                     bot_idx = r * self.cols + bot_col
                     self.board[bot_idx] = self.player_symbols.get("bot_tanjun", "Y")
                     self.last_move = bot_idx
-                    self.current_turn = p_ids[0]
+                    self.current_turn = p_ids[1] if p_ids[0] == "bot_tanjun" else p_ids[0]
 
         return True
 
@@ -184,14 +184,33 @@ class Connect4Game(BaseGame):
             if w == human_sym:
                 return c
 
-        # 3. Prefer center column or inner columns
+        # 3. For medium/high difficulty (>=3), avoid giving the opponent a win on the row directly above
+        safe_cols = []
+        if self.difficulty >= 3:
+            for c in valid_cols:
+                r = self._get_lowest_empty_row(c)
+                if r > 0:
+                    idx = r * self.cols + c
+                    self.board[idx] = bot_sym
+                    above_idx = (r - 1) * self.cols + c
+                    self.board[above_idx] = human_sym
+                    w_above, _ = self.check_winner()
+                    self.board[above_idx] = ""
+                    self.board[idx] = ""
+                    if w_above != human_sym:
+                        safe_cols.append(c)
+                else:
+                    safe_cols.append(c)
+        candidate_cols = safe_cols if safe_cols else valid_cols
+
+        # 4. Prefer center column or inner columns
         center = self.cols // 2
-        preference_order = sorted(range(self.cols), key=lambda col: abs(col - center))
+        preference_order = sorted(candidate_cols, key=lambda col: abs(col - center))
         for pref in preference_order:
-            if pref in valid_cols and random.random() < 0.7:
+            if random.random() < 0.75:
                 return pref
 
-        return random.choice(valid_cols)
+        return random.choice(candidate_cols)
 
     async def handle_action(
         self,
@@ -202,6 +221,8 @@ class Connect4Game(BaseGame):
     ) -> Dict[str, Any]:
         if action == "start":
             mode = data.get("mode", "pvp")
+            if mode != self.game_mode:
+                self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
             diff = int(data.get("difficulty", 3))
             self.difficulty = diff
@@ -232,11 +253,13 @@ class Connect4Game(BaseGame):
         if action == "move":
             if not self.is_started or self.is_finished:
                 return {"error": "Game is not active"}
+            if player_id not in self.players or player_id in self.spectators:
+                return {"error": "Spectators cannot make moves"}
             if self.current_turn != player_id:
                 return {"error": "Not your turn"}
 
             col = data.get("col") if "col" in data else data.get("column")
-            if col is None or not (0 <= col < self.cols):
+            if col is None or isinstance(col, bool) or not isinstance(col, int) or not (0 <= col < self.cols):
                 return {"error": "Invalid column"}
 
             row = self._get_lowest_empty_row(col)
@@ -327,6 +350,7 @@ class Connect4Game(BaseGame):
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
+            self.scores = {pid: 0 for pid in self.players}
             return {"status": "lobby", "state": self.get_state()}
 
         return {"error": f"Unknown action: {action}"}

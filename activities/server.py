@@ -1,9 +1,13 @@
+import asyncio
 import json
+import logging
 from aiohttp import web
 from activities.base import Player
 from activities.manager import session_manager
 from config import activity_server_host, activity_server_port, applicationId
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).parent / "static"
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -18,6 +22,7 @@ class ActivityServer:
         self.app = web.Application()
         self.runner = None
         self.site = None
+        self._cleanup_task: asyncio.Task | None = None
         self._setup_routes()
 
     @web.middleware
@@ -189,9 +194,12 @@ class ActivityServer:
 
                         # If the session was auto-created with a placeholder host,
                         # promote the first real user to host instead of adding them as player 2.
-                        PLACEHOLDER_HOST_ID = "discord_player"
-                        if session.game.host.user_id == PLACEHOLDER_HOST_ID:
-                            # Replace the placeholder host with the real user
+                        PLACEHOLDER_HOST_IDS = {"discord_player", "guest_host", "guest_1"}
+                        is_placeholder = session.game.host.user_id in PLACEHOLDER_HOST_IDS or (
+                            len(session.game.players) <= 1 and any(pid in PLACEHOLDER_HOST_IDS for pid in session.game.players)
+                        )
+                        if is_placeholder:
+                            old_placeholder_id = session.game.host.user_id
                             real_host = Player(
                                 user_id=user_id,
                                 username=username,
@@ -200,9 +208,13 @@ class ActivityServer:
                                 is_host=True
                             )
                             # Remove placeholder from players dict and set real host
-                            session.game.players.pop(PLACEHOLDER_HOST_ID, None)
+                            session.game.players.pop(old_placeholder_id, None)
                             session.game.host = real_host
                             session.game.players[user_id] = real_host
+                            if session.tournament:
+                                session.tournament.participants.pop(old_placeholder_id, None)
+                                session.tournament.host_id = user_id
+                                session.tournament.add_participant(real_host)
                         else:
                             player = Player(
                                 user_id=user_id,
@@ -212,6 +224,9 @@ class ActivityServer:
                                 is_host=(user_id == session.game.host.user_id)
                             )
                             session.game.add_player(player)
+                            session.cancel_disconnect_forfeit(user_id)
+                            if session.tournament:
+                                session.tournament.add_participant(player)
 
                         await ws.send_json({
                             "type": "joined",
@@ -225,7 +240,11 @@ class ActivityServer:
                         action_name = data.get("action", "")
                         action_payload = data.get("data", {})
 
+                        is_host = (p_id == session.game.host.user_id) or bool(session.tournament and p_id == session.tournament.host_id)
+
                         if action_name == "select_game":
+                            if not is_host:
+                                continue
                             game_type = action_payload.get("game_type", "tictactoe")
                             try:
                                 session.switch_game(game_type)
@@ -233,15 +252,37 @@ class ActivityServer:
                                 pass
                             await session.broadcast_state()
                         elif action_name == "return_to_hub":
+                            if not is_host:
+                                continue
                             session.is_hub = True
                             if hasattr(session.game, "reset"):
                                 await session.game.reset()
                             await session.broadcast_state()
                         elif action_name == "update_settings":
+                            if not is_host:
+                                continue
                             session.lobby_settings.update(action_payload)
                             await session.broadcast_state()
+                        elif action_name in ("forfeit", "surrender"):
+                            if session.tournament and session.tournament.status == "active":
+                                forfeited_winner = session.leave_tournament(p_id)
+                                if forfeited_winner:
+                                    await session.tournament.resolve_current_match(forfeited_winner)
+                                    if session.tournament.transition_info:
+                                        session.schedule_match_transition(delay=5.0)
+                                    elif session.tournament.status == "round_end":
+                                        session.sync_tournament_match()
+                            elif session.game and session.game.is_started and not session.game.is_finished:
+                                if p_id in session.game.players:
+                                    opponents = [pid for pid in session.game.players if pid != p_id and not session.game.players[pid].is_bot]
+                                    if opponents:
+                                        winner = opponents[0]
+                                        session.game.is_finished = True
+                                        session.game.winner = winner
+                                        session.game.scores[winner] = session.game.scores.get(winner, 0) + 1
+                            await session.broadcast_state()
                         elif action_name in ("create_tournament", "tournament_create"):
-                            current_p = session.game.players.get(p_id) or Player(
+                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id) or Player(
                                 user_id=p_id,
                                 username=action_payload.get("username", "Host"),
                                 display_name=action_payload.get("display_name", "Host"),
@@ -252,7 +293,7 @@ class ActivityServer:
                             session.tournament.add_participant(current_p)
                             await session.broadcast_state()
                         elif action_name == "tournament_join":
-                            current_p = session.game.players.get(p_id) or Player(
+                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id) or Player(
                                 user_id=p_id,
                                 username=action_payload.get("username", "Player"),
                                 display_name=action_payload.get("display_name", "Player"),
@@ -264,7 +305,14 @@ class ActivityServer:
                             await session.broadcast_state()
                         elif action_name == "tournament_leave":
                             if session.tournament:
-                                session.leave_tournament(p_id)
+                                forfeited_winner = session.leave_tournament(p_id)
+                                if forfeited_winner:
+                                    await session.tournament.resolve_current_match(forfeited_winner)
+                                    if session.tournament.transition_info:
+                                        session.schedule_match_transition(delay=5.0)
+                                    elif session.tournament.status == "round_end":
+                                        session.sync_tournament_match()
+                                session.migrate_host_if_needed(p_id)
                             await session.broadcast_state()
                         elif action_name == "tournament_destroy":
                             if session.tournament and session.tournament.host_id == p_id:
@@ -280,6 +328,8 @@ class ActivityServer:
                                 await session.broadcast_state()
                         else:
                             if action_name == "start":
+                                if not is_host:
+                                    continue
                                 full_payload = dict(session.lobby_settings)
                                 full_payload.update(action_payload)
                                 action_payload = full_payload
@@ -312,7 +362,8 @@ class ActivityServer:
                 del session.sockets[user_id]
                 session.game.remove_player(user_id)
                 if session.tournament:
-                    session.tournament.remove_participant(user_id)
+                    session.tournament.remove_participant(user_id, voluntary=False)
+                session.schedule_disconnect_forfeit(user_id, delay=30.0)
                 await session.broadcast_state()
 
         return ws
@@ -323,13 +374,27 @@ class ActivityServer:
         self.site = web.TCPSite(self.runner, self.host, self.port)
         try:
             await self.site.start()
+            self._cleanup_task = asyncio.create_task(self._cleanup_loop())
             print(f"[Activities] Discord Activity HTTP & WebSocket server started on http://{self.host}:{self.port}")
         except OSError as exc:
             print(f"[Activities] Warning: Could not bind Activity server to {self.host}:{self.port}: {exc}")
 
     async def stop(self) -> None:
+        if self._cleanup_task and not self._cleanup_task.done():
+            self._cleanup_task.cancel()
+            self._cleanup_task = None
         if self.runner:
             await self.runner.cleanup()
             self.runner = None
             self.site = None
             print("[Activities] Discord Activity server stopped.")
+
+    async def _cleanup_loop(self) -> None:
+        try:
+            while True:
+                await asyncio.sleep(300)
+                await session_manager.cleanup_idle_sessions(max_idle_seconds=3600)
+        except asyncio.CancelledError:
+            pass
+        except Exception as e:
+            logger.error("Error in session cleanup loop: %s", e)

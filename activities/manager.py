@@ -28,6 +28,7 @@ class GameSession:
         self.created_at: float = asyncio.get_event_loop().time()
         self.last_activity: float = self.created_at
         self._transition_task: Optional[asyncio.Task] = None
+        self._disconnect_tasks: Dict[str, asyncio.Task] = {}
         self.lobby_settings: Dict[str, Any] = {
             "mode": "pvp",
             "first_turn": "host",
@@ -38,6 +39,55 @@ class GameSession:
             "target_wins": 3,
             "variation": "classic"
         }
+
+    def schedule_disconnect_forfeit(self, user_id: str, delay: float = 30.0) -> None:
+        self.cancel_disconnect_forfeit(user_id)
+
+        async def _forfeit_timer():
+            try:
+                await asyncio.sleep(delay)
+                if self.tournament and self.tournament.status == "active":
+                    curr_m = self.tournament.get_current_match()
+                    if curr_m and curr_m.status == "active":
+                        p1_id = curr_m.player1.user_id
+                        p2_id = curr_m.player2.user_id if curr_m.player2 else None
+                        if user_id in (p1_id, p2_id):
+                            winner = p2_id if user_id == p1_id and p2_id else p1_id
+                            logger.info("[Activities] Player %s timed out after disconnect. Forfeiting to %s", user_id, winner)
+                            if self.tournament.format == "knockout" and user_id in self.tournament.participants:
+                                self.tournament.participants[user_id].is_eliminated = True
+                            await self.tournament.resolve_current_match(winner)
+                            if self.tournament.transition_info:
+                                self.schedule_match_transition(delay=5.0)
+                            elif self.tournament.status == "round_end":
+                                self.sync_tournament_match()
+                            await self.broadcast_state()
+                elif self.game and self.game.is_started and not self.game.is_finished and self.game.game_mode == "pvp":
+                    if user_id in self.game.players:
+                        opponent_ids = [pid for pid in self.game.players if pid != user_id and not self.game.players[pid].is_bot]
+                        if opponent_ids:
+                            winner = opponent_ids[0]
+                            self.game.is_finished = True
+                            self.game.winner = winner
+                            self.game.scores[winner] = self.game.scores.get(winner, 0) + 1
+                            logger.info("[Activities] Player %s timed out after disconnect in session %s. Forfeited to %s", user_id, self.session_id, winner)
+                            await self.broadcast_state()
+
+                # Migrate host privilege after timeout if departed player was host
+                migrated = self.migrate_host_if_needed(user_id)
+                if migrated:
+                    await self.broadcast_state()
+            except asyncio.CancelledError:
+                pass
+            except Exception as e:
+                logger.error("Error in disconnect forfeit timer: %s", e)
+
+        self._disconnect_tasks[user_id] = asyncio.create_task(_forfeit_timer())
+
+    def cancel_disconnect_forfeit(self, user_id: str) -> None:
+        task = self._disconnect_tasks.pop(user_id, None)
+        if task and not task.done():
+            task.cancel()
 
     def schedule_match_transition(self, delay: float = 5.0) -> None:
         if self._transition_task and not self._transition_task.done():
@@ -80,12 +130,71 @@ class GameSession:
         for pid, player in self.game.players.items():
             if not player.is_bot:
                 self.tournament.add_participant(player)
+        for pid, player in self.game.spectators.items():
+            if not player.is_bot:
+                self.tournament.add_participant(player)
         return self.tournament
 
     def join_tournament(self, player: Player) -> Any:
         if not self.tournament:
             return None
         return self.tournament.add_participant(player)
+
+    def leave_tournament(self, user_id: str) -> Optional[str]:
+        if self.tournament:
+            winner = self.tournament.remove_participant(user_id, voluntary=True)
+            if self.game and user_id in self.game.players:
+                self.game.players[user_id].connected = False
+            return winner
+        return None
+
+    def migrate_host_if_needed(self, departed_user_id: str) -> Optional[Player]:
+        """If the current host leaves, transfer host privileges to the next connected player."""
+        is_game_host = (self.game.host.user_id == departed_user_id)
+        is_tourney_host = bool(self.tournament and self.tournament.host_id == departed_user_id)
+
+        if not (is_game_host or is_tourney_host):
+            return None
+
+        # Find candidate from connected sockets or connected players
+        connected_candidates = [
+            p for uid, p in self.game.players.items()
+            if uid != departed_user_id and not p.is_bot and (uid in self.sockets or p.connected)
+        ]
+        if not connected_candidates:
+            connected_candidates = [
+                p for uid, p in self.game.spectators.items()
+                if uid != departed_user_id and not p.is_bot and (uid in self.sockets or p.connected)
+            ]
+        if not connected_candidates and self.tournament:
+            connected_candidates = [
+                Player(
+                    user_id=tp.user_id,
+                    username=tp.username,
+                    display_name=tp.display_name,
+                    avatar_url=tp.avatar_url,
+                    is_host=True
+                )
+                for tp in self.tournament.participants.values()
+                if tp.user_id != departed_user_id and tp.connected
+            ]
+
+        if not connected_candidates:
+            return None
+
+        new_host = connected_candidates[0]
+        new_host.is_host = True
+        self.game.host = new_host
+        if departed_user_id in self.game.players:
+            self.game.players[departed_user_id].is_host = False
+        if new_host.user_id in self.game.players:
+            self.game.players[new_host.user_id].is_host = True
+
+        if self.tournament:
+            self.tournament.update_host(new_host.user_id)
+
+        logger.info("[Activities] Migrated host in session %s from %s to %s", self.session_id, departed_user_id, new_host.user_id)
+        return new_host
 
     def sync_tournament_match(self) -> None:
         if not self.tournament or self.tournament.status not in ("active", "round_end"):
@@ -120,15 +229,18 @@ class GameSession:
         new_players: Dict[str, Player] = {}
         new_spectators: Dict[str, Player] = {}
 
+        tourney_host_id = self.tournament.host_id if self.tournament else self.game.host.user_id
         for uid, p in all_known.items():
+            p.is_host = (uid == tourney_host_id)
             if uid == p1_id:
-                p.is_host = True
                 new_players[uid] = p
             elif p2_id and uid == p2_id:
-                p.is_host = False
                 new_players[uid] = p
             else:
                 new_spectators[uid] = p
+
+        if tourney_host_id in all_known:
+            self.game.host = all_known[tourney_host_id]
 
         self.game.players = new_players
         self.game.spectators = new_spectators
@@ -144,12 +256,15 @@ class GameSession:
         if not cls:
             raise ValueError(f"Unknown game type: {game_type}")
 
-        # Preserve players and host across games
+        # Preserve players and host across games respecting max_players
         new_game = cls(session_id=self.session_id, host=self.game.host)
         for pid, player in self.game.players.items():
             if not player.is_bot:
-                new_game.players[pid] = player
-        new_game.spectators = dict(self.game.spectators)
+                if len(new_game.players) < new_game.max_players:
+                    new_game.players[pid] = player
+                else:
+                    new_game.spectators[pid] = player
+        new_game.spectators.update(self.game.spectators)
         self.game = new_game
         self.is_hub = False
         return new_game

@@ -45,6 +45,10 @@ class TanjunActivityClient {
 
     this.inTournamentView = false;
     this.selectedNextRoundGame = "connect4";
+    this.soundEnabled = localStorage.getItem("tanjun_sound_enabled") !== "false";
+    this.audioCtx = null;
+    this.prevGameFinished = false;
+    this.prevCountdownSec = null;
 
     // Available games list (fallback if not yet received from WS)
     this.availableGames = [
@@ -76,6 +80,146 @@ class TanjunActivityClient {
     this.setupEventListeners();
   }
 
+  initAudio() {
+    if (!this.audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.audioCtx = new AudioCtx();
+    }
+    if (this.audioCtx && this.audioCtx.state === "suspended") {
+      this.audioCtx.resume().catch(() => {});
+    }
+  }
+
+  toggleSound() {
+    this.soundEnabled = !this.soundEnabled;
+    localStorage.setItem("tanjun_sound_enabled", this.soundEnabled ? "true" : "false");
+    if (this.el.soundToggleBtn) {
+      this.el.soundToggleBtn.textContent = this.soundEnabled ? "🔊" : "🔇";
+    }
+    if (this.soundEnabled) {
+      this.playPop();
+    }
+  }
+
+  playPop() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(520, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(320, this.audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.18, this.audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.09);
+    } catch (e) {}
+  }
+
+  playDrop() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(240, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, this.audioCtx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.25, this.audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.13);
+    } catch (e) {}
+  }
+
+  playClash() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(440, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(220, this.audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.14, this.audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.16);
+    } catch (e) {}
+  }
+
+  playWin() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const notes = [261.63, 329.63, 392.00, 523.25];
+      notes.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        const startTime = this.audioCtx.currentTime + idx * 0.1;
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.16, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.36);
+      });
+    } catch (e) {}
+  }
+
+  playCheer() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const freqs = [587.33, 880.0];
+      freqs.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        const startTime = this.audioCtx.currentTime + idx * 0.08;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.12, startTime);
+        gain.gain.linearRampToValueAtTime(0.01, startTime + 0.18);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.19);
+      });
+    } catch (e) {}
+  }
+
+  playCountdown() {
+    if (!this.soundEnabled) return;
+    try {
+      this.initAudio();
+      if (!this.audioCtx) return;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(780, this.audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, this.audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.07);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (e) {}
+  }
+
   initUser() {
     let storedUserId = sessionStorage.getItem("tanjun_activity_user_id");
     let storedUserName = sessionStorage.getItem("tanjun_activity_user_name");
@@ -89,7 +233,9 @@ class TanjunActivityClient {
       id: storedUserId,
       username: storedUserName,
       displayName: storedUserName,
-      avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png"
+      display_name: storedUserName,
+      avatarUrl: "https://cdn.discordapp.com/embed/avatars/0.png",
+      avatar_url: "https://cdn.discordapp.com/embed/avatars/0.png"
     };
   }
 
@@ -121,6 +267,7 @@ class TanjunActivityClient {
       lobbyGameSubtitle: document.getElementById("lobbyGameSubtitle"),
       modeBotBtn: document.getElementById("modeBotBtn"),
       modePvpBtn: document.getElementById("modePvpBtn"),
+      connectionBanner: document.getElementById("connectionBanner"),
 
       // Game Settings Elements
       gameSettingsContainer: document.getElementById("gameSettingsContainer"),
@@ -250,11 +397,31 @@ class TanjunActivityClient {
       podiumRewardsText: document.getElementById("podiumRewardsText"),
       tourneyFinalTable: document.getElementById("tourneyFinalTable"),
       tourneyNewCupBtn: document.getElementById("tourneyNewCupBtn"),
-      tourneyPodiumHubBtn: document.getElementById("tourneyPodiumHubBtn")
+      tourneyPodiumHubBtn: document.getElementById("tourneyPodiumHubBtn"),
+
+      // Audio & Global Overlays
+      soundToggleBtn: document.getElementById("soundToggleBtn"),
+      globalCheerOverlay: document.getElementById("globalCheerOverlay"),
+      tourneyLeaveBtn: document.getElementById("tourneyLeaveBtn")
     };
   }
 
   setupEventListeners() {
+    // Sound toggle
+    if (this.el.soundToggleBtn) {
+      this.el.soundToggleBtn.textContent = this.soundEnabled ? "🔊" : "🔇";
+      this.el.soundToggleBtn.addEventListener("click", () => this.toggleSound());
+    }
+
+    // Tournament Leave (lobby)
+    if (this.el.tourneyLeaveBtn) {
+      this.el.tourneyLeaveBtn.addEventListener("click", () => {
+        this.inTournamentView = false;
+        this.sendAction("tournament_leave");
+        this.returnToHub();
+      });
+    }
+
     // Mode toggles
     this.el.modeBotBtn.addEventListener("click", () => this.setMode("bot"));
     this.el.modePvpBtn.addEventListener("click", () => this.setMode("pvp"));
@@ -633,8 +800,10 @@ class TanjunActivityClient {
                         this.user.id = auth.user.id;
                         this.user.username = auth.user.username;
                         this.user.displayName = auth.user.global_name || auth.user.username;
+                        this.user.display_name = this.user.displayName;
                         if (auth.user.avatar) {
                           this.user.avatarUrl = `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=128`;
+                          this.user.avatar_url = this.user.avatarUrl;
                         }
                         sessionStorage.setItem("tanjun_activity_user_id", this.user.id);
                         sessionStorage.setItem("tanjun_activity_user_name", this.user.displayName);
@@ -674,7 +843,7 @@ class TanjunActivityClient {
     if (!this.el.gamesGrid) return;
 
     const games = this.gameState?.available_games || this.availableGames;
-    const isHost = !this.gameState || (this.gameState.players || [])[0]?.user_id === this.user.id;
+    const isHost = this.isHost();
 
     let html = "";
     games.forEach(g => {
@@ -683,10 +852,10 @@ class TanjunActivityClient {
           <div class="game-card-icon">${g.icon}</div>
           <div class="game-card-body">
             <div class="game-card-top">
-              <span class="game-card-title">${g.name}</span>
-              <span class="game-card-tag">${g.badge || 'Spiel'}</span>
+              <span class="game-card-title">${this.escapeHtml(g.name)}</span>
+              <span class="game-card-tag">${this.escapeHtml(g.badge || 'Spiel')}</span>
             </div>
-            <div class="game-card-desc">${g.description}</div>
+            <div class="game-card-desc">${this.escapeHtml(g.description)}</div>
           </div>
         </div>
       `;
@@ -706,7 +875,8 @@ class TanjunActivityClient {
         this.el.hubStatusMsg.textContent = "Wähle ein Spiel aus, um die Runde zu starten!";
         this.el.hubStatusMsg.style.color = "#00f2fe";
       } else {
-        const hostName = (this.gameState?.players || [])[0]?.display_name || "Der Host";
+        const hostPlayer = (this.gameState?.players || []).find(p => p.is_host) || (this.gameState?.players || [])[0];
+        const hostName = hostPlayer?.display_name || "Der Host";
         this.el.hubStatusMsg.textContent = `Warte darauf, dass ${hostName} ein Spiel auswählt...`;
         this.el.hubStatusMsg.style.color = "#94a3b8";
       }
@@ -714,7 +884,7 @@ class TanjunActivityClient {
   }
 
   selectGameFromHub(gameType) {
-    const isHost = !this.gameState || (this.gameState.players || [])[0]?.user_id === this.user.id;
+    const isHost = this.isHost();
     if (!isHost) {
       alert("Nur der Host kann ein neues Spiel auswählen.");
       return;
@@ -730,28 +900,54 @@ class TanjunActivityClient {
 
   async createStandaloneSession(gameType) {
     try {
-      const resp = await fetch("/api/sessions", {
+      const res = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           game_type: gameType,
           user_id: this.user.id,
           username: this.user.username,
-          display_name: this.user.displayName,
-          avatar_url: this.user.avatarUrl
+          display_name: this.user.display_name,
+          avatar_url: this.user.avatar_url
         })
       });
-      const data = await resp.json();
+      const data = await res.json();
       this.sessionId = data.session_id;
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("session", this.sessionId);
+      window.history.replaceState({}, "", newUrl.toString());
       this.connectWebSocket();
     } catch (e) {
       console.error("[Discord Activity] Failed to create session:", e);
     }
   }
 
+  escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   isHost() {
-    const players = this.gameState?.players || [this.user];
-    return !this.gameState || players[0]?.user_id === this.user.id;
+    if (!this.gameState) return true;
+    if (this.gameState.tournament && this.gameState.tournament.host_id) {
+      return this.gameState.tournament.host_id === this.user.id;
+    }
+    const players = this.gameState.players || [];
+    const thisPlayer = players.find(p => p.user_id === this.user.id);
+    if (thisPlayer) {
+      return Boolean(thisPlayer.is_host);
+    }
+    const spectators = this.gameState.spectators || [];
+    const thisSpectator = spectators.find(p => p.user_id === this.user.id);
+    if (thisSpectator) {
+      return Boolean(thisSpectator.is_host);
+    }
+    return players.length === 0 || players[0]?.user_id === this.user.id;
   }
 
   broadcastSettings() {
@@ -874,6 +1070,18 @@ class TanjunActivityClient {
       this.reconnectTimer = null;
     }
 
+    if (this.ws) {
+      try {
+        this.ws.onopen = null;
+        this.ws.onmessage = null;
+        this.ws.onclose = null;
+        this.ws.onerror = null;
+        if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
+          this.ws.close();
+        }
+      } catch (e) {}
+    }
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws/${this.sessionId}`;
 
@@ -881,10 +1089,13 @@ class TanjunActivityClient {
       this.ws = new WebSocket(wsUrl);
     } catch (err) {
       console.error("[Discord Activity] WebSocket connection failed:", err);
+      if (this.el.connectionBanner) this.el.connectionBanner.style.display = "flex";
+      this.reconnectTimer = setTimeout(() => this.connectWebSocket(onOpenCallback), 2000);
       return;
     }
 
     this.ws.onopen = () => {
+      if (this.el.connectionBanner) this.el.connectionBanner.style.display = "none";
       this.ws.send(JSON.stringify({
         type: "join",
         user_id: this.user.id,
@@ -907,11 +1118,16 @@ class TanjunActivityClient {
     };
 
     this.ws.onclose = () => {
+      if (this.el.connectionBanner) this.el.connectionBanner.style.display = "flex";
       if (this.sessionId) {
         this.reconnectTimer = setTimeout(() => {
           this.connectWebSocket();
         }, 2000);
       }
+    };
+
+    this.ws.onerror = () => {
+      if (this.el.connectionBanner) this.el.connectionBanner.style.display = "flex";
     };
   }
 
@@ -964,6 +1180,9 @@ class TanjunActivityClient {
 
   returnToLobby() {
     this.clearAnimationCaches();
+    if (this.gameState && this.gameState.is_started && !this.gameState.is_finished && this.gameState.game_mode === "pvp") {
+      this.sendAction("forfeit");
+    }
     this.sendAction("lobby");
   }
 
@@ -1021,8 +1240,8 @@ class TanjunActivityClient {
       html += `
         <div class="lobby-player-row">
           <div class="lobby-player-meta">
-            <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-            <span>${p.display_name || p.username}</span>
+            <img class="lobby-player-avatar-small" src="${this.escapeHtml(p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="Avatar">
+            <span>${this.escapeHtml(p.display_name || p.username)}</span>
             ${isYou ? '<span class="lobby-tag-you">Du</span>' : ''}
           </div>
           ${isHost ? '<span class="lobby-tag-host">Host 👑</span>' : '<span style="font-size:0.75rem; color:#94a3b8;">Verbunden</span>'}
@@ -1043,15 +1262,16 @@ class TanjunActivityClient {
     let html = "";
     players.forEach((p, idx) => {
       const isYou = p.user_id === this.user.id;
-      const isHost = idx === 0 || p.is_host;
+      const isHost = p.is_host;
+      const isOffline = p.connected === false;
       html += `
         <div class="lobby-player-row">
           <div class="lobby-player-meta">
-            <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-            <span>${p.display_name || p.username}</span>
+            <img class="lobby-player-avatar-small" src="${this.escapeHtml(p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="Avatar">
+            <span>${this.escapeHtml(p.display_name || p.username)}</span>
             ${isYou ? '<span class="lobby-tag-you">Du</span>' : ''}
           </div>
-          ${isHost ? '<span class="lobby-tag-host">Host 👑</span>' : '<span style="font-size:0.75rem; color:#94a3b8;">Bereit</span>'}
+          ${isOffline ? '<span class="lobby-tag-offline">Getrennt ⚠️</span>' : (isHost ? '<span class="lobby-tag-host">Host 👑</span>' : '<span style="font-size:0.75rem; color:#94a3b8;">Bereit</span>')}
         </div>
       `;
     });
@@ -1144,7 +1364,12 @@ class TanjunActivityClient {
               this.el.tourneyTransitionSubtitle.textContent = `Nächstes Duell: ${info.next_p1} vs ${info.next_p2} (${nextGameStr})`;
             }
             if (this.el.tourneyTransitionCountdown) {
-              this.el.tourneyTransitionCountdown.textContent = `${info.seconds_remaining || 5}s`;
+              const sec = info.seconds_remaining || 5;
+              this.el.tourneyTransitionCountdown.textContent = `${sec}s`;
+              if (this.prevCountdownSec !== sec) {
+                this.prevCountdownSec = sec;
+                if (sec > 0) this.playCountdown();
+              }
             }
             if (this.el.tourneyTransitionSkipBtn) {
               this.el.tourneyTransitionSkipBtn.style.display = this.isTournamentHost() ? "inline-block" : "none";
@@ -1249,10 +1474,16 @@ class TanjunActivityClient {
     this.el.p1Name.textContent = p1.display_name || p1.username;
     this.el.p1Avatar.src = p1.avatar_url || "https://cdn.discordapp.com/embed/avatars/0.png";
     this.el.p1Score.textContent = `${state.scores?.[p1.user_id] || 0} Siege`;
+    if (p1.connected === false) {
+      this.el.p1Score.innerHTML = `<span class="player-tag-offline">Getrennt (30s)</span>`;
+    }
 
     this.el.p2Name.textContent = p2.display_name || p2.username;
     this.el.p2Avatar.src = p2.avatar_url || (p2.is_bot ? "/static/images/tanjun_avatar.png" : "https://cdn.discordapp.com/embed/avatars/1.png");
     this.el.p2Score.textContent = `${state.scores?.[p2.user_id] || 0} Siege`;
+    if (p2.connected === false && !p2.is_bot) {
+      this.el.p2Score.innerHTML = `<span class="player-tag-offline">Getrennt (30s)</span>`;
+    }
 
     // Active turn highlight
     if (gameType !== "rps") {
@@ -1308,7 +1539,10 @@ class TanjunActivityClient {
         if (val === "X") cell.classList.add("cell-x", "taken");
         if (val === "O") cell.classList.add("cell-o", "taken");
         if (winningLine.includes(idx)) cell.classList.add("winner-cell");
-        if (val && isNewMove(idx)) cell.classList.add("anim-pop");
+        if (val && isNewMove(idx)) {
+          cell.classList.add("anim-pop");
+          this.playPop();
+        }
       });
       this.prevTTTBoard = [...state.board];
     }
@@ -1378,6 +1612,7 @@ class TanjunActivityClient {
             cell.style.setProperty("--drop-dist", `-${dropDist}px`);
             cell.style.setProperty("--drop-duration", `${0.26 + row * 0.04}s`);
             cell.classList.add("anim-drop");
+            this.playDrop();
           }
         }
       });
@@ -1428,6 +1663,7 @@ class TanjunActivityClient {
         if (this.prevRpsRound !== state.current_round || this.prevRpsFinished !== state.is_finished) {
           this.el.rpsP1Pick.classList.add("anim-reveal");
           this.el.rpsP2Pick.classList.add("anim-reveal");
+          this.playClash();
         }
         const myChoiceName = choiceNames[myPick] || myPick;
         const otherChoiceName = choiceNames[otherPick] || otherPick;
@@ -1460,6 +1696,11 @@ class TanjunActivityClient {
 
     // ── In-game Status Bar Text ──
     if (state.is_finished) {
+      if (!this.prevGameFinished) {
+        if (state.winner && state.winner !== "draw") {
+          this.playWin();
+        }
+      }
       if (state.winner === "draw") {
         this.el.statusBar.textContent = "🤝 Unentschieden! Großartiges Match.";
         this.el.statusBar.style.color = "#f0b232";
@@ -1470,7 +1711,13 @@ class TanjunActivityClient {
         this.el.statusBar.style.color = "#23a55a";
       }
     } else if (state.is_started) {
-      if (gameType === "rps") {
+      this.prevGameFinished = false;
+      const offlineOpponent = players.find(p => p.connected === false && !p.is_bot);
+      if (offlineOpponent) {
+        const offName = offlineOpponent.display_name || offlineOpponent.username;
+        this.el.statusBar.textContent = `⏳ ${offName} hat die Verbindung verloren. Warte auf Reconnect (30s)...`;
+        this.el.statusBar.style.color = "#ef4444";
+      } else if (gameType === "rps") {
         this.el.statusBar.textContent = "⚡ Wähle Stein, Papier oder Schere!";
         this.el.statusBar.style.color = "#5865f2";
       } else if (state.current_turn === this.user.id) {
@@ -1616,8 +1863,8 @@ class TanjunActivityClient {
         html += `
           <div class="lobby-player-row">
             <div class="lobby-player-meta">
-              <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-              <span>${p.display_name}</span>
+              <img class="lobby-player-avatar-small" src="${this.escapeHtml(p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="Avatar">
+              <span>${this.escapeHtml(p.display_name)}</span>
               ${isYou ? '<span class="lobby-tag-you">Du</span>' : ''}
             </div>
             ${isH ? '<span class="lobby-tag-host">Turnierleiter 👑</span>' : '<span style="font-size:0.75rem; color:#23a55a;">Bereit</span>'}
@@ -1661,6 +1908,9 @@ class TanjunActivityClient {
             this.el.tourneyLobbyStatusMsg.style.color = "#fb8500";
           }
         }
+      }
+      if (this.el.tourneyLeaveBtn) {
+        this.el.tourneyLeaveBtn.style.display = isHost ? "none" : "inline-block";
       }
     }
   }
@@ -1762,8 +2012,8 @@ class TanjunActivityClient {
           <div class="tourney-leaderboard-row ${idx === 0 ? 'rank-1' : ''} ${isYou ? 'current-user-row' : ''}">
             <div class="tourney-leaderboard-meta">
               <span class="tourney-rank-num">${rankDisplay}</span>
-              <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-              <span style="font-weight: 700;">${p.display_name}</span>
+              <img class="lobby-player-avatar-small" src="${this.escapeHtml(p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="Avatar">
+              <span style="font-weight: 700;">${this.escapeHtml(p.display_name)}</span>
               ${isYou ? '<span class="lobby-tag-you">Du</span>' : ''}
               ${p.is_host ? '<span title="Turnierleiter">👑</span>' : ''}
               ${p.is_eliminated ? '<span style="font-size:0.7rem; color:#da373c;">(Ausgeschieden)</span>' : ''}
@@ -1837,11 +2087,11 @@ class TanjunActivityClient {
         history.slice(-8).reverse().forEach(h => {
           let winnerLabel = "🤝 Unentschieden";
           if (h.winner && h.winner !== "draw") {
-            winnerLabel = `🏆 ${h.winner}`;
+            winnerLabel = `🏆 ${this.escapeHtml(h.winner)}`;
           }
           histHtml += `
             <div class="tourney-history-item">
-              <span class="tourney-history-details">Runde ${h.round} (${gameNames[h.game_type] || h.game_type}): <strong>${h.p1}</strong> vs <strong>${h.p2}</strong></span>
+              <span class="tourney-history-details">Runde ${h.round} (${gameNames[h.game_type] || h.game_type}): <strong>${this.escapeHtml(h.p1)}</strong> vs <strong>${this.escapeHtml(h.p2)}</strong></span>
               <span class="tourney-history-winner">${winnerLabel}</span>
             </div>
           `;
@@ -1877,7 +2127,7 @@ class TanjunActivityClient {
           rewParts.push(`Level-XP vergeben (🥇 +${rew.xp_1st.toLocaleString()} XP)`);
         }
         if (rew.can_grant_role && (rew.role_name || rew.role_id)) {
-          rewParts.push(`Sieger-Rolle verliehen (@${rew.role_name || "Champion"})`);
+          rewParts.push(`Sieger-Rolle verliehen (@${this.escapeHtml(rew.role_name || "Champion")})`);
         }
         if (this.el.podiumRewardsText) {
           this.el.podiumRewardsText.innerHTML = `<strong>Server-Belohnungen:</strong> ${rewParts.join(" & ")} im Discord-Server gutgeschrieben!`;
@@ -1900,10 +2150,10 @@ class TanjunActivityClient {
         podiumHtml += `
           <div class="podium-step podium-step-2">
             <div class="podium-avatar-wrap">
-              <img class="podium-avatar" src="${p2.avatar_url || 'https://cdn.discordapp.com/embed/avatars/1.png'}" alt="2nd">
+              <img class="podium-avatar" src="${this.escapeHtml(p2.avatar_url || 'https://cdn.discordapp.com/embed/avatars/1.png')}" alt="2nd">
               <span class="podium-medal">🥈</span>
             </div>
-            <div class="podium-name">${p2.display_name}</div>
+            <div class="podium-name">${this.escapeHtml(p2.display_name)}</div>
             <div class="podium-score">${p2.score} Pkt</div>
           </div>
         `;
@@ -1914,10 +2164,10 @@ class TanjunActivityClient {
         podiumHtml += `
           <div class="podium-step podium-step-1">
             <div class="podium-avatar-wrap">
-              <img class="podium-avatar" src="${p1.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="1st">
+              <img class="podium-avatar" src="${this.escapeHtml(p1.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="1st">
               <span class="podium-medal">🥇</span>
             </div>
-            <div class="podium-name">${p1.display_name}</div>
+            <div class="podium-name">${this.escapeHtml(p1.display_name)}</div>
             <div class="podium-score">${p1.score} Pkt</div>
           </div>
         `;
@@ -1928,10 +2178,10 @@ class TanjunActivityClient {
         podiumHtml += `
           <div class="podium-step podium-step-3">
             <div class="podium-avatar-wrap">
-              <img class="podium-avatar" src="${p3.avatar_url || 'https://cdn.discordapp.com/embed/avatars/2.png'}" alt="3rd">
+              <img class="podium-avatar" src="${this.escapeHtml(p3.avatar_url || 'https://cdn.discordapp.com/embed/avatars/2.png')}" alt="3rd">
               <span class="podium-medal">🥉</span>
             </div>
-            <div class="podium-name">${p3.display_name}</div>
+            <div class="podium-name">${this.escapeHtml(p3.display_name)}</div>
             <div class="podium-score">${p3.score} Pkt</div>
           </div>
         `;
@@ -1948,8 +2198,8 @@ class TanjunActivityClient {
           <div class="tourney-leaderboard-row ${idx === 0 ? 'rank-1' : ''}">
             <div class="tourney-leaderboard-meta">
               <span class="tourney-rank-num">#${idx + 1}</span>
-              <img class="lobby-player-avatar-small" src="${p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}" alt="Avatar">
-              <span>${p.display_name}</span>
+              <img class="lobby-player-avatar-small" src="${this.escapeHtml(p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png')}" alt="Avatar">
+              <span>${this.escapeHtml(p.display_name)}</span>
               ${p.user_id === this.user.id ? '<span class="lobby-tag-you">Du</span>' : ''}
             </div>
             <div class="tourney-leaderboard-scores">
@@ -1968,19 +2218,22 @@ class TanjunActivityClient {
   }
 
   spawnFloatingCheer(name, emote) {
-    if (!this.el.tourneyCheerOverlay) return;
-    const cheerEl = document.createElement("div");
-    cheerEl.className = "floating-cheer";
-    const leftPercent = Math.floor(15 + Math.random() * 70);
-    cheerEl.style.left = `${leftPercent}%`;
-    cheerEl.innerHTML = `
-      <span>${emote}</span>
-      <span class="floating-cheer-name">${name}</span>
-    `;
-    this.el.tourneyCheerOverlay.appendChild(cheerEl);
-    setTimeout(() => {
-      if (cheerEl.parentNode) cheerEl.remove();
-    }, 2400);
+    this.playCheer();
+    const targets = [this.el.tourneyCheerOverlay, this.el.globalCheerOverlay].filter(Boolean);
+    targets.forEach(overlay => {
+      const cheerEl = document.createElement("div");
+      cheerEl.className = "floating-cheer";
+      const leftPercent = Math.floor(15 + Math.random() * 70);
+      cheerEl.style.left = `${leftPercent}%`;
+      cheerEl.innerHTML = `
+        <span>${this.escapeHtml(emote)}</span>
+        <span class="floating-cheer-name">${this.escapeHtml(name)}</span>
+      `;
+      overlay.appendChild(cheerEl);
+      setTimeout(() => {
+        if (cheerEl.parentNode) cheerEl.remove();
+      }, 2400);
+    });
   }
 }
 

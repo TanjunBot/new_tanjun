@@ -104,6 +104,7 @@ class Tournament:
         self.current_match_idx: int = 0
         self.spectated_match_id: Optional[str] = None
         self.last_round_result: Optional[Dict[str, Any]] = None
+        self._finished_triggered: bool = False
 
         # Add initial host participant
         self.add_participant(host)
@@ -121,16 +122,43 @@ class Tournament:
             self.participants[player.user_id] = tp
             return tp
         else:
-            self.participants[player.user_id].connected = True
-            return self.participants[player.user_id]
+            tp = self.participants[player.user_id]
+            tp.connected = True
+            tp.username = player.username
+            tp.display_name = player.display_name
+            if player.avatar_url:
+                tp.avatar_url = player.avatar_url
+            if self.format != "knockout":
+                tp.is_eliminated = False
+            return tp
 
-    def remove_participant(self, user_id: str) -> None:
-        if user_id in self.participants:
-            if self.status == "lobby":
-                del self.participants[user_id]
-            else:
-                self.participants[user_id].connected = False
-                self.participants[user_id].is_eliminated = True
+    def remove_participant(self, user_id: str, voluntary: bool = False) -> Optional[str]:
+        if user_id not in self.participants:
+            return None
+
+        tp = self.participants[user_id]
+        if self.status == "lobby":
+            del self.participants[user_id]
+            return None
+
+        tp.connected = False
+        if voluntary:
+            tp.is_eliminated = True
+
+        # If user is in the currently active match and voluntarily left, forfeit match to opponent
+        curr_m = self.get_current_match()
+        if voluntary and curr_m and curr_m.status == "active":
+            if curr_m.player1.user_id == user_id:
+                return curr_m.player2.user_id if curr_m.player2 else "draw"
+            elif curr_m.player2 and curr_m.player2.user_id == user_id:
+                return curr_m.player1.user_id
+
+        return None
+
+    def update_host(self, new_host_id: str) -> None:
+        self.host_id = new_host_id
+        for p in self.participants.values():
+            p.is_host = (p.user_id == new_host_id)
 
     def get_current_match(self) -> Optional[TournamentMatch]:
         if not self.active_matches:
@@ -152,6 +180,7 @@ class Tournament:
         self.status = "active"
         self.current_round = 0
         self.match_history = []
+        self._finished_triggered = False
         for p in self.participants.values():
             p.score = 0
             p.wins = 0
@@ -205,13 +234,11 @@ class Tournament:
         self.active_matches = []
 
         # Eligible participants
-        if self.format == "knockout":
-            eligible = [p for p in self.participants.values() if not p.is_eliminated and p.connected]
-            if len(eligible) <= 1:
-                self.status = "finished"
-                return True
-        else:
-            eligible = [p for p in self.participants.values() if p.connected]
+        eligible = [p for p in self.participants.values() if not p.is_eliminated]
+        if len(eligible) <= 1:
+            self.status = "finished"
+            await self._trigger_tournament_finished()
+            return True
 
         # Shuffle for diverse pairings across rounds
         random.shuffle(eligible)
@@ -260,16 +287,36 @@ class Tournament:
                 )
                 match.status = "finished"
                 match.winner_id = p1.user_id
-                p1.score += self.points_draw
+                if self.format == "knockout":
+                    p1.wins += 1
+                    p1.score += self.points_win
+                else:
+                    p1.score += self.points_draw
                 matches.append(match)
+                self.match_history.append({
+                    "match_id": match.match_id,
+                    "round": match.round_index,
+                    "game_type": match.game_type,
+                    "p1": match.player1.display_name,
+                    "p2": "Freilos (Bye)",
+                    "winner": match.player1.display_name
+                })
                 i += 1
 
         self.active_matches = matches
-        if self.active_matches:
-            self.active_matches[0].status = "active"
-            self.spectated_match_id = self.active_matches[0].match_id
+        first_playable = next((m for m in self.active_matches if m.status != "finished" and not m.is_bye), None)
+        if first_playable:
+            first_playable.status = "active"
+            self.spectated_match_id = first_playable.match_id
+            self.current_match_idx = self.active_matches.index(first_playable)
+            self.status = "active"
+        elif self.active_matches:
+            self.spectated_match_id = None
+            self.current_match_idx = 0
+            self.status = "round_end"
+        else:
+            self.status = "finished"
 
-        self.status = "active"
         return True
 
     async def resolve_current_match(self, winner: str) -> None:
@@ -331,7 +378,8 @@ class Tournament:
                 else:
                     self.status = "round_end"
             else:
-                if self.current_round >= self.total_rounds:
+                remaining = [p for p in self.participants.values() if not p.is_eliminated]
+                if len(remaining) <= 1 or self.current_round >= self.total_rounds:
                     self.status = "finished"
                 else:
                     self.status = "round_end"
@@ -352,6 +400,9 @@ class Tournament:
                 }
 
     async def _trigger_tournament_finished(self) -> None:
+        if self._finished_triggered:
+            return
+        self._finished_triggered = True
         if self.on_finished_callback:
             try:
                 res = self.on_finished_callback(self)
@@ -365,15 +416,31 @@ class Tournament:
         curr = self.get_current_match()
         if curr and curr.status == "active":
             return curr
-        if self.current_match_idx + 1 < len(self.active_matches):
+        while self.current_match_idx + 1 < len(self.active_matches):
             self.current_match_idx += 1
             next_m = self.active_matches[self.current_match_idx]
-            if next_m.is_bye:
-                await self._resolve_match(next_m, next_m.player1.user_id)
-                return await self.advance_to_next_match()
+            if next_m.is_bye or next_m.status == "finished":
+                continue
             next_m.status = "active"
             self.spectated_match_id = next_m.match_id
             return next_m
+
+        # If no further playable matches exist in this round:
+        all_finished = all(m.status == "finished" for m in self.active_matches)
+        if all_finished:
+            remaining = [p for p in self.participants.values() if not p.is_eliminated]
+            if len(remaining) <= 1:
+                self.status = "finished"
+            elif self.format == "knockout":
+                self.status = "round_end"
+            else:
+                if self.current_round >= self.total_rounds:
+                    self.status = "finished"
+                else:
+                    self.status = "round_end"
+            if self.status == "finished":
+                await self._trigger_tournament_finished()
+
         return None
 
     async def handle_match_action(self, user_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -451,6 +518,9 @@ class Tournament:
             self.status = "lobby"
             self.current_round = 0
             self.active_matches = []
+            self.transition_info = None
+            self._finished_triggered = False
+            self.rewards.rewards_granted = False
             for p in self.participants.values():
                 p.score = 0
                 p.wins = 0
@@ -463,10 +533,12 @@ class Tournament:
             if not is_host:
                 return {"error": "Only host can end tournament"}
             self.status = "finished"
+            self.transition_info = None
+            await self._trigger_tournament_finished()
             return {"status": "tournament_finished"}
 
         if action == "tournament_cheer":
-            emote = data.get("emote", "🎉")
+            emote = str(data.get("emote", "🎉"))[:8]
             p = self.participants.get(user_id)
             name = p.display_name if p else "Zuschauer"
             current_m = self.get_current_match()
