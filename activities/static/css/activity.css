@@ -110,6 +110,48 @@ body {
   color: var(--text-header);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-sound-toggle {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text-normal);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+.btn-sound-toggle:hover {
+  background-color: var(--bg-hover);
+  transform: scale(1.06);
+}
+
+.btn-sound-toggle:active {
+  transform: scale(0.94);
+}
+
+.global-cheer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
 .user-badge {
   display: flex;
   align-items: center;
@@ -1870,5 +1912,36 @@ body {
   font-size: 0.82rem;
   color: var(--text-normal);
   line-height: 1.35;
+}
+
+/* ── Connection Banner & Offline States ── */
+.connection-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(218, 55, 60, 0.95);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(218, 55, 60, 0.5);
+  animation: pulse 1.2s ease-in-out infinite;
+  z-index: 1000;
+}
+
+.lobby-tag-offline,
+.player-tag-offline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  animation: pulse 1.5s infinite;
 }
 

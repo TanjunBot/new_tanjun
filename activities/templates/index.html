@@ -18,16 +18,26 @@
       <div class="brand-icon">🎮</div>
       <div class="brand-title">Tanjun Activities</div>
     </div>
-    <div class="user-badge">
-      <div class="user-avatar-wrap-header">
-        <img id="userAvatar" class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
-        <span class="user-status-dot"></span>
+    <div class="header-right">
+      <button id="soundToggleBtn" class="btn-sound-toggle" type="button" title="Sound umschalten" aria-label="Sound umschalten">🔊</button>
+      <div class="user-badge">
+        <div class="user-avatar-wrap-header">
+          <img id="userAvatar" class="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+          <span class="user-status-dot"></span>
+        </div>
+        <span id="usernameDisplay">Spieler</span>
       </div>
-      <span id="usernameDisplay">Spieler</span>
     </div>
   </header>
 
   <main class="game-container">
+    <!-- WebSocket Reconnect Status Banner -->
+    <div id="connectionBanner" class="connection-banner" style="display: none;">
+      <span>🔌</span>
+      <span>Verbindung zum Server unterbrochen... Verbinde erneut...</span>
+    </div>
+    <!-- Global Cheer Overlay for showmatches & active gameplay -->
+    <div id="globalCheerOverlay" class="tourney-cheer-overlay global-cheer-overlay"></div>
     <!-- Persistent Tournament HUD (Visible during active Cup matches across all games) -->
     <div id="tournamentHud" class="tourney-hud glass-panel" style="display: none;">
       <div class="tourney-hud-left">
@@ -428,9 +438,10 @@
         <div id="tourneyPlayersList" class="lobby-players-list"></div>
       </div>
 
-      <div id="tourneyLobbyStatusMsg" class="lobby-status-text"></div>
-
-      <button id="tourneyStartBtn" class="btn-primary" type="button">🏆 Turnier Starten</button>
+      <div class="lobby-action-row" style="display: flex; gap: 10px; margin-top: 14px;">
+        <button id="tourneyStartBtn" class="btn-primary" type="button" style="flex: 2;">🏆 Turnier Starten</button>
+        <button id="tourneyLeaveBtn" class="btn-secondary" type="button" style="flex: 1; display: none;">Verlassen</button>
+      </div>
     </section>
 
     <!-- 5. Tournament Leaderboard & Cup Modal -->

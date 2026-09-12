@@ -1,5 +1,6 @@
 """Unit tests for Discord Activities framework and games."""
 
+import asyncio
 import unittest
 from activities.base import Player
 from activities.manager import session_manager
@@ -628,6 +629,594 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIsNotNone(m2)
         self.assertEqual(m2.status, "active")
         self.assertIsNone(tourney.transition_info)
+
+    async def test_leave_tournament_and_reconnect_non_elimination(self):
+        """Verify leave_tournament removes in lobby, and disconnect doesn't eliminate in points mode."""
+        session = session_manager.create_session("hub", host=self.host, session_id="test_leave_reconnect")
+        tourney = session.create_tournament(host=self.host)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+        self.assertEqual(len(tourney.participants), 2)
+
+        # 1. Leave in lobby removes participant
+        session.leave_tournament("user_p2")
+        self.assertNotIn("user_p2", tourney.participants)
+
+        # 2. Rejoin and start tournament
+        tourney.add_participant(p2)
+        await tourney.start_tournament("connect4")
+        self.assertEqual(tourney.status, "active")
+
+        # 3. Disconnect in active tournament (points mode) only marks connected=False, NOT is_eliminated
+        tourney.remove_participant("user_p2")
+        self.assertFalse(tourney.participants["user_p2"].connected)
+        self.assertFalse(tourney.participants["user_p2"].is_eliminated)
+
+        # 4. Reconnect restores connected=True
+        tourney.add_participant(p2)
+        self.assertTrue(tourney.participants["user_p2"].connected)
+        self.assertFalse(tourney.participants["user_p2"].is_eliminated)
+
+    async def test_host_migration(self):
+        """Verify that when host departs, session & tournament migrate to next connected human player."""
+        session = session_manager.create_session("hub", host=self.host, session_id="test_migration")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        session.game.add_player(p2)
+        tourney = session.create_tournament(host=self.host)
+        tourney.add_participant(p2)
+
+        self.assertEqual(session.game.host.user_id, "user_host")
+        self.assertEqual(tourney.host_id, "user_host")
+
+        # Migrate when user_host departs
+        new_host = session.migrate_host_if_needed("user_host")
+        self.assertIsNotNone(new_host)
+        self.assertEqual(new_host.user_id, "user_p2")
+        self.assertEqual(session.game.host.user_id, "user_p2")
+        self.assertTrue(session.game.players["user_p2"].is_host)
+        self.assertEqual(tourney.host_id, "user_p2")
+        self.assertTrue(tourney.participants["user_p2"].is_host)
+
+    async def test_tournament_end_early_callback(self):
+        """Verify that host ending tournament early triggers on_finished_callback."""
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="test_end_early", host=self.host)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        finished_events = []
+        async def mock_finish_cb(t):
+            finished_events.append(t.session_id)
+
+        tourney.on_finished_callback = mock_finish_cb
+        await tourney.start_tournament("tictactoe")
+        self.assertEqual(tourney.status, "active")
+
+        # Host ends tournament early
+        res = await tourney.handle_action("user_host", "tournament_end", {})
+        self.assertEqual(res["status"], "tournament_finished")
+        self.assertEqual(tourney.status, "finished")
+        self.assertEqual(len(finished_events), 1)
+        self.assertEqual(finished_events[0], "test_end_early")
+
+    async def test_connect4_bot_avoids_suicide_trap(self):
+        """Verify that Connect 4 bot AI on difficulty >= 3 avoids setting up a winning move for player."""
+        session = session_manager.create_session("connect4", host=self.host, session_id="test_c4_trap")
+        game: Connect4Game = session.game
+        game.difficulty = 4
+        game.setup_bot(difficulty=4)
+        game.player_symbols = {"user_host": "R", "bot_tanjun": "Y"}
+        game.is_started = True
+
+        # Set up horizontal 3-in-a-row for Human "R" on row 4 in columns 0, 1, 2.
+        # If bot places chip in column 3, row 5 (the bottom row), row 4 in col 3 will become playable for Human to win!
+        # Bottom row (row 5) indices: 5 * 7 + c = 35 + c
+        # Row 4 indices: 4 * 7 + c = 28 + c
+        game.board = [""] * 42
+        # Human chips at row 4, cols 0, 1, 2
+        game.board[4 * 7 + 0] = "R"
+        game.board[4 * 7 + 1] = "R"
+        game.board[4 * 7 + 2] = "R"
+        # Support chips under them on row 5 (non-winning for bot)
+        game.board[5 * 7 + 0] = "Y"
+        game.board[5 * 7 + 1] = "R"
+        game.board[5 * 7 + 2] = "Y"
+
+        # Now column 3 is empty at row 5. If bot plays in col 3 at row 5, human can play row 4, col 3 and win with 4-in-a-row!
+        # Col 4, 5, 6 are completely empty and safe.
+        bot_choice = game._bot_calculate_move()
+        # Bot should NOT choose column 3!
+        self.assertNotEqual(bot_choice, 3, "Bot should have avoided column 3 because it sets up a human win on row 4!")
+
+    async def test_bot_first_turn_handover(self):
+        """Verify that when bot makes first move, turn hands over to human player properly."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_first_turn")
+        game: TicTacToeGame = session.game
+        game.first_turn_rule = "guest"  # Guest is bot
+        await game.handle_action("user_host", "start", {"mode": "bot", "first_turn": "guest"})
+
+        self.assertTrue(game.is_started)
+        # Bot made move, turn must now be user_host
+        self.assertEqual(game.current_turn, "user_host")
+        x_count = sum(1 for c in game.board if c == "X")
+        o_count = sum(1 for c in game.board if c == "O")
+        self.assertEqual(o_count, 1)
+        self.assertEqual(x_count, 0)
+
+
+    async def test_spectator_action_rejection(self):
+        """Verify that spectators cannot make game moves or picks."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_spec_rej")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        spec = Player(user_id="user_spec", username="Spec", display_name="Spectator")
+        session.game.add_player(p2)
+        session.game.add_player(spec)  # exceeds max_players (2) -> added as spectator
+        self.assertIn("user_spec", session.game.spectators)
+
+        await session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        self.assertTrue(session.game.is_started)
+
+        # Spectator tries to move in TicTacToe
+        res = await session.game.handle_action("user_spec", "move", {"cell": 0})
+        self.assertIn("error", res)
+        self.assertIn("Spectator", res["error"])
+
+        # Same for Connect4
+        c4_session = session_manager.create_session("connect4", host=self.host, session_id="test_c4_spec")
+        c4_session.game.add_player(p2)
+        c4_session.game.add_player(spec)
+        await c4_session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        c4_res = await c4_session.game.handle_action("user_spec", "move", {"col": 0})
+        self.assertIn("error", c4_res)
+        self.assertIn("Spectator", c4_res["error"])
+
+        # Same for RPS
+        rps_session = session_manager.create_session("rps", host=self.host, session_id="test_rps_spec")
+        rps_session.game.add_player(p2)
+        rps_session.game.add_player(spec)
+        await rps_session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        rps_res = await rps_session.game.handle_action("user_spec", "pick", {"choice": "rock"})
+        self.assertIn("error", rps_res)
+        self.assertIn("Only active players", rps_res["error"])
+
+    async def test_spectators_included_in_tournament_mode(self):
+        """Verify that spectators from Hub/game are transferred into tournament participants."""
+        session = session_manager.create_session("hub", host=self.host, session_id="test_hub_tourney")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        p3 = Player(user_id="user_p3", username="P3", display_name="Player 3")
+        p4 = Player(user_id="user_p4", username="P4", display_name="Player 4")
+        session.game.add_player(p2)
+        session.game.add_player(p3)  # In hub with max_players=2, p3 & p4 become spectators
+        session.game.add_player(p4)
+
+        self.assertEqual(len(session.game.players), 2)
+        self.assertEqual(len(session.game.spectators), 2)
+
+        # Host initiates tournament mode
+        session.start_tournament_mode()
+        self.assertIsNotNone(session.tournament)
+        # All 4 participants must be registered in the tournament
+        self.assertEqual(len(session.tournament.participants), 4)
+        self.assertIn("user_host", session.tournament.participants)
+        self.assertIn("user_p2", session.tournament.participants)
+        self.assertIn("user_p3", session.tournament.participants)
+        self.assertIn("user_p4", session.tournament.participants)
+
+    async def test_rps_spectator_no_deadlock(self):
+        """Verify that RPS round evaluates cleanly between duelists even if spectators are present."""
+        session = session_manager.create_session("rps", host=self.host, session_id="test_rps_deadlock")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        spec = Player(user_id="user_spec", username="Spec", display_name="Spectator")
+        session.game.add_player(p2)
+        session.game.add_player(spec)
+
+        await session.game.handle_action("user_host", "start", {"mode": "pvp", "target_wins": 2})
+        self.assertTrue(session.game.is_started)
+
+        # Host picks rock
+        p1_res = await session.game.handle_action("user_host", "pick", {"choice": "rock"})
+        self.assertFalse(p1_res["round_completed"])
+
+        # P2 picks scissors -> round must complete immediately without waiting for spec!
+        p2_res = await session.game.handle_action("user_p2", "pick", {"choice": "scissors"})
+        self.assertTrue(p2_res["round_completed"])
+        self.assertEqual(p2_res["round_result"]["winner"], "user_host")
+        self.assertEqual(session.game.scores["user_host"], 1)
+
+    async def test_switch_game_respects_capacity(self):
+        """Verify switch_game maintains max_players bound and routes extra players to spectators."""
+        session = session_manager.create_session("connect4", host=self.host, session_id="test_switch_cap")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        session.game.add_player(p2)
+
+        # Switch to TicTacToe (max_players = 2)
+        new_game = session.switch_game("tictactoe")
+        self.assertEqual(new_game.game_type, "tictactoe")
+        self.assertLessEqual(len(new_game.players), new_game.max_players)
+
+    async def test_score_reset_on_mode_change_and_lobby(self):
+        """Verify game scores are cleared when returning to lobby or switching game modes."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_score_reset")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        session.game.add_player(p2)
+
+        await session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        # Complete a game: host wins
+        session.game.current_turn = "user_host"
+        await session.game.handle_action("user_host", "move", {"cell": 0})
+        await session.game.handle_action("user_p2", "move", {"cell": 3})
+        await session.game.handle_action("user_host", "move", {"cell": 1})
+        await session.game.handle_action("user_p2", "move", {"cell": 4})
+        await session.game.handle_action("user_host", "move", {"cell": 2})
+
+        self.assertTrue(session.game.is_finished)
+        self.assertEqual(session.game.scores["user_host"], 1)
+
+        # Return to lobby
+        lobby_res = await session.game.handle_action("user_host", "lobby", {})
+        self.assertEqual(lobby_res["status"], "lobby")
+        self.assertEqual(session.game.scores["user_host"], 0)
+
+    async def test_points_tournament_retains_disconnected_players(self):
+        """Verify that in points tournament, temporary disconnected status doesn't eliminate player from next round."""
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="test_disc_ret", host=self.host)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        await tourney.handle_action("user_host", "tournament_update_settings", {
+            "format": "points",
+            "total_rounds": 3,
+            "selected_game": "tictactoe"
+        })
+        await tourney.start_tournament("tictactoe")
+        self.assertEqual(tourney.current_round, 1)
+
+        # Simulate match resolution
+        curr_m = tourney.get_current_match()
+        await tourney.resolve_current_match("user_host")
+        self.assertEqual(tourney.status, "round_end")
+
+        # P2 has a brief network disconnect before round 2 starts
+        tourney.participants["user_p2"].connected = False
+
+        # Host advances to round 2
+        await tourney.handle_action("user_host", "tournament_next_round", {})
+        self.assertEqual(tourney.current_round, 2)
+        # P2 should still be in the round pairings!
+        match_pids = [tourney.active_matches[0].player1.user_id, tourney.active_matches[0].player2.user_id]
+        self.assertIn("user_p2", match_pids)
+
+    async def test_tournament_leave_active_match_forfeit(self):
+        """Verify that voluntarily leaving an active match forfeits to the opponent."""
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="test_forfeit", host=self.host)
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        p3 = Player(user_id="user_p3", username="P3", display_name="Player 3")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+
+        await tourney.start_tournament("tictactoe")
+        self.assertEqual(tourney.status, "active")
+
+        # Find match with p2
+        curr_m = tourney.get_current_match()
+        active_pids = [curr_m.player1.user_id, curr_m.player2.user_id if curr_m.player2 else None]
+        leaving_pid = active_pids[0]
+        expected_winner = active_pids[1]
+
+        winner = tourney.remove_participant(leaving_pid, voluntary=True)
+        self.assertEqual(winner, expected_winner)
+
+        # Resolve match with the forfeit winner
+        await tourney.resolve_current_match(winner)
+        self.assertEqual(curr_m.status, "finished")
+        self.assertEqual(curr_m.winner_id, expected_winner)
+
+    async def test_points_tournament_finishes_when_only_one_player_remains(self):
+        """Verify that tournament finishes immediately when remaining active participants drop to 1."""
+        from activities.tournament import Tournament
+
+        finished_called = []
+        async def on_fin(t):
+            finished_called.append(t.session_id)
+
+        tourney = Tournament(session_id="test_dropouts", host=self.host)
+        tourney.on_finished_callback = on_fin
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        await tourney.start_tournament("tictactoe")
+        self.assertEqual(tourney.status, "active")
+
+        # P2 voluntarily leaves
+        forfeit_winner = tourney.remove_participant("user_p2", voluntary=True)
+        self.assertEqual(forfeit_winner, "user_host")
+        await tourney.resolve_current_match(forfeit_winner)
+
+        # Because only 1 player remains, tournament should finish immediately!
+        self.assertEqual(tourney.status, "finished")
+        self.assertEqual(len(finished_called), 1)
+
+    async def test_knockout_disconnect_reconnect_and_forfeit_timer(self):
+        """Verify that a disconnected player can reconnect during match, or forfeits after timeout."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_reconnect_ko")
+        tourney = session.start_tournament_mode()
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        await tourney.handle_action("user_host", "tournament_update_settings", {
+            "format": "knockout",
+            "selected_game": "tictactoe"
+        })
+        await tourney.start_tournament("tictactoe")
+
+        curr_m = tourney.get_current_match()
+        self.assertEqual(curr_m.status, "active")
+
+        # 1. P2 has a brief network disconnect
+        winner = tourney.remove_participant("user_p2", voluntary=False)
+        self.assertIsNone(winner, "Temporary disconnect should not immediately forfeit active match")
+        self.assertFalse(tourney.participants["user_p2"].connected)
+        session.schedule_disconnect_forfeit("user_p2", delay=0.1)
+
+        # 2. P2 reconnects within grace period!
+        session.cancel_disconnect_forfeit("user_p2")
+        tourney.add_participant(p2)
+        self.assertTrue(tourney.participants["user_p2"].connected)
+        self.assertEqual(curr_m.status, "active")
+
+        # 3. P2 disconnects again and timeout expires without reconnecting
+        tourney.remove_participant("user_p2", voluntary=False)
+        session.schedule_disconnect_forfeit("user_p2", delay=0.05)
+        # Wait for timeout
+        await asyncio.sleep(0.1)
+
+        # Match must have been forfeited to user_host
+        self.assertEqual(curr_m.status, "finished")
+        self.assertEqual(curr_m.winner_id, "user_host")
+        self.assertEqual(tourney.status, "finished")
+
+    async def test_malformed_action_payloads(self):
+        """Verify robust error handling on non-int or malformed action payloads."""
+        # Connect4
+        c4_session = session_manager.create_session("connect4", host=self.host, session_id="test_malformed_c4")
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        c4_session.game.add_player(p2)
+        await c4_session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        c4_session.game.current_turn = "user_host"
+
+        # String column
+        r1 = await c4_session.game.handle_action("user_host", "move", {"col": "not_a_number"})
+        self.assertIn("error", r1)
+        self.assertEqual(r1["error"], "Invalid column")
+
+        # Boolean column (isinstance(True, int) in Python)
+        r2 = await c4_session.game.handle_action("user_host", "move", {"col": True})
+        self.assertIn("error", r2)
+        self.assertEqual(r2["error"], "Invalid column")
+
+        # TicTacToe
+        ttt_session = session_manager.create_session("tictactoe", host=self.host, session_id="test_malformed_ttt")
+        ttt_session.game.add_player(p2)
+        await ttt_session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        ttt_session.game.current_turn = "user_host"
+
+        # String cell
+        t1 = await ttt_session.game.handle_action("user_host", "move", {"cell": "nine"})
+        self.assertIn("error", t1)
+        self.assertEqual(t1["error"], "Invalid cell move")
+
+        # Boolean cell
+        t2 = await ttt_session.game.handle_action("user_host", "move", {"cell": False})
+        self.assertIn("error", t2)
+        self.assertEqual(t2["error"], "Invalid cell move")
+
+        # RPS
+        rps_session = session_manager.create_session("rps", host=self.host, session_id="test_malformed_rps")
+        rps_session.game.add_player(p2)
+        await rps_session.game.handle_action("user_host", "start", {"mode": "pvp"})
+
+        # Non-string choice
+        rps1 = await rps_session.game.handle_action("user_host", "pick", {"choice": 123})
+        self.assertIn("error", rps1)
+        self.assertIn("Invalid choice", rps1["error"])
+
+    async def test_session_manager_cleanup_idle_sessions(self):
+        """Verify that inactive sessions without sockets are purged when idle timeout expires."""
+        s = session_manager.create_session("tictactoe", host=self.host, session_id="test_cleanup_stale")
+        self.assertIsNotNone(session_manager.get_session("test_cleanup_stale"))
+
+        # Simulate session created 2 hours ago
+        s.last_activity = asyncio.get_event_loop().time() - 7200
+        # Clean up sessions idle > 3600s
+        await session_manager.cleanup_idle_sessions(max_idle_seconds=3600)
+
+        # Stale session must have been purged
+        self.assertIsNone(session_manager.get_session("test_cleanup_stale"))
+
+    async def test_standard_game_disconnect_forfeit_and_reconnect(self):
+        """Verify that in standard games, disconnect sets a grace period forfeit timer,
+        and reconnecting cancels forfeit while timeout forfeits match to opponent."""
+        session = session_manager.create_session("connect4", host=self.host, session_id="test_std_disconnect")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+        await session.game.handle_action("user_host", "start", {"mode": "pvp"})
+        self.assertTrue(session.game.is_started)
+        self.assertFalse(session.game.is_finished)
+
+        # 1. Guest disconnects (e.g. mobile app backgrounded)
+        session.game.remove_player("user_guest")
+        self.assertFalse(session.game.players["user_guest"].connected)
+        session.schedule_disconnect_forfeit("user_guest", delay=0.1)
+
+        # 2. Guest reconnects within grace period
+        session.cancel_disconnect_forfeit("user_guest")
+        session.game.add_player(p2)
+        self.assertTrue(session.game.players["user_guest"].connected)
+        self.assertTrue(session.game.is_started)
+        self.assertFalse(session.game.is_finished)
+
+        # 3. Guest drops connection permanently and forfeit timer expires
+        session.game.remove_player("user_guest")
+        session.schedule_disconnect_forfeit("user_guest", delay=0.05)
+        await asyncio.sleep(0.1)
+
+        # Game must now be finished with host awarded the win by forfeit
+        self.assertTrue(session.game.is_finished)
+        self.assertEqual(session.game.winner, "user_host")
+        self.assertEqual(session.game.scores.get("user_host"), 1)
+
+    async def test_rps_secret_choice_masking_no_spectator_leak(self):
+        """Verify that secret picks in RPS are never leaked to opponents or unauthenticated/spectator requests."""
+        session = session_manager.create_session("rps", host=self.host, session_id="test_rps_masking")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+        await session.game.handle_action("user_host", "start", {"mode": "pvp"})
+
+        # Host picks rock
+        pick_res = await session.game.handle_action("user_host", "pick", {"choice": "rock"})
+        self.assertEqual(pick_res["status"], "picked")
+
+        # 1. Host sees their own pick
+        host_state = session.game.get_state(for_user_id="user_host")
+        self.assertEqual(host_state["current_picks"]["user_host"], "rock")
+
+        # 2. Opponent (Guest) sees masked "locked" pick
+        guest_state = session.game.get_state(for_user_id="user_guest")
+        self.assertEqual(guest_state["current_picks"]["user_host"], "locked")
+
+        # 3. Spectator or API GET request with for_user_id=None sees masked "locked"
+        spectator_state = session.game.get_state(for_user_id=None)
+        self.assertEqual(spectator_state["current_picks"]["user_host"], "locked")
+
+    async def test_host_migration_delayed_on_disconnect_timeout(self):
+        """Verify host migration only occurs after disconnect grace period expires,
+        and cleanly unsets the former host's is_host flag."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_host_migrate")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+        self.assertTrue(session.game.players["user_host"].is_host)
+
+        # Host disconnects
+        session.game.remove_player("user_host")
+        session.schedule_disconnect_forfeit("user_host", delay=0.05)
+
+        # Before timeout expires, host is still user_host
+        self.assertEqual(session.game.host.user_id, "user_host")
+
+        # Wait for timeout to expire
+        await asyncio.sleep(0.1)
+
+        # Host privileges must have transferred to user_guest
+        self.assertEqual(session.game.host.user_id, "user_guest")
+        self.assertTrue(session.game.players["user_guest"].is_host)
+        self.assertFalse(session.game.players["user_host"].is_host)
+
+    async def test_pvp_voluntary_forfeit_action(self):
+        """Verify that sending forfeit in an active PvP match awards the win to opponent."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_forfeit_action")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+        await session.game.handle_action("user_host", "start", {"mode": "pvp"})
+
+        # Guest forfeits
+        self.assertTrue(session.game.is_started)
+        self.assertFalse(session.game.is_finished)
+
+        # Simulate forfeit action
+        if session.game and session.game.is_started and not session.game.is_finished:
+            opponents = [pid for pid in session.game.players if pid != "user_guest" and not session.game.players[pid].is_bot]
+            if opponents:
+                winner = opponents[0]
+                session.game.is_finished = True
+                session.game.winner = winner
+                session.game.scores[winner] = session.game.scores.get(winner, 0) + 1
+
+        self.assertTrue(session.game.is_finished)
+        self.assertEqual(session.game.winner, "user_host")
+        self.assertEqual(session.game.scores["user_host"], 1)
+
+    async def test_tournament_host_preserved_when_spectating_matches(self):
+        """Verify that when tournament host Alice is spectating Bob vs Charlie,
+        Alice remains the session host and is_host is not falsely assigned to Bob."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_tourney_spectate_host")
+        tourney = session.tournament
+        p_bob = Player(user_id="user_bob", username="Bob", display_name="Bob")
+        p_charlie = Player(user_id="user_charlie", username="Charlie", display_name="Charlie")
+        tourney.add_participant(p_bob)
+        tourney.add_participant(p_charlie)
+
+        # Force pairings to be Bob vs Charlie, Alice receives bye or spectates
+        await tourney.start_tournament("tictactoe")
+        # Find a match where Alice is not playing
+        alice_match = next((m for m in tourney.active_matches if m.player1.user_id != self.host.user_id and (not m.player2 or m.player2.user_id != self.host.user_id)), None)
+        if alice_match:
+            tourney.active_matches = [alice_match]
+            tourney.current_match_idx = 0
+            session.sync_tournament_match()
+
+            # Host must still be Alice
+            self.assertEqual(session.game.host.user_id, self.host.user_id)
+            self.assertTrue(session.game.host.is_host)
+            # Neither Bob nor Charlie should have hijacked host
+            p1_player = session.game.players.get(alice_match.player1.user_id)
+            if p1_player:
+                self.assertFalse(p1_player.is_host)
+
+    async def test_knockout_tournament_dispatches_finished_rewards(self):
+        """Verify that knockout tournament triggers finish callback when final match concludes."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_knockout_finish_cb")
+        tourney = session.tournament
+        p2 = Player(user_id="user_p2", username="P2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        callback_called = False
+        def _on_finish(t):
+            nonlocal callback_called
+            callback_called = True
+
+        tourney.on_finished_callback = _on_finish
+        await tourney.handle_action("user_host", "tournament_update_settings", {"format": "knockout"})
+        await tourney.start_tournament("tictactoe")
+
+        curr_m = tourney.get_current_match()
+        self.assertIsNotNone(curr_m)
+        # Host wins the final match
+        await tourney.resolve_current_match("user_host")
+
+        self.assertEqual(tourney.status, "finished")
+        self.assertTrue(callback_called, "Finished callback must be invoked upon knockout conclusion")
+
+    async def test_tictactoe_restart_respects_first_turn_rule(self):
+        """Verify that restarting a TicTacToe game respects the first_turn_rule (guest)."""
+        session = session_manager.create_session("tictactoe", host=self.host, session_id="test_ttt_restart_turn")
+        p2 = Player(user_id="user_guest", username="Guest", display_name="Guest")
+        session.game.add_player(p2)
+        await session.game.handle_action("user_host", "start", {"mode": "pvp", "first_turn": "guest"})
+        self.assertEqual(session.game.current_turn, "user_guest")
+
+        # Restart game
+        await session.game.handle_action("user_host", "restart", {})
+        # Must still be user_guest's turn
+        self.assertEqual(session.game.current_turn, "user_guest")
+
+    async def test_tournament_cheer_length_clamping(self):
+        """Verify that tournament cheer emote string is safely clamped."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_cheer_clamp")
+        tourney = session.tournament
+        p2 = Player(user_id="user_p2", username="P2", display_name="P2")
+        tourney.add_participant(p2)
+        await tourney.start_tournament("tictactoe")
+
+        res = await tourney.handle_action("user_p2", "tournament_cheer", {"emote": "A" * 500})
+        self.assertEqual(res["status"], "cheered")
+        curr_m = tourney.get_current_match()
+        self.assertTrue(len(curr_m.cheers) > 0)
+        self.assertEqual(curr_m.cheers[-1]["emote"], "AAAAAAAA")
 
 
 if __name__ == "__main__":

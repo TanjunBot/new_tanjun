@@ -105,7 +105,7 @@ class RPSGame(BaseGame):
         return random.choice(available)
 
     def _evaluate_round(self) -> Dict[str, Any]:
-        p_ids = list(self.players.keys())
+        p_ids = list(self.players.keys())[:2]
         p1_id, p2_id = p_ids[0], p_ids[1]
         c1 = self.current_picks.get(p1_id, "")
         c2 = self.current_picks.get(p2_id, "")
@@ -150,6 +150,8 @@ class RPSGame(BaseGame):
     ) -> Dict[str, Any]:
         if action == "start":
             mode = data.get("mode", "pvp")
+            if mode != self.game_mode:
+                self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
             self.difficulty = int(data.get("difficulty", 3))
             self.target_wins = int(data.get("target_wins", 3))
@@ -173,8 +175,12 @@ class RPSGame(BaseGame):
             if not self.is_started or self.is_finished:
                 return {"error": "Game is not active"}
 
+            active_pids = list(self.players.keys())[:2]
+            if player_id not in active_pids or player_id in self.spectators:
+                return {"error": "Only active players can make picks"}
+
             choice = data.get("choice")
-            if choice not in self.choices:
+            if not isinstance(choice, str) or choice not in self.choices:
                 return {"error": f"Invalid choice: {choice}"}
 
             self.current_picks[player_id] = choice
@@ -192,8 +198,8 @@ class RPSGame(BaseGame):
                 round_result = self._evaluate_round()
                 round_completed = True
             else:
-                # Check if all human players have picked
-                human_pids = [p for p in self.players.keys() if not self.players[p].is_bot]
+                # Check if all active human players have picked
+                human_pids = [p for p in active_pids if not self.players[p].is_bot]
                 if all(pid in self.current_picks for pid in human_pids):
                     round_result = self._evaluate_round()
                     round_completed = True
@@ -219,9 +225,11 @@ class RPSGame(BaseGame):
             self.winner = None
             self.current_picks = {}
             self.last_round_result = None
+            self.round_history = []
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
+            self.scores = {pid: 0 for pid in self.players}
             return {"status": "lobby", "state": self.get_state()}
 
         return {"error": f"Unknown action: {action}"}
@@ -240,7 +248,7 @@ class RPSGame(BaseGame):
         # Mask opponents' choices until round evaluation
         visible_picks: Dict[str, str] = {}
         for pid, choice in self.current_picks.items():
-            if for_user_id is None or pid == for_user_id:
+            if for_user_id is not None and pid == for_user_id:
                 visible_picks[pid] = choice
             else:
                 visible_picks[pid] = "locked"

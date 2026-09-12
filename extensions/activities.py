@@ -7,7 +7,7 @@ to launch multiplayer activity games in voice or text channels.
 from __future__ import annotations
 
 import logging
-from typing import Optional, cast
+from typing import Any, Optional, cast
 
 import discord
 from discord import app_commands
@@ -404,7 +404,7 @@ async def _dispatch_tournament_rewards(bot: Any, tourney: Any) -> None:
 
     # 2. Award Role
     granted_role_line = None
-    if tourney.rewards.can_grant_role and tourney.rewards.role_id and p1:
+    if tourney.rewards.can_grant_role and tourney.rewards.role_id and str(tourney.rewards.role_id).isdigit() and p1 and str(p1["user_id"]).isdigit():
         role = guild.get_role(int(tourney.rewards.role_id))
         if role:
             try:
@@ -418,18 +418,21 @@ async def _dispatch_tournament_rewards(bot: Any, tourney: Any) -> None:
                 logger.error("Failed to assign tournament reward role to %s: %s", p1["user_id"], exc)
 
     # 3. Channel Announcement Embed
-    if channel_id:
+    if channel_id and str(channel_id).isdigit():
         target_channel = guild.get_channel(int(channel_id))
         if target_channel and isinstance(target_channel, discord.TextChannel):
+            p1_mention = f"<@{p1['user_id']}>" if str(p1['user_id']).isdigit() else p1['display_name']
             desc = (
                 f"Das Community-Event **{tourney.title}** ist offiziell beendet!\n\n"
                 f"🏆 **Die Gewinner:**\n"
-                f"🥇 1. Platz: **<@{p1['user_id']}>** ({p1['score']} Punkte)\n"
+                f"🥇 1. Platz: **{p1_mention}** ({p1['score']} Punkte)\n"
             )
             if p2:
-                desc += f"🥈 2. Platz: **<@{p2['user_id']}>** ({p2['score']} Punkte)\n"
+                p2_mention = f"<@{p2['user_id']}>" if str(p2['user_id']).isdigit() else p2['display_name']
+                desc += f"🥈 2. Platz: **{p2_mention}** ({p2['score']} Punkte)\n"
             if p3:
-                desc += f"🥉 3. Platz: **<@{p3['user_id']}>** ({p3['score']} Punkte)\n"
+                p3_mention = f"<@{p3['user_id']}>" if str(p3['user_id']).isdigit() else p3['display_name']
+                desc += f"🥉 3. Platz: **{p3_mention}** ({p3['score']} Punkte)\n"
 
             if granted_xp_lines:
                 desc += f"\n✨ **Level-XP vergeben:**\n" + "\n".join(granted_xp_lines) + "\n"

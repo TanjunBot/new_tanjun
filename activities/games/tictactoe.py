@@ -81,7 +81,7 @@ class TicTacToeGame(BaseGame):
             if bot_move != -1:
                 self.board[bot_move] = self.player_symbols.get("bot_tanjun", "O")
                 self.last_move = bot_move
-                self.current_turn = p_ids[0]
+                self.current_turn = p_ids[1] if p_ids[0] == "bot_tanjun" else p_ids[0]
 
         return True
 
@@ -183,6 +183,8 @@ class TicTacToeGame(BaseGame):
     ) -> Dict[str, Any]:
         if action == "start":
             mode = data.get("mode", "pvp")
+            if mode != self.game_mode:
+                self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
             diff = int(data.get("difficulty", 3))
             self.difficulty = diff
@@ -205,11 +207,13 @@ class TicTacToeGame(BaseGame):
         if action == "move":
             if not self.is_started or self.is_finished:
                 return {"error": "Game is not active"}
+            if player_id not in self.players or player_id in self.spectators:
+                return {"error": "Spectators cannot make moves"}
             if self.current_turn != player_id:
                 return {"error": "Not your turn"}
 
             cell = data.get("cell")
-            if cell is None or not (0 <= cell <= 8) or self.board[cell] != "":
+            if cell is None or isinstance(cell, bool) or not isinstance(cell, int) or not (0 <= cell <= 8) or self.board[cell] != "":
                 return {"error": "Invalid cell move"}
 
             sym = self.player_symbols.get(player_id)
@@ -266,7 +270,13 @@ class TicTacToeGame(BaseGame):
             self.last_move = None
             p_ids = list(self.players.keys())
             if len(p_ids) >= 2:
-                self.current_turn = p_ids[0] if random.random() > 0.5 else p_ids[1]
+                if self.first_turn_rule == "random":
+                    self.current_turn = random.choice(p_ids)
+                elif self.first_turn_rule == "guest":
+                    self.current_turn = p_ids[1]
+                else:
+                    self.current_turn = p_ids[0]
+
                 if self.current_turn == "bot_tanjun":
                     bot_move = self._bot_calculate_move()
                     if bot_move != -1:
@@ -286,6 +296,7 @@ class TicTacToeGame(BaseGame):
             if "bot_tanjun" in self.players:
                 del self.players["bot_tanjun"]
                 self.bot_player = None
+            self.scores = {pid: 0 for pid in self.players}
             return {"status": "lobby", "state": self.get_state()}
 
         return {"error": f"Unknown action: {action}"}
