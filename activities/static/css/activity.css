@@ -1476,6 +1476,26 @@ body {
   transform: scale(0.95);
 }
 
+.tourney-match-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.tourney-match-badge.status-live {
+  background: rgba(35, 165, 90, 0.2);
+  color: #23a55a;
+  border: 1px solid rgba(35, 165, 90, 0.4);
+}
+.tourney-match-badge.status-pending {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+.tourney-match-badge.status-finished {
+  background: rgba(240, 178, 50, 0.15);
+  color: #f0b232;
+}
+
 .tourney-cheer-overlay {
   position: absolute;
   top: 0;

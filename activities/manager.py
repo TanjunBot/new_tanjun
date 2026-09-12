@@ -272,8 +272,16 @@ class GameSession:
     def get_full_state(self, for_user_id: Optional[str] = None) -> Dict[str, Any]:
         if self.tournament and self.tournament.status in ("active", "round_end"):
             user_match = self.tournament.get_match_for_user(for_user_id) if for_user_id else None
-            if user_match and user_match.game_instance and self.tournament.match_style == "parallel":
+            if user_match and user_match.status == "active" and user_match.game_instance and self.tournament.match_style == "parallel":
                 state = user_match.game_instance.get_state(for_user_id=for_user_id)
+            elif self.tournament.match_style == "parallel":
+                spectated_m = self.tournament.get_current_spectated_match()
+                if spectated_m and spectated_m.game_instance:
+                    state = spectated_m.game_instance.get_state(for_user_id=for_user_id)
+                elif user_match and user_match.game_instance:
+                    state = user_match.game_instance.get_state(for_user_id=for_user_id)
+                else:
+                    state = self.game.get_state(for_user_id=for_user_id)
             else:
                 state = self.game.get_state(for_user_id=for_user_id)
         else:

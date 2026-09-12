@@ -383,6 +383,8 @@ class TanjunActivityClient {
       tourneyNextRoundBtn: document.getElementById("tourneyNextRoundBtn"),
       tourneyNextMatchBtn: document.getElementById("tourneyNextMatchBtn"),
       tourneyEndFromRoundBtn: document.getElementById("tourneyEndFromRoundBtn"),
+      tourneyModalActiveMatchesSection: document.getElementById("tourneyModalActiveMatchesSection"),
+      tourneyModalActiveMatchesList: document.getElementById("tourneyModalActiveMatchesList"),
       tourneyModalHistoryList: document.getElementById("tourneyModalHistoryList"),
       tourneyEndEarlyBtn: document.getElementById("tourneyEndEarlyBtn"),
       tourneyCheerBtns: document.querySelectorAll(".tourney-cheer-btn"),
@@ -1489,6 +1491,17 @@ class TanjunActivityClient {
         if (this.el.gameView) this.el.gameView.style.display = "block";
         this.renderGame(state);
 
+        // Floating cheers during tournament matches
+        if (tourney.current_match?.cheers && tourney.current_match.cheers.length > 0) {
+          if (tourney.current_match.cheers.length > this.renderedCheerCount) {
+            const newCheers = tourney.current_match.cheers.slice(this.renderedCheerCount);
+            newCheers.forEach(c => this.spawnFloatingCheer(c.name, c.emote));
+            this.renderedCheerCount = tourney.current_match.cheers.length;
+          }
+        } else {
+          this.renderedCheerCount = 0;
+        }
+
         if (this.el.tournamentLeaderboardModal && this.el.tournamentLeaderboardModal.style.display === "flex") {
           this.renderTournamentLeaderboardModalContent(tourney);
         }
@@ -2266,6 +2279,59 @@ class TanjunActivityClient {
         this.el.tourneyHostControlsBox.style.display = "none";
         if (this.el.tourneyEndEarlyBtn) this.el.tourneyEndEarlyBtn.style.display = "none";
         if (this.el.tourneyEndFromRoundBtn) this.el.tourneyEndFromRoundBtn.style.display = "none";
+      }
+    }
+
+    // Active Matches of Current Round
+    if (this.el.tourneyModalActiveMatchesSection && this.el.tourneyModalActiveMatchesList) {
+      const activeMatches = tourney.active_matches || [];
+      if (activeMatches.length > 0 && tourney.status === "active") {
+        this.el.tourneyModalActiveMatchesSection.style.display = "block";
+        const gameIcons = { connect4: "🔴 Vier Gewinnt", tictactoe: "❌ Tic-Tac-Toe", rps: "✊ RPS" };
+        let matchesHtml = "";
+        activeMatches.forEach(m => {
+          const isCurrSpectated = (tourney.current_match && tourney.current_match.match_id === m.match_id);
+          const isFinished = m.status === "finished";
+          const isPlaying = m.status === "active";
+          let statusBadge = `<span class="tourney-match-badge status-pending">⏳ Wartend</span>`;
+          if (isFinished) {
+            statusBadge = `<span class="tourney-match-badge status-finished">🏁 Beendet</span>`;
+          } else if (isPlaying) {
+            statusBadge = `<span class="tourney-match-badge status-live">🟢 Live</span>`;
+          }
+
+          let spectateBtn = "";
+          if (tourney.match_style === "parallel" && !isCurrSpectated && !isFinished) {
+            spectateBtn = `<button class="btn-secondary btn-sm tourney-switch-match-btn" data-match-id="${m.match_id}" type="button" style="padding: 4px 8px; font-size: 0.72rem;">👁️ Zuschauen</button>`;
+          }
+
+          matchesHtml += `
+            <div class="tourney-history-item" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; ${isCurrSpectated ? 'border: 1px solid var(--discord-blurple);' : ''}">
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span class="tourney-history-details"><strong>${this.escapeHtml(m.p1_name)}</strong> vs <strong>${this.escapeHtml(m.p2_name)}</strong></span>
+                <span style="font-size: 0.72rem; color: #94a3b8;">${gameIcons[m.game_type] || m.game_type} ${isCurrSpectated ? '• 👁️ Ausgewählt' : ''}</span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                ${statusBadge}
+                ${spectateBtn}
+              </div>
+            </div>
+          `;
+        });
+        this.el.tourneyModalActiveMatchesList.innerHTML = matchesHtml;
+
+        // Hook up switch spectate buttons
+        this.el.tourneyModalActiveMatchesList.querySelectorAll(".tourney-switch-match-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const mId = btn.dataset.matchId;
+            if (mId) {
+              this.sendAction("tournament_spectate_match", { match_id: mId });
+              this.closeTournamentLeaderboardModal();
+            }
+          });
+        });
+      } else {
+        this.el.tourneyModalActiveMatchesSection.style.display = "none";
       }
     }
 

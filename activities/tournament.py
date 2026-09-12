@@ -160,9 +160,19 @@ class Tournament:
         for p in self.participants.values():
             p.is_host = (p.user_id == new_host_id)
 
+    def get_match_by_id(self, match_id: str) -> Optional[TournamentMatch]:
+        for m in self.active_matches:
+            if m.match_id == match_id:
+                return m
+        return None
+
     def get_current_match(self) -> Optional[TournamentMatch]:
         if not self.active_matches:
             return None
+        if self.spectated_match_id:
+            m = self.get_match_by_id(self.spectated_match_id)
+            if m:
+                return m
         if 0 <= self.current_match_idx < len(self.active_matches):
             return self.active_matches[self.current_match_idx]
         return self.active_matches[-1]
@@ -569,6 +579,9 @@ class Tournament:
             self.status = "lobby"
             self.current_round = 0
             self.active_matches = []
+            self.match_history = []
+            self.last_round_result = None
+            self.spectated_match_id = None
             self.transition_info = None
             self._finished_triggered = False
             self.rewards.rewards_granted = False
@@ -587,6 +600,15 @@ class Tournament:
             self.transition_info = None
             await self._trigger_tournament_finished()
             return {"status": "tournament_finished"}
+
+        if action in ("tournament_spectate_match", "tournament_select_match"):
+            target_id = str(data.get("match_id", ""))
+            m = self.get_match_by_id(target_id)
+            if m:
+                self.spectated_match_id = m.match_id
+                self.current_match_idx = self.active_matches.index(m)
+                return {"status": "spectating_match", "match_id": m.match_id}
+            return {"error": "Match nicht gefunden"}
 
         if action == "tournament_cheer":
             emote = str(data.get("emote", "🎉"))[:8]
@@ -607,7 +629,7 @@ class Tournament:
     def get_leaderboard(self) -> List[Dict[str, Any]]:
         sorted_p = sorted(
             self.participants.values(),
-            key=lambda p: (p.score, p.wins, -p.losses),
+            key=lambda p: (not p.is_eliminated if self.format == "knockout" else True, p.score, p.wins, -p.losses),
             reverse=True
         )
         return [

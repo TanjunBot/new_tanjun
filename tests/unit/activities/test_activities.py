@@ -1332,6 +1332,81 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         # Now that both matches finished, round ends
         self.assertIn(tourney.status, ("round_end", "finished"))
 
+    async def test_tournament_reset_to_lobby_clears_history_and_state(self):
+        """Verify that resetting a finished tournament to lobby cleans up history, rounds, and eliminations."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_reset_lobby")
+        tourney = session.tournament
+        p2 = Player(user_id="user_p2", username="Player2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        await tourney.handle_action("user_host", "tournament_start", {"selected_game": "tictactoe"})
+        m = tourney.active_matches[0]
+        await tourney._resolve_match(m, "user_host")
+        self.assertEqual(len(tourney.match_history), 1)
+        self.assertIn(tourney.status, ("round_end", "finished"))
+
+        # Reset to lobby
+        res = await tourney.handle_action("user_host", "tournament_reset_to_lobby", {})
+        self.assertEqual(res["status"], "reset_to_lobby")
+        self.assertEqual(tourney.status, "lobby")
+        self.assertEqual(tourney.current_round, 0)
+        self.assertEqual(len(tourney.active_matches), 0)
+        self.assertEqual(len(tourney.match_history), 0)
+        self.assertIsNone(tourney.last_round_result)
+        self.assertIsNone(tourney.spectated_match_id)
+        self.assertEqual(tourney.participants["user_host"].score, 0)
+
+    async def test_tournament_knockout_leaderboard_prioritizes_non_eliminated(self):
+        """Verify that in knockout mode, surviving players rank above eliminated ones."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_ko_rank")
+        tourney = session.tournament
+        tourney.format = "knockout"
+        p2 = Player(user_id="user_p2", username="Player2", display_name="Player 2")
+        tourney.add_participant(p2)
+
+        # Eliminate p2
+        tourney.participants["user_p2"].is_eliminated = True
+        tourney.participants["user_p2"].score = 10
+        tourney.participants["user_host"].is_eliminated = False
+        tourney.participants["user_host"].score = 3
+
+        lb = tourney.get_leaderboard()
+        self.assertEqual(lb[0]["user_id"], "user_host")
+        self.assertEqual(lb[1]["user_id"], "user_p2")
+
+    async def test_tournament_spectator_switch_in_parallel_mode(self):
+        """Verify that spectators in parallel mode receive the spectated match game state and can switch matches."""
+        session = session_manager.create_session("tournament", host=self.host, session_id="test_spectate_switch")
+        tourney = session.tournament
+        tourney.match_style = "parallel"
+        p2 = Player(user_id="user_p2", username="Player2", display_name="Player 2")
+        p3 = Player(user_id="user_p3", username="Player3", display_name="Player 3")
+        p4 = Player(user_id="user_p4", username="Player4", display_name="Player 4")
+        spec = Player(user_id="user_spec", username="Spectator", display_name="Spectator")
+        tourney.add_participant(p2)
+        tourney.add_participant(p3)
+        tourney.add_participant(p4)
+        session.game.spectators["user_spec"] = spec
+
+        await tourney.handle_action("user_host", "tournament_start", {"selected_game": "tictactoe"})
+        self.assertEqual(len(tourney.active_matches), 2)
+        m0 = tourney.active_matches[0]
+        m1 = tourney.active_matches[1]
+
+        # By default, spectated_match_id is m0
+        self.assertEqual(tourney.spectated_match_id, m0.match_id)
+        state_spec = session.get_full_state(for_user_id="user_spec")
+        self.assertEqual(state_spec["players"][0]["user_id"], m0.player1.user_id)
+
+        # Spectator switches to watch match 1
+        res = await tourney.handle_action("user_spec", "tournament_spectate_match", {"match_id": m1.match_id})
+        self.assertEqual(res["status"], "spectating_match")
+        self.assertEqual(tourney.spectated_match_id, m1.match_id)
+
+        # Spectator now gets match 1's state
+        state_spec_m1 = session.get_full_state(for_user_id="user_spec")
+        self.assertEqual(state_spec_m1["players"][0]["user_id"], m1.player1.user_id)
+
 
 if __name__ == "__main__":
     unittest.main()

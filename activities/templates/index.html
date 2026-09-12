@@ -59,6 +59,12 @@
           <span class="tourney-hud-score-label">Deine Punkte:</span>
           <span id="tourneyHudUserScore" class="tourney-hud-score-val">0 Pkt</span>
         </div>
+        <div class="tourney-hud-cheers" style="display: flex; gap: 4px; align-items: center;">
+          <button class="tourney-cheer-btn" data-tourney-emote="🎉" type="button" title="Jubeln">🎉</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="🔥" type="button" title="Hype">🔥</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="👏" type="button" title="Klatschen">👏</button>
+          <button class="tourney-cheer-btn" data-tourney-emote="🏆" type="button" title="Pokal">🏆</button>
+        </div>
         <button id="tourneyHudLeaderboardBtn" class="btn-secondary btn-sm" type="button">📊 Zwischenstand</button>
         <button id="tourneyHudHostBtn" class="btn-primary btn-sm" type="button" style="display: none;">⚙️ Cup-Menü</button>
       </div>
@@ -483,6 +489,12 @@
               </div>
               <button id="tourneyEndFromRoundBtn" class="btn-secondary btn-sm" type="button" style="color: var(--discord-red); border-color: rgba(218, 55, 60, 0.4);">🏁 Turnier jetzt beenden & Siegerehrung</button>
             </div>
+          </div>
+
+          <!-- Active Matches of the Current Round -->
+          <div id="tourneyModalActiveMatchesSection" class="tourney-active-matches-section" style="margin-top: 16px; display: none;">
+            <div class="tourney-modal-section-title" style="font-size: 0.82rem;">⚔️ Duelle dieser Runde</div>
+            <div id="tourneyModalActiveMatchesList" class="tourney-history-list"></div>
           </div>
 
           <!-- Match History for the Cup -->
