@@ -30,6 +30,9 @@ Deployed at `https://botstatus-api.tanjun.bot`.
 | `BOTSTATUS_API_KEY` | *(empty)* | Secret key for POST authentication; required for deployments that accept heartbeats |
 | `BOTSTATUS_STATE_FILE` | `data/state.json` | Path to persistent state file |
 | `BOTSTATUS_UPTIME_KUMA_PUSH_URL` | *(empty)* | Optional Uptime Kuma push monitor URL to bridge heartbeats |
+| `BOTSTATUS_MAX_BODY_BYTES` | `65536` | Maximum accepted HTTP request body size |
+| `BOTSTATUS_HEARTBEAT_RATE_LIMIT` | `60` | Maximum heartbeat requests per client IP per rate window |
+| `BOTSTATUS_HEARTBEAT_RATE_WINDOW_SECONDS` | `60` | Heartbeat rate-limit window in seconds |
 
 ---
 
@@ -58,6 +61,10 @@ docker compose -f botstatus-api/docker-compose.yml up -d
 
 Set `BOTSTATUS_API_KEY` to a strong secret and send that value in the HTTP
 authorization header. The header value must match the configured key.
+
+Heartbeat requests over the body-size limit receive `413`; malformed payloads
+receive `422`; and clients over the heartbeat rate limit receive `429` with a
+`Retry-After` header.
 
 ---
 

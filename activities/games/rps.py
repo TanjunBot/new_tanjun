@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import copy
 import random
 from typing import Any, Dict, List, Optional
-from activities.base import BaseGame, Player
+from activities.base import BaseGame, Player, serialized_action
 
 
 class RPSGame(BaseGame):
@@ -141,6 +142,7 @@ class RPSGame(BaseGame):
 
         return result
 
+    @serialized_action
     async def handle_action(
         self,
         player_id: str,
@@ -149,13 +151,27 @@ class RPSGame(BaseGame):
         broadcast_cb: Optional[Any] = None
     ) -> Dict[str, Any]:
         if action == "start":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can start or configure the game"}
             mode = data.get("mode", "pvp")
+            if mode not in {"pvp", "bot"}:
+                return {"error": "Invalid game mode"}
             if mode != self.game_mode:
                 self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
-            self.difficulty = int(data.get("difficulty", 3))
-            self.target_wins = int(data.get("target_wins", 3))
-            self.variation = data.get("variation", "classic")
+            try:
+                difficulty = int(data.get("difficulty", 3))
+                target_wins = int(data.get("target_wins", 3))
+            except (TypeError, ValueError):
+                return {"error": "Invalid match configuration"}
+            if not 1 <= target_wins <= 100:
+                return {"error": "Target wins must be between 1 and 100"}
+            variation = data.get("variation", "classic")
+            if variation not in {"classic", "lizard_spock"}:
+                return {"error": "Invalid variation"}
+            self.difficulty = max(1, min(5, difficulty))
+            self.target_wins = target_wins
+            self.variation = variation
             if mode == "bot":
                 self.setup_bot(self.difficulty)
             elif "bot_tanjun" in self.players:
@@ -182,6 +198,8 @@ class RPSGame(BaseGame):
             choice = data.get("choice")
             if not isinstance(choice, str) or choice not in self.choices:
                 return {"error": f"Invalid choice: {choice}"}
+            if player_id in self.current_picks:
+                return {"error": "You have already picked this round"}
 
             self.current_picks[player_id] = choice
 
@@ -212,14 +230,15 @@ class RPSGame(BaseGame):
             }
 
         if action == "restart":
-            return await self.handle_action(player_id, "start", {
-                "mode": self.game_mode,
-                "difficulty": self.difficulty,
-                "target_wins": self.target_wins,
-                "variation": self.variation
-            })
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can restart the game"}
+            self.is_started = False
+            self.start_game()
+            return {"status": "restarted", "state": self.get_state()}
 
         if action == "lobby":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can return to the lobby"}
             self.is_started = False
             self.is_finished = False
             self.winner = None
@@ -265,10 +284,10 @@ class RPSGame(BaseGame):
             "is_started": self.is_started,
             "is_finished": self.is_finished,
             "winner": self.winner,
-            "current_picks": visible_picks,
-            "last_round_result": self.last_round_result,
-            "round_history": self.round_history,
-            "scores": self.scores,
+            "current_picks": dict(visible_picks),
+            "last_round_result": copy.deepcopy(self.last_round_result),
+            "round_history": copy.deepcopy(self.round_history),
+            "scores": dict(self.scores),
             "players": [p.model_dump() for p in self.players.values()],
             "spectators": [p.model_dump() for p in self.spectators.values()]
         }

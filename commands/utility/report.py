@@ -80,6 +80,18 @@ async def report(command_info: CommandInfo, reason: str, user: discord.Member, a
 async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> None:
     """Handle report button interactions (accept, reject, block, status transitions)."""
     parts = custom_id.split(';')
+    if (
+        len(parts) < 3
+        or parts[0] not in {'report_accept', 'report_reject', 'report_resolve', 'report_reopen', 'report_block_reporter'}
+        or not parts[1]
+        or not parts[2].isdigit()
+    ):
+        embed = tanjunEmbed(
+            title=locale.commands.utility.report.invalid_action.title(str(interaction.locale)),
+            description=locale.commands.utility.report.invalid_action.description(str(interaction.locale)),
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
     report_action = parts[0]
     report_id = parts[1]
     reporter_id = parts[2] if len(parts) > 2 else ''
@@ -117,7 +129,10 @@ async def report_btn_click(interaction: discord.Interaction, custom_id: str) -> 
         await interaction.response.send_message(embed=embed)
         if not await report_service.has_opted_out_of_notifications(guild.id, reporter_id):
             try:
-                reporter_member = guild.get_member(int(reporter_id))
+                try:
+                    reporter_member = guild.get_member(int(reporter_id))
+                except (TypeError, ValueError):
+                    reporter_member = None
                 if reporter_member:
                     dm_embed = discord.Embed(title=f'Report #{report_id} Status Update', description=f'Your report on **{guild.name}** has been updated to **{label}**.', color=discord.Color.blue())
                     if note:

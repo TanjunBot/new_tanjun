@@ -82,10 +82,18 @@ def _dedupe_guild_config_table(table: str) -> None:
     if not exists or not exists[0]:
         return
 
-    _execute_idempotent(
-        f"DELETE t1 FROM `{table}` t1 "
-        f"INNER JOIN `{table}` t2 ON t1.guild_id = t2.guild_id AND t1.channel_id > t2.channel_id"
-    )
+    duplicate_count = conn.execute(
+        text(
+            f"SELECT COUNT(*) FROM `{table}` t1 "
+            f"INNER JOIN `{table}` t2 ON t1.guild_id = t2.guild_id "
+            "AND (t1.channel_id > t2.channel_id OR "
+            "(t1.channel_id IS NULL AND t2.channel_id IS NOT NULL))"
+        )
+    ).scalar()
+    if duplicate_count:
+        raise RuntimeError(
+            f"Cannot safely deduplicate `{table}`: {duplicate_count} duplicate guild configuration rows"
+        )
 
     pk_cols = _primary_key_columns(conn, table)
     if pk_cols == ["guild_id"]:
@@ -126,7 +134,13 @@ def _ensure_guild_id_column(
             )
         )
 
-    conn.execute(text(f"DELETE FROM `{table}` WHERE `guild_id` IS NULL"))
+    orphan_count = conn.execute(
+        text(f"SELECT COUNT(*) FROM `{table}` WHERE `guild_id` IS NULL")
+    ).scalar()
+    if orphan_count:
+        raise RuntimeError(
+            f"Cannot safely make `{table}.guild_id` NOT NULL: {orphan_count} rows have no guild"
+        )
 
 
 def _drop_foreign_keys_to(conn: Connection, child_table: str, parent_table: str) -> None:
@@ -142,6 +156,36 @@ def _drop_foreign_keys_to(conn: Connection, child_table: str, parent_table: str)
         _execute_idempotent(f"ALTER TABLE `{child_table}` DROP FOREIGN KEY `{constraint_name}`")
 
 
+def _has_child_foreign_key(
+    conn: Connection, child_table: str, parent_table: str, fk_columns: tuple[str, str]
+) -> bool:
+    row = conn.execute(
+        text(
+            "SELECT COUNT(*) FROM information_schema.key_column_usage "
+            "WHERE table_schema = DATABASE() AND table_name = :child "
+            "AND constraint_name <> 'PRIMARY' AND referenced_table_name = :parent "
+            "AND column_name = :guild_column AND referenced_column_name = 'guild_id'"
+        ),
+        {
+            "child": child_table,
+            "parent": parent_table,
+            "guild_column": fk_columns[0],
+        },
+    ).fetchone()
+    if not row or not row[0]:
+        return False
+    row = conn.execute(
+        text(
+            "SELECT COUNT(*) FROM information_schema.key_column_usage "
+            "WHERE table_schema = DATABASE() AND table_name = :child "
+            "AND referenced_table_name = :parent AND column_name = :id_column "
+            "AND referenced_column_name = 'id'"
+        ),
+        {"child": child_table, "parent": parent_table, "id_column": fk_columns[1]},
+    ).fetchone()
+    return bool(row and row[0])
+
+
 def _repair_guild_scoped_parent(table: str, child_table: str, fk_columns: tuple[str, str]) -> None:
     conn = op.get_bind()
     exists = conn.execute(
@@ -155,7 +199,11 @@ def _repair_guild_scoped_parent(table: str, child_table: str, fk_columns: tuple[
         return
 
     pk_cols = _primary_key_columns(conn, table)
-    if pk_cols == ["id"] and _has_unique_guild_id(conn, table):
+    if (
+        pk_cols == ["id"]
+        and _has_unique_guild_id(conn, table)
+        and _has_child_foreign_key(conn, child_table, table, fk_columns)
+    ):
         return
 
     child_exists = conn.execute(

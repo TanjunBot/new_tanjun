@@ -22,8 +22,12 @@ from app import StatusManager, app, settings
 def client(tmp_path):
     state_file = str(tmp_path / "state.json")
     botstatus_module.manager = StatusManager(state_file, timeout_seconds=90)
+    botstatus_module._heartbeat_requests.clear()
     settings.state_file = state_file
     settings.api_key = "test-key"
+    settings.max_body_bytes = 64 * 1024
+    settings.heartbeat_rate_limit = 60
+    settings.heartbeat_rate_window_seconds = 60
     with TestClient(app) as test_client:
         yield test_client
 
@@ -112,3 +116,42 @@ def test_heartbeat_rejects_invalid_bot_id(client):
         headers={"Authorization": "Bearer test-key"},
     )
     assert response.status_code == 422
+
+
+def test_heartbeat_rejects_oversized_body(client):
+    payload = {"id": "123456789012345", "extra": {"data": "x" * 70_000}}
+    response = client.post("/", json=payload, headers={"Authorization": "Bearer test-key"})
+    assert response.status_code == 413
+    assert response.json()["detail"] == "Request body too large"
+
+
+def test_heartbeat_rejects_invalid_latency(client):
+    response = client.post(
+        "/",
+        json={"id": "123456789012345", "latency": "not-a-number"},
+        headers={"Authorization": "Bearer test-key"},
+    )
+    assert response.status_code == 422
+
+
+def test_heartbeat_rate_limit_returns_retry_after(client):
+    settings.heartbeat_rate_limit = 1
+    payload = {"id": "123456789012345"}
+    headers = {"Authorization": "Bearer test-key"}
+
+    assert client.post("/", json=payload, headers=headers).status_code == 200
+    response = client.post("/", json=payload, headers=headers)
+
+    assert response.status_code == 429
+    assert response.headers["retry-after"].isdigit()
+
+
+def test_status_rejects_malformed_bot_id(client):
+    response = client.get("/status/not-a-discord-id")
+    assert response.status_code == 422
+
+
+def test_api_key_requires_bearer_scheme(client):
+    payload = {"id": "123456789012345", "status": "alive"}
+    response = client.post("/", json=payload, headers={"Authorization": "test-key"})
+    assert response.status_code == 401

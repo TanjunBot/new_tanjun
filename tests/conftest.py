@@ -312,6 +312,20 @@ def _restore_discord_app_command_mocks() -> None:
     discord.app_commands.Choice = lambda **kw: type("Choice", (), kw)
 
 
+@pytest.fixture(autouse=True)
+def _restore_api_global_state():
+    """Restore API globals so one test cannot reuse another test's bot/pool."""
+    import api
+
+    original_bot = api._bot
+    original_pool = api.db_manager._pool
+    original_log_table_state = api._log_enables_table_ensured
+    yield
+    api._bot = original_bot
+    api.db_manager._pool = original_pool
+    api._log_enables_table_ensured = original_log_table_state
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo) -> None:
     outcome = yield

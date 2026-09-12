@@ -311,7 +311,7 @@ class GiveawayService:
     async def get_send_ready() -> list[int]:
         """Get IDs of giveaways ready to be sent (started=0, starttime < now)."""
         giveaway_ids: list[int] = []
-        async for row in execute_query_iter("SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"):
+        async for row in execute_query_iter("SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime <= NOW()"):
             giveaway_ids.append(row[0])
         return giveaway_ids
 
@@ -320,7 +320,7 @@ class GiveawayService:
         """Get IDs of giveaways ready to end (ended=0, endtime < now, started=1)."""
         giveaway_ids: list[int] = []
         async for row in execute_query_iter(
-            "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
+            "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime <= NOW() AND started = 1 AND messageId <> 'pending'"
         ):
             giveaway_ids.append(row[0])
         return giveaway_ids

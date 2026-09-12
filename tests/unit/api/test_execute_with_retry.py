@@ -40,6 +40,13 @@ async def _run_retry(pool, cursor, *, is_write: bool = False, side_effect=None):
 
 
 class TestExecuteWithRetry:
+    def test_set_bot_clears_stale_pool_when_new_bot_is_not_ready(self):
+        set_bot(MagicMock(_pool=MagicMock()))
+
+        set_bot(MagicMock(_pool=None))
+
+        assert db_manager._pool is None
+
     @pytest.mark.asyncio
     async def test_deadlock_retry_on_second_attempt(self):
         pool, conn, cursor = make_mock_pool()

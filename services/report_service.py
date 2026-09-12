@@ -50,7 +50,7 @@ class ReportService:
     """Service for managing reports, blocked reporters, report channels, evidence,
     moderation actions, notifications, and anonymity settings."""
 
-    VALID_STATUSES = ("PENDING", "INVESTIGATING", "ACTION_TAKEN", "DISMISSED")
+    VALID_STATUSES = ("pending", "investigating", "action_taken", "dismissed")
 
     # ------------------------------------------------------------------ #
     # Reports
@@ -155,6 +155,9 @@ class ReportService:
         note: str | None = None,
     ) -> str | None:
         """Update report status. Returns the previous status or None if not found."""
+        new_status = new_status.lower()
+        if new_status not in ReportService.VALID_STATUSES:
+            raise ValueError(f"Invalid report status: {new_status!r}")
         # Get current status first
         current = await execute_query(
             "SELECT status FROM reports WHERE guild_id = %s AND id = %s",
@@ -282,21 +285,13 @@ class ReportService:
     @staticmethod
     async def set_anonymity_setting(guild_id: str, enabled: bool) -> None:
         """Enable or disable anonymous-by-default for a guild."""
-        # Upsert
-        result = await execute_query(
-            "SELECT guild_id FROM report_anonymity WHERE guild_id = %s",
-            (guild_id,),
+        # A read-then-insert race can create duplicate rows when two
+        # administrators save the setting concurrently.
+        await execute_action(
+            "INSERT INTO report_anonymity (guild_id, enabled) VALUES (%s, %s) "
+            "ON DUPLICATE KEY UPDATE enabled = VALUES(enabled)",
+            (guild_id, int(enabled)),
         )
-        if result:
-            await execute_action(
-                "UPDATE report_anonymity SET enabled = %s WHERE guild_id = %s",
-                (int(enabled), guild_id),
-            )
-        else:
-            await execute_action(
-                "INSERT INTO report_anonymity (guild_id, enabled) VALUES (%s, %s)",
-                (guild_id, int(enabled)),
-            )
 
     @staticmethod
     async def get_anonymity_setting(guild_id: str) -> bool:
@@ -377,7 +372,10 @@ class ReportService:
     @staticmethod
     async def set_channel(guild_id: str, channel_id: str) -> None:
         """Set the report channel for a guild."""
-        query = "INSERT INTO reportchannel (guild_id, channel_id) VALUES (%s, %s)"
+        query = (
+            "INSERT INTO reportchannel (guild_id, channel_id) VALUES (%s, %s) "
+            "ON DUPLICATE KEY UPDATE channel_id = VALUES(channel_id)"
+        )
         params = (guild_id, channel_id)
         await execute_action(query, params)
 

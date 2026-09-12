@@ -60,6 +60,7 @@ def test_wait_for_database_retries_then_raises(entrypoint) -> None:
         entrypoint._wait_for_database()
 
     assert engine.connect.call_count == 2
+    engine.dispose.assert_called_once()
 
 
 def test_main_runs_wait_migrate_and_exec(entrypoint) -> None:

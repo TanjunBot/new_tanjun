@@ -67,6 +67,12 @@ pip install -e ".[dev]"
 
 > **Note:** There is no `requirements.txt` — all dependencies are managed through `pyproject.toml`.
 
+Runtime dependencies are declared in `[project.dependencies]`; test, lint, and
+documentation tooling belongs in the appropriate optional extra. Keep direct
+imports explicitly declared, pin runtime dependencies for reproducible
+deployments, and update them through the repository's Dependabot/Renovate
+dependency pull requests rather than editing generated lock files.
+
 ### Environment Variables
 
 Copy the example environment file and configure it:

@@ -36,7 +36,7 @@ async def ping_server(client: Client) -> None:
                 else:
                     logger.warning("Uptime Kuma push failed, status code: %s", response.status)
         except (aiohttp.ClientError, TimeoutError) as exc:
-            logger.warning("Uptime Kuma push error: %s", exc)
+            logger.warning("Uptime Kuma push error: %s", type(exc).__name__)
 
     # 2. Botstatus API Heartbeat
     botstatus_url = getattr(config, "BOTSTATUS_API_URL", "").strip()
@@ -63,4 +63,4 @@ async def ping_server(client: Client) -> None:
                 else:
                     logger.warning("Botstatus API push failed, status code: %s", response.status)
         except (aiohttp.ClientError, TimeoutError) as exc:
-            logger.warning("Botstatus API push error: %s", exc)
+            logger.warning("Botstatus API push error: %s", type(exc).__name__)

@@ -141,6 +141,14 @@ async def test_report_btn_invalid():
     interaction.response.send_message.assert_awaited_once()
 
 
+async def test_report_btn_malformed_custom_id():
+    interaction = make_view_interaction()
+    interaction.channel = make_text_channel()
+    interaction.guild = interaction.channel.guild
+    await report_btn_click(interaction, "report_accept")
+    interaction.response.send_message.assert_awaited_once()
+
+
 @patch("commands.utility.removescheduled.ScheduledMessageService.get_user_messages", new_callable=AsyncMock, return_value=[])
 async def test_remove_scheduled_no_messages(mock_get, admin_command_info):
     await remove_scheduled_message(admin_command_info)

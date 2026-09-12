@@ -34,7 +34,7 @@ from utils.db_migration import (  # noqa: E402
 pytestmark = pytest.mark.unit
 
 ROOT = Path(__file__).resolve().parents[3]
-HEAD = "006_giveaway_id_not_null"
+HEAD = "008_nullable_repair"
 
 
 def _engine_context(connection: MagicMock) -> MagicMock:

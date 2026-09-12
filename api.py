@@ -193,11 +193,10 @@ def set_bot(bot) -> None:
     """
     global _bot
     _bot = bot
-    if bot is not None and hasattr(bot, "_pool") and bot._pool is not None:
-        db_manager._pool = bot._pool
-    elif bot is None:
-        # Clear the manager's pool when clearing _bot so test resets work
-        db_manager._pool = None
+    # Keep the manager in lockstep with the compatibility reference.  In
+    # particular, a bot whose pool is not ready must not retain a previous
+    # bot's pool.
+    db_manager._pool = getattr(bot, "_pool", None) if bot is not None else None
 
 
 def _get_pool() -> Pool | None:

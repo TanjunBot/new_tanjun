@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import time
+from contextlib import suppress
 from typing import Any
 
 import discord
@@ -33,6 +34,11 @@ from services.metrics_service import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _safe_command_label(command: str) -> str:
+    """Keep metric labels bounded and free of control characters."""
+    return "".join(char for char in command if char.isprintable())[:64] or "unknown"
 
 
 class PrometheusMetricsCog(commands.Cog):
@@ -142,21 +148,18 @@ class PrometheusMetricsCog(commands.Cog):
             for shard_id, shard in shards.items():
                 try:
                     latency = shard.latency
-                    shard_latency.labels(shard_id=str(shard_id)).set(latency or 0.0)
-                    shard_connected.labels(shard_id=str(shard_id)).set(1.0 if shard.is_connected() else 0.0)
+                    safe_shard_id = str(shard_id)[:32]
+                    shard_latency.labels(shard_id=safe_shard_id).set(latency or 0.0)
+                    shard_connected.labels(shard_id=safe_shard_id).set(1.0 if shard.is_connected() else 0.0)
                 except Exception:
-                    shard_connected.labels(shard_id=str(shard_id)).set(0.0)
+                    shard_connected.labels(shard_id=str(shard_id)[:32]).set(0.0)
 
             # Update guild/user counts.
-            try:
+            with suppress(Exception):
                 guild_count.set(len(self.bot.guilds))
-            except Exception:
-                pass
 
-            try:
+            with suppress(Exception):
                 user_count.set(len(self.bot.users))
-            except Exception:
-                pass
         except Exception:
             logger.exception("Failed to update shard metrics")
             error = True
@@ -199,7 +202,8 @@ class PrometheusMetricsCog(commands.Cog):
         if message.guild is None:
             return
 
-        messages_processed.labels(guild_id=str(message.guild.id)).inc()
+        # A per-guild label grows without bound as the bot joins guilds.
+        messages_processed.labels(guild_id="guild").inc()
 
     @commands.Cog.listener()
     async def on_app_command_completion(
@@ -209,21 +213,21 @@ class PrometheusMetricsCog(commands.Cog):
     ) -> None:
         """Record command usage metrics on completion."""
         try:
-            cmd_name = command.qualified_name if command else "unknown"
-            guild_id = str(interaction.guild_id) if interaction.guild_id else "dm"
-            command_usage.labels(command=cmd_name, guild_id=guild_id, status="success").inc()
+            cmd_name = _safe_command_label(command.qualified_name if command else "unknown")
+            scope = "guild" if interaction.guild_id else "dm"
+            command_usage.labels(command=cmd_name, guild_id=scope, status="success").inc()
         except Exception:
-            pass
+            logger.exception("Failed to record application command metric")
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx: commands.Context[Any]) -> None:
         """Record prefix command usage metrics on completion."""
         try:
-            cmd_name = ctx.command.qualified_name if ctx.command else "unknown"
-            guild_id = str(ctx.guild.id) if ctx.guild else "dm"
-            command_usage.labels(command=cmd_name, guild_id=guild_id, status="success").inc()
+            cmd_name = _safe_command_label(ctx.command.qualified_name if ctx.command else "unknown")
+            scope = "guild" if ctx.guild else "dm"
+            command_usage.labels(command=cmd_name, guild_id=scope, status="success").inc()
         except Exception:
-            pass
+            logger.exception("Failed to record prefix command metric")
 
 
 # ── Standalone utilities for external instrumentation ─────────────────────────
@@ -237,9 +241,9 @@ def record_db_query(operation: str, duration: float, error: bool = False) -> Non
     try:
         from services.metrics_service import db_query_duration, db_query_errors
 
-        db_query_duration.labels(operation=operation).observe(duration)
+        db_query_duration.labels(operation=_safe_command_label(operation)).observe(duration)
         if error:
-            db_query_errors.labels(operation=operation).inc()
+            db_query_errors.labels(operation=_safe_command_label(operation)).inc()
     except Exception:
         logger.exception("Failed to record DB query metric")
 
@@ -249,7 +253,7 @@ def record_command_execution(command_name: str, duration: float) -> None:
 
     Called from command wrappers / error handlers.
     """
-    command_duration.labels(command=command_name).observe(duration)
+    command_duration.labels(command=_safe_command_label(command_name)).observe(duration)
 
 
 def record_loop_iteration(loop_name: str, duration: float, error: bool = False) -> None:
@@ -257,14 +261,15 @@ def record_loop_iteration(loop_name: str, duration: float, error: bool = False) 
 
     Called from loop wrappers.
     """
-    loop_iteration_duration.labels(loop_name=loop_name).observe(duration)
+    safe_name = _safe_command_label(loop_name)
+    loop_iteration_duration.labels(loop_name=safe_name).observe(duration)
     if error:
-        loop_iteration_errors.labels(loop_name=loop_name).inc()
+        loop_iteration_errors.labels(loop_name=safe_name).inc()
 
 
 def set_loop_running(loop_name: str, running: bool) -> None:
     """Set the running gauge for a background loop."""
-    loop_running.labels(loop_name=loop_name).set(1.0 if running else 0.0)
+    loop_running.labels(loop_name=_safe_command_label(loop_name)).set(1.0 if running else 0.0)
 
 
 async def setup(bot: commands.AutoShardedBot) -> None:

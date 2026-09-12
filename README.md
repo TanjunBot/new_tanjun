@@ -132,7 +132,13 @@ A powerful, feature-rich Discord bot built with [discord.py](https://github.com/
 3. Install dependencies:
 
    ```bash
-   pip install -r requirements.txt
+   pip install .
+   ```
+
+   For local development and testing, install the development extras instead:
+
+   ```bash
+   pip install -e ".[dev]"
    ```
 
 4. Copy and configure the environment file:

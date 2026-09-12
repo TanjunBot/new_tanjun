@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-09-12
+
+### Changed
+
+- Synchronized release metadata and test isolation with the current package version.
+
 ## [1.3.0] - 2026-09-01
 
 ### Added
@@ -163,7 +169,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Counting minigame
 - Leaderboard
 
-[1.2.0]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.1.4...development
+[1.4.4]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.3.0...ver/1.4.4
+[1.3.0]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.2.0...ver/1.3.0
+[1.2.0]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.1.4...ver/1.2.0
 [1.1.4]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.3...ver/1.1.4
 [1.0.3]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.2...ver/1.0.3
 [1.0.2]: https://github.com/TanjunBot/new_tanjun/compare/ver/1.0.1...ver/1.0.2

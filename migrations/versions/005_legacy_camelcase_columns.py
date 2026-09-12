@@ -143,7 +143,7 @@ def _column_clause(conn: Connection, table: str, column: str) -> str | None:
     return " ".join(parts)
 
 
-def _drop_foreign_keys_on(conn: Connection, table: str) -> None:
+def _drop_foreign_keys_on(conn: Connection, table: str, affected_columns: set[str]) -> None:
     rows = conn.execute(
         text(
             "SELECT DISTINCT constraint_name FROM information_schema.table_constraints "
@@ -152,10 +152,21 @@ def _drop_foreign_keys_on(conn: Connection, table: str) -> None:
         {"table": table},
     ).fetchall()
     for (constraint_name,) in rows:
-        _execute_idempotent(f"ALTER TABLE `{table}` DROP FOREIGN KEY `{constraint_name}`")
+        columns = conn.execute(
+            text(
+                "SELECT column_name FROM information_schema.key_column_usage "
+                "WHERE table_schema = DATABASE() AND table_name = :table "
+                "AND constraint_name = :constraint"
+            ),
+            {"table": table, "constraint": constraint_name},
+        ).fetchall()
+        if any(column[0] in affected_columns for column in columns):
+            _execute_idempotent(f"ALTER TABLE `{table}` DROP FOREIGN KEY `{constraint_name}`")
 
 
-def _drop_foreign_keys_referencing(conn: Connection, referenced_table: str) -> None:
+def _drop_foreign_keys_referencing(
+    conn: Connection, referenced_table: str, affected_columns: set[str]
+) -> None:
     rows = conn.execute(
         text(
             "SELECT DISTINCT table_name, constraint_name FROM information_schema.key_column_usage "
@@ -164,7 +175,20 @@ def _drop_foreign_keys_referencing(conn: Connection, referenced_table: str) -> N
         {"parent": referenced_table},
     ).fetchall()
     for child_table, constraint_name in rows:
-        _execute_idempotent(f"ALTER TABLE `{child_table}` DROP FOREIGN KEY `{constraint_name}`")
+        columns = conn.execute(
+            text(
+                "SELECT column_name, referenced_column_name "
+                "FROM information_schema.key_column_usage "
+                "WHERE table_schema = DATABASE() AND table_name = :table "
+                "AND constraint_name = :constraint"
+            ),
+            {"table": child_table, "constraint": constraint_name},
+        ).fetchall()
+        if any(
+            child_column in affected_columns or referenced_column in affected_columns
+            for child_column, referenced_column in columns
+        ):
+            _execute_idempotent(f"ALTER TABLE `{child_table}` DROP FOREIGN KEY `{constraint_name}`")
 
 
 def _rename_column(conn: Connection, table: str, old_name: str, new_name: str) -> None:
@@ -222,10 +246,14 @@ def upgrade() -> None:
     conn = op.get_bind()
     tables = [t for t in _LEGACY_RENAMES if _table_exists(conn, t)]
 
+    affected = {
+        table: {old for old, _new in renames}
+        for table, renames in _LEGACY_RENAMES.items()
+    }
     for table in tables:
-        _drop_foreign_keys_referencing(conn, table)
+        _drop_foreign_keys_referencing(conn, table, affected[table])
     for table in tables:
-        _drop_foreign_keys_on(conn, table)
+        _drop_foreign_keys_on(conn, table, affected[table])
 
     for table, renames in _LEGACY_RENAMES.items():
         if not _table_exists(conn, table):

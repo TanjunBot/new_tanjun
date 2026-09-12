@@ -3,6 +3,8 @@ from collections.abc import Mapping
 import io
 import json
 import logging
+import re
+import asyncio
 from datetime import datetime, timedelta
 from urllib.parse import urlsplit
 import aiohttp
@@ -11,6 +13,16 @@ import utility
 from services.scheduled_message_service import Attachment, ScheduledMessageService, ScheduleMessageParams
 
 MAX_SCHEDULED_ATTACHMENT_BYTES = 10 * 1024 * 1024
+MAX_SCHEDULED_FILENAME_LENGTH = 255
+
+
+def _safe_attachment_filename(filename: object) -> str:
+    """Return a bounded filename without path components for a Discord upload."""
+    value = str(filename or "file").replace("\\", "/")
+    value = value.rsplit("/", 1)[-1].strip()
+    value = re.sub(r"[\x00-\x1f\x7f]", "_", value)
+    return (value or "file")[:MAX_SCHEDULED_FILENAME_LENGTH]
+_send_lock = asyncio.Lock()
 
 async def schedule_message(command_info: utility.CommandInfo, content: str, send_in: str, channel: discord.TextChannel | None=None, repeat: str | None=None, repeat_amount: int | None=None, attachments: list[discord.Attachment] | None=None) -> None:
     if command_info.channel is None:
@@ -23,7 +35,8 @@ async def schedule_message(command_info: utility.CommandInfo, content: str, send
         embed = utility.tanjunEmbed(title=locale.commands.utility.schedulemessage.invalidTime.title(str(command_info.locale)), description=locale.commands.utility.schedulemessage.invalidTime.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
-    if send_time <= datetime.now():
+    now = datetime.now(send_time.tzinfo) if send_time.tzinfo else datetime.now()
+    if send_time <= now:
         embed = utility.tanjunEmbed(title=locale.commands.utility.schedulemessage.pastTime.title(str(command_info.locale)), description=locale.commands.utility.schedulemessage.pastTime.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
@@ -64,84 +77,87 @@ async def schedule_message(command_info: utility.CommandInfo, content: str, send
 
 async def send_scheduled_messages(client: discord.Client) -> None:
     """Send all scheduled messages that are ready to be sent"""
-    ready_messages = await ScheduledMessageService.get_due_messages()
-    if ready_messages is None:
+    if _send_lock.locked():
         return
-    for msg in ready_messages:
-        try:
-            message_id = msg.message_id
-            guild_id = int(msg.guild_id) if msg.guild_id else None
-            channel_id = int(msg.channel_id) if msg.channel_id else None
-            user_id = int(msg.user_id)
-            content = msg.content
-            repeat_interval = msg.repeat_interval
-            repeat_amount = msg.repeat_amount
-            target: discord.VoiceChannel | discord.StageChannel | discord.ForumChannel | discord.TextChannel | discord.CategoryChannel | discord.DMChannel
-            if channel_id and guild_id:
-                guild = client.get_guild(guild_id)
-                if not guild:
-                    continue
-                channel = guild.get_channel(channel_id)
-                if not channel:
-                    continue
-                target = channel
-            else:
-                try:
-                    user = await client.fetch_user(user_id)
-                except discord.NotFound:
-                    continue
-                target = user.dm_channel if user.dm_channel else await user.create_dm()
-            if isinstance(target, (discord.CategoryChannel, discord.ForumChannel)):
-                continue
-            files: list[discord.File] = []
-            if msg.attachments:
-                try:
-                    attachment_data: list[dict] = json.loads(msg.attachments)
-                    timeout = aiohttp.ClientTimeout(total=30)
-                    async with aiohttp.ClientSession(timeout=timeout) as session:
-                        for att_data in attachment_data:
-                            url = att_data.get('url', '')
-                            filename = att_data.get('filename', 'file')
-                            if urlsplit(url).scheme not in {"http", "https"}:
-                                continue
-                            async with session.get(url, allow_redirects=False) as resp:
-                                if resp.status == 200:
-                                    headers = getattr(resp, "headers", {})
-                                    content_length = headers.get("Content-Length") if isinstance(headers, Mapping) else None
-                                    try:
-                                        content_length_value = int(content_length) if content_length is not None else None
-                                    except (TypeError, ValueError):
-                                        content_length_value = None
-                                    if content_length_value is not None and content_length_value > MAX_SCHEDULED_ATTACHMENT_BYTES:
-                                        continue
-                                    file_bytes = await resp.read(MAX_SCHEDULED_ATTACHMENT_BYTES + 1)
-                                    if len(file_bytes) <= MAX_SCHEDULED_ATTACHMENT_BYTES:
-                                        files.append(discord.File(io.BytesIO(file_bytes), filename=filename))
-                except (json.JSONDecodeError, ValueError, aiohttp.ClientError):
-                    logging.exception('Failed to parse attachments for scheduled message %s', message_id)
-            embed = utility.tanjunEmbed(description=content)
-            send_kwargs: dict = {'content': content, 'embed': embed}
-            if files:
-                send_kwargs['files'] = files
-            sent_message = await target.send(**send_kwargs)
-            await ScheduledMessageService.update_discord_message_id(message_id, str(sent_message.id))
-            if repeat_interval and repeat_interval > 0:
-                now = datetime.now()
-                elapsed = (now - msg.send_time).total_seconds()
-                intervals_behind = max(0, int(elapsed // repeat_interval))
-                total_consumed = intervals_behind + 1
-                next_send_time = msg.send_time + timedelta(seconds=repeat_interval * total_consumed)
-                if intervals_behind > 0:
-                    logging.info('Scheduled message %s was %d repeat intervals behind. Catching up: advancing send_time by %d intervals.', message_id, intervals_behind, total_consumed)
-                if repeat_amount is not None:
-                    new_amount = max(0, repeat_amount - total_consumed)
-                    if new_amount > 0:
-                        await ScheduledMessageService.update_repeat_and_send_time(message_id, new_amount, next_send_time)
-                    else:
-                        await ScheduledMessageService.cancel(message_id)
+    async with _send_lock:
+        ready_messages = await ScheduledMessageService.get_due_messages()
+        if ready_messages is None:
+            return
+        for msg in ready_messages:
+            try:
+                message_id = msg.message_id
+                guild_id = int(msg.guild_id) if msg.guild_id else None
+                channel_id = int(msg.channel_id) if msg.channel_id else None
+                user_id = int(msg.user_id)
+                content = msg.content
+                repeat_interval = msg.repeat_interval
+                repeat_amount = msg.repeat_amount
+                target: discord.VoiceChannel | discord.StageChannel | discord.ForumChannel | discord.TextChannel | discord.CategoryChannel | discord.DMChannel
+                if channel_id and guild_id:
+                    guild = client.get_guild(guild_id)
+                    if not guild:
+                        continue
+                    channel = guild.get_channel(channel_id)
+                    if not channel:
+                        continue
+                    target = channel
                 else:
-                    await ScheduledMessageService.update_send_time(message_id, next_send_time)
-            else:
-                await ScheduledMessageService.cancel(message_id)
-        except Exception:
-            logging.exception('Failed to send scheduled message %s', message_id)
+                    try:
+                        user = await client.fetch_user(user_id)
+                    except discord.NotFound:
+                        continue
+                    target = user.dm_channel if user.dm_channel else await user.create_dm()
+                if isinstance(target, (discord.CategoryChannel, discord.ForumChannel)):
+                    continue
+                files: list[discord.File] = []
+                if msg.attachments:
+                    try:
+                        attachment_data: list[dict] = json.loads(msg.attachments)
+                        timeout = aiohttp.ClientTimeout(total=30)
+                        async with aiohttp.ClientSession(timeout=timeout) as session:
+                            for att_data in attachment_data:
+                                url = att_data.get('url', '')
+                                filename = _safe_attachment_filename(att_data.get('filename', 'file'))
+                                if urlsplit(url).scheme not in {"http", "https"}:
+                                    continue
+                                async with session.get(url, allow_redirects=False) as resp:
+                                    if resp.status == 200:
+                                        headers = getattr(resp, "headers", {})
+                                        content_length = headers.get("Content-Length") if isinstance(headers, Mapping) else None
+                                        try:
+                                            content_length_value = int(content_length) if content_length is not None else None
+                                        except (TypeError, ValueError):
+                                            content_length_value = None
+                                        if content_length_value is not None and content_length_value > MAX_SCHEDULED_ATTACHMENT_BYTES:
+                                            continue
+                                        file_bytes = await resp.read(MAX_SCHEDULED_ATTACHMENT_BYTES + 1)
+                                        if len(file_bytes) <= MAX_SCHEDULED_ATTACHMENT_BYTES:
+                                            files.append(discord.File(io.BytesIO(file_bytes), filename=filename))
+                    except (json.JSONDecodeError, ValueError, aiohttp.ClientError):
+                        logging.exception('Failed to parse attachments for scheduled message %s', message_id)
+                embed = utility.tanjunEmbed(description=content)
+                send_kwargs: dict = {'content': content, 'embed': embed}
+                if files:
+                    send_kwargs['files'] = files
+                sent_message = await target.send(**send_kwargs)
+                await ScheduledMessageService.update_discord_message_id(message_id, str(sent_message.id))
+                if repeat_interval and repeat_interval > 0:
+                    now = datetime.now(msg.send_time.tzinfo) if msg.send_time.tzinfo else datetime.now()
+                    elapsed = (now - msg.send_time).total_seconds()
+                    intervals_behind = max(0, int(elapsed // repeat_interval))
+                    total_consumed = intervals_behind + 1
+                    next_send_time = msg.send_time + timedelta(seconds=repeat_interval * total_consumed)
+                    if intervals_behind > 0:
+                        logging.info('Scheduled message %s was %d repeat intervals behind. Catching up: advancing send_time by %d intervals.', message_id, intervals_behind, total_consumed)
+                    if repeat_amount is not None:
+                        new_amount = max(0, repeat_amount - total_consumed)
+                        if new_amount > 0:
+                            await ScheduledMessageService.update_repeat_and_send_time(message_id, new_amount, next_send_time)
+                        else:
+                            await ScheduledMessageService.cancel(message_id)
+                    else:
+                        await ScheduledMessageService.update_send_time(message_id, next_send_time)
+                else:
+                    await ScheduledMessageService.cancel(message_id)
+            except Exception:
+                logging.exception('Failed to send scheduled message %s', message_id)

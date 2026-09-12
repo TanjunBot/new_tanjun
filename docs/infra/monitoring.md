@@ -18,7 +18,7 @@ This endpoint returns a JSON response with the status of various subsystems:
   "uptime": 123456,
   "database": "connected",
   "discord": "connected",
-  "version": "1.2.0",
+  "version": "1.4.4",
   "checks": {
     "database": { "status": "ok", "latency_ms": 12 },
     "discord_gateway": { "status": "ok", "latency_ms": 85 },

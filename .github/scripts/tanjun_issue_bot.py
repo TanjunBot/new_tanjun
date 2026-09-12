@@ -43,6 +43,31 @@ REPO_DIR = WORKSPACE
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 
+def _repo_path(raw_path: str) -> Path:
+    """Resolve an AI-supplied path while keeping it inside the checkout."""
+    if not isinstance(raw_path, str) or not raw_path.strip():
+        raise ValueError("AI file change has an invalid path")
+    root = REPO_DIR.resolve()
+    path = (root / raw_path).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError as exc:
+        raise ValueError(f"AI file change escapes repository: {raw_path!r}") from exc
+    if path == root / ".git" or (root / ".git") in path.parents:
+        raise ValueError("AI file changes may not modify the Git metadata")
+    return path
+
+
+def _write_change(change: dict[str, Any]) -> Path:
+    path = _repo_path(change.get("path"))
+    content = change.get("content")
+    if not isinstance(content, str):
+        raise ValueError(f"AI file change for {path} has non-text content")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
 def run(cmd: list[str], cwd: str | None = None, timeout: int = 120, check: bool = True) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, text=True, cwd=cwd or str(REPO_DIR), timeout=timeout, check=check)
 
@@ -236,24 +261,20 @@ Output a JSON array of file changes following the format specified.
         return False
 
     for change in changes:
-        path = Path(REPO_DIR / change["path"])
+        path = _repo_path(change.get("path"))
         action = change.get("action", "modify")
 
         if action == "delete":
             if path.exists():
-                path.unlink()
-                run(["git", "rm", change["path"]])
+                run(["git", "rm", "--", str(path.relative_to(REPO_DIR.resolve()))])
                 log(f"Deleted {change['path']}")
             continue
-
-        # Ensure parent directory exists
-        path.parent.mkdir(parents=True, exist_ok=True)
 
         if action == "create" and path.exists():
             log(f"File {change['path']} already exists, skipping creation")
             continue
 
-        path.write_text(change["content"])
+        _write_change(change)
         log(f"{'Created' if action == 'create' else 'Modified'} {change['path']}")
 
     return True
@@ -433,9 +454,7 @@ Output a JSON array of file changes.
         return False
 
     for change in changes:
-        path = Path(REPO_DIR / change["path"])
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(change["content"])
+        _write_change(change)
         log(f"Fixed {change['path']}")
 
     # Commit and push fixes

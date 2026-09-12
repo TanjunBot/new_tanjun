@@ -107,6 +107,24 @@ class TestReportBotException:
             body = mock_repo.create_issue.call_args[1]["body"]
             assert "**Fingerprint:**" in body
 
+    def test_exception_report_redacts_credentials(self):
+        with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github") as mock_github:
+            mock_repo = MagicMock()
+            mock_g = MagicMock()
+            mock_g.get_repo.return_value = mock_repo
+            mock_g.search_issues.return_value.totalCount = 0
+            mock_github.return_value = mock_g
+            report_bot_exception_sync(
+                RuntimeError("Authorization: Bearer super-secret"),
+                source="https://example.test/?token=url-secret",
+                context={"password": "db-secret"},
+            )
+            call = mock_repo.create_issue.call_args.kwargs
+            assert "super-secret" not in call["body"]
+            assert "url-secret" not in call["body"]
+            assert "db-secret" not in call["body"]
+            assert "[REDACTED]" in call["body"]
+
     def test_dedup_prevents_duplicate_reports(self):
         with patch("utils.github.GithubAuthToken", "token"), patch("utils.github.Github") as mock_github:
             mock_repo = MagicMock()

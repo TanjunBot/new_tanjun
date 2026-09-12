@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -11,6 +12,36 @@ from models import ScheduledMessageModel
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID
 
 pytestmark = pytest.mark.asyncio
+
+
+async def test_overlapping_scheduler_ticks_do_not_duplicate_send() -> None:
+    msg = _due_msg()
+    entered = asyncio.Event()
+    release = asyncio.Event()
+    channel = MagicMock()
+
+    async def send(**kwargs):
+        entered.set()
+        await release.wait()
+        return MagicMock(id=1)
+
+    channel.send = AsyncMock(side_effect=send)
+    guild = MagicMock()
+    guild.get_channel = MagicMock(return_value=channel)
+    client = MagicMock()
+    client.get_guild = MagicMock(return_value=guild)
+    with (
+        patch("commands.utility.schedulemessage.ScheduledMessageService.get_due_messages", new_callable=AsyncMock, return_value=[msg]),
+        patch("commands.utility.schedulemessage.ScheduledMessageService.update_discord_message_id", new_callable=AsyncMock),
+        patch("commands.utility.schedulemessage.ScheduledMessageService.cancel", new_callable=AsyncMock),
+    ):
+        first = asyncio.create_task(send_scheduled_messages(client))
+        await entered.wait()
+        await send_scheduled_messages(client)
+        release.set()
+        await first
+
+    assert channel.send.call_count == 1
 
 
 def _due_msg(**kwargs) -> ScheduledMessageModel:

@@ -2,6 +2,8 @@ from locale_keys import locale
 import random
 import utility
 
+MAX_RANDOM_NUMBERS = 10
+
 async def random_number_command(command_info: utility.CommandInfo, min: int, max: int, amount: int=1) -> None:
     try:
         min = int(min)
@@ -13,7 +15,7 @@ async def random_number_command(command_info: utility.CommandInfo, min: int, max
         return
     if max < min:
         embed = utility.tanjunEmbed(title=locale.commands.math.randomnumber.error.title(str(command_info.locale)), description=locale.commands.math.randomnumber.error.invalid_range(str(command_info.locale)))
-    elif amount < 1:
+    elif amount < 1 or amount > MAX_RANDOM_NUMBERS:
         embed = utility.tanjunEmbed(title=locale.commands.math.randomnumber.error.title(str(command_info.locale)), description=locale.commands.math.randomnumber.error.invalid_amount(str(command_info.locale)))
     else:
         numbers = [random.randint(min, max) for _ in range(amount)]

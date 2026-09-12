@@ -36,10 +36,17 @@ def check_locale_files() -> list[CheckOutcome]:
         if not isinstance(data, list):
             outcomes.append(CheckOutcome(check_id, False, "Expected JSON array of translation entries"))
             continue
-        ids = [str(entry.get("identifier", "")) for entry in data if isinstance(entry, dict)]
+        invalid = [entry for entry in data if not isinstance(entry, dict)]
+        if invalid:
+            outcomes.append(CheckOutcome(check_id, False, f"{len(invalid)} entries are not objects"))
+            continue
+        ids = [str(entry.get("identifier", "")) for entry in data]
         empty = [i for i in ids if not i]
         if empty:
             outcomes.append(CheckOutcome(check_id, False, f"{len(empty)} entries missing identifier"))
+            continue
+        if any(not isinstance(entry.get("translation"), str) for entry in data):
+            outcomes.append(CheckOutcome(check_id, False, "Entries must have string translations"))
             continue
         outcomes.append(CheckOutcome(check_id, True, f"{len(ids)} entries"))
     return outcomes

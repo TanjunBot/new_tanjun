@@ -59,6 +59,11 @@ class TestReportService:
         action.assert_awaited_once()
 
     @pytest.mark.asyncio
+    async def test_update_status_rejects_unknown_status(self):
+        with pytest.raises(ValueError, match="Invalid report status"):
+            await ReportService.update_status(GUILD_ID, "5", "unknown")
+
+    @pytest.mark.asyncio
     async def test_set_anonymous_and_delete(self):
         with patch("services.report_service.execute_action", AsyncMock()) as action:
             await ReportService.set_anonymous(GUILD_ID, "5", True)

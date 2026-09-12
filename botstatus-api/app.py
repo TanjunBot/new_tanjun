@@ -11,18 +11,30 @@ Receives periodic heartbeats from Tanjun bot(s) and provides:
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import hmac
 import json
 import logging
+import math
 import os
 from pathlib import Path
+from time import monotonic
 from typing import Any
 
-from fastapi import FastAPI, Header, HTTPException, Query, Response, status
+from fastapi import (
+    FastAPI,
+    Header,
+    HTTPException,
+    Path as FastAPIPath,
+    Query,
+    Request,
+    Response,
+    status,
+)
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logging.basicConfig(
@@ -42,18 +54,38 @@ class Settings(BaseSettings):
     default_bot_id: str = "832297321793323028"  # Tanjun bot ID
     state_file: str = "data/state.json"
     uptime_kuma_push_url: str = ""
+    max_body_bytes: int = 64 * 1024
+    heartbeat_rate_limit: int = 60
+    heartbeat_rate_window_seconds: int = 60
 
 settings = Settings()
 
 
 class HeartbeatPayload(BaseModel):
     id: str = Field(..., pattern=r"^[0-9]{15,20}$", description="Discord application / bot user ID")
-    status: str = Field(default="alive", description="Status string, e.g. alive / online")
+    status: str = Field(default="alive", min_length=1, max_length=32, description="Status string, e.g. alive / online")
     latency: float | str | None = Field(default=None, description="Discord WebSocket latency in seconds")
-    latency_ms: int | None = Field(default=None, description="Discord WebSocket latency in milliseconds")
+    latency_ms: int | None = Field(default=None, ge=0, le=300_000, description="Discord WebSocket latency in milliseconds")
     guild_count: int | None = Field(default=None, ge=0, description="Number of connected Discord guilds")
-    version: str | None = Field(default=None, description="Bot version")
+    version: str | None = Field(default=None, max_length=128, description="Bot version")
     extra: dict[str, Any] | None = Field(default=None, description="Extra metadata")
+
+    @model_validator(mode="after")
+    def validate_values(self) -> "HeartbeatPayload":
+        if isinstance(self.latency, float) and not math.isfinite(self.latency):
+            raise ValueError("latency must be finite")
+        if self.latency is not None:
+            if isinstance(self.latency, str) and len(self.latency) > 32:
+                raise ValueError("latency is too long")
+            try:
+                parsed = float(self.latency)
+            except (TypeError, ValueError) as exc:
+                raise ValueError("latency must be numeric") from exc
+            if parsed < 0 or parsed > 300:
+                raise ValueError("latency must be between 0 and 300 seconds")
+        if self.extra is not None and len(json.dumps(self.extra, separators=(",", ":"))) > 8 * 1024:
+            raise ValueError("extra metadata is too large")
+        return self
 
 
 class BotState(BaseModel):
@@ -157,6 +189,7 @@ class StatusManager:
 
 
 manager = StatusManager(settings.state_file, settings.timeout_seconds)
+_heartbeat_requests: dict[str, deque[float]] = defaultdict(deque)
 
 
 @asynccontextmanager
@@ -174,6 +207,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+@app.middleware("http")
+async def reject_oversized_requests(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            too_large = int(content_length) > settings.max_body_bytes
+        except ValueError:
+            too_large = True
+        if too_large:
+            return Response(
+                content='{"detail":"Request body too large"}',
+                status_code=413,
+                media_type="application/json",
+            )
+    return await call_next(request)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -189,10 +239,29 @@ def verify_auth(authorization: str | None = Header(None)) -> None:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Heartbeat authentication is not configured",
         )
+    scheme, separator, provided = (authorization or "").partition(" ")
+    if not separator or scheme.lower() != "bearer" or not provided.strip():
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
     expected = settings.api_key.removeprefix("Bearer ").strip()
-    provided = authorization.removeprefix("Bearer ").strip() if authorization else ""
+    provided = provided.strip()
     if not hmac.compare_digest(provided, expected):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
+
+
+def enforce_heartbeat_rate_limit(client_key: str) -> None:
+    now = monotonic()
+    requests = _heartbeat_requests[client_key]
+    cutoff = now - settings.heartbeat_rate_window_seconds
+    while requests and requests[0] <= cutoff:
+        requests.popleft()
+    if len(requests) >= settings.heartbeat_rate_limit:
+        retry_after = max(1, int(requests[0] + settings.heartbeat_rate_window_seconds - now))
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Heartbeat rate limit exceeded",
+            headers={"Retry-After": str(retry_after)},
+        )
+    requests.append(now)
 
 
 def _escape_prometheus_label(value: str) -> str:
@@ -206,9 +275,11 @@ def _escape_prometheus_label(value: str) -> str:
 @app.post("/status", status_code=status.HTTP_200_OK)
 async def post_heartbeat(
     payload: HeartbeatPayload,
+    request: Request,
     authorization: str | None = Header(None),
 ) -> dict[str, Any]:
     verify_auth(authorization)
+    enforce_heartbeat_rate_limit(request.client.host if request.client else "unknown")
     bot = manager.record_ping(payload)
     logger.info("Heartbeat received from bot %s: latency=%dms", payload.id, bot.latency_ms)
 
@@ -225,7 +296,8 @@ async def post_heartbeat(
             async with httpx.AsyncClient(timeout=5.0) as client:
                 await client.get(push_url)
         except Exception as e:
-            logger.warning("Failed to forward push to Uptime Kuma: %s", e)
+            # The configured push URL contains the Uptime Kuma secret token.
+            logger.warning("Failed to forward heartbeat to Uptime Kuma: %s", type(e).__name__)
 
     return {"status": "ok", "bot": bot.model_dump()}
 
@@ -234,7 +306,9 @@ async def post_heartbeat(
 
 @app.get("/")
 @app.get("/status")
-async def get_status(bot_id: str | None = Query(None, description="Optional bot ID")) -> dict[str, Any]:
+async def get_status(
+    bot_id: str | None = Query(None, pattern=r"^[0-9]{15,20}$", description="Optional bot ID"),
+) -> dict[str, Any]:
     if bot_id:
         bot = manager.get_bot(bot_id)
         if not bot:
@@ -256,7 +330,9 @@ async def get_status(bot_id: str | None = Query(None, description="Optional bot 
 
 
 @app.get("/status/{bot_id}")
-async def get_bot_status(bot_id: str) -> dict[str, Any]:
+async def get_bot_status(
+    bot_id: str = FastAPIPath(..., pattern=r"^[0-9]{15,20}$"),
+) -> dict[str, Any]:
     bot = manager.get_bot(bot_id)
     if not bot:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Bot {bot_id} not found")

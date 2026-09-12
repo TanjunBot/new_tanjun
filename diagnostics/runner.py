@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Any
@@ -14,6 +15,8 @@ from diagnostics.models import CheckOutcome, DiagnosticsSummary, PhaseResult
 from diagnostics.prefix_checks import run_prefix_command_checks
 from diagnostics.registry import all_specs, run_spec
 from diagnostics.tree import compare_tree_to_manifest
+
+logger = logging.getLogger(__name__)
 
 EXPECTED_COGS = frozenset(
     {
@@ -175,11 +178,12 @@ class DiagnosticsRunner:
             await self._update_progress(phase_index, label, "Running…")
             try:
                 await phase_fn(phase_index)
-            except Exception as exc:
+            except Exception as e:
+                logger.exception("Diagnostics phase %s (%s) failed", phase_id, phase_title)
                 self.summary.aborted = True
-                self.summary.abort_message = str(exc)
-                await self._thread_send(f"Phase {phase_id} ({phase_title}) aborted: {exc}")
-                await self._update_progress(phase_index, label, f"Aborted: {exc}")
+                self.summary.abort_message = f"Phase failed unexpectedly: {e}; see bot logs"
+                await self._thread_send(f"Phase {phase_id} ({phase_title}) aborted unexpectedly: {e}; see bot logs")
+                await self._update_progress(phase_index, label, "Aborted unexpectedly; see bot logs")
                 break
 
         await self._finalize()

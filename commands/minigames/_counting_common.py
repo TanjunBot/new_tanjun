@@ -51,6 +51,11 @@ async def require_counting_channel(command_info: CommandInfo, channel_id: int, g
 
 async def require_valid_progress(command_info: CommandInfo, progress: int, locale_key_prefix: str) -> bool:
     """Check progress bounds. Returns True if invalid (should return)."""
+    if isinstance(progress, bool) or not isinstance(progress, int):
+        ns = at(locale_key_prefix).error.invalid_progress
+        embed = tanjunEmbed(title=ns.title(command_info.locale), description=ns.description(command_info.locale))
+        await command_info.reply(embed=embed)
+        return True
     if progress < 0:
         ns = at(locale_key_prefix).error.invalid_progress
         embed = tanjunEmbed(title=ns.title(command_info.locale), description=ns.description(command_info.locale))

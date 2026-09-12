@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import abc
 import asyncio
+from functools import wraps
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
@@ -14,6 +15,15 @@ class Player(BaseModel):
     is_bot: bool = False
     is_host: bool = False
     connected: bool = True
+
+
+def serialized_action(method):
+    """Serialize state-changing actions, including delayed bot turns."""
+    @wraps(method)
+    async def wrapped(self, *args, **kwargs):
+        async with self.action_lock:
+            return await method(self, *args, **kwargs)
+    return wrapped
 
 
 class BaseGame(abc.ABC):
@@ -29,6 +39,11 @@ class BaseGame(abc.ABC):
         self.is_finished: bool = False
         self.winner: Optional[str] = None
         self.game_mode: str = "pvp"  # pvp or bot
+        self.action_lock = asyncio.Lock()
+
+    def is_controller(self, player_id: str) -> bool:
+        """Only the session host may change game configuration or reset a match."""
+        return player_id == self.host.user_id and player_id not in self.spectators
 
     @property
     @abc.abstractmethod

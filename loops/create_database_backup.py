@@ -12,10 +12,13 @@ from config import database_ip, database_password, database_port, database_schem
 
 def _write_defaults_file(user: str, password: str, host: str, port: int) -> str:
     """Create a temporary MySQL defaults file with credentials. Returns the file path."""
+    if any("\r" in value or "\n" in value for value in (user, password, host)):
+        raise ValueError("MySQL connection values may not contain newlines")
     content = f"[client]\nuser={user}\npassword={password}\nhost={host}\nport={port}\n"
     fd, path = tempfile.mkstemp(prefix="mysql_", suffix=".cnf", text=True)
     with os.fdopen(fd, "w") as f:
         f.write(content)
+    os.chmod(path, 0o600)
     return path
 
 

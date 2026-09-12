@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import time
+from datetime import UTC, time
 
 import discord
 from discord.ext import commands, tasks
@@ -46,6 +46,8 @@ embeds = {}  # type: ignore[var-annotated]
 class LoopCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self._startup_lock = asyncio.Lock()
+        self._loops_started = False
 
     @tasks.loop(seconds=30)
     async def sendSendReadyGiveaways(self) -> None:
@@ -172,7 +174,7 @@ class LoopCog(commands.Cog):
         except Exception:
             _log_loop_error("pollTwitchStreams")
 
-    @tasks.loop(time=[time(hour=2), time(hour=8), time(hour=14), time(hour=20)])
+    @tasks.loop(time=[time(hour=2, tzinfo=UTC), time(hour=8, tzinfo=UTC), time(hour=14, tzinfo=UTC), time(hour=20, tzinfo=UTC)])
     async def sendPokemonWerbung(self) -> None:
         try:
             message = """
@@ -215,25 +217,29 @@ Jede(r) ist ♥️-lich willkommen! Wir freuen uns über jeden Neuzugang! Schaut
             self.bot._pool_ready = asyncio.Event()
         await self.bot._pool_ready.wait()
 
-        loop_starts = [
-            self.pollTwitchStreams,
-            self.sendSendReadyGiveaways,
-            self.endGiveawaysLoop,
-            self.checkVoiceUsers,
-            self.clearNotifiedUsersLoop,
-            self.addVoiceUserLoop,
-            self.refillAiTokenLoop,
-            self.pingServerLoop,
-            self.backupDatabaseLoop,
-            self.removeExpiredClaimedBoosterRoles,
-            self.removeExpiredClaimedBoosterChannels,
-            self.sendScheduledMessages,
-            self.sendPokemonWerbung,
-        ]
-        for loop in loop_starts:
-            if not loop.is_running():
-                loop.start()  # type: ignore[unused-awaitable]
-            await asyncio.sleep(0.25)
+        async with self._startup_lock:
+            if self._loops_started:
+                return
+            loop_starts = [
+                self.pollTwitchStreams,
+                self.sendSendReadyGiveaways,
+                self.endGiveawaysLoop,
+                self.checkVoiceUsers,
+                self.clearNotifiedUsersLoop,
+                self.addVoiceUserLoop,
+                self.refillAiTokenLoop,
+                self.pingServerLoop,
+                self.backupDatabaseLoop,
+                self.removeExpiredClaimedBoosterRoles,
+                self.removeExpiredClaimedBoosterChannels,
+                self.sendScheduledMessages,
+                self.sendPokemonWerbung,
+            ]
+            for loop in loop_starts:
+                if not loop.is_running():
+                    loop.start()  # type: ignore[unused-awaitable]
+                await asyncio.sleep(0.25)
+            self._loops_started = True
 
 
 async def setup(bot: commands.Bot) -> None:

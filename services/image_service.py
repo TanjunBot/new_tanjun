@@ -1,6 +1,7 @@
 """ImageService: Consolidated image processing with typed operations."""
 from __future__ import annotations
 import io
+import warnings
 from enum import Enum
 from io import BytesIO
 from typing import Any
@@ -84,10 +85,17 @@ class ImageService:
 
         Returns an error locale key prefix on failure, or None on success.
         """
-        if hasattr(image, 'filename') and (not image.filename.lower().endswith(ImageService.ALLOWED_EXTENSIONS)):
+        filename = getattr(image, "filename", "")
+        if isinstance(filename, str) and not filename.lower().endswith(ImageService.ALLOWED_EXTENSIONS):
             return 'typenotsupported'
-        if hasattr(image, 'size') and image.size > ImageService.MAX_FILE_SIZE:
+        size = getattr(image, "size", 0)
+        if isinstance(size, int) and size < 0:
+            return "filesize"
+        if isinstance(size, int) and size > ImageService.MAX_FILE_SIZE:
             return 'filesize'
+        content_type = getattr(image, "content_type", None)
+        if isinstance(content_type, str) and not content_type.lower().startswith("image/"):
+            return "typenotsupported"
         return None
 
     @staticmethod
@@ -96,37 +104,58 @@ class ImageService:
         if operation.filter_name is None and operation.resize is None and (operation.scale is None) and (operation.mirror_axis is None) and (operation.compress_quality is None) and (not operation.remove_background):
             return image_data
         try:
-            pil_image: Image.Image = Image.open(io.BytesIO(image_data))
-        except (UnidentifiedImageError, OSError) as e:
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", Image.DecompressionBombWarning)
+                with Image.open(io.BytesIO(image_data)) as source:
+                    source.load()
+                    pil_image = source.copy()
+        except (UnidentifiedImageError, OSError, Image.DecompressionBombWarning, Image.DecompressionBombError) as e:
             msg = f'Failed to open image: {e}'
             raise ValueError(msg) from e
-        if operation.compress_quality is not None and pil_image.mode in ('RGBA', 'P'):
-            pil_image = pil_image.convert('RGB')
-        if operation.filter_name is not None:
-            pil_image = pil_image.filter(operation.filter_name.to_pil(operation.radius))
-        if operation.resize is not None:
-            pil_image = pil_image.resize(operation.resize)
-        if operation.scale is not None:
-            new_size = (int(pil_image.width * operation.scale), int(pil_image.height * operation.scale))
-            pil_image = pil_image.resize(new_size)
-        if operation.mirror_axis == 'x':
-            pil_image = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
-        elif operation.mirror_axis == 'y':
-            pil_image = pil_image.transpose(Image.FLIP_TOP_BOTTOM)
-        if operation.compress_quality is not None:
-            fmt = 'JPEG'
-            save_kwargs: dict[str, Any] = {'format': fmt, 'quality': operation.compress_quality, 'optimize': True}
-        else:
-            fmt = 'PNG'
-            save_kwargs = {'format': fmt}
-        buffer = BytesIO()
         try:
+            if operation.compress_quality is not None and pil_image.mode in ('RGBA', 'P'):
+                converted = pil_image.convert('RGB')
+                pil_image.close()
+                pil_image = converted
+            if operation.filter_name is not None:
+                transformed = pil_image.filter(operation.filter_name.to_pil(operation.radius))
+                pil_image.close()
+                pil_image = transformed
+            if operation.resize is not None:
+                if any(d <= 0 for d in operation.resize):
+                    raise ValueError("Image dimensions must be positive")
+                transformed = pil_image.resize(operation.resize)
+                pil_image.close()
+                pil_image = transformed
+            if operation.scale is not None:
+                if operation.scale <= 0:
+                    raise ValueError("Image scale must be positive")
+                new_size = (max(1, int(pil_image.width * operation.scale)), max(1, int(pil_image.height * operation.scale)))
+                transformed = pil_image.resize(new_size)
+                pil_image.close()
+                pil_image = transformed
+            if operation.mirror_axis == 'x':
+                transformed = pil_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+                pil_image.close()
+                pil_image = transformed
+            elif operation.mirror_axis == 'y':
+                transformed = pil_image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+                pil_image.close()
+                pil_image = transformed
+            if operation.compress_quality is not None:
+                fmt = 'JPEG'
+                save_kwargs: dict[str, Any] = {'format': fmt, 'quality': operation.compress_quality, 'optimize': True}
+            else:
+                fmt = 'PNG'
+                save_kwargs = {'format': fmt}
+            buffer = BytesIO()
             pil_image.save(buffer, **save_kwargs)
+            buffer.seek(0)
+            return buffer.getvalue()
         except (OSError, ValueError) as e:
-            msg = f'Failed to save image: {e}'
-            raise ValueError(msg) from e
-        buffer.seek(0)
-        return buffer.getvalue()
+            raise ValueError(f'Failed to save image: {e}') from e
+        finally:
+            pil_image.close()
 
     @staticmethod
     def format_error_embed(loc: str, error_key: str, locale_prefix: str='image') -> object:

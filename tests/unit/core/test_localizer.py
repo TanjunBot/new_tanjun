@@ -355,6 +355,30 @@ class TestLocalize:
         finally:
             restore()
 
+    def test_missing_key_falls_back_to_english_entry(self, service: LocalizerService, locale_dir):
+        restore = _chdir(locale_dir)
+        try:
+            (locale_dir / "de.json").write_text(
+                json.dumps([{"identifier": "common.success", "translation": "DE"}]),
+                encoding="utf-8",
+            )
+            service.reload_locales()
+            assert service.localize("de", "commands.ping.name") == "ping"
+        finally:
+            restore()
+
+    def test_malformed_template_does_not_raise(self, service: LocalizerService, locale_dir):
+        restore = _chdir(locale_dir)
+        try:
+            (locale_dir / "en.json").write_text(
+                json.dumps([{"identifier": "bad", "translation": "broken ${value"}]),
+                encoding="utf-8",
+            )
+            service.reload_locales()
+            assert service.localize("en", "bad") == "broken ${value"
+        finally:
+            restore()
+
 
 # ===================================================================
 # test_localize

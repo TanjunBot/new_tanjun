@@ -71,7 +71,7 @@ async def test_command_completion_increments_counter(metrics_port: int) -> None:
     try:
         before = command_usage.labels(
             command="test_ping",
-            guild_id="999",
+            guild_id="guild",
             status="success",
         )._value.get()
         ctx = MagicMock()
@@ -82,7 +82,7 @@ async def test_command_completion_increments_counter(metrics_port: int) -> None:
         await cog.on_command_completion(ctx)
         after = command_usage.labels(
             command="test_ping",
-            guild_id="999",
+            guild_id="guild",
             status="success",
         )._value.get()
         assert after == before + 1
@@ -91,7 +91,8 @@ async def test_command_completion_increments_counter(metrics_port: int) -> None:
             async with session.get(f"http://127.0.0.1:{metrics_port}/metrics") as resp:
                 body = await resp.text()
         assert 'command="test_ping"' in body
-        assert 'guild_id="999"' in body
+        assert 'guild_id="guild"' in body
+        assert 'guild_id="999"' not in body
     finally:
         await cog.cog_unload()
 

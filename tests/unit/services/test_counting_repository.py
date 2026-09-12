@@ -111,6 +111,16 @@ class TestCountingRepository:
             assert "last_counter_id" in args[0]
             assert args[1] == ("user_1", "123")
 
+    @pytest.mark.asyncio
+    async def test_increment_progress_if_turn_is_atomic(self, repo: CountingRepository) -> None:
+        with patch("services.counting_repository.execute_action", new_callable=AsyncMock) as mock_exec:
+            mock_exec.return_value = 0
+            result = await repo.increment_progress_if_turn(CountingMode.NORMAL, "123", "user_1")
+            assert result is False
+            query, params = mock_exec.await_args.args
+            assert "last_counter_id <> %s" in query
+            assert params == ("user_1", "123", "user_1")
+
     # ── clear ─────────────────────────────────────────────────
 
     @pytest.mark.asyncio
