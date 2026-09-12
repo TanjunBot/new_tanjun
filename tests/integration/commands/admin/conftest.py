@@ -12,6 +12,7 @@ from tests.helpers.discord import make_interaction, make_permissions
 def make_aiohttp_session(status: int = 200, data: bytes = b"fake", side_effect: Exception | None = None):
     mock_resp = AsyncMock()
     mock_resp.status = status
+    mock_resp.headers = {}
     mock_resp.read = AsyncMock(return_value=data)
     mock_session = MagicMock()
     if side_effect:

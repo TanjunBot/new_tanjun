@@ -7,7 +7,7 @@ This guide covers deploying Tanjun in a production environment.
 ### Prerequisites
 
 - Docker and Docker Compose
-- MySQL or MariaDB server (or use the database service in the compose file)
+- MySQL or MariaDB server (the production Compose file does not provision a database)
 - Discord Bot Token and Application ID
 
 ### Quick Start
@@ -48,22 +48,12 @@ See [Environment Variables](./environment.md) for the full list.
 
 #### Database
 
-For production, use a managed MySQL/MariaDB instance:
+Use a managed MySQL/MariaDB instance, or provide a separately managed database
+service. The bot container connects to the host named by `database_ip`; the
+Compose file only runs the bot and the optional botstatus API.
 
-```yaml
-# compose.yaml excerpt
-services:
-  db:
-    image: mariadb:11
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${database_schema}
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: unless-stopped
-```
-
-Configure your `.env`:
+Configure your `.env` (use the database service's internal hostname when
+running in a platform such as Coolify):
 
 ```ini
 database_ip=db
@@ -75,13 +65,9 @@ database_schema=tanjun
 
 #### Health Checks
 
-The bot includes built-in health checks accessible at:
-
-```
-http://localhost:8080/health
-```
-
-Configure monitoring to check this endpoint regularly.
+The Docker healthcheck uses `http://127.0.0.1:8001/health` (the metrics
+server). Configure external monitoring against that endpoint when port 8001 is
+exposed; port 8080 is used by the Discord Activities server when enabled.
 
 ## Manual Deployment
 
@@ -90,7 +76,7 @@ Configure monitoring to check this endpoint regularly.
    ```bash
    python3.12 -m venv venv
    source venv/bin/activate
-   pip install -e ".[dev]"
+   pip install -e .
    ```
 
 2. Run with a process manager like `systemd` or `supervisor`:
@@ -134,7 +120,7 @@ docker compose up -d --build
 ```bash
 git pull
 source venv/bin/activate
-pip install -e ".[dev]"
+pip install -e .
 # Restart the bot
 ```
 

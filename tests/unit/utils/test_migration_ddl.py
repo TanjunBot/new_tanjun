@@ -49,3 +49,26 @@ def test_run_create_all_tables_executes_ddl_in_order() -> None:
     assert connection.execute.call_count == 2
     first_sql = str(connection.execute.call_args_list[0][0][0])
     assert "reports" in first_sql
+
+
+def test_migration_chain_reaches_nullable_repair_head() -> None:
+    import importlib
+
+    revisions = [
+        importlib.import_module(f"migrations.versions.{name}")
+        for name in (
+            "001_initial_schema",
+            "002_legacy_schema_patches",
+            "003_giveaway_legacy_column",
+            "004_schema_fk_and_guild_keys",
+            "005_legacy_camelcase_columns",
+            "006_giveaway_id_not_null",
+            "007_welcome_leave_channel_nullable",
+            "008_nullable_repair",
+        )
+    ]
+
+    assert revisions[0].down_revision is None
+    for previous, current in zip(revisions[:-1], revisions[1:], strict=True):
+        assert current.down_revision == previous.revision
+    assert revisions[-1].revision == "008_nullable_repair"

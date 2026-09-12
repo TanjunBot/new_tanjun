@@ -4,6 +4,10 @@ from services.booster_service import BoosterType, ClaimedBoosterType, booster_se
 from utility import command_info, tanjunEmbed
 
 async def claimBoosterChannel(command_info: command_info, name: str):
+    if command_info.guild is None or not isinstance(command_info.user, discord.Member):
+        embed = tanjunEmbed(title=locale.errors.guildOnly.title(command_info.locale), description=locale.errors.guildOnly.description(command_info.locale))
+        await command_info.reply(embed=embed)
+        return
     booster_channel = await booster_service.get(BoosterType.CHANNEL, str(command_info.guild.id))
     if not booster_channel:
         embed = tanjunEmbed(title=locale.commands.utility.claimboosterchannel.no_booster_role.title(command_info.locale), description=locale.commands.utility.claimboosterchannel.no_booster_role.description(command_info.locale))

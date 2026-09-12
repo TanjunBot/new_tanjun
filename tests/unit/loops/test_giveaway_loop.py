@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -17,6 +18,27 @@ FROZEN_START = datetime(2025, 6, 15, 12, 0, 0, tzinfo=UTC)
 
 
 class TestSendReadyGiveaways:
+    async def test_overlapping_ticks_do_not_send_same_batch_twice(self) -> None:
+        client = MagicMock()
+        entered = asyncio.Event()
+        release = asyncio.Event()
+
+        async def send(*, giveawayid: int, client: MagicMock) -> None:
+            entered.set()
+            await release.wait()
+
+        with (
+            patch("loops.giveaway.giveaway_service.get_send_ready", new_callable=AsyncMock, return_value=[10]),
+            patch("loops.giveaway.sendGiveaway", side_effect=send) as mock_send,
+        ):
+            first = asyncio.create_task(giveaway.sendReadyGiveaways(client))
+            await entered.wait()
+            await giveaway.sendReadyGiveaways(client)
+            release.set()
+            await first
+
+        mock_send.assert_awaited_once()
+
     @freeze_time(FROZEN_START)
     async def test_no_ready_giveaways_skips_send(self) -> None:
         client = MagicMock()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import AsyncIterator
 from datetime import datetime
 from enum import IntEnum
@@ -47,7 +48,7 @@ class GiveawayModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     # Matches SELECT column order from giveaway table
-    giveaway_id: int
+    giveaway_id: int = Field(ge=1)
     guild_id: GuildId
     title: Annotated[str, StringConstraints(max_length=128)]
     description: Annotated[str | None, StringConstraints(max_length=1024)] = None
@@ -121,16 +122,16 @@ class ReportModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     # Matches SELECT order from reports table
-    id: int
+    id: int = Field(ge=1)
     guild_id: GuildId
     user_id: UserId
     reporter_id: UserId
     reason: Annotated[str | None, StringConstraints(max_length=1024)] = None
     created_at: int  # UNIX_TIMESTAMP
-    status: str  # "pending", "investigating", "action_taken", "dismissed"
+    status: Literal["pending", "investigating", "action_taken", "dismissed"]
     status_updated_at: int | None  # UNIX_TIMESTAMP
     status_updated_by: OptionalUserId = None
-    status_note: str | None = None
+    status_note: Annotated[str | None, StringConstraints(max_length=1024)] = None
     anonymous: bool = False
 
     @classmethod
@@ -148,11 +149,14 @@ class ReportModel(BaseModel):
 class ReportEvidenceModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: int = Field(ge=1)
     guild_id: GuildId
-    report_id: int
-    url: Annotated[str, StringConstraints(max_length=2048)]
-    filename: str | None = None
+    report_id: int = Field(ge=1)
+    url: Annotated[str, StringConstraints(min_length=1, max_length=2048)]
+    filename: Annotated[
+        str | None,
+        StringConstraints(min_length=1, max_length=255, pattern=r"^[^/\\\x00-\x1f\x7f]+$"),
+    ] = None
     uploaded_by: OptionalUserId = None
     uploaded_at: int  # UNIX_TIMESTAMP
 
@@ -171,13 +175,13 @@ class ReportEvidenceModel(BaseModel):
 class ReportModActionModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: int = Field(ge=1)
     guild_id: GuildId
-    report_id: int
-    action_type: str  # "ban", "kick", "timeout", "warning", "note"
+    report_id: int = Field(ge=1)
+    action_type: Literal["ban", "kick", "timeout", "warning", "note"]
     target_id: UserId
     performed_by: UserId
-    details: str | None = None
+    details: Annotated[str | None, StringConstraints(max_length=1024)] = None
     created_at: int  # UNIX_TIMESTAMP
 
     @classmethod
@@ -245,7 +249,7 @@ class TwitchOnlineNotificationModel(BaseModel):
 class TriggerMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: int = Field(ge=1)
     guild_id: GuildId
     trigger: Annotated[str, StringConstraints(max_length=128)]
     response: Annotated[str, StringConstraints(max_length=1024)]
@@ -268,7 +272,7 @@ class TriggerMessageChannelModel(BaseModel):
 
     guild_id: GuildId
     channel_id: ChannelId
-    trigger_id: int
+    trigger_id: int = Field(ge=1)
 
     @classmethod
     def from_row(cls, row: tuple) -> TriggerMessageChannelModel:
@@ -285,7 +289,7 @@ class TriggerMessageChannelModel(BaseModel):
 class TicketMessageModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
+    id: int = Field(ge=1)
     guild_id: GuildId
     channel_id: ChannelId
     introduction: Annotated[str | None, StringConstraints(max_length=1024)] = None
@@ -317,7 +321,7 @@ class TicketModel(BaseModel):
     closed_at: int | None  # UNIX_TIMESTAMP
     closed_by: OptionalUserId = None
     channel_id: ChannelId
-    ticket_message_id: int
+    ticket_message_id: int = Field(ge=1)
 
     @classmethod
     def from_row(cls, row: tuple) -> TicketModel:
@@ -840,13 +844,19 @@ class ChannelOverwriteModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     role_id: RoleId
-    overwrites: dict
+    overwrites: dict[str, object]
 
     @classmethod
     def from_row(cls, row: tuple) -> ChannelOverwriteModel:
-        import json
-
-        return cls(role_id=row[0], overwrites=json.loads(row[1]))
+        if not isinstance(row, (list, tuple)) or len(row) != 2:
+            raise ValueError("ChannelOverwriteModel.from_row expected 2 columns")
+        try:
+            payload = json.loads(row[1])
+        except (TypeError, json.JSONDecodeError) as exc:
+            raise ValueError("ChannelOverwriteModel.from_row received invalid JSON") from exc
+        if not isinstance(payload, dict):
+            raise ValueError("ChannelOverwriteModel.from_row expected a JSON object")
+        return cls(role_id=row[0], overwrites=payload)
 
     @classmethod
     async def iter_rows(cls, query: str, params=None) -> AsyncIterator[ChannelOverwriteModel]:
@@ -994,18 +1004,20 @@ class CountingModesConfigModel(BaseModel):
 class TwitchUserModel(BaseModel):
     """A Twitch user returned by the Helix API /users endpoint."""
 
-    id: str
-    login: str
-    display_name: str
-    type: str = ""
-    broadcaster_type: str = ""
-    description: str = ""
-    profile_image_url: str = ""
-    offline_image_url: str = ""
-    view_count: int = 0
-    created_at: str = ""
+    id: Annotated[str, StringConstraints(min_length=1, max_length=64)]
+    login: Annotated[str, StringConstraints(min_length=1, max_length=64)]
+    display_name: Annotated[str, StringConstraints(min_length=1, max_length=128)]
+    type: Annotated[str, StringConstraints(max_length=32)] = ""
+    broadcaster_type: Annotated[str, StringConstraints(max_length=32)] = ""
+    description: Annotated[str, StringConstraints(max_length=1024)] = ""
+    profile_image_url: Annotated[str, StringConstraints(max_length=2048)] = ""
+    offline_image_url: Annotated[str, StringConstraints(max_length=2048)] = ""
+    view_count: int = Field(default=0, ge=0)
+    created_at: Annotated[str, StringConstraints(max_length=64)] = ""
 
     @classmethod
     def from_api_response(cls, data: dict[str, str]) -> TwitchUserModel:
         """Create a TwitchUserModel from a raw Helix API user dict."""
-        return cls(**data)
+        if not isinstance(data, dict):
+            raise ValueError("Twitch user response must be an object")
+        return cls.model_validate(data)

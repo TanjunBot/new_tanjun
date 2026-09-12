@@ -22,20 +22,18 @@ class LevelConfigRepository:
         from api import _guild_config_cache, execute_query
 
         cached = _guild_config_cache.get(guild_id)
-        if cached is not None:
-            if cached:
-                return LevelConfig(
-                    guild_id=guild_id,
-                    active=cached.get("active", True),
-                    difficulty=cached.get("scaling", "medium"),
-                    custom_formula=cached.get("custom_formula"),
-                    level_up_message_active=cached.get("level_up_message_active", True),
-                    level_up_message=cached.get("level_up_message"),
-                    level_up_channel_id=cached.get("level_up_channel_id"),
-                    text_cooldown=cached.get("text_cooldown", 60),
-                    voice_cooldown=cached.get("voice_cooldown", 60),
-                )
-            return LevelConfig(guild_id=guild_id)
+        if cached:
+            return LevelConfig(
+                guild_id=guild_id,
+                active=cached.get("active", True),
+                difficulty=cached.get("scaling", "medium"),
+                custom_formula=cached.get("custom_formula"),
+                level_up_message_active=cached.get("level_up_message_active", True),
+                level_up_message=cached.get("level_up_message"),
+                level_up_channel_id=cached.get("level_up_channel_id"),
+                text_cooldown=cached.get("text_cooldown", 60),
+                voice_cooldown=cached.get("voice_cooldown", 60),
+            )
 
         query = """
         SELECT guild_id, active, difficulty, customFormula, level_up_messageActive,
@@ -60,7 +58,9 @@ class LevelConfigRepository:
                 },
             )
             return config
-        _guild_config_cache.set(guild_id, {})
+        # Do not cache a missing row as an empty mapping.  An empty mapping is
+        # indistinguishable from a real cached config to callers and would
+        # hide a config created by another process until the TTL expires.
         return LevelConfig(guild_id=guild_id)
 
     async def save_config(self, config: LevelConfig) -> None:

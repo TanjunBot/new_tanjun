@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -90,6 +91,26 @@ class TestHealthCheckManagerRunAll:
         results = await manager.run_all()
         assert results[0].status == HealthStatus.CRITICAL
         assert "exception" in results[0].message.lower()
+        assert "boom" not in results[0].message
+
+    @pytest.mark.asyncio
+    async def test_notification_failure_does_not_escape_periodic_loop(self, manager: HealthCheckManager):
+        manager.register(_CriticalFailCheck(), interval=1)
+        sleep_calls = 0
+
+        async def fake_sleep(_interval):
+            nonlocal sleep_calls
+            sleep_calls += 1
+            if sleep_calls >= 2:
+                manager._running = False
+
+        with (
+            patch("health.manager.asyncio.sleep", side_effect=fake_sleep),
+            patch("time.time", side_effect=[0, 100, 200]),
+            patch("health.manager.notify_health_failures", new_callable=AsyncMock, side_effect=RuntimeError("secret")),
+        ):
+            await manager.start_periodic_checks(interval=60)
+            await manager._periodic_task
 
 
 class TestHealthCheckManagerStartup:
@@ -222,3 +243,14 @@ class TestHealthCheckManagerPeriodic:
         assert manager._running is False
         assert manager._periodic_task is None
         task.cancel.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_async_stop_waits_for_periodic_task(self, manager: HealthCheckManager):
+        manager._running = True
+        task = asyncio.create_task(asyncio.sleep(3600))
+        manager._periodic_task = task
+
+        await manager.stop_periodic_checks_async()
+
+        assert task.done()
+        assert manager._periodic_task is None

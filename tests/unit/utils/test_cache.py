@@ -89,6 +89,11 @@ class TestTTLCacheExpiry:
         time.sleep(0.02)
         assert cache.get("key") is None
 
+    def test_non_positive_custom_ttl_raises(self):
+        cache = TTLCache(ttl=60)
+        with pytest.raises(ValueError, match="ttl must be positive"):
+            cache.set("key", "value", ttl=0)
+
 
 class TestTTLCacheLRU:
     def test_evicts_oldest_when_maxsize_exceeded(self):
@@ -133,6 +138,18 @@ class TestTTLCacheCompute:
         assert cache.get_or_compute_sync("key", factory) == 42
         assert len(calls) == 1
 
+    def test_get_or_compute_sync_caches_none(self):
+        cache = TTLCache[str, None](ttl=60)
+        calls = []
+
+        def factory():
+            calls.append(1)
+            return None
+
+        assert cache.get_or_compute_sync("key", factory) is None
+        assert cache.get_or_compute_sync("key", factory) is None
+        assert len(calls) == 1
+
     @pytest.mark.asyncio
     async def test_get_or_compute_async(self):
         cache = TTLCache(ttl=60)
@@ -146,6 +163,19 @@ class TestTTLCacheCompute:
         value = await result
         assert value == 99
         assert cache.get("key") == 99
+        assert len(calls) == 1
+
+    @pytest.mark.asyncio
+    async def test_get_or_compute_async_caches_none(self):
+        cache = TTLCache[str, None](ttl=60)
+        calls = []
+
+        async def factory():
+            calls.append(1)
+            return None
+
+        assert await cache.get_or_compute("key", factory) is None
+        assert cache.get_or_compute("key", factory) is None
         assert len(calls) == 1
 
     def test_repr(self):

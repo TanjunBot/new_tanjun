@@ -20,27 +20,45 @@ from config import (
 
 
 async def getGif(query: str, amount: int = 1, limit: int = 10) -> list[str]:  # noqa: N802
+    if amount <= 0 or limit <= 0:
+        return []
+    amount = min(amount, limit)
+    limit = min(limit, 50)
     try:
         async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
 
-            async def fetch(url: str) -> dict[str, Any] | None:
-                async with session.get(url) as response:
+            async def fetch(url: str, *, params: dict[str, Any]) -> dict[str, Any] | None:
+                async with session.get(url, params=params) as response:
                     if response.status != 200:
                         return None
                     response_json: dict[str, Any] | None = await response.json()
                     return response_json if isinstance(response_json, dict) else None
 
             r: dict[str, Any] | None = await fetch(
-                f"https://api.giphy.com/v1/gifs/search?api_key={giphyAPIKey}&q={query}&limit={limit}&rating=pg"
+                "https://api.giphy.com/v1/gifs/search",
+                params={"api_key": giphyAPIKey, "q": query, "limit": limit, "rating": "pg"},
             )
 
             if r is None:
                 return []
-            results: list[dict[str, Any]] = r.get("data", [])
+            results = r.get("data", [])
+            if not isinstance(results, list):
+                return []
             # nosec: B311
             random.shuffle(results)
 
-            return [results[i]["images"]["downsized_medium"]["url"] for i in range(min(amount, len(results)))]
+            urls: list[str] = []
+            for result in results:
+                if not isinstance(result, dict):
+                    continue
+                images = result.get("images")
+                medium = images.get("downsized_medium") if isinstance(images, dict) else None
+                url = medium.get("url") if isinstance(medium, dict) else None
+                if isinstance(url, str) and url:
+                    urls.append(url)
+                if len(urls) >= amount:
+                    break
+            return urls
     except (TimeoutError, aiohttp.ClientError):
         return []
 
@@ -53,9 +71,11 @@ async def upload_image_to_imgbb(image_bytes: bytes, file_extension: str) -> dict
         form_data.add_field("name", "tbg")
 
         async with session.post("https://api.imgbb.com/1/upload", data=form_data) as response:
-            response_data: dict[str, Any] = await response.json()
+            if not 200 <= response.status < 300:
+                return {}
+            response_data = await response.json()
 
-    return response_data
+    return response_data if isinstance(response_data, dict) else {}
 
 
 async def upload_to_tanjun_logs(content: str) -> str | None:
@@ -65,17 +85,19 @@ async def upload_to_tanjun_logs(content: str) -> str | None:
     password = bytebin_password
 
     async with aiohttp.ClientSession(timeout=ClientTimeout(total=10)) as session:
-        auth = aiohttp.BasicAuth(username, password)
-        headers = {"Content-Type": "text/html", "Content-Encoding": "gzip"}
+        headers = {
+            "Authorization": aiohttp.encode_basic_auth(username, password),
+            "Content-Type": "text/html",
+            "Content-Encoding": "gzip",
+        }
 
-        async with session.post(url + "/post", data=compressed_content, headers=headers, auth=auth) as response:
+        async with session.post(url.rstrip("/") + "/post", data=compressed_content, headers=headers) as response:
             if response.status == 201:
                 response_data = await response.json()
-                if "key" in response_data:
-                    return f"{bytebin_url}/{response_data['key']}"
-                else:
-                    print("Unexpected response format:", response_data)
-                    return None
+                if isinstance(response_data, dict) and isinstance(response_data.get("key"), str):
+                    return f"{bytebin_url.rstrip('/')}/{response_data['key']}"
+                print("Unexpected response format:", response_data)
+                return None
             else:
                 print(f"Request failed with status {response.status}: {await response.text()}")
                 return None

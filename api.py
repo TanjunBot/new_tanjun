@@ -193,11 +193,10 @@ def set_bot(bot) -> None:
     """
     global _bot
     _bot = bot
-    if bot is not None and hasattr(bot, "_pool") and bot._pool is not None:
-        db_manager._pool = bot._pool
-    elif bot is None:
-        # Clear the manager's pool when clearing _bot so test resets work
-        db_manager._pool = None
+    # Keep the manager in lockstep with the compatibility reference.  In
+    # particular, a bot whose pool is not ready must not retain a previous
+    # bot's pool.
+    db_manager._pool = getattr(bot, "_pool", None) if bot is not None else None
 
 
 def _get_pool() -> Pool | None:
@@ -566,8 +565,20 @@ async def execute_batch(query: str, params_list: list[tuple], bot=None) -> None:
             err_str = str(e).lower()
             if "connection" in err_str or "timeout" in err_str:
                 broken_connection = True
-            # Determine which errors are safe to retry (mirroring _execute_with_retry for write operations)
-            retryable = "deadlock" in err_str or "duplicate" in err_str or "abort" in err_str
+            if conn is not None and not broken_connection:
+                try:
+                    await conn.rollback()
+                except Exception:
+                    pass
+            # Connection failures and deadlocks are safe to retry after the
+            # failed transaction has been rolled back or discarded.
+            retryable = (
+                "deadlock" in err_str
+                or "abort" in err_str
+                or "connection" in err_str
+                or "timeout" in err_str
+                or _is_stale_pool_connection_error(e)
+            )
             if attempt < _MAX_DB_RETRIES - 1 and retryable:
                 print(f"Transient error on execute_batch attempt {attempt + 1}/{_MAX_DB_RETRIES}: {safe_id}")
                 await asyncio.sleep(0.5 * (attempt + 1))
@@ -630,10 +641,6 @@ async def execute_query_iter(
                 async for row in cursor:
                     yielded_any = True
                     yield row
-            try:
-                await conn.rollback()
-            except Exception:
-                pass
             return
         except TimeoutError:
             broken_connection = True
@@ -663,6 +670,11 @@ async def execute_query_iter(
             return
         finally:
             if conn is not None:
+                if not broken_connection:
+                    try:
+                        await conn.rollback()
+                    except Exception:
+                        pass
                 _release_pool_connection(pool, conn, broken=broken_connection)
     print(f"All retries exhausted for execute_query_iter: {safe_id}")
 
@@ -696,7 +708,7 @@ async def transaction(bot=None):
             try:
                 yield conn
                 await conn.commit()
-            except Exception:
+            except BaseException:
                 await conn.rollback()
                 raise
             return

@@ -417,6 +417,16 @@ class Tournament:
         await self._resolve_match(curr_m, winner)
 
     async def _resolve_match(self, match: TournamentMatch, winner: str) -> None:
+        # Match completion can be triggered by both the action handler and a
+        # websocket disconnect/forfeit timer.  Resolve it exactly once.
+        if match.status == "finished":
+            return
+        valid_winners = {"draw", match.player1.user_id}
+        if match.player2:
+            valid_winners.add(match.player2.user_id)
+        if winner not in valid_winners:
+            logger.warning("Ignoring invalid winner %r for match %s", winner, match.match_id)
+            return
         match.status = "finished"
         match.winner_id = winner
 
@@ -546,7 +556,9 @@ class Tournament:
         return None
 
     async def handle_match_action(self, user_id: str, action: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        match = self.get_match_for_user(user_id) or self.get_current_match()
+        match = self.get_match_for_user(user_id)
+        if not match:
+            return {"error": "Only match players can perform match actions"}
         if not match or not match.game_instance:
             return {"error": "No active match found"}
 
@@ -570,12 +582,17 @@ class Tournament:
             if not is_host:
                 return {"error": "Only tournament host can change settings"}
             if "format" in data:
+                if data["format"] not in ("points", "knockout"):
+                    return {"error": "Invalid tournament format"}
                 self.format = data["format"]
             if "match_style" in data:
                 if data["match_style"] in ("spectated", "parallel"):
                     self.match_style = data["match_style"]
             if "total_rounds" in data:
-                self.total_rounds = max(1, min(50, int(data["total_rounds"])))
+                try:
+                    self.total_rounds = max(1, min(50, int(data["total_rounds"])))
+                except (TypeError, ValueError):
+                    return {"error": "Invalid total_rounds"}
             if "game_selection" in data:
                 self.game_selection = data["game_selection"]
             if "disciplines" in data and isinstance(data["disciplines"], list):
@@ -585,9 +602,15 @@ class Tournament:
             if "selected_game" in data:
                 self.selected_game = data["selected_game"]
             if "points_win" in data:
-                self.points_win = max(1, min(10, int(data["points_win"])))
+                try:
+                    self.points_win = max(1, min(10, int(data["points_win"])))
+                except (TypeError, ValueError):
+                    return {"error": "Invalid points_win"}
             if "points_draw" in data:
-                self.points_draw = max(0, min(5, int(data["points_draw"])))
+                try:
+                    self.points_draw = max(0, min(5, int(data["points_draw"])))
+                except (TypeError, ValueError):
+                    return {"error": "Invalid points_draw"}
             if "title" in data:
                 self.title = str(data["title"])[:32]
             return {"status": "settings_updated"}
@@ -595,6 +618,8 @@ class Tournament:
         if action == "tournament_start":
             if not is_host:
                 return {"error": "Only host can start tournament"}
+            if self.status != "lobby":
+                return {"error": "Tournament has already started"}
             if "selected_game" in data:
                 self.selected_game = data["selected_game"]
             ok = await self.start_tournament(self.selected_game)

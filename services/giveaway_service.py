@@ -70,6 +70,10 @@ class GiveawayUpdateParams(BaseModel):
     channel_id: str
 
 
+class GiveawayCreationError(RuntimeError):
+    """Raised when the giveaway and its requirements cannot be committed."""
+
+
 # ------------------------------------------------------------------ #
 # Service class
 # ------------------------------------------------------------------ #
@@ -133,9 +137,8 @@ class GiveawayService:
                     role_req_query = "INSERT INTO giveawayRoleRequirement (role_id, giveaway_id) VALUES (%s, %s)"
                     role_req_params = [(role_id, giveaway_id) for role_id in params.role_requirement]
                     await cursor.executemany(role_req_query, role_req_params)
-        except Exception as e:
-            print(f"Error creating giveaway: {e}")
-            return None
+        except Exception as exc:
+            raise GiveawayCreationError("Could not create giveaway") from exc
 
         return giveaway_id
 
@@ -308,7 +311,7 @@ class GiveawayService:
     async def get_send_ready() -> list[int]:
         """Get IDs of giveaways ready to be sent (started=0, starttime < now)."""
         giveaway_ids: list[int] = []
-        async for row in execute_query_iter("SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime < NOW()"):
+        async for row in execute_query_iter("SELECT giveaway_id FROM giveaway WHERE started = 0 AND starttime <= NOW()"):
             giveaway_ids.append(row[0])
         return giveaway_ids
 
@@ -317,7 +320,7 @@ class GiveawayService:
         """Get IDs of giveaways ready to end (ended=0, endtime < now, started=1)."""
         giveaway_ids: list[int] = []
         async for row in execute_query_iter(
-            "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime < NOW() AND started = 1 AND messageId <> 'pending'"
+            "SELECT giveaway_id FROM giveaway WHERE ended = 0 AND endtime <= NOW() AND started = 1 AND messageId <> 'pending'"
         ):
             giveaway_ids.append(row[0])
         return giveaway_ids

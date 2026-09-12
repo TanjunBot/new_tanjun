@@ -4,14 +4,12 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
 
 import pytest
 
 fastapi = pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 
-# Add botstatus-api directory to sys.path for testing
 _botstatus_dir = str(Path(__file__).resolve().parent.parent.parent.parent / "botstatus-api")
 if _botstatus_dir not in sys.path:
     sys.path.insert(0, _botstatus_dir)
@@ -24,8 +22,12 @@ from app import StatusManager, app, settings
 def client(tmp_path):
     state_file = str(tmp_path / "state.json")
     botstatus_module.manager = StatusManager(state_file, timeout_seconds=90)
+    botstatus_module._heartbeat_requests.clear()
     settings.state_file = state_file
-    settings.api_key = ""
+    settings.api_key = "test-key"
+    settings.max_body_bytes = 64 * 1024
+    settings.heartbeat_rate_limit = 60
+    settings.heartbeat_rate_window_seconds = 60
     with TestClient(app) as test_client:
         yield test_client
 
@@ -39,31 +41,29 @@ def test_health_check_initially(client):
 
 def test_heartbeat_and_status(client):
     payload = {
-        "id": "1234567890",
+        "id": "123456789012345",
         "status": "alive",
         "latency": 0.045,
         "guild_count": 50,
         "version": "1.2.145",
     }
-    post_resp = client.post("/api/status", json=payload)
+    post_resp = client.post("/api/status", json=payload, headers={"Authorization": "Bearer test-key"})
     assert post_resp.status_code == 200
     assert post_resp.json()["status"] == "ok"
     assert post_resp.json()["bot"]["latency_ms"] == 45
     assert post_resp.json()["bot"]["status"] == "online"
 
-    # Query status
     status_resp = client.get("/status")
     assert status_resp.status_code == 200
     data = status_resp.json()
     assert data["status"] == "online"
     assert data["total_bots"] == 1
     assert data["online_bots"] == 1
-    assert data["bots"][0]["id"] == "1234567890"
+    assert data["bots"][0]["id"] == "123456789012345"
 
-    # Query single bot
-    single_resp = client.get("/status/1234567890")
+    single_resp = client.get("/status/123456789012345")
     assert single_resp.status_code == 200
-    assert single_resp.json()["id"] == "1234567890"
+    assert single_resp.json()["id"] == "123456789012345"
 
 
 def test_badge_endpoint(client):
@@ -72,7 +72,7 @@ def test_badge_endpoint(client):
         "status": "alive",
         "latency": "0.020",
     }
-    client.post("/", json=payload)
+    client.post("/", json=payload, headers={"Authorization": "Bearer test-key"})
 
     badge_resp = client.get("/badge")
     assert badge_resp.status_code == 200
@@ -83,27 +83,75 @@ def test_badge_endpoint(client):
 
 def test_metrics_endpoint(client):
     payload = {
-        "id": "1234567890",
+        "id": "123456789012345",
         "status": "alive",
         "latency": 0.050,
         "guild_count": 10,
     }
-    client.post("/", json=payload)
+    client.post("/", json=payload, headers={"Authorization": "Bearer test-key"})
 
     metrics_resp = client.get("/metrics")
     assert metrics_resp.status_code == 200
     text = metrics_resp.text
-    assert 'bot_online{bot_id="1234567890"} 1' in text
-    assert 'bot_latency_ms{bot_id="1234567890"} 50' in text
-    assert 'bot_guild_count{bot_id="1234567890"} 10' in text
+    assert 'bot_online{bot_id="123456789012345"} 1' in text
+    assert 'bot_latency_ms{bot_id="123456789012345"} 50' in text
+    assert 'bot_guild_count{bot_id="123456789012345"} 10' in text
 
 
 def test_api_key_auth(client):
     settings.api_key = "supersecret"
-    payload = {"id": "1", "status": "alive"}
+    payload = {"id": "123456789012345", "status": "alive"}
 
     unauth_resp = client.post("/", json=payload)
     assert unauth_resp.status_code == 401
 
     auth_resp = client.post("/", json=payload, headers={"Authorization": "Bearer supersecret"})
     assert auth_resp.status_code == 200
+
+
+def test_heartbeat_rejects_invalid_bot_id(client):
+    response = client.post(
+        "/",
+        json={"id": "not-a-discord-id"},
+        headers={"Authorization": "Bearer test-key"},
+    )
+    assert response.status_code == 422
+
+
+def test_heartbeat_rejects_oversized_body(client):
+    payload = {"id": "123456789012345", "extra": {"data": "x" * 70_000}}
+    response = client.post("/", json=payload, headers={"Authorization": "Bearer test-key"})
+    assert response.status_code == 413
+    assert response.json()["detail"] == "Request body too large"
+
+
+def test_heartbeat_rejects_invalid_latency(client):
+    response = client.post(
+        "/",
+        json={"id": "123456789012345", "latency": "not-a-number"},
+        headers={"Authorization": "Bearer test-key"},
+    )
+    assert response.status_code == 422
+
+
+def test_heartbeat_rate_limit_returns_retry_after(client):
+    settings.heartbeat_rate_limit = 1
+    payload = {"id": "123456789012345"}
+    headers = {"Authorization": "Bearer test-key"}
+
+    assert client.post("/", json=payload, headers=headers).status_code == 200
+    response = client.post("/", json=payload, headers=headers)
+
+    assert response.status_code == 429
+    assert response.headers["retry-after"].isdigit()
+
+
+def test_status_rejects_malformed_bot_id(client):
+    response = client.get("/status/not-a-discord-id")
+    assert response.status_code == 422
+
+
+def test_api_key_requires_bearer_scheme(client):
+    payload = {"id": "123456789012345", "status": "alive"}
+    response = client.post("/", json=payload, headers={"Authorization": "test-key"})
+    assert response.status_code == 401

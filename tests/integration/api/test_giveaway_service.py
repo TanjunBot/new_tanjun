@@ -14,6 +14,7 @@ mock_config.patch_config_module()
 from api import set_bot
 from services.giveaway_service import (
     GiveawayCreateParams,
+    GiveawayCreationError,
     GiveawayService,
     GiveawayUpdateParams,
     giveaway_service,
@@ -95,14 +96,14 @@ class TestGiveawayCrud:
     async def test_create_returns_none_on_exception(self, bot_with_pool):
         _, cursor = bot_with_pool
         cursor.execute = AsyncMock(side_effect=RuntimeError("db fail"))
-        result = await GiveawayService.create(_create_params())
-        assert result is None
+        with pytest.raises(GiveawayCreationError):
+            await GiveawayService.create(_create_params())
 
     async def test_create_returns_none_when_no_insert_id(self, bot_with_pool):
         _, cursor = bot_with_pool
         cursor.fetchone = AsyncMock(return_value=None)
-        result = await GiveawayService.create(_create_params())
-        assert result is None
+        with pytest.raises(GiveawayCreationError):
+            await GiveawayService.create(_create_params())
 
     async def test_get_found(self, bot_with_pool):
         _, cursor = bot_with_pool

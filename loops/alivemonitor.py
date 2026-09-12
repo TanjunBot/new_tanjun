@@ -29,14 +29,14 @@ async def ping_server(client: Client) -> None:
         try:
             async with (
                 aiohttp.ClientSession() as session,
-                session.get(push_url, timeout=ClientTimeout(total=10)) as response,
+                session.get(push_url, allow_redirects=False, timeout=ClientTimeout(total=10)) as response,
             ):
                 if response.status == 200:
                     logger.debug("Uptime Kuma push succeeded")
                 else:
                     logger.warning("Uptime Kuma push failed, status code: %s", response.status)
         except (aiohttp.ClientError, TimeoutError) as exc:
-            logger.warning("Uptime Kuma push error: %s", exc)
+            logger.warning("Uptime Kuma push error: %s", type(exc).__name__)
 
     # 2. Botstatus API Heartbeat
     botstatus_url = getattr(config, "BOTSTATUS_API_URL", "").strip()
@@ -56,11 +56,11 @@ async def ping_server(client: Client) -> None:
         try:
             async with (
                 aiohttp.ClientSession() as session,
-                session.post(botstatus_url, json=payload, headers=headers, timeout=ClientTimeout(total=10)) as response,
+                session.post(botstatus_url, json=payload, headers=headers, allow_redirects=False, timeout=ClientTimeout(total=10)) as response,
             ):
                 if response.status in (200, 201, 204):
                     logger.debug("Botstatus API push succeeded")
                 else:
                     logger.warning("Botstatus API push failed, status code: %s", response.status)
         except (aiohttp.ClientError, TimeoutError) as exc:
-            logger.warning("Botstatus API push error: %s", exc)
+            logger.warning("Botstatus API push error: %s", type(exc).__name__)

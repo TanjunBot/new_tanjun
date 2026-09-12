@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from models import GiveawayModel
-from services.giveaway_service import GiveawayCreateParams, GiveawayService, GiveawayUpdateParams
+from services.giveaway_service import GiveawayCreateParams, GiveawayCreationError, GiveawayService, GiveawayUpdateParams
 from tests.helpers.factories import CHANNEL_ID, GUILD_ID, USER_ID, giveaway_row
 
 
@@ -114,7 +114,7 @@ class TestGiveawayService:
         assert result == 1
 
     @pytest.mark.asyncio
-    async def test_create_returns_none_on_error(self):
+    async def test_create_raises_on_error(self):
         params = GiveawayCreateParams(
             guild_id=GUILD_ID,
             title="Fail",
@@ -131,8 +131,8 @@ class TestGiveawayService:
             yield  # pragma: no cover
 
         with patch("services.giveaway_service.transaction", _boom):
-            result = await GiveawayService.create(params)
-        assert result is None
+            with pytest.raises(GiveawayCreationError, match="Could not create giveaway"):
+                await GiveawayService.create(params)
 
     @pytest.mark.asyncio
     async def test_update_with_requirements(self):

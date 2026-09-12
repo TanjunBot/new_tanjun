@@ -14,7 +14,7 @@ Deployed at `https://botstatus-api.tanjun.bot`.
 - **Health Check (`GET /health` & `GET /livez` & `GET /readyz`):** Liveness endpoint for Docker, Coolify, Traefik, or Uptime Kuma.
 - **Shields.io Badge API (`GET /badge`):** Returns dynamic JSON for Shields.io endpoint badges (`online (35ms)` / `offline`).
 - **Prometheus Exporter (`GET /metrics`):** Exposes `bot_online`, `bot_latency_ms`, and `bot_seconds_since_last_ping`.
-- **Uptime Kuma Forwarding:** Optionally forward heartbeats to an Uptime Kuma push monitor URL.
+- **Uptime Kuma Forwarding:** Optionally forward heartbeats to an Uptime Kuma push monitor URL. The main Tanjun bot normally pushes directly to Uptime Kuma.
 - **State Persistence:** Automatically preserves bot states across container restarts in `data/state.json`.
 
 ---
@@ -27,9 +27,12 @@ Deployed at `https://botstatus-api.tanjun.bot`.
 | `BOTSTATUS_PORT` | `8000` | Bind port |
 | `BOTSTATUS_TIMEOUT_SECONDS` | `90` | Time after which a missing ping marks the bot as offline |
 | `BOTSTATUS_DEFAULT_BOT_ID` | `832297321793323028` | Primary bot ID |
-| `BOTSTATUS_API_KEY` | *(empty)* | Optional secret key for POST authentication (`Bearer <key>`) |
+| `BOTSTATUS_API_KEY` | *(empty)* | Secret key for POST authentication; required for deployments that accept heartbeats |
 | `BOTSTATUS_STATE_FILE` | `data/state.json` | Path to persistent state file |
 | `BOTSTATUS_UPTIME_KUMA_PUSH_URL` | *(empty)* | Optional Uptime Kuma push monitor URL to bridge heartbeats |
+| `BOTSTATUS_MAX_BODY_BYTES` | `65536` | Maximum accepted HTTP request body size |
+| `BOTSTATUS_HEARTBEAT_RATE_LIMIT` | `60` | Maximum heartbeat requests per client IP per rate window |
+| `BOTSTATUS_HEARTBEAT_RATE_WINDOW_SECONDS` | `60` | Heartbeat rate-limit window in seconds |
 
 ---
 
@@ -55,6 +58,13 @@ docker compose -f botstatus-api/docker-compose.yml up -d
 1. Create a new service from the Git repository with Dockerfile path `botstatus-api/Dockerfile` (or build context `botstatus-api`).
 2. Set Port to `8000`.
 3. Set Domain to `https://botstatus-api.tanjun.bot`.
+
+Set `BOTSTATUS_API_KEY` to a strong secret and send that value in the HTTP
+authorization header. The header value must match the configured key.
+
+Heartbeat requests over the body-size limit receive `413`; malformed payloads
+receive `422`; and clients over the heartbeat rate limit receive `429` with a
+`Retry-After` header.
 
 ---
 

@@ -4,7 +4,11 @@ import utility
 from api import LogBlacklistType, add_log_blacklist, is_log_entity_blacklisted
 
 async def blacklist_category(command_info: utility.CommandInfo, channel: discord.CategoryChannel) -> None:
-    if isinstance(command_info.user, discord.Member) and (not command_info.user.guild_permissions.administrator):
+    if command_info.guild is None or not isinstance(command_info.user, discord.Member):
+        embed = utility.tanjunEmbed(title=locale.errors.guildOnly.title(command_info.locale), description=locale.errors.guildOnly.description(command_info.locale))
+        await command_info.reply(embed=embed)
+        return
+    if not command_info.user.guild_permissions.administrator:
         embed = utility.tanjunEmbed(title=locale.commands.logs.blacklistCategory.missingPermission.title(command_info.locale), description=locale.commands.logs.blacklistCategory.missingPermission.description(command_info.locale))
         await command_info.reply(embed=embed)
         return

@@ -38,6 +38,11 @@ class TestParseAlertConfig:
         monkeypatch.setenv("HEALTH_ALERT_USER_ID", "bad")
         assert _parse_alert_config() is None
 
+    def test_non_positive_ids_return_none(self, monkeypatch):
+        monkeypatch.setenv("HEALTH_ALERT_CHANNEL_ID", "0")
+        monkeypatch.setenv("HEALTH_ALERT_USER_ID", "-1")
+        assert _parse_alert_config() is None
+
 
 class TestNotifyHealthFailures:
     @pytest.mark.asyncio

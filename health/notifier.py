@@ -31,13 +31,17 @@ def _parse_alert_config() -> tuple[int, int] | None:
     try:
         channel_id = int(channel_str)
     except ValueError:
-        logger.warning("HEALTH_ALERT_CHANNEL_ID must be an integer, got: %r", channel_str)
+        logger.warning("HEALTH_ALERT_CHANNEL_ID must be an integer")
         return None
 
     try:
         user_id = int(user_str)
     except ValueError:
-        logger.warning("HEALTH_ALERT_USER_ID must be an integer, got: %r", user_str)
+        logger.warning("HEALTH_ALERT_USER_ID must be an integer")
+        return None
+
+    if channel_id <= 0 or user_id <= 0:
+        logger.warning("Health alert IDs must be positive integers")
         return None
 
     return channel_id, user_id
@@ -69,8 +73,11 @@ async def notify_health_failures(
     if channel is None:
         try:
             channel = await bot.fetch_channel(channel_id)
-        except (discord.Forbidden, discord.NotFound, discord.HTTPException):
+        except (discord.Forbidden, discord.NotFound):
             channel = None
+        except discord.HTTPException:
+            logger.warning("Could not fetch health alert channel %s", channel_id)
+            return
 
     if channel is None:
         logger.warning(
@@ -112,7 +119,13 @@ async def notify_health_failures(
                 content=content,
                 embed=embed,
             )
-        except Exception as exc:
-            logger.error("Failed to send health failure notification: %s", exc)
+        except discord.Forbidden:
+            logger.warning("Permission denied sending health failure notification")
+            return
+        except discord.HTTPException:
+            logger.warning("Discord rejected health failure notification")
+            return
+        except Exception:
+            logger.error("Unexpected failure sending health failure notification", exc_info=True)
             return
         logger.info("Sent health failure notification to channel %s", channel_id)

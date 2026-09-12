@@ -35,10 +35,10 @@ async def test_claimBoosterRole_not_a_booster(admin_command_info):
     assert_reply_embed(info)
 
 
-async def test_claimBoosterRole_no_guild_raises(no_guild_command_info):
+async def test_claimBoosterRole_no_guild_replies(no_guild_command_info):
     with patch("commands.utility.claim_booster_role.booster_service") as svc:
         svc.get = AsyncMock(return_value="999")
         from commands.utility.claim_booster_role import claimBoosterRole as command_fn
 
-        with pytest.raises(AttributeError):
-            await command_fn(no_guild_command_info, name="Test", color=None, icon=None)
+        await command_fn(no_guild_command_info, name="Test", color=None, icon=None)
+    no_guild_command_info.reply.assert_awaited_once()

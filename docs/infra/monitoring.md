@@ -7,7 +7,7 @@ Tanjun includes built-in monitoring and observability features to help you keep 
 The bot exposes a health check endpoint at:
 
 ```
-http://localhost:8080/health
+http://localhost:8001/health
 ```
 
 This endpoint returns a JSON response with the status of various subsystems:
@@ -18,7 +18,7 @@ This endpoint returns a JSON response with the status of various subsystems:
   "uptime": 123456,
   "database": "connected",
   "discord": "connected",
-  "version": "1.2.0",
+  "version": "1.4.4",
   "checks": {
     "database": { "status": "ok", "latency_ms": 12 },
     "discord_gateway": { "status": "ok", "latency_ms": 85 },
@@ -43,27 +43,19 @@ class MyHealthCheck(HealthCheck):
 
 ## Prometheus Metrics
 
-When enabled, Tanjun exposes Prometheus metrics at:
+When enabled, Tanjun exposes Prometheus metrics at (port `8001` by default):
 
 ```
-http://localhost:8080/metrics
+http://localhost:8001/metrics
 ```
 
 ### Available Metrics
 
 | Metric | Type | Description |
 |--------|------|-------------|
-| `commands_total` | Counter | Total commands executed |
-| `commands_errors_total` | Counter | Total command errors |
-| `messages_processed_total` | Counter | Total messages processed |
-| `guild_count` | Gauge | Number of guilds the bot is in |
-| `shard_count` | Gauge | Number of shards |
-| `http_latency_seconds` | Histogram | Discord API latency |
-| `database_pool_size` | Gauge | Database connection pool size |
-
-### Grafana Dashboard
-
-A pre-configured Grafana dashboard is available in the `grafana/` directory. Import it into your Grafana instance to get started quickly.
+The exact metric names and labels are exported by
+`services/metrics_service.py` and may change as instrumentation evolves.
+Scrape `/metrics` rather than relying on a fixed list in this document.
 
 ## Status Page (Uptime Kuma)
 
@@ -79,7 +71,9 @@ The bot's operational status is tracked at [status.tanjun.bot](https://status.ta
 
 The bot sends a lightweight `GET` to `/api/push/<token>?status=up&msg=OK&ping=<latency_ms>` when the token is set. If `UPTIME_KUMA_PUSH_TOKEN` is empty, no push requests are made (useful for local dev).
 
-The legacy `botstatus-api.tanjun.bot` relay is no longer used.
+The legacy `botstatus-api.tanjun.bot` relay is no longer used by the bot.
+The standalone service remains available for deployments that explicitly use
+it; see [`botstatus-api/README.md`](../../botstatus-api/README.md).
 
 ## Discord Alerts
 

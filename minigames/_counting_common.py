@@ -82,7 +82,11 @@ async def counting(message: discord.Message, *, get_progress_func, get_last_coun
         else:
             await DiscordSafe.delete(message)
         return
-    await increase_progress_func(message.channel.id, message.author.id)
+    advanced = await increase_progress_func(message.channel.id, message.author.id)
+    if advanced is False:
+        # Another message won the race between the read and the update.
+        await DiscordSafe.delete(message)
+        return
     if random.randint(1, 100) == 1:
         await DiscordSafe.send(message.channel, embed=tanjunEmbed(description=str(progress + 2)))
         await increase_progress_func(message.channel.id, 'me')

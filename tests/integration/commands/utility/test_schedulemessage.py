@@ -168,6 +168,15 @@ async def test_send_scheduled_messages_none(mock_due):
     await send_scheduled_messages(client)
 
 
+def test_safe_attachment_filename_removes_paths_and_control_characters():
+    from commands.utility.schedulemessage import _safe_attachment_filename
+
+    assert _safe_attachment_filename("../../etc/passwd") == "passwd"
+    assert _safe_attachment_filename(r"..\secret.txt") == "secret.txt"
+    assert "\x00" not in _safe_attachment_filename("bad\x00name")
+    assert len(_safe_attachment_filename("x" * 300)) == 255
+
+
 @patch("commands.utility.schedulemessage.ScheduledMessageService.cancel", new_callable=AsyncMock)
 @patch("commands.utility.schedulemessage.ScheduledMessageService.update_discord_message_id", new_callable=AsyncMock)
 @patch("commands.utility.schedulemessage.ScheduledMessageService.get_due_messages", new_callable=AsyncMock)

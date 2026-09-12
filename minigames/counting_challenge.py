@@ -19,4 +19,4 @@ async def _challenge_double_count(message: discord.Message, locale_str: str, _co
 
 async def counting(message, config: dict | None=None) -> None:
     """Counting challenge handler. Accepts optional pre-fetched config to skip a DB query."""
-    await _counting_base(message, get_progress_func=lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid), get_last_counter_id_func=lambda cid: _repo.get_last_counter_id(CountingMode.CHALLENGE, cid), increase_progress_func=lambda cid, uid: _repo.increment_progress(CountingMode.CHALLENGE, cid, uid), on_failure=_challenge_failure, on_double_count=_challenge_double_count, config=config)
+    await _counting_base(message, get_progress_func=lambda cid: _repo.get_progress(CountingMode.CHALLENGE, cid), get_last_counter_id_func=lambda cid: _repo.get_last_counter_id(CountingMode.CHALLENGE, cid), increase_progress_func=lambda cid, uid: _repo.increment_progress_if_turn(CountingMode.CHALLENGE, cid, uid), on_failure=_challenge_failure, on_double_count=_challenge_double_count, config=config)

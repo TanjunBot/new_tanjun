@@ -1,6 +1,8 @@
 import asyncio
+import contextlib
 import json
 import logging
+import re
 try:
     from aiohttp import web
     _middleware_decorator = web.middleware
@@ -18,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).parent / "static"
 TEMPLATES_DIR = Path(__file__).parent / "templates"
+MAX_ACTIVITY_TEXT_LENGTH = 2000
+MAX_ACTIVITY_ID_LENGTH = 128
+SESSION_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 
 class ActivityServer:
@@ -134,11 +139,13 @@ class ActivityServer:
         except Exception:
             return web.json_response({"error": "Invalid JSON"}, status=400)
 
-        game_type = body.get("game_type", "hub")
-        user_id = body.get("user_id", "guest_1")
-        username = body.get("username", "Player")
+        game_type = str(body.get("game_type", "hub"))
+        user_id = str(body.get("user_id", "guest_1")).strip()[:MAX_ACTIVITY_ID_LENGTH]
+        username = str(body.get("username", "Player")).strip()[:32] or "Player"
         display_name = body.get("display_name", username)
         avatar_url = body.get("avatar_url")
+        if not user_id:
+            return web.json_response({"error": "user_id must not be empty"}, status=400)
 
         host = Player(
             user_id=str(user_id),
@@ -171,6 +178,8 @@ class ActivityServer:
 
     async def handle_ws(self, request: web.Request) -> web.WebSocketResponse:
         session_id = request.match_info.get("session_id", "")
+        if not SESSION_ID_PATTERN.fullmatch(session_id):
+            return web.json_response({"error": "Invalid session ID"}, status=400)
         session = session_manager.get_session(session_id)
         if not session:
             channel_id = request.query.get("channel_id")
@@ -186,7 +195,14 @@ class ActivityServer:
                 display_name="Player",
                 is_host=True
             )
-            session = session_manager.create_session("hub", host=default_host, session_id=session_id)
+            try:
+                session = session_manager.create_session("hub", host=default_host, session_id=session_id)
+            except ValueError:
+                # A concurrent websocket may have created this session between
+                # the lookup above and the create call.
+                session = session_manager.get_session(session_id)
+                if not session:
+                    raise
 
         ws = web.WebSocketResponse(heartbeat=30.0)
         await ws.prepare(request)
@@ -201,17 +217,28 @@ class ActivityServer:
                     session.last_activity = asyncio.get_event_loop().time()
                     try:
                         data = json.loads(msg.data)
-                    except json.JSONDecodeError:
+                    except (TypeError, json.JSONDecodeError):
+                        continue
+                    if not isinstance(data, dict):
+                        await ws.send_json({"type": "error", "error": "Message must be a JSON object"})
                         continue
 
                     msg_type = data.get("type")
 
                     if msg_type == "join":
-                        user_id = str(data.get("user_id", "unknown"))
-                        username = str(data.get("username", "Player"))
-                        display_name = str(data.get("display_name", username))
+                        if user_id is not None:
+                            await ws.send_json({"type": "error", "error": "This websocket is already joined"})
+                            continue
+                        user_id = str(data.get("user_id", "")).strip()[:MAX_ACTIVITY_ID_LENGTH]
+                        if not user_id:
+                            await ws.send_json({"type": "error", "error": "A user_id is required to join"})
+                            continue
+                        username = str(data.get("username", "Player")).strip()[:32] or "Player"
+                        display_name = str(data.get("display_name", username)).strip()[:32] or username
                         avatar_url = data.get("avatar_url")
 
+                        # Replacing a stale connection is supported, but its
+                        # finally block must not remove this live connection.
                         session.sockets[user_id] = ws
 
                         # If the session was auto-created with a placeholder host,
@@ -238,6 +265,7 @@ class ActivityServer:
                             session.game.players.pop(old_placeholder_id, None)
                             session.game.host = real_host
                             session.game.players[user_id] = real_host
+                            session.cancel_disconnect_forfeit(user_id)
                             if session.tournament:
                                 session.tournament.participants.pop(old_placeholder_id, None)
                                 session.tournament.host_id = user_id
@@ -266,9 +294,17 @@ class ActivityServer:
                         await session.broadcast_state()
 
                     elif msg_type == "action":
-                        p_id = str(data.get("user_id", user_id or ""))
+                        if user_id is None:
+                            continue
+                        # The websocket identity is authoritative. Never trust an
+                        # action payload to select another player's identity.
+                        p_id = user_id
                         action_name = data.get("action", "")
+                        if not isinstance(action_name, str):
+                            continue
                         action_payload = data.get("data", {})
+                        if not isinstance(action_payload, dict):
+                            continue
 
                         is_host = (p_id == session.game.host.user_id) or bool(session.tournament and p_id == session.tournament.host_id)
 
@@ -313,25 +349,17 @@ class ActivityServer:
                                         session.game.scores[winner] = session.game.scores.get(winner, 0) + 1
                             await session.broadcast_state()
                         elif action_name in ("create_tournament", "tournament_create"):
-                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id) or Player(
-                                user_id=p_id,
-                                username=action_payload.get("username", "Host"),
-                                display_name=action_payload.get("display_name", "Host"),
-                                avatar_url=action_payload.get("avatar_url"),
-                                is_host=True
-                            )
+                            if not is_host:
+                                continue
+                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id)
+                            if current_p is None:
+                                continue
                             session.create_tournament(host=current_p)
                             session.tournament.add_participant(current_p)
                             await session.broadcast_state()
                         elif action_name == "tournament_join":
-                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id) or Player(
-                                user_id=p_id,
-                                username=action_payload.get("username", "Player"),
-                                display_name=action_payload.get("display_name", "Player"),
-                                avatar_url=action_payload.get("avatar_url"),
-                                is_host=False
-                            )
-                            if session.tournament:
+                            current_p = session.game.players.get(p_id) or session.game.spectators.get(p_id)
+                            if session.tournament and current_p is not None:
                                 session.tournament.add_participant(current_p)
                             await session.broadcast_state()
                         elif action_name == "tournament_leave":
@@ -416,18 +444,27 @@ class ActivityServer:
                             await session.broadcast_state()
 
                     elif msg_type == "chat":
+                        if user_id is None:
+                            continue
+                        text = str(data.get("text", "")).strip()
+                        if not text:
+                            continue
                         await session.broadcast({
                             "type": "chat_message",
                             "user_id": user_id,
-                            "sender": data.get("sender", "User"),
-                            "text": data.get("text", "")
+                            "sender": session.game.players.get(user_id, session.game.spectators.get(user_id)).display_name
+                            if session.game.players.get(user_id, session.game.spectators.get(user_id))
+                            else "User",
+                            "text": text[:MAX_ACTIVITY_TEXT_LENGTH]
                         })
 
                 elif msg.type == WSMsgType.ERROR:
                     pass
 
         finally:
-            if user_id and user_id in session.sockets:
+            # A reconnect may have replaced this websocket.  Only the current
+            # socket for the identity is allowed to remove the player.
+            if user_id and session.sockets.get(user_id) is ws:
                 del session.sockets[user_id]
                 session.game.remove_player(user_id)
                 if session.tournament:
@@ -441,6 +478,8 @@ class ActivityServer:
         return ws
 
     async def start(self) -> None:
+        if self.runner is not None:
+            return
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
         self.site = web.TCPSite(self.runner, self.host, self.port)
@@ -452,9 +491,12 @@ class ActivityServer:
             print(f"[Activities] Warning: Could not bind Activity server to {self.host}:{self.port}: {exc}")
 
     async def stop(self) -> None:
-        if self._cleanup_task and not self._cleanup_task.done():
-            self._cleanup_task.cancel()
-            self._cleanup_task = None
+        cleanup_task = self._cleanup_task
+        self._cleanup_task = None
+        if cleanup_task and not cleanup_task.done():
+            cleanup_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await cleanup_task
         if self.runner:
             await self.runner.cleanup()
             self.runner = None

@@ -170,8 +170,9 @@ class LocalizerService:
         if report_id in reported_missing:
             return
         reported_missing.add(report_id)
+        coroutine = missingLocalization(locale_str, key)
         try:
-            task = asyncio.create_task(missingLocalization(locale_str, key))
+            task = asyncio.create_task(coroutine)
 
             def _handle_task_exception(t: asyncio.Task[Any]) -> None:
                 if t.cancelled():
@@ -183,6 +184,7 @@ class LocalizerService:
                     traceback.print_exception(type(exc), exc, exc.__traceback__)
             task.add_done_callback(_handle_task_exception)
         except RuntimeError:
+            coroutine.close()
             try:
                 asyncio.run(missingLocalization(locale_str, key))
             except Exception as e:
@@ -255,21 +257,31 @@ class LocalizerService:
         locale_str = self._normalize_locale(locale)
         translations = self._load_sync(locale_str)
         entry = self._find_entry(translations, key)
+        if entry is None and locale_str != "en":
+            entry = self._find_entry(self._load_sync("en"), key)
         if entry is None:
             print(f"No translation found for key '{key}' in locale '{locale_str}'.")
             self._report_missing(locale_str, key)
             return TRANSLATION_NOT_FOUND
-        template = Template(entry.translation)
-        return str(template.safe_substitute(args))
+        try:
+            return str(Template(entry.translation).safe_substitute(args))
+        except ValueError:
+            # A malformed translation must not break command execution.
+            print(f"Invalid translation template for key '{key}' in locale '{locale_str}'.")
+            return entry.translation
 
     def test_localize(self, locale: str, key: str, **args: Any) -> str:
         """Test-oriented lookup: falls back to German on missing keys."""
         translations = self._load_sync(locale)
         entry = self._find_entry(translations, key)
+        if entry is None and locale != "en":
+            entry = self._find_entry(self._load_sync("en"), key)
         if entry is None:
             return self.localize('de', key, **args) if locale != 'de' else f"No translation found for key '{key}'."
-        template = Template(entry.translation)
-        return template.safe_substitute(args)
+        try:
+            return Template(entry.translation).safe_substitute(args)
+        except ValueError:
+            return entry.translation
 
     def get_available_locales(self) -> list[str]:
         """Return a list of locale identifiers that have cached translations."""

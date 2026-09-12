@@ -46,6 +46,18 @@ async def test_say_sends_to_target_channel(admin_command_info):
     channel.send.assert_awaited_once()
 
 
+async def test_say_rejects_user_without_target_permission(admin_command_info):
+    channel = make_text_channel(guild=admin_command_info.guild, channel_id=999)
+    user_permissions = make_permissions(manage_messages=False)
+    bot_permissions = make_permissions(send_messages=True)
+    channel.permissions_for = MagicMock(
+        side_effect=lambda member: user_permissions if member is admin_command_info.user else bot_permissions
+    )
+    await say(admin_command_info, channel, message="blocked")
+    channel.send.assert_not_awaited()
+    admin_command_info.reply.assert_awaited_once()
+
+
 async def test_say_reply_has_embed(admin_command_info):
     channel = make_text_channel(guild=admin_command_info.guild)
     channel.permissions_for = MagicMock(return_value=make_permissions(send_messages=True))

@@ -26,6 +26,12 @@ def _mark_startup_in_progress() -> None:
     path.touch()
 
 
+def _clear_stale_markers() -> None:
+    """Remove readiness markers left by a previous container process."""
+    _startup_marker_path().unlink(missing_ok=True)
+    Path(os.environ.get("BOT_READY_FILE", "/usr/local/app/.bot_ready")).unlink(missing_ok=True)
+
+
 def _wait_for_database() -> None:
     from sqlalchemy import create_engine, text
 
@@ -49,6 +55,7 @@ def _wait_for_database() -> None:
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
             logger.info("Database connection ready (attempt %s)", attempt)
+            engine.dispose()
             return
         except Exception as exc:
             last_error = exc
@@ -56,21 +63,24 @@ def _wait_for_database() -> None:
                 "Waiting for database (%s/%s): %s",
                 attempt,
                 _DB_WAIT_ATTEMPTS,
-                exc,
+                type(exc).__name__,
             )
             if attempt == _DB_WAIT_ATTEMPTS:
                 log_database_connection_debug(
                     context="docker entrypoint database wait (final failure)",
                     log=logger,
-                    extra={"last_error": str(exc)},
+                    extra={"last_error_type": type(exc).__name__},
                 )
-            time.sleep(_DB_WAIT_DELAY_SEC)
+            if attempt < _DB_WAIT_ATTEMPTS:
+                time.sleep(_DB_WAIT_DELAY_SEC)
 
+    engine.dispose()
     raise RuntimeError("Database not reachable before startup timeout") from last_error
 
 
 def main() -> None:
     os.chdir(os.environ.get("TANJUN_APP_ROOT", "/usr/local/app"))
+    _clear_stale_markers()
     _mark_startup_in_progress()
 
     logger.info("Checking database connectivity")

@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import logging
+import re
 import time
 import traceback
 from typing import Any
@@ -23,6 +24,21 @@ _DEDUP_TTL_SEC = 3600.0
 _recent_reports: dict[str, float] = {}
 _capture_missing_localization_issues = False
 _captured_missing_localization_issue_numbers: set[int] = set()
+_SENSITIVE_AUTH_RE = re.compile(
+    r'(?i)((?:authorization|token)[\"\'\s:=]+(?:bearer\s+|basic\s+|bot\s+)?|\b(?:bearer|basic|bot)\s+)(?!\[REDACTED\])[^\[\s\"\'\`,;)\]}]+'
+)
+_SENSITIVE_VALUE_RE = re.compile(
+    r'(?i)((?:password|secret|api[_-]?key))([\"\'\s:=]+)(?!\[REDACTED\])[^\[\s\"\'\`,;)\]}]+'
+)
+_SENSITIVE_QUERY_RE = re.compile(r'(?i)([?&](?:token|key|secret|password|api[_-]?key)=)[^&#\s\[]+')
+
+
+def _redact_sensitive(value: object) -> str:
+    """Remove credentials from exception text before sending it to GitHub/logs."""
+    text = str(value)
+    text = _SENSITIVE_QUERY_RE.sub(r"\g<1>[REDACTED]", text)
+    text = _SENSITIVE_AUTH_RE.sub(r"\g<1>[REDACTED]", text)
+    return _SENSITIVE_VALUE_RE.sub(r"\g<1>\g<2>[REDACTED]", text)
 
 def _is_discord_instance(exc: BaseException, exc_type: Any) -> bool:
     if isinstance(exc_type, type) and isinstance(exc, exc_type):
@@ -101,10 +117,19 @@ def _dedup_allows_report(fingerprint: str) -> bool:
     _recent_reports[fingerprint] = now
     return True
 
+_SENSITIVE_KEY_RE = re.compile(r"(?i)authorization|token|password|secret|api[_-]?key")
+
+
 def _format_context(context: dict[str, Any] | None) -> str:
     if not context:
         return '_No additional context._'
-    lines = [f'- **{key}:** {value}' for key, value in context.items()]
+    lines = []
+    for key, value in context.items():
+        if _SENSITIVE_KEY_RE.search(str(key)):
+            val_str = "[REDACTED]"
+        else:
+            val_str = _redact_sensitive(value)
+        lines.append(f'- **{key}:** {val_str}')
     return '\n'.join(lines)
 
 def _resolve_labels(repo: Any) -> list[Any]:
@@ -126,21 +151,21 @@ def _sync_create_bot_exception_issue(exc: BaseException, *, source: str, context
         return
     tb = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
     exc_name = type(exc).__name__
-    exc_message = str(exc) or '(no message)'
-    title = f'{_bot_exception_title_prefix(exc_name, source)} {exc_message}'
+    exc_message = _redact_sensitive(exc) or '(no message)'
+    title = f'{_bot_exception_title_prefix(exc_name, _redact_sensitive(source))} {exc_message}'
     if len(title) > 240:
         title = title[:237] + '...'
     environment = sentry_environment or 'unknown'
-    body = f'## Bot Exception Report\n\n**Fingerprint:** `{fingerprint}`\n**Source:** `{source}`\n**Exception:** `{exc_name}: {exc_message}`\n**Version:** `{version}`\n**Environment:** `{environment}`\n\n### Context\n{_format_context(context)}\n\n### Traceback\n```\n{tb}\n```\n'
+    body = f'## Bot Exception Report\n\n**Fingerprint:** `{fingerprint}`\n**Source:** `{_redact_sensitive(source)}`\n**Exception:** `{exc_name}: {exc_message}`\n**Version:** `{version}`\n**Environment:** `{_redact_sensitive(environment)}`\n\n### Context\n{_format_context(context)}\n\n### Traceback\n```\n{_redact_sensitive(tb)}\n```\n'
     try:
-        g = Github(GithubAuthToken)
+        g = Github(GithubAuthToken, timeout=10)
         if _open_bot_exception_issue_exists(g, fingerprint, exc_name, source):
             return
         repo = g.get_repo(_REPO)
         labels = _resolve_labels(repo)
         repo.create_issue(title=title, body=body, labels=labels)
     except Exception as report_error:
-        logger.error('Failed to create GitHub issue for bot exception: %s', report_error)
+        logger.error('Failed to create GitHub issue for bot exception: %s', _redact_sensitive(report_error))
 
 def report_bot_exception_sync(exc: BaseException, *, source: str='unknown', context: dict[str, Any] | None=None) -> None:
     _sync_create_bot_exception_issue(exc, source=source, context=context)
@@ -194,7 +219,7 @@ def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
         return
     title = _missing_localization_issue_title(locale, key)
     try:
-        g = Github(GithubAuthToken)
+        g = Github(GithubAuthToken, timeout=10)
         if _missing_localization_issue_exists(g, locale, key):
             return
         repo = g.get_repo(_REPO)
@@ -205,14 +230,14 @@ def _sync_create_missing_localization_issue(locale: str, key: str) -> None:
             if isinstance(number, int):
                 _captured_missing_localization_issue_numbers.add(number)
     except Exception as report_error:
-        logger.error('Failed to create missing localization issue: %s', report_error)
+        logger.error('Failed to create missing localization issue: %s', _redact_sensitive(report_error))
 
 
 def _sync_close_missing_localization_issues(issue_numbers: list[int]) -> int:
     if not GithubAuthToken:
         return 0
     closed = 0
-    g = Github(GithubAuthToken)
+    g = Github(GithubAuthToken, timeout=10)
     repo = g.get_repo(_REPO)
     for issue_number in issue_numbers:
         try:
@@ -220,7 +245,7 @@ def _sync_close_missing_localization_issues(issue_numbers: list[int]) -> int:
             issue.edit(state="closed")
             closed += 1
         except Exception as close_error:
-            logger.error('Failed to close missing localization issue #%s: %s', issue_number, close_error)
+            logger.error('Failed to close missing localization issue #%s: %s', issue_number, _redact_sensitive(close_error))
     return closed
 
 async def addFeedback(content: str, author: str) -> None:
@@ -228,7 +253,9 @@ async def addFeedback(content: str, author: str) -> None:
     await run_blocking(_sync_create_feedback_issue, content, author)
 
 def _sync_create_feedback_issue(content: str, author: str) -> None:
-    g = Github(GithubAuthToken)
+    if not GithubAuthToken:
+        return
+    g = Github(GithubAuthToken, timeout=10)
     repo = g.get_repo(_REPO)
     label = repo.get_label('Feedback')
     repo.create_issue(title='Feedback', body=f'# {author} has given Feedback:\n{content}', labels=[label])

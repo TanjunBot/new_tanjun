@@ -44,10 +44,23 @@ def _schedule_report(
         report_bot_exception_sync(exc, source=source, context=context)
         return
 
-    loop.create_task(
+    task = loop.create_task(
         report_bot_exception(exc, source=source, context=context),
         name=f"github-report:{source}",
     )
+    task.add_done_callback(_report_done)
+
+
+def _report_done(task: asyncio.Task[Any]) -> None:
+    """Make failures in the reporter itself visible without an orphan warning."""
+    if task.cancelled():
+        return
+    error = task.exception()
+    if error is not None:
+        logger.error(
+            "Failed to report exception to GitHub",
+            exc_info=(type(error), error, error.__traceback__),
+        )
 
 
 def handle_asyncio_exception(loop: asyncio.AbstractEventLoop, context: dict[str, Any]) -> None:

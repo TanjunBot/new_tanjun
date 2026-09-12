@@ -77,22 +77,24 @@ class TriggerMessageRepository:
         query = """
             SELECT t.id, t.guild_id, t.`trigger`, t.response, t.case_sensitive FROM triggerMessages t
             LEFT JOIN triggerMessagesChannel tc ON t.id = tc.triggerId AND t.guild_id = tc.guild_id
-            WHERE t.guild_id = %s AND t.`trigger` LIKE %s
+            WHERE t.guild_id = %s AND t.`trigger` = %s
             AND (tc.channel_id = %s)
         """
         params = (guild_id, trigger, channel_id)
         rows_result: list[tuple[Any, ...]] | None = await execute_query(query, params)
-        row: tuple[Any, ...] | None = rows_result[0] if rows_result and rows_result[0] else None
-        if not row:
-            return None
-        trigger_message = TriggerMessageModel.from_row(row)
-        if trigger_message.case_sensitive:
-            if trigger != trigger_message.trigger:
-                return None
-        else:
-            if trigger.lower() != trigger_message.trigger.lower():
-                return None
-        return trigger_message
+        # A case-insensitive database collation can return several rows for an
+        # exact query.  Inspect all rows so a case-sensitive mismatch in the
+        # first row does not hide a valid match later in the result set.
+        for row in rows_result or []:
+            if not row:
+                continue
+            trigger_message = TriggerMessageModel.from_row(row)
+            if trigger_message.case_sensitive:
+                if trigger == trigger_message.trigger:
+                    return trigger_message
+            elif trigger.lower() == trigger_message.trigger.lower():
+                return trigger_message
+        return None
 
 
 # Module-level singleton for easy import

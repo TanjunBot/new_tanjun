@@ -119,6 +119,12 @@ class GameSession:
             self._transition_task.cancel()
             self._transition_task = None
 
+    def close(self) -> None:
+        """Cancel all delayed work owned by this session."""
+        for user_id in list(self._disconnect_tasks):
+            self.cancel_disconnect_forfeit(user_id)
+        self.cancel_match_transition()
+
     def create_tournament(self, host: Player) -> Any:
         from activities.tournament import Tournament
         self.tournament = Tournament(session_id=self.session_id, host=host)
@@ -335,6 +341,7 @@ class SessionManager:
     """Central registry and lifecycle manager for all game sessions."""
 
     def __init__(self) -> None:
+        self.max_sessions = 1000
         self._sessions: Dict[str, GameSession] = {}
         self._channel_aliases: Dict[str, str] = {}  # channel_id -> session_id
         self._game_registry: Dict[str, type[BaseGame]] = {
@@ -401,6 +408,10 @@ class SessionManager:
 
     def create_session(self, game_type: str = "hub", host: Optional[Player] = None, session_id: Optional[str] = None) -> GameSession:
         sid = session_id or str(uuid.uuid4())[:8]
+        if sid in self._sessions:
+            raise ValueError("Session already exists")
+        if len(self._sessions) >= self.max_sessions:
+            raise ValueError("Session limit reached")
         if host is None:
             host = Player(
                 user_id="guest_host",
@@ -433,8 +444,9 @@ class SessionManager:
         return None
 
     def remove_session(self, session_id: str) -> None:
-        if session_id in self._sessions:
-            del self._sessions[session_id]
+        session = self._sessions.pop(session_id, None)
+        if session is not None:
+            session.close()
         # Clean up any alias pointing to this session
         to_del = [cid for cid, sid in self._channel_aliases.items() if sid == session_id]
         for cid in to_del:

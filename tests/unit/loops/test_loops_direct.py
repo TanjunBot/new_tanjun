@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import aiohttp
 import pytest
 
 from loops import alivemonitor, create_database_backup, giveaway, level
@@ -120,6 +121,73 @@ async def test_ping_server_infinite_latency_uses_zero(mock_session_cls):
     await alivemonitor.ping_server(client)
     call_url = session.get.call_args[0][0]
     assert "ping=0" in call_url
+
+
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "test-push-token")
+@patch("loops.alivemonitor.config.BOTSTATUS_API_URL", "https://botstatus-api.example.test/status")
+@patch("loops.alivemonitor.aiohttp.ClientSession")
+async def test_ping_server_continues_to_botstatus_when_kuma_fails(mock_session_cls):
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = 0.1
+    client.guilds = []
+
+    response = AsyncMock()
+    response.status = 204
+    response.__aenter__ = AsyncMock(return_value=response)
+    response.__aexit__ = AsyncMock(return_value=None)
+    session = AsyncMock()
+    session.post = MagicMock(return_value=response)
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    mock_session_cls.side_effect = [aiohttp.ClientError("Kuma unavailable"), session]
+
+    await alivemonitor.ping_server(client)
+
+    session.post.assert_called_once()
+
+
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "")
+@patch("loops.alivemonitor.config.BOTSTATUS_API_URL", "https://botstatus-api.example.test/status")
+@patch("loops.alivemonitor.aiohttp.ClientSession")
+async def test_ping_server_swallows_botstatus_client_error(mock_session_cls):
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = 0.1
+    session = AsyncMock()
+    session.post = MagicMock(side_effect=aiohttp.ClientError("API unavailable"))
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    mock_session_cls.return_value = session
+
+    await alivemonitor.ping_server(client)
+
+    session.post.assert_called_once()
+
+
+@patch("loops.alivemonitor.config.UPTIME_KUMA_PUSH_TOKEN", "")
+@patch("loops.alivemonitor.config.BOTSTATUS_API_URL", "https://botstatus-api.example.test/status")
+@patch("loops.alivemonitor.aiohttp.ClientSession")
+async def test_ping_server_sanitizes_nonfinite_botstatus_latency(mock_session_cls):
+    client = MagicMock()
+    client.user = MagicMock(id=1)
+    client.latency = float("nan")
+    client.guilds = [1, 2]
+    response = AsyncMock()
+    response.status = 200
+    response.__aenter__ = AsyncMock(return_value=response)
+    response.__aexit__ = AsyncMock(return_value=None)
+    session = AsyncMock()
+    session.post = MagicMock(return_value=response)
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    mock_session_cls.return_value = session
+
+    await alivemonitor.ping_server(client)
+
+    payload = session.post.call_args.kwargs["json"]
+    assert payload["latency"] == 0.0
+    assert payload["latency_ms"] == 0
 
 
 @patch("loops.create_database_backup.database_password", "pw")

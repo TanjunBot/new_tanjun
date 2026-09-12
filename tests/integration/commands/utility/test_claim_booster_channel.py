@@ -19,6 +19,15 @@ async def test_claim_booster_channel_not_configured():
     info.reply.assert_awaited()
 
 
+async def test_claim_booster_channel_no_guild_replies():
+    from commands.utility.claim_booster_channel import claimBoosterChannel
+
+    info = make_command_info()
+    info.guild = None
+    await claimBoosterChannel(command_info=info, name="my-channel")
+    info.reply.assert_awaited_once()
+
+
 async def test_claim_booster_channel_success():
     from commands.utility.claim_booster_channel import claimBoosterChannel
 

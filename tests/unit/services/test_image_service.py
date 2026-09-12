@@ -35,6 +35,10 @@ class TestImageService:
         attachment.size = 1000
         assert ImageService.validate_attachment(attachment) is None
 
+    def test_validate_attachment_rejects_non_image_content_type(self):
+        attachment = MagicMock(filename="file.png", size=1000, content_type="application/octet-stream")
+        assert ImageService.validate_attachment(attachment) == "typenotsupported"
+
     @pytest.mark.asyncio
     async def test_process_resize(self):
         img = Image.new("RGB", (100, 100), color="red")
@@ -79,6 +83,14 @@ class TestImageService:
     async def test_process_invalid_image_raises(self):
         with pytest.raises(ValueError):
             await ImageService.process(b"not-an-image", ImageOperation(resize=(10, 10)))
+
+    @pytest.mark.asyncio
+    async def test_process_rejects_non_positive_dimensions(self):
+        img = Image.new("RGB", (10, 10))
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        with pytest.raises(ValueError, match="positive"):
+            await ImageService.process(buf.getvalue(), ImageOperation(resize=(0, 10)))
 
     @pytest.mark.asyncio
     async def test_process_compress_jpeg(self):

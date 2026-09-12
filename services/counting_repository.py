@@ -90,6 +90,23 @@ class CountingRepository:
         await execute_action(query, (last_counter_id, channel_id))
         invalidate_counting_cache(channel_id)
 
+    @staticmethod
+    async def increment_progress_if_turn(
+        mode: CountingMode,
+        channel_id: str | int,
+        last_counter_id: str | int,
+    ) -> bool:
+        """Atomically reject a concurrent/double count before advancing state."""
+        table = _TABLE_MAP[mode]
+        query = (
+            f"UPDATE {table} SET progress = progress + 1, last_counter_id = %s "
+            "WHERE channel_id = %s AND (last_counter_id IS NULL OR last_counter_id <> %s)"
+        )
+        changed = await execute_action(query, (last_counter_id, channel_id, last_counter_id))
+        if changed:
+            invalidate_counting_cache(channel_id)
+        return bool(changed)
+
     # ── Clear ────────────────────────────────────────────────
 
     @staticmethod

@@ -1,42 +1,49 @@
 # CI/CD
 
-Tanjun uses GitHub Actions for continuous integration and deployment. This page documents the available workflows and what they do.
+Tanjun uses GitHub Actions for continuous integration and deployment. This page documents the workflows currently present in `.github/workflows/`.
 
 ## Workflows
 
-### CI — Tests
+### CI — Tests and quality gates
 
 **File:** `.github/workflows/ci.yml`
 
-Triggers on every push and pull request to `development`.
+Triggers on pushes (except `l10n*` branches), pull requests targeting
+`development`, `master`, or `main`, and manual dispatch.
 
-- Runs the full pytest test suite
-- Generates a JUnit XML report
-- Posts test results as a comment on PRs
+- Runs import/diagnostic smoke checks, Ruff, mypy, unit tests, integration
+  tests, mock E2E tests, and the combined 85% coverage gate.
+- Runs optional live Discord E2E checks on non-PR events when test secrets are
+  configured; failures are non-blocking.
+- Sends a Discord notification for selected release branches when configured.
 
 ```bash
-pytest --junitxml=test-results.xml
+pytest tests/unit -q
+pytest tests/integration -m "not slow and not live_discord" -q
 ```
 
-### Ruff Lint & Format
+### Test — Legacy/branch test workflow
 
-**File:** `.github/workflows/ruff_linter.yml`
+**File:** `.github/workflows/test.yml`
 
-Triggers on every push and pull request to `development`.
+Runs on pushes to `main`/`development` and all pull requests. It runs unit,
+integration, mock E2E, command coverage, and schema-revision checks.
 
-- Runs `ruff check --fix` to auto-fix lint issues
-- Runs `ruff format` to format code
-- Auto-commits any fixes back to the branch
+### Docker image publishing
 
-### Type Checking
+**File:** `.github/workflows/publish-ghcr.yml`
 
-**File:** `.github/workflows/type_checking.yml`
+Pushes to `master` build and publish `ghcr.io/tanjunbot/new_tanjun:latest`
+and a commit-SHA tag. Pushes to other branches do not publish images.
 
-Triggers on every push and pull request to `development`.
+### Ruff, type checking, and maintenance
 
-- Runs mypy with strict settings
-- Creates/updates a tracking issue for any type errors found
-- Auto-closes the tracking issue when all errors are resolved
+- `ruff_linter.yml` is manual-only and performs Ruff checks (it does not
+  auto-fix or auto-commit).
+- `type_checking.yml` runs on all pushes and pull requests, uploads reports,
+  and manages a tracking issue for detected mypy errors.
+- `stale.yml`, `crowdin.yml`, `versioning.yml`, `issues-discord-message.yml`,
+  and `e2e-live-nightly.yml` provide scheduled or event-specific maintenance.
 
 ### Stale Issues & PRs
 
@@ -62,17 +69,13 @@ Triggers on pushes to `development` that change locale files.
 You can run the same checks that CI runs:
 
 ```bash
-# Tests
-pytest
-
-# Linting
+# Linting and formatting
 ruff check .
-
-# Formatting check
 ruff format . --check
-
-# Type checking
-mypy .
+# Type checking (same main CI invocation)
+python -m mypy . --explicit-package-bases --no-error-summary --show-error-codes --soft-error-limit -1
+# Unit tests
+pytest tests/unit/ -q
 ```
 
 ## Adding a New Workflow

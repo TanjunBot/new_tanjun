@@ -53,3 +53,16 @@ class TestLevelConfigRepository:
         with patch("api.execute_action", new_callable=AsyncMock) as mock_exec, patch("api._invalidate_guild_cache"):
             await repo.delete_config(GUILD_ID)
             assert "DELETE FROM levelConfig" in mock_exec.await_args[0][0]
+
+    @pytest.mark.asyncio
+    async def test_missing_config_is_not_cached(self, repo: LevelConfigRepository):
+        with (
+            patch("api._guild_config_cache") as cache,
+            patch("api.execute_query", new_callable=AsyncMock, return_value=[]) as query,
+        ):
+            cache.get.return_value = {}
+            result = await repo.get_config(GUILD_ID)
+
+        assert result.difficulty == "medium"
+        query.assert_awaited_once()
+        cache.set.assert_not_called()

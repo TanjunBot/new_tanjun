@@ -34,6 +34,7 @@ services:
       - BOTSTATUS_PORT=8000
       - BOTSTATUS_TIMEOUT_SECONDS=90
       - BOTSTATUS_DEFAULT_BOT_ID=832297321793323028
+      - BOTSTATUS_API_KEY=${BOTSTATUS_API_KEY:?BOTSTATUS_API_KEY must be set}
     volumes:
       - botstatus-data:/app/data
 

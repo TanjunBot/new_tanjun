@@ -40,27 +40,26 @@ Tanjun is configured through environment variables defined in a `.env` file. Thi
 
 ### Logging & Monitoring
 
-| Variable | Description |
-|----------|-------------|
-| `log_level` | Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
-| `prometheus_port` | Port for Prometheus metrics endpoint (default: `9090`) |
-| `healthcheck_port` | Port for health check endpoint (default: `8080`) |
-| `sentry_dsn` | Sentry DSN for error tracking |
-| `UPTIME_KUMA_PUSH_TOKEN` | Uptime Kuma push monitor token (optional; omit to disable heartbeats) |
-| `UPTIME_KUMA_STATUS_URL` | Uptime Kuma base URL (default: `https://status.tanjun.bot`) |
-| `HEALTH_ALERT_CHANNEL_ID` | Discord channel ID for internal health-check failure alerts |
-| `HEALTH_ALERT_USER_ID` | Discord user ID to ping with health-check failure alerts |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `log_level` | Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | `INFO` |
+| `METRICS_PORT` | Port for Prometheus metrics and `/health` endpoint | `8001` |
+| `sentry_dsn` | Sentry DSN for error tracking | (empty) |
+| `UPTIME_KUMA_PUSH_TOKEN` | Uptime Kuma push monitor token (omit to disable heartbeats) | (empty) |
+| `UPTIME_KUMA_STATUS_URL` | Uptime Kuma base URL | `https://status.tanjun.bot` |
+| `HEALTH_ALERT_CHANNEL_ID` | Discord channel ID for internal health-check failure alerts | (unset) |
+| `HEALTH_ALERT_USER_ID` | Discord user ID to ping with health-check failure alerts | (unset) |
 
 ### Bot Behavior
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `default_prefix` | Legacy command prefix | `t!` |
-| `default_language` | Default locale | `en` |
-| `activity_type` | Bot status activity type | `playing` |
-| `activity_text` | Bot status activity text | `Tanjun v1.2` |
-| `shard_count` | Number of shards for large bots | `1` |
-| `shard_ids` | Comma-separated shard IDs | (auto) |
+| `prefix` | Legacy command prefix | (required) |
+| `activity` | Bot status/activity template | `Tanjun {version}` |
+| `SYNC_COMMANDS_ON_STARTUP` | Synchronize application commands at startup | `true` |
+| `ACTIVITY_SERVER_PORT` | Discord Activities server port | `8080` |
+| `ACTIVITY_SERVER_HOST` | Discord Activities bind host | `0.0.0.0` |
+| `ACTIVITY_PUBLIC_URL` | Public Discord Activities URL | `https://activity.entcheneric.com` |
 
 ### Database
 
@@ -89,10 +88,14 @@ openai_tokens=10000
 
 # Optional: Monitoring
 log_level=INFO
-prometheus_port=9090
-healthcheck_port=8080
+METRICS_PORT=8001
 UPTIME_KUMA_PUSH_TOKEN=your_push_token_from_uptime_kuma
 # UPTIME_KUMA_STATUS_URL=https://status.tanjun.bot
 ```
 
 > See [.env.example](https://github.com/TanjunBot/new_tanjun/blob/development/.env.example) in the repository for the latest template.
+
+The bundled `botstatus-api` service has separate settings documented in
+[`botstatus-api/README.md`](../../botstatus-api/README.md). Its
+`BOTSTATUS_API_KEY` is required when that service is deployed and must match
+the bearer token sent by the bot via `BOTSTATUS_API_TOKEN`.

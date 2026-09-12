@@ -93,9 +93,12 @@ class TTLCache(Generic[K, V]):
 
     def set(self, key: K, value: V, *, ttl: float | None = None) -> None:
         """Store a value with the default or explicit TTL."""
+        effective_ttl = self._ttl if ttl is None else ttl
+        if effective_ttl <= 0:
+            raise ValueError("ttl must be positive")
         now = time.monotonic()
         self._store[key] = value
-        self._deadline[key] = now + (ttl if ttl is not None else self._ttl)
+        self._deadline[key] = now + effective_ttl
         self._store.move_to_end(key)  # most recently used
         self._evict_lru()
 
@@ -161,9 +164,8 @@ class TTLCache(Generic[K, V]):
         If *factory* is a coroutine function, this returns an awaitable;
         otherwise returns the value directly.
         """
-        existing = self.get(key)
-        if existing is not None:
-            return existing
+        if self.is_cached(key):
+            return self.get(key)  # type: ignore[return-value]
 
         result = factory()
         if isinstance(result, Awaitable):
@@ -184,9 +186,8 @@ class TTLCache(Generic[K, V]):
         ttl: float | None = None,
     ) -> V:
         """Synchronous variant of :meth:`get_or_compute` that does NOT await."""
-        existing = self.get(key)
-        if existing is not None:
-            return existing
+        if self.is_cached(key):
+            return self.get(key)  # type: ignore[return-value]
         value = factory()
         self.set(key, value, ttl=ttl)
         return value
@@ -254,9 +255,16 @@ class StampedeProtectedCache(Generic[K, V]):
             return self._cache.get(key)  # type: ignore[return-value]
 
         lock = self._locks.setdefault(key, asyncio.Lock())
-        async with lock:
-            if self._cache.is_cached(key):
-                return self._cache.get(key)  # type: ignore[return-value]
-            value = await fetch()
-            self._cache.set(key, value)
-            return value
+        try:
+            async with lock:
+                if self._cache.is_cached(key):
+                    return self._cache.get(key)  # type: ignore[return-value]
+                value = await fetch()
+                self._cache.set(key, value)
+                return value
+        finally:
+            # Locks are only needed while a miss is being resolved. Remove the
+            # entry once this generation completes, without deleting a lock
+            # installed by a concurrent caller after ``clear``.
+            if self._locks.get(key) is lock:
+                self._locks.pop(key, None)

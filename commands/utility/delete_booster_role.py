@@ -13,7 +13,7 @@ async def deleteBoosterRole(command_info: CommandInfo) -> None:
         embed = utility.tanjunEmbed(title=locale.errors.noChannel.title(command_info.locale), description=locale.errors.noChannel.description(command_info.locale))
         await command_info.reply(embed=embed)
         return
-    if isinstance(command_info.user, discord.Member) and (not command_info.channel.permissions_for(command_info.user).administrator):
+    if not isinstance(command_info.user, discord.Member) or not command_info.channel.permissions_for(command_info.user).administrator:
         embed = utility.tanjunEmbed(title=locale.commands.utility.deleteboosterrole.missingPermission.title(command_info.locale), description=locale.commands.utility.deleteboosterrole.missingPermission.description(command_info.locale))
         await command_info.reply(embed=embed)
         return

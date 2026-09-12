@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 from typing import Any, Dict, List, Optional, Tuple
-from activities.base import BaseGame, Player
+from activities.base import BaseGame, Player, serialized_action
 
 
 class Connect4Game(BaseGame):
@@ -212,6 +212,7 @@ class Connect4Game(BaseGame):
 
         return random.choice(candidate_cols)
 
+    @serialized_action
     async def handle_action(
         self,
         player_id: str,
@@ -220,20 +221,31 @@ class Connect4Game(BaseGame):
         broadcast_cb: Optional[Any] = None
     ) -> Dict[str, Any]:
         if action == "start":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can start or configure the game"}
             mode = data.get("mode", "pvp")
+            if mode not in {"pvp", "bot"}:
+                return {"error": "Invalid game mode"}
             if mode != self.game_mode:
                 self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
-            diff = int(data.get("difficulty", 3))
-            self.difficulty = diff
+            try:
+                diff = int(data.get("difficulty", 3))
+                rows = int(data.get("rows", self.DEFAULT_ROWS))
+                cols = int(data.get("cols", self.DEFAULT_COLS))
+                connect = int(data.get("connect", 4))
+            except (TypeError, ValueError):
+                return {"error": "Invalid game configuration"}
+            self.difficulty = max(1, min(5, diff))
 
             # Configurable grid and rules
-            rows = int(data.get("rows", self.DEFAULT_ROWS))
-            cols = int(data.get("cols", self.DEFAULT_COLS))
             self.rows = max(5, min(9, rows))
             self.cols = max(6, min(10, cols))
-            self.connect_target = max(3, min(5, int(data.get("connect", 4))))
-            self.first_turn_rule = data.get("first_turn", "host")
+            self.connect_target = max(3, min(5, connect))
+            first_turn = data.get("first_turn", "host")
+            if first_turn not in {"host", "guest", "random"}:
+                return {"error": "Invalid first turn"}
+            self.first_turn_rule = first_turn
 
             if mode == "bot":
                 self.setup_bot(diff)
@@ -315,6 +327,8 @@ class Connect4Game(BaseGame):
             return {"status": "moved", "state": self.get_state()}
 
         if action == "restart":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can restart the game"}
             self.board = [""] * (self.rows * self.cols)
             self.is_finished = False
             self.winning_line = None
@@ -341,6 +355,8 @@ class Connect4Game(BaseGame):
             return {"status": "restarted", "state": self.get_state()}
 
         if action == "lobby":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can return to the lobby"}
             self.board = [""] * (self.rows * self.cols)
             self.is_started = False
             self.is_finished = False
@@ -374,15 +390,15 @@ class Connect4Game(BaseGame):
             "is_finished": self.is_finished,
             "winner": self.winner,
             "winning_line": self.winning_line,
-            "board": self.board,
+            "board": list(self.board),
             "rows": self.rows,
             "cols": self.cols,
             "last_move": self.last_move,
             "connect_target": self.connect_target,
             "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,
-            "player_symbols": self.player_symbols,
-            "scores": self.scores,
+            "player_symbols": dict(self.player_symbols),
+            "scores": dict(self.scores),
             "players": [p.model_dump() for p in self.players.values()],
             "spectators": [p.model_dump() for p in self.spectators.values()]
         }

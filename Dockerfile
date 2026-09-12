@@ -15,15 +15,14 @@ RUN useradd -m appuser && \
     mkdir -p /usr/local/app && \
     chown appuser:appuser /usr/local/app
 
-# Install Python dependencies
-COPY pyproject.toml README.md ./
+# Copy the application before installing it. Setuptools needs the declared
+# modules and packages present while building the project.
+COPY . /usr/local/app/
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir .
 
-# Copy the entire application
-COPY --chown=appuser:appuser . /usr/local/app/
-
 RUN chmod +x /usr/local/app/scripts/docker_entrypoint.py
+RUN chown -R appuser:appuser /usr/local/app
 
 USER appuser
 

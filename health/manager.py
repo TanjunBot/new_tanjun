@@ -4,12 +4,13 @@ Orchestrates startup validation and periodic health monitoring.
 """
 from __future__ import annotations
 
-from locale_keys import locale
 import asyncio
 import logging
 from typing import TYPE_CHECKING
+
 from health.checks import HealthCheck, HealthCheckResult, HealthStatus
 from health.notifier import notify_health_failures
+
 if TYPE_CHECKING:
     from discord.ext import commands
 logger = logging.getLogger(__name__)
@@ -54,13 +55,22 @@ class HealthCheckManager:
         results: list[HealthCheckResult] = []
         for check, raw in zip(self._checks, raw_results, strict=False):
             if isinstance(raw, BaseException):
-                result = HealthCheckResult(check_name=check.name, status=HealthStatus.CRITICAL, message=f'Health check raised an unexpected exception: {raw}')
+                result = self._exception_result(check)
                 logger.exception('Health check %s raised an exception', check.name, exc_info=(type(raw), raw, raw.__traceback__))
             else:
                 result = raw
             self._last_results[result.check_name] = result
             results.append(result)
         return results
+
+    @staticmethod
+    def _exception_result(check: HealthCheck) -> HealthCheckResult:
+        """Convert an exception into a safe, status-appropriate result."""
+        return HealthCheckResult(
+            check_name=check.name,
+            status=HealthStatus.CRITICAL,
+            message="Health check raised an unexpected exception",
+        )
 
     async def run_startup_checks(self) -> tuple[bool, list[HealthCheckResult]]:
         """Run all checks at startup.
@@ -88,7 +98,10 @@ class HealthCheckManager:
         """Notify the designated Discord channel about critical startup failures."""
         critical_results = [r for r in self._last_results.values() if r.status == HealthStatus.CRITICAL]
         if critical_results:
-            await notify_health_failures(self.bot, critical_results)
+            try:
+                await notify_health_failures(self.bot, critical_results)
+            except Exception:
+                logger.exception("Failed to notify critical startup health failures")
 
     async def start_periodic_checks(self, interval: int=300) -> None:
         """Start periodic health checks every *interval* seconds.
@@ -124,7 +137,7 @@ class HealthCheckManager:
                         results: list[HealthCheckResult] = []
                         for check, raw in zip(checks_to_run, raw_results, strict=False):
                             if isinstance(raw, BaseException):
-                                result = HealthCheckResult(check_name=check.name, status=HealthStatus.CRITICAL, message=f'Health check raised an unexpected exception: {raw}')
+                                result = self._exception_result(check)
                                 logger.exception('Health check %s raised an exception', check.name, exc_info=(type(raw), raw, raw.__traceback__))
                             else:
                                 result = raw
@@ -132,7 +145,10 @@ class HealthCheckManager:
                             results.append(result)
                         failures = [r for r in results if r.status in (HealthStatus.CRITICAL, HealthStatus.DEGRADED)]
                         if failures:
-                            await notify_health_failures(self.bot, failures)
+                            try:
+                                await notify_health_failures(self.bot, failures)
+                            except Exception:
+                                logger.exception("Failed to notify health check failures")
                 except Exception:
                     logger.exception('Periodic health check iteration failed')
         self._periodic_task = asyncio.create_task(_periodic_loop())
@@ -144,3 +160,10 @@ class HealthCheckManager:
             self._periodic_task.cancel()
             self._periodic_task = None
         logger.info('Periodic health checks stopped')
+
+    async def stop_periodic_checks_async(self) -> None:
+        """Stop periodic checks and wait for the worker to finish."""
+        task = self._periodic_task
+        self.stop_periodic_checks()
+        if task is not None:
+            await asyncio.gather(task, return_exceptions=True)

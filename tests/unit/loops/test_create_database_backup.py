@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import stat
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -15,8 +16,14 @@ def test_write_defaults_file():
             content = f.read()
         assert "user=user" in content
         assert "password=pass" in content
+        assert stat.S_IMODE(os.stat(path).st_mode) == 0o600
     finally:
         os.unlink(path)
+
+
+def test_write_defaults_file_rejects_newlines() -> None:
+    with pytest.raises(ValueError, match="newlines"):
+        create_database_backup._write_defaults_file("user", "bad\npassword", "host", 3306)
 
 
 pytestmark = pytest.mark.asyncio

@@ -65,6 +65,17 @@ class TestTriggerMessageRepository:
         assert result is None
 
     @pytest.mark.asyncio
+    async def test_find_skips_case_sensitive_mismatch_in_first_row(self, repo: TriggerMessageRepository):
+        rows = [
+            (1, GUILD_ID, "Hello", "wrong", True),
+            (2, GUILD_ID, "HELLO", "right", False),
+        ]
+        with patch("api.execute_query", new_callable=AsyncMock, return_value=rows):
+            result = await repo.find(GUILD_ID, "hello", CHANNEL_ID)
+        assert result is not None
+        assert result.id == 2
+
+    @pytest.mark.asyncio
     async def test_find_not_found(self, repo: TriggerMessageRepository):
         with patch("api.execute_query", new_callable=AsyncMock) as mock_q:
             mock_q.return_value = []

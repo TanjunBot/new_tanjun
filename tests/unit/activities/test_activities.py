@@ -53,6 +53,20 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIn("user_guest", game.players)
         self.assertNotIn("user_guest", game.spectators)
 
+    async def test_session_manager_rejects_duplicate_ids(self):
+        session_manager.create_session("hub", host=self.host, session_id="duplicate_session")
+        with self.assertRaises(ValueError):
+            session_manager.create_session("hub", host=self.host, session_id="duplicate_session")
+
+    async def test_session_manager_enforces_session_limit(self):
+        previous_limit = session_manager.max_sessions
+        session_manager.max_sessions = len(session_manager._sessions)
+        try:
+            with self.assertRaises(ValueError):
+                session_manager.create_session("hub", host=self.host, session_id="limit_session")
+        finally:
+            session_manager.max_sessions = previous_limit
+
     async def test_bot_mode(self):
         session = session_manager.create_session("tictactoe", host=self.host, session_id="test_bot")
         game: TicTacToeGame = session.game
@@ -1430,6 +1444,18 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(session_manager.get_session(voice_channel_id))
         self.assertIsNone(session_manager.get_session_by_channel(voice_channel_id))
 
+    async def test_remove_session_cancels_owned_background_tasks(self):
+        """Removing an idle session must not leave delayed callbacks alive."""
+        session = session_manager.create_session("hub", host=self.host, session_id="task_cleanup")
+        session.schedule_disconnect_forfeit("user", delay=3600)
+        task = session._disconnect_tasks["user"]
+
+        session_manager.remove_session(session.session_id)
+        await asyncio.sleep(0)
+
+        self.assertTrue(task.cancelled())
+        self.assertNotIn(session.session_id, session_manager._sessions)
+
     async def test_points_tournament_fair_pairings_minimize_duplicates(self):
         """Verify that in points tournament, pairings across rounds minimize repeat encounters."""
         session = session_manager.create_session("tournament", host=self.host, session_id="test_fair_pairs")
@@ -1541,9 +1567,65 @@ class TestActivities(unittest.IsolatedAsyncioTestCase):
         finally:
             config.discord_client_secret = orig_secret
 
+    async def test_tournament_rejects_malformed_settings_and_duplicate_resolution(self):
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="malformed_tourney", host=self.host)
+        tourney.add_participant(Player(user_id="p2", username="P2", display_name="P2"))
+        result = await tourney.handle_action("user_host", "tournament_update_settings", {
+            "total_rounds": "not-a-number",
+        })
+        self.assertIn("error", result)
+        self.assertEqual(tourney.total_rounds, 3)
+
+        await tourney.start_tournament("tictactoe")
+        match = tourney.active_matches[0]
+        await tourney._resolve_match(match, "user_host")
+        history_len = len(tourney.match_history)
+        host_score = tourney.participants["user_host"].score
+        await tourney._resolve_match(match, "p2")
+        self.assertEqual(len(tourney.match_history), history_len)
+        self.assertEqual(tourney.participants["user_host"].score, host_score)
+
+    async def test_tournament_match_actions_require_match_membership(self):
+        from activities.tournament import Tournament
+
+        tourney = Tournament(session_id="match_auth", host=self.host)
+        tourney.add_participant(Player(user_id="p2", username="P2", display_name="P2"))
+        await tourney.start_tournament("tictactoe")
+        result = await tourney.handle_action("spectator", "tournament_match_action", {
+            "sub_action": "move", "sub_data": {"cell": 0}
+        })
+        self.assertIn("error", result)
+        self.assertIn("match players", result["error"])
+
+    async def test_activity_websocket_handles_non_object_and_reconnects(self):
+        from aiohttp.test_utils import TestClient, TestServer
+        from activities.server import ActivityServer
+
+        client = TestClient(TestServer(ActivityServer().app))
+        await client.start_server()
+        try:
+            ws1 = await client.ws_connect("/ws/ws_edge_case")
+            await ws1.send_str("[]")
+            self.assertEqual((await ws1.receive_json())["type"], "error")
+            await ws1.send_json({"type": "join", "user_id": "reconnect_user"})
+            self.assertEqual((await ws1.receive_json())["type"], "joined")
+
+            ws2 = await client.ws_connect("/ws/ws_edge_case")
+            await ws2.send_json({"type": "join", "user_id": "reconnect_user"})
+            self.assertEqual((await ws2.receive_json())["type"], "joined")
+            await ws1.close()
+            await asyncio.sleep(0)
+
+            session = session_manager.get_session("ws_edge_case")
+            self.assertIn("reconnect_user", session.sockets)
+            self.assertNotEqual(session.sockets["reconnect_user"], ws1)
+            self.assertTrue(session.game.players["reconnect_user"].connected)
+            await ws2.close()
+        finally:
+            await client.close()
+
 
 if __name__ == "__main__":
     unittest.main()
-
-
-

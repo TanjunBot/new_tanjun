@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 from typing import Any, Dict, List, Optional
-from activities.base import BaseGame, Player
+from activities.base import BaseGame, Player, serialized_action
 
 
 class TicTacToeGame(BaseGame):
@@ -174,6 +174,7 @@ class TicTacToeGame(BaseGame):
                 best_move = move
         return best_move
 
+    @serialized_action
     async def handle_action(
         self,
         player_id: str,
@@ -182,13 +183,23 @@ class TicTacToeGame(BaseGame):
         broadcast_cb: Optional[Any] = None
     ) -> Dict[str, Any]:
         if action == "start":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can start or configure the game"}
             mode = data.get("mode", "pvp")
+            if mode not in {"pvp", "bot"}:
+                return {"error": "Invalid game mode"}
             if mode != self.game_mode:
                 self.scores = {pid: 0 for pid in self.players}
             self.game_mode = mode
-            diff = int(data.get("difficulty", 3))
-            self.difficulty = diff
-            self.first_turn_rule = data.get("first_turn", "host")
+            try:
+                diff = int(data.get("difficulty", 3))
+            except (TypeError, ValueError):
+                return {"error": "Invalid difficulty"}
+            first_turn = data.get("first_turn", "host")
+            if first_turn not in {"host", "guest", "random"}:
+                return {"error": "Invalid first turn"}
+            self.difficulty = max(1, min(5, diff))
+            self.first_turn_rule = first_turn
             if mode == "bot":
                 self.setup_bot(diff)
             elif "bot_tanjun" in self.players:
@@ -206,19 +217,19 @@ class TicTacToeGame(BaseGame):
 
         if action == "move":
             if not self.is_started or self.is_finished:
-                return {"error": "Game is not active"}
+                return {"status": "error", "error": "Game is not active"}
             if player_id not in self.players or player_id in self.spectators:
-                return {"error": "Spectators cannot make moves"}
+                return {"status": "error", "error": "Spectators cannot make moves"}
             if self.current_turn != player_id:
-                return {"error": "Not your turn"}
+                return {"status": "error", "error": "Not your turn"}
 
             cell = data.get("cell")
             if cell is None or isinstance(cell, bool) or not isinstance(cell, int) or not (0 <= cell <= 8) or self.board[cell] != "":
-                return {"error": "Invalid cell move"}
+                return {"status": "error", "error": "Invalid cell move"}
 
             sym = self.player_symbols.get(player_id)
             if not sym:
-                return {"error": "Unknown player symbol"}
+                return {"status": "error", "error": "Unknown player symbol"}
             self.board[cell] = sym
             self.last_move = cell
 
@@ -263,6 +274,8 @@ class TicTacToeGame(BaseGame):
             return {"status": "moved", "state": self.get_state()}
 
         if action == "restart":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can restart the game"}
             self.board = [""] * 9
             self.is_finished = False
             self.winning_line = None
@@ -287,6 +300,8 @@ class TicTacToeGame(BaseGame):
             return {"status": "restarted", "state": self.get_state()}
 
         if action == "lobby":
+            if not self.is_controller(player_id):
+                return {"error": "Only the host can return to the lobby"}
             self.board = [""] * 9
             self.is_started = False
             self.is_finished = False
@@ -320,12 +335,12 @@ class TicTacToeGame(BaseGame):
             "is_finished": self.is_finished,
             "winner": self.winner,
             "winning_line": self.winning_line,
-            "board": self.board,
+            "board": list(self.board),
             "last_move": self.last_move,
             "first_turn": self.first_turn_rule,
             "current_turn": self.current_turn,
-            "player_symbols": self.player_symbols,
-            "scores": self.scores,
+            "player_symbols": dict(self.player_symbols),
+            "scores": dict(self.scores),
             "players": [p.model_dump() for p in self.players.values()],
             "spectators": [p.model_dump() for p in self.spectators.values()]
         }

@@ -9,6 +9,10 @@ async def say(command_info: utility.CommandInfo, channel: discord.TextChannel, *
         await command_info.reply(embed=embed)
         return
     assert command_info.guild is not None
+    if isinstance(command_info.user, discord.Member) and not channel.permissions_for(command_info.user).manage_messages:
+        embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.say.missingPermission.title(str(command_info.locale)), description=locale.commands.admin.say.missingPermission.description(str(command_info.locale)))
+        await command_info.reply(embed=embed)
+        return
     if not channel.permissions_for(command_info.guild.me).send_messages:
         embed = utility.tanjunEmbed(colour=EmbedColor.ERROR, title=locale.commands.admin.say.missingPermissionBot.title(str(command_info.locale)), description=locale.commands.admin.say.missingPermissionBot.description(command_info.locale))
         await command_info.reply(embed=embed)

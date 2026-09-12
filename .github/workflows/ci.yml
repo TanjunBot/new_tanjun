@@ -16,9 +16,16 @@ on:
         required: false
         type: string
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION: '3.12'
-  RUFF_VERSION: '0.11.5'
+  RUFF_VERSION: '0.16.5'
 
 jobs:
   import-smoke:
@@ -54,8 +61,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: pip install ruff==${{ env.RUFF_VERSION }}
-      - run: ruff check . --fix --exit-zero
-      - run: ruff format .
+      - run: ruff check .
+      - run: ruff format --check .
       - run: python scripts/lint_tests.py
       - run: python scripts/lint_channel_select.py
       - run: python scripts/lint_view_initial_embed.py
@@ -93,6 +100,7 @@ jobs:
           pip install -e ".[dev]"
       - run: COVERAGE_FILE=coverage-unit.dat pytest tests/unit/ -n auto --cov=. --cov-report=xml:coverage-unit.xml --cov-fail-under=0 -q
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: coverage-unit
           path: |
@@ -124,6 +132,7 @@ jobs:
         env:
           TANJUN_INTEGRATION: true
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: coverage-integration
           path: |
@@ -134,6 +143,11 @@ jobs:
     name: E2E Live Discord (optional)
     runs-on: ubuntu-latest
     continue-on-error: true
+    if: github.event_name != 'pull_request'
+    env:
+      TANJUN_TEST_BOT_TOKEN: ${{ secrets.TANJUN_TEST_BOT_TOKEN }}
+      TANJUN_TEST_GUILD_ID: ${{ secrets.TANJUN_TEST_GUILD_ID }}
+      TANJUN_TEST_CHANNEL_ID: ${{ secrets.TANJUN_TEST_CHANNEL_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
