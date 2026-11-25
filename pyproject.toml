@@ -16,7 +16,7 @@ authors = [
 
 dependencies = [
     "pywin32==312; sys_platform == 'win32'",
-    "aiohttp==3.14.3",
+    "aiohttp==3.14.4",
     "akinator-python==1.6.0",
     "annotated-types==0.8.0",
     "anyio==4.14.2",
